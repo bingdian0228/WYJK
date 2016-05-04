@@ -26,6 +26,7 @@ namespace WYJK.Web.Controllers.Http
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         private readonly IAccumulationFundService _accumulationFundService = new AccumulationFundService();
         private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
+        private readonly IMemberService _memberService = new MemberService();
         /// <summary>
         /// 获取户口性质
         /// </summary>
@@ -846,6 +847,21 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<dynamic> ApplyStopSocialSecurity(StopSocialSecurityParameter parameter)
         {
             bool flag = _socialSecurityService.ApplyTopSocialSecurity(parameter);
+
+            //查看是否处于待续费状态，如果是，则判断余额-待办是否够交待续费的钱，如果够则将待续费变成正常
+            int memberID = DbHelper.QuerySingle<int>($"select MemberID from SocialSecurityPeople where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+            if (_socialSecurityService.IsExistsRenew(memberID)) {
+                AccountInfo accountInfo = _memberService.GetAccountInfo(memberID);
+                //获取该用户下所有参保人的所有待办金额之和
+                decimal WaitingHandleTotal = _socialSecurityService.GetWaitingHandleTotalByMemberID(memberID);
+                //获取某用户下的所有待续费金额之和
+                decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(memberID);
+                if (accountInfo.Account - WaitingHandleTotal >= RenewMonthTotal) {
+                    //将所有的待续费变成正常,并将剩余月数变成服务月数
+                    _socialSecurityService.UpdateRenewToNormalByMemberID(memberID, 1);
+                }
+            }
+
             return new JsonResult<dynamic>
             {
                 status = flag,
@@ -863,6 +879,23 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<dynamic> ApplyStopAccumulationFund(StopAccumulationFundParameter parameter)
         {
             bool flag = _socialSecurityService.ApplyTopAccumulationFund(parameter);
+
+            //查看是否处于待续费状态，如果是，则判断余额-待办是否够交待续费的钱，如果够则将待续费变成正常
+            int memberID = DbHelper.QuerySingle<int>($"select MemberID from SocialSecurityPeople where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+            if (_socialSecurityService.IsExistsRenew(memberID))
+            {
+                AccountInfo accountInfo = _memberService.GetAccountInfo(memberID);
+                //获取该用户下所有参保人的所有待办金额之和
+                decimal WaitingHandleTotal = _socialSecurityService.GetWaitingHandleTotalByMemberID(memberID);
+                //获取某用户下的所有待续费金额之和
+                decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(memberID);
+                if (accountInfo.Account - WaitingHandleTotal >= RenewMonthTotal)
+                {
+                    //将所有的待续费变成正常,并将剩余月数变成服务月数
+                    _socialSecurityService.UpdateRenewToNormalByMemberID(memberID, 1);
+                }
+            }
+
             return new JsonResult<dynamic>
             {
                 status = flag,

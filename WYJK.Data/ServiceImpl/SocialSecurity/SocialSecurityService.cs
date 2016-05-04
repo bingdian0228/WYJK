@@ -836,5 +836,26 @@ select @totalAmount";
             decimal result = DbHelper.QuerySingle<decimal>(sqlstr);
             return result;
         }
+
+        /// <summary>
+        ///  获取该用户下所有参保人的所有待办金额之和
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public decimal GetWaitingHandleTotalByMemberID(int MemberID)
+        {
+            string sqlstr = $@"declare @SocialSecurityAmount decimal = 0, @AccumulationFundAmount decimal = 0,@totalAmount decimal =0
+select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase*SocialSecurity.PayMonthCount * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
+      left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+      where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status = 2;
+            select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase *AccumulationFund.PayMonthCount* AccumulationFund.PayProportion / 100 from SocialSecurityPeople
+                  left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+                  where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = 2;
+            select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
+select @totalAmount";
+
+            decimal result = DbHelper.QuerySingle<decimal>(sqlstr);
+            return result;
+        }
     }
 }
