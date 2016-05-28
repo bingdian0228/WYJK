@@ -168,6 +168,9 @@ namespace WYJK.Web
                                 {
                                     sqlStr2 += $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID ={accumulationFund.SocialSecurityPeopleID};";
                                 }
+
+                                //发送消息提醒
+                                DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},{message.ContentStr})", null);
                             }
 
                             #endregion
