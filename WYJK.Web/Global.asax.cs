@@ -169,6 +169,10 @@ namespace WYJK.Web
                                     sqlStr2 += $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID ={accumulationFund.SocialSecurityPeopleID};";
                                 }
 
+                                Message message = new Message();
+                                message.MemberID = member.MemberID;
+                                message.ContentStr = "您的账户余额已不足抵扣下个月社保、公积金.请及时充值.";
+
                                 //发送消息提醒
                                 DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},{message.ContentStr})", null);
                             }
