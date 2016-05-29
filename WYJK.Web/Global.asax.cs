@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Timers;
 using System.Transactions;
 using System.Web;
@@ -44,6 +47,26 @@ namespace WYJK.Web
             #endregion
         }
 
+        protected void Application_End(object sender, EventArgs e)
+
+        {
+
+            //下面的代码是关键，可解决IIS应用程序池自动回收的问题  
+
+            System.Threading.Thread.Sleep(1000);
+
+            //这里设置你的web地址，可以随便指向你的任意一个aspx页面甚至不存在的页面，目的是要激发Application_Start  
+
+            string url = "http://www.shaoqun.com";
+
+            HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+
+            HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+
+            Stream receiveStream = myHttpWebResponse.GetResponseStream();//得到回写的字节流  
+
+        }
+
         /// <summary>
         /// 触发事件
         /// </summary>
@@ -56,8 +79,8 @@ namespace WYJK.Web
             int CurrentMinute = DateTime.Now.Minute;
             int CurrentSecond = DateTime.Now.Second;
 
-            //定制时间 每月15号 00：00：00 开始执行
-            int CustomDay = 15;
+            //定制时间 每月16号 00：00：00 开始执行
+            int CustomDay = 16;
             int CustomHour = 00;
             int CustomMinute = 00;
             int CustomSecond = 00;
@@ -67,13 +90,13 @@ namespace WYJK.Web
             if (CurrentDay == CustomDay && CurrentHour == CustomHour
                 && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
             {
-                Console.WriteLine("每月15号 00：00：00 开始执行");
+                Console.WriteLine("每月16号 00：00：00 开始执行");
 
                 using (TransactionScope transaction = new TransactionScope())
                 {
                     try
                     {
-                        #region 每个用户下的所有正常的参保人进行扣款,并将已投月数+1
+                        #region 每个用户下的所有正常的参保人进行扣款,并将已投月数+1,剩余月数-1
                         //查询所有用户
                         string sqlMember = "select * from Members";
                         List<Members> memberList = DbHelper.Query<Members>(sqlMember);
@@ -81,13 +104,14 @@ namespace WYJK.Web
 
                         foreach (Members member in memberList)
                         {
+                            decimal yue = DbHelper.QuerySingle<decimal>($"select ISNULL(Account,0) from Members where MemberID={member.MemberID}");
                             //查询该用户下的所有参保人
                             string sqlSocialSecurityPeople = $"select * from SocialSecurityPeople where MemberID={member.MemberID}";
                             List<SocialSecurityPeople> SocialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>(sqlSocialSecurityPeople);
                             string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
 
                             //查询该用户下的所有正常参保方案
-                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}' and Status={(int)SocialSecurityStatusEnum.Normal})";
+                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
                             List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
                             foreach (SocialSecurity socialSecurity in SocialSecurityList)
                             {
@@ -95,15 +119,17 @@ namespace WYJK.Web
                                 decimal account = socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100;
                                 //余额减
                                 sqlStr += $"update Members set Account=Account-{account} where MemberID={member.MemberID};";
+
+                                yue -= account;
                                 //社保流水账
-                                sqlStr += $"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime)"
-                                           + $" values({member.MemberID},{socialSecurity.SocialSecurityPeopleID},{socialSecurity.SocialSecurityPeopleName},'支出','余额','社保费',{account},getdate());";
-                                //已投月数+1
-                                sqlStr += $"update SocialSecurity set AlreadyPayMonthCount=ISNULL(AlreadyPayMonthCount,0)+1 where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
+                                sqlStr += $"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)"
+                                           + $" values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurity.SocialSecurityPeopleID},'{socialSecurity.SocialSecurityPeopleName}','支出','余额','社保费',{account},{yue},getdate());";
+                                //已投月数+1,剩余月数-1
+                                sqlStr += $"update SocialSecurity set AlreadyPayMonthCount=ISNULL(AlreadyPayMonthCount,0)+1,PayMonthCount=ISNULL(PayMonthCount,0)-1  where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
                             }
 
                             //查询该用户下的所有正常参公积金方案
-                            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}' and Status={(int)SocialSecurityStatusEnum.Normal})";
+                            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
                             List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
                             foreach (AccumulationFund accumulationFund in AccumulationFundList)
                             {
@@ -111,15 +137,19 @@ namespace WYJK.Web
                                 decimal account = accumulationFund.AccumulationFundBase * accumulationFund.PayProportion / 100;
                                 //余额减
                                 sqlStr += $"update Members set Account=Account-{account} where MemberID={member.MemberID};";
+
+                                yue -= account;
                                 //公积金流水账
-                                sqlStr += $"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime)"
-                                           + $" values({member.MemberID},{accumulationFund.SocialSecurityPeopleID},{accumulationFund.SocialSecurityPeopleName},'支出','余额','公积金费',{account},getdate());";
-                                //已投月数+1
-                                sqlStr += $"update AccumulationFund set AlreadyPayMonthCount=ISNULL(AlreadyPayMonthCount,0)+1 where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
+                                sqlStr += $"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)"
+                                           + $" values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{accumulationFund.SocialSecurityPeopleID},'{accumulationFund.SocialSecurityPeopleName}','支出','余额','公积金费',{account},{yue},getdate());";
+                                //已投月数+1,剩余月数-1
+                                sqlStr += $"update AccumulationFund set AlreadyPayMonthCount=ISNULL(AlreadyPayMonthCount,0)+1,PayMonthCount=ISNULL(PayMonthCount,0)-1 where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
                             }
                         }
-
-                        DbHelper.ExecuteSqlCommand(sqlStr, null);
+                        if (sqlStr.Trim() != string.Empty)
+                        {
+                            DbHelper.ExecuteSqlCommand(sqlStr, null);
+                        }
 
                         #endregion
 
@@ -135,7 +165,7 @@ namespace WYJK.Web
                             string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
 
                             //查询该用户下的所有正常参保方案
-                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}' and Status={(int)SocialSecurityStatusEnum.Normal})";
+                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
                             List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
                             foreach (SocialSecurity socialSecurity in SocialSecurityList)
                             {
@@ -145,7 +175,7 @@ namespace WYJK.Web
                             }
 
                             //查询该用户下的所有正常参公积金方案
-                            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}' and Status={(int)SocialSecurityStatusEnum.Normal})";
+                            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
                             List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
                             foreach (AccumulationFund accumulationFund in AccumulationFundList)
                             {
@@ -174,13 +204,13 @@ namespace WYJK.Web
                                 message.ContentStr = "您的账户余额已不足抵扣下个月社保、公积金.请及时充值.";
 
                                 //发送消息提醒
-                                DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},{message.ContentStr})", null);
+                                DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},'{message.ContentStr}')", null);
                             }
 
                             #endregion
-
-                            DbHelper.ExecuteSqlCommand(sqlStr2, null);
                         }
+                        if (sqlStr2.Trim() != string.Empty)
+                            DbHelper.ExecuteSqlCommand(sqlStr2, null);
                         #endregion
 
                         transaction.Complete();

@@ -159,7 +159,7 @@
         <div class="row cl">
             <label class="form-label col-2">社平工资：</label>
             <div class="formControls col-2">
-                @Html.TextBoxFor(m => m.SocialAvgSalary, new { @class = "input-text base" })
+                @Html.TextBoxFor(m => m.SocialAvgSalary, new { @class = "input-text base",@readonly= "readonly"})
             </div>
             <div class="col-2">@Html.ValidationMessageFor(m => m.SocialAvgSalary)</div>
         </div>

@@ -20,6 +20,8 @@ using WYJK.Data.IService;
 using System.Transactions;
 using System.Configuration;
 using System.Threading;
+using System.IO;
+using System.Text;
 
 namespace WYJK.Web.Controllers.Http
 {
@@ -912,7 +914,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         }
                         //公积金人员列表
                         List<SocialSecurityPeople> SocialSecurityPeopleList1 = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
- 
+
                         //公积金服务费
                         CostParameterSetting AFParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund);
                         if (AFParameter != null && !string.IsNullOrEmpty(AFParameter.RenewServiceCost))
@@ -927,7 +929,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
                                     //社保待续费的人数*金额
                                     AFServiceCost = SocialSecurityPeopleList1.Count * Convert.ToDecimal(str1[2]);
- 
+
                                     break;
                                 }
                             }
@@ -950,7 +952,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                                                         insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
                                                  values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','服务费',{TotalServiceCost},{info.Account + parameter.Amount - TotalServiceCost},getdate()); ", null);
                             //修改账户余额
-                            DbHelper.ExecuteSqlCommand($@"update Members set Account = ISNULL(Account, 0) +{ parameter.Amount- TotalServiceCost}
+                            DbHelper.ExecuteSqlCommand($@"update Members set Account = ISNULL(Account, 0) +{ parameter.Amount - TotalServiceCost}
                                                 where MemberID = { parameter.MemberID }", null);
 
                             //将所有的待续费变成正常,并将剩余月数变成服务月数
@@ -1023,20 +1025,21 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         [System.Web.Http.HttpGet]
-        private JsonResult<dynamic> TestTransaction()
+        public JsonResult<dynamic> TestTransaction()
         {
-            using (TransactionScope transaction = new TransactionScope())
-            {
-                DbHelper.ExecuteSqlCommand("update Members set InviteCode = 123 where memberID=5", null);
+            string url = "http://localhost:47565/api/member/GetRenewalServiceList?MemberID";
 
-                Thread.Sleep(5000);
+            HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
 
-                transaction.Complete();
-            }
+            HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+
+            //Stream receiveStream = myHttpWebResponse.GetResponseStream();//得到回写的字节流
+            StreamReader stream = new StreamReader(myHttpWebResponse.GetResponseStream(), Encoding.UTF8);
             return new JsonResult<dynamic>
             {
                 status = true,
-                Message = "测试成功"
+                Message = "测试成功",
+                Data = stream.ReadToEnd()
             };
         }
 
