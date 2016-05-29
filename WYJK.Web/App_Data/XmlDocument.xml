@@ -1615,18 +1615,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:WYJK.Web.ModelStateExtensions">
-            <summary>
-            ModelState 的扩展
-            </summary>
-        </member>
-        <member name="M:WYJK.Web.ModelStateExtensions.FirstModelStateError(System.Web.Http.ModelBinding.ModelStateDictionary)">
-            <summary>
-             获取第一个错误信息
-            </summary>
-            <param name="modelState"></param>
-            <returns></returns>
-        </member>
         <member name="T:WYJK.Web.Filters.CustomAuthorizedAttribute">
             <summary>
             身份验证过滤器

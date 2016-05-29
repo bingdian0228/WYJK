@@ -285,7 +285,6 @@
     <Compile Include="Controllers\Mvc\SocialSecurity\SocialSecurityController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\HomeController.cs" />
     <Compile Include="Core\HttpHeadersExtentions.cs" />
-    <Compile Include="Core\ModelStateExtensions.cs" />
     <Compile Include="Filters\AuthorizedAttribute.cs" />
     <Compile Include="Filters\ErrorAttribute.cs" />
     <Compile Include="Filters\ValidationModelAttribute.cs" />

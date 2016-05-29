@@ -1,0 +1,3120 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WYJK.Entity</name>
+    </assembly>
+    <members>
+        <member name="T:WYJK.Entity.JsonResult`1">
+            <summary>
+            调用服务时返回的数据结果,用于返回给第三方的结果信息  where TEntity : class
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+        </member>
+        <member name="M:WYJK.Entity.JsonResult`1.#ctor">
+            <summary>
+            初始化对象的实例
+            </summary>
+        </member>
+        <member name="M:WYJK.Entity.JsonResult`1.#ctor(System.Boolean,System.String)">
+            <summary>
+            初始化对象的实例
+            </summary>
+            <param name="status">错误码</param>
+            <param name="mssage">错误信息</param>
+        </member>
+        <member name="P:WYJK.Entity.JsonResult`1.status">
+            <summary>
+            错误码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JsonResult`1.Message">
+            <summary>
+            响应信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JsonResult`1.Data">
+            <summary>
+            返回的数据
+            </summary>
+        </member>
+        <member name="M:WYJK.Entity.JsonResult`1.ToString">
+            <summary>
+            返回字符串的表达形式
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:WYJK.Entity.PagedParameter">
+            <summary>
+            分页参数接口
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.PageIndex">
+            <summary>
+            当前页码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.PageSize">
+            <summary>
+            每页记录数量
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.Keyword">
+            <summary>
+            搜索关键字[可选]
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.OrderBy">
+            <summary>
+            排序类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.IsDescending">
+            <summary>
+            是否是降序
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.SkipCount">
+            <summary>
+            获取跳过的记录数量
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedParameter.TakeCount">
+            <summary>
+            获取的条数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.IPagedResult">
+            <summary>
+            分页结果统一接口
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.IPagedResult.PageIndex">
+            <summary>
+            当前页码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.IPagedResult.PageSize">
+            <summary>
+            每页记录数量
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.IPagedResult.TotalPageCount">
+            <summary>
+            总页数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.IPagedResult.TotalItemCount">
+            <summary>
+            总记录数量
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.IPagedResult`1">
+            <summary>
+            统一分页泛型接口
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+        </member>
+        <member name="P:WYJK.Entity.IPagedResult`1.Items">
+            <summary>
+            分页集合数据列表
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.PagedResult`1">
+            <summary>
+            分页基类
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+        </member>
+        <member name="M:WYJK.Entity.PagedResult`1.#ctor">
+            <summary>
+            初始化对象的实例
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedResult`1.Items">
+            <summary>
+            记录集合
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedResult`1.PageIndex">
+            <summary>
+            当前页索引
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedResult`1.PageSize">
+            <summary>
+            每页记录数量
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedResult`1.TotalPageCount">
+            <summary>
+            总页数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PagedResult`1.TotalItemCount">
+            <summary>
+            总记录数量
+            </summary>
+        </member>
+        <member name="M:WYJK.Entity.PagedResult`1.GetEnumerator">
+            <summary>
+            实现迭代
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:WYJK.Entity.AccountRecord">
+            <summary>
+            账户记录
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.SocialSecurityPeopleName">
+            <summary>
+            参保人姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.ShouZhiType">
+            <summary>
+            收支类型
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.LaiYuan">
+            <summary>
+            来源
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.OperationType">
+            <summary>
+            操作类型
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.Cost">
+            <summary>
+            费用
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.CostDisplay">
+            <summary>
+            显示费用
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.Balance">
+            <summary>
+            余额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.CreateTime">
+            <summary>
+            创建时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountRecord.SerialNum">
+            <summary>
+            流水号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.AccumulationFund">
+            <summary>
+            公积金信息表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundID">
+            <summary>
+            公积金ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.SocialSecurityPeopleName">
+            <summary>
+            参保人名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.HouseholdProperty">
+            <summary>
+            户口性质
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundArea">
+            <summary>
+            参公积金地
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundBase">
+            <summary>
+            公积金基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.PayProportion">
+            <summary>
+            缴费比例
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.PayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.PayMonthCount">
+            <summary>
+            缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AlreadyPayMonthCount">
+            <summary>
+            已投月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.RemainingMonths">
+            <summary>
+            剩余月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.PayBeforeMonthCount">
+            <summary>
+            补交月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.Note">
+            <summary>
+            备注
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundNo">
+            <summary>
+            公积金号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.StopDate">
+            <summary>
+            业务办停时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.HandleDate">
+            <summary>
+            业务办理时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.RelationEnterprise">
+            <summary>
+            关联签约企业号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.AccumulationFundShowModel">
+            <summary>
+            公积金业务显示列表（Admin）
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.UserType">
+            <summary>
+            客户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.MemberName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.IdentityCard">
+            <summary>
+            身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.HouseholdProperty">
+            <summary>
+            户口性质
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.AccumulationFundID">
+            <summary>
+            公积金ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.AccumulationFundArea">
+            <summary>
+            参保地
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.AccumulationFundBase">
+            <summary>
+            社保基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.PayProportion">
+            <summary>
+            缴费比例
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.PayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.PayMonthCount">
+            <summary>
+            缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.PayBeforeMonthCount">
+            <summary>
+            补交月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.ApplyStopDate">
+            <summary>
+            申请停公积金时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.StopDate">
+            <summary>
+            停公积金时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.IsArrears">
+            <summary>
+            是否欠费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.AccumulationFundParameter">
+            <summary>
+            公积金参数 (Admin)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundParameter.IdentityCard">
+            <summary>
+            身份证号码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundParameter.UserType">
+            <summary>
+            客户类型 --用户
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundParameter.Status">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.BaseAudit">
+            <summary>
+            基数审核
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.CurrentBase">
+            <summary>
+            当前基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.BaseAdjusted">
+            <summary>
+            调整后基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.ApplyDate">
+            <summary>
+            申请时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.AuditDate">
+            <summary>
+            审核时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.Status">
+            <summary>
+            审核状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseAudit.Type">
+            <summary>
+            类型（社保：0、公积金：1）
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.BaseAuditList">
+            <summary>
+            基数调整列表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditList.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditList.MemberName">
+            <summary>
+            代理机构
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditList.SocialSecurityPeopleName">
+            <summary>
+            参保人名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditList.CurrentBase">
+            <summary>
+            当前基数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.BaseAuditParameter">
+            <summary>
+            基数审核参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditParameter.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditParameter.MemberID">
+            <summary>
+            代理机构
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditParameter.SocialSecurityPeopleName">
+            <summary>
+            参保人名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseAuditParameter.Status">
+            <summary>
+            审核状态
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.AdjustingBase">
+            <summary>
+            调整基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.IsPaySocialSecurity">
+            <summary>
+            是否正常缴纳社保
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.IsPayAccumulationFund">
+            <summary>
+            是否正常缴纳公积金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.SocialSecurityBase">
+            <summary>
+            社保基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.SocialSecurityMinBase">
+            <summary>
+            社保最小基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.SocialSecurityMaxBase">
+            <summary>
+            社保最大基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.AccumulationFundBase">
+            <summary>
+            公积金基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.AccumulationFundMinBase">
+            <summary>
+            公积金最小基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBase.AccumulationFundMaxBase">
+            <summary>
+            公积金最大基数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.AdjustingBaseParameter">
+            <summary>
+            调整基数参数类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.IsPaySocialSecurity">
+            <summary>
+            是否正常缴纳社保
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.IsPayAccumulationFund">
+            <summary>
+            是否正常缴纳公积金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.SocialSecurityBaseAdjusted">
+            <summary>
+            调整后的社保基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.AccumulationFundBaseAdjusted">
+            <summary>
+            调整后的公积金基数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.CostParameterSetting">
+            <summary>
+            费用参数设置
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.ID">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.BacklogCost">
+            <summary>
+            代办费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.FreezingAmount">
+            <summary>
+            冻结费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.PayBeforeServiceCost">
+            <summary>
+            补办服务费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.RenewServiceCost">
+            <summary>
+            续费服务费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.StartTime">
+            <summary>
+            起始时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.EndTime">
+            <summary>
+            终止时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.ServiceCost">
+            <summary>
+            服务费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.Status">
+            <summary>
+            缴费类型
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RenewServiceCost">
+            <summary>
+            续费服务费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewServiceCost.StartTime">
+            <summary>
+            起始时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewServiceCost.EndTime">
+            <summary>
+            终止时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewServiceCost.ServiceCost">
+            <summary>
+            服务费
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.CustomerServiceViewModel">
+            <summary>
+            客户服务实体
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.MemberName">
+            <summary>
+            代理机构
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.MemberPhone">
+            <summary>
+            用户电话
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.Account">
+            <summary>
+            个人账户
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.OrderCode">
+            <summary>
+            订单编号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.OrderStatus">
+            <summary>
+            订单状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.CustomerServiceStatus">
+            <summary>
+            客服状态  0:未审核，1：已通过
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.IdentityCard">
+            <summary>
+            身份证号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.SSstatus">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.SocialSecurityException">
+            <summary>
+            社保异常备注
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.AFStatus">
+            <summary>
+            公积金状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.AccumulationFundException">
+            <summary>
+            公积金异常备注
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.ArrearAmount">
+            <summary>
+            欠费金额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.CustomerServiceParameter">
+            <summary>
+            客户服务参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceParameter.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceParameter.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceParameter.SocialSecurityPeopleName">
+            <summary>
+            客户名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceParameter.IdentityCard">
+            <summary>
+            身份证号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.EnterpriseSocialSecurity">
+            <summary>
+            企业社保
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.EnterpriseID">
+            <summary>
+            企业ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.EnterpriseName">
+            <summary>
+            企业名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.EnterpriseArea">
+            <summary>
+            区域
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.ProvinceCode">
+            <summary>
+            省
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CityCode">
+            <summary>
+            市
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CountyCode">
+            <summary>
+            区
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.ContactUser">
+            <summary>
+            联系人
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.ContactTel">
+            <summary>
+            联系电话
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.Fax">
+            <summary>
+            传真
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.Email">
+            <summary>
+            电子邮件
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.OfficeTel">
+            <summary>
+            办公电话
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.HouseholdProperty">
+            <summary>
+            户口类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.OrgAddress">
+            <summary>
+            机构地址
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.SocialAvgSalary">
+            <summary>
+            社平工资
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.MinSocial">
+            <summary>
+            最低社保百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.MaxSocial">
+            <summary>
+            最高社保百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CompYangLao">
+            <summary>
+            单位养老百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CompYiLiao">
+            <summary>
+            单位医疗百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CompShiYe">
+            <summary>
+            单位失业百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CompGongShang">
+            <summary>
+            单位工伤百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CompShengYu">
+            <summary>
+            单位生育百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalYangLao">
+            <summary>
+            个人养老百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalYiLiao">
+            <summary>
+            个人医疗百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalShiYeTown">
+            <summary>
+            个人失业（城镇）百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalShiYeRural">
+            <summary>
+            个人失业（农村）百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalGongShang">
+            <summary>
+            个人工伤百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalShengYu">
+            <summary>
+            个人生育百分比
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.MinAccumulationFund">
+            <summary>
+            公积金基数范围最小值
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.MaxAccumulationFund">
+            <summary>
+            公积金基数范围最大值
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.CompProportion">
+            <summary>
+            公积金单位比例
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.PersonalProportion">
+            <summary>
+            公积金个人比例
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.IsDefault">
+            <summary>
+            是否默认
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.EnterpriseSocialSecurityParameter">
+            <summary>
+            签约企业参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurityParameter.EnterpriseName">
+            <summary>
+            签约企业名称
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.Information">
+            <summary>
+            信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Information.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Information.Name">
+            <summary>
+            标题
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Information.ImgUrls">
+            <summary>
+            图片名称数组
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Information.ImgUrl">
+            <summary>
+            图片名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Information.StrContent">
+            <summary>
+            StrContent
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.InformationParameter">
+            <summary>
+            信息查询参数 (Web)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.InformationParameter.Name">
+            <summary>
+            标题
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.LoanAnswer">
+            <summary>
+            答案
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.LoanAnswer.AnswerID">
+            <summary>
+            答案ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.LoanAnswer.Answer">
+            <summary>
+            答案
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.LoanAnswer.LoanAmount">
+            <summary>
+            贷款金额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.LoanAnswer.SubjectID">
+            <summary>
+            题目ID
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.LoanSubject">
+            <summary>
+            题目
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.LoanSubject.SubjectID">
+            <summary>
+            题目ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.LoanSubject.Subject">
+            <summary>
+            题目
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.LoanSubject.Sort">
+            <summary>
+            排序
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.LoanSubject.LoanAnswerList">
+            <summary>
+            答案列表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.LoanSubject.NextSubjectID">
+            <summary>
+            下一题目ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.LoanSubject.SubjectCount">
+            <summary>
+            题目总数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.ValueCalculationParameter">
+            <summary>
+            身价计算参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ValueCalculationParameter.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ValueCalculationParameter.RelList">
+            <summary>
+            课题答案对应组合
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SubjectAnswerRelation">
+            <summary>
+            课题答案
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SubjectAnswerRelation.SubjectID">
+            <summary>
+            课题ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SubjectAnswerRelation.AnswerID">
+            <summary>
+            答案ID
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.Log">
+            <summary>
+            日志记录类
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoan">
+            <summary>
+            用户借款
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoan.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoan.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoan.TotalAmount">
+            <summary>
+            总额度
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoan.AlreadyUsedAmount">
+            <summary>
+            已用额度
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoan.AvailableAmount">
+            <summary>
+            可用额度
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanList">
+            <summary>
+            用户借款列表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanList.MemberName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanList.MemberPhone">
+            <summary>
+            用户电话
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanParameter">
+            <summary>
+            用户借款参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanParameter.MemberName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.AppayLoan">
+            <summary>
+            申请借款
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AppayLoan.AlreadyUsedAmount">
+            <summary>
+            已借
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AppayLoan.AvailableAmount">
+            <summary>
+            可借
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanAudit">
+            <summary>
+            借款审核表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.ApplyAmount">
+            <summary>
+            本次申请额度
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.LoanTerm">
+            <summary>
+            还款期限
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.LoanMethod">
+            <summary>
+            还款方式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.ApplyDate">
+            <summary>
+            申请日期
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.AuditDate">
+            <summary>
+            审核日期
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanAuditParameter">
+            <summary>
+            借款参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditParameter.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditParameter.ApplyAmount">
+            <summary>
+            本次申请额度
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditParameter.LoanTerm">
+            <summary>
+            还款期限
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditParameter.LoanMethod">
+            <summary>
+            还款方式
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanAuditList">
+            <summary>
+            用户借款审核列表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.ApplyAmount">
+            <summary>
+            本次申请额度
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.ApplyDate">
+            <summary>
+            申请日期
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.AuditDate">
+            <summary>
+            审核日期
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.AlreadyloanDate">
+            <summary>
+            放款时间
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanAuditListParameter">
+            <summary>
+            用户借款审核参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditListParameter.MemberName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditListParameter.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.Order">
+            <summary>
+            主订单
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Order.OrderCode">
+            <summary>
+            订单编号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Order.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Order.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Order.GenerateDate">
+            <summary>
+            生成时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Order.Status">
+            <summary>
+            订单状态 0:待付款,1:审核中，2：已完成
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Order.PayTime">
+            <summary>
+            支付时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Order.AuditTime">
+            <summary>
+            审核时间
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.FinanceOrder">
+            <summary>
+            财务主订单(Admin)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.PayTime">
+            <summary>
+            支付时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.OrderCode">
+            <summary>
+            订单编号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.MemberName">
+            <summary>
+            代理机构名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.payUserCount">
+            <summary>
+            用户支付数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.Amounts">
+            <summary>
+            总金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.Status">
+            <summary>
+            订单状态
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.FinanceSubOrder">
+            <summary>
+            财务从订单
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.FinanceOrderParameter">
+            <summary>
+            财务订单参数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.GenerateOrderParameter">
+            <summary>
+            生成订单参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.GenerateOrderParameter.SocialSecurityPeopleIDS">
+            <summary>
+            参保人ID数组
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.GenerateOrderParameter.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.OrderListForMobile">
+            <summary>
+            移动端订单列表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderListForMobile.OrderCode">
+            <summary>
+            订单编号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderListForMobile.Names">
+            <summary>
+            人员集合
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderListForMobile.Amounts">
+            <summary>
+            总额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.OrderDetailForMobile">
+            <summary>
+            移动端订单详情
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.OrderCode">
+            <summary>
+            订单编号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.Names">
+            <summary>
+            人员集合
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.SocialSecurityTotalAmount">
+            <summary>
+            社保总金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.AccumulationFundTotalAmount">
+            <summary>
+            公积金总金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.ServiceCost">
+            <summary>
+            总服务费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.FirstBacklogCost">
+            <summary>
+            第一次代办费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.OrderCodeArrayParameter">
+            <summary>
+            订单编号数组类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderCodeArrayParameter.OrderCode">
+            <summary>
+            订单编号数组
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.OrderDetails">
+            <summary>
+            从订单
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.OrderDetailID">
+            <summary>
+            OrderDetailID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.OrderCode">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecurityPeopleName">
+            <summary>
+            参保人名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecurityAmount">
+            <summary>
+            社保每月金额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecuritypayMonth">
+            <summary>
+            社保缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecurityServiceCost">
+            <summary>
+            社保服务费
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecurityFirstBacklogCost">
+            <summary>
+            社保第一次代办费
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.SocialSecurityBuCha">
+            <summary>
+            社保补差
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.AccumulationFundAmount">
+            <summary>
+            公积金每月金额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.AccumulationFundpayMonth">
+            <summary>
+            公积金缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.AccumulationFundServiceCost">
+            <summary>
+            公积金服务费
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.AccumulationFundFirstBacklogCost">
+            <summary>
+            公积金第一次代办费
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.Permissions">
+            <summary>
+            权限
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.PermissionID">
+            <summary>
+            权限ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.Code">
+            <summary>
+            权限编码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.Description">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.Controller">
+            <summary>
+            Controller
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.Action">
+            <summary>
+            Action
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.ParentCode">
+            <summary>
+            父级编码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.Sort">
+            <summary>
+            排序
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Permissions.IsModified">
+            <summary>
+            是否修改
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.Region">
+            <summary>
+            省市区信息表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Region.RegionId">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Region.RegionName">
+            <summary>
+            区域名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Region.RegionCode">
+            <summary>
+            区域编号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Region.ParentCode">
+            <summary>
+            父编号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.Roles">
+            <summary>
+            角色
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Roles.RoleID">
+            <summary>
+            角色id
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Roles.RoleName">
+            <summary>
+            角色名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Roles.Description">
+            <summary>
+            描述
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Roles.PermissionList">
+            <summary>
+            权限
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.Users">
+            <summary>
+            员工
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Users.UserID">
+            <summary>
+            UserID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.UserName">
+            <summary>
+            员工登录名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.RegType">
+            <summary>
+            注册类型： 0：兼职，1：正式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.Password">
+            <summary>
+            密码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.IdentityCard">
+            <summary>
+            身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.CompanyID">
+            <summary>
+            公司ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.DepartmentID">
+            <summary>
+            部门ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.RoleID">
+            <summary>
+            角色ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.TrueName">
+            <summary>
+            真实姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.ContactPhone">
+            <summary>
+            联系人手机号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.QQ">
+            <summary>
+            QQ
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.OfficeTelephone">
+            <summary>
+            办公电话
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.Email">
+            <summary>
+            Email
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.Address">
+            <summary>
+            居住地址
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.BankAccount">
+            <summary>
+            开户行
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.UserAccount">
+            <summary>
+            开户人
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.CardNo">
+            <summary>
+            银行卡号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.Enabled">
+            <summary>
+            是否启用
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.CreateTime">
+            <summary>
+            操作时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.CreateUser">
+            <summary>
+            操作用户
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Users.InviteCode">
+            <summary>
+            邀请码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Users.roles">
+            <summary>
+            角色
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.UsersParameter">
+            <summary>
+            用户参数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurity">
+            <summary>
+            参保人的社保信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityID">
+            <summary>
+            社保ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.HouseholdProperty">
+            <summary>
+            户口性质
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityPeopleName">
+            <summary>
+            参保人姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.InsuranceArea">
+            <summary>
+            参保地
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityBase">
+            <summary>
+            社保基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.PayProportion">
+            <summary>
+            缴费比例
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.PayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.PayMonthCount">
+            <summary>
+            缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.AlreadyPayMonthCount">
+            <summary>
+            已投月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.RemainingMonths">
+            <summary>
+            剩余月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.PayBeforeMonthCount">
+            <summary>
+            补交月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.BankPayMonth">
+            <summary>
+            银行缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.EnterprisePayMonth">
+            <summary>
+            企业缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.Note">
+            <summary>
+            备注
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityNo">
+            <summary>
+            社保号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.RelationEnterprise">
+            <summary>
+            关联签约企业
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.StopDate">
+            <summary>
+            业务办停时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.HandleDate">
+            <summary>
+            业务办理时间
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityShowModel">
+            <summary>
+            社保业务显示列表(Admin)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.UserType">
+            <summary>
+            客户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.MemberName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.IdentityCard">
+            <summary>
+            身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.HouseholdProperty">
+            <summary>
+            户口性质
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.SocialSecurityID">
+            <summary>
+            社保ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.InsuranceArea">
+            <summary>
+            参保地
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.SocialSecurityBase">
+            <summary>
+            社保基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.PayProportion">
+            <summary>
+            缴费比例
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.PayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.PayMonthCount">
+            <summary>
+            缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.PayBeforeMonthCount">
+            <summary>
+            补交月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.BankPayMonth">
+            <summary>
+            银行缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.EnterprisePayMonth">
+            <summary>
+            企业缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.StopReason">
+            <summary>
+            停保原因
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.ApplyStopDate">
+            <summary>
+            申请停保时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.StopDate">
+            <summary>
+            停保原因
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.IsArrears">
+            <summary>
+            是否欠费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.Status">
+            <summary>
+            状态
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityParameter">
+            <summary>
+            社保参数(Admin)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityParameter.IdentityCard">
+            <summary>
+            身份证号码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityParameter.UserType">
+            <summary>
+            客户类型 --用户
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityParameter.Status">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityDetail">
+            <summary>
+            社保与公积金详情(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.IsSocialSecurity">
+            <summary>
+            是否交社保
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.IsAccumulationFund">
+            <summary>
+            是否交公积金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.SocialSecurityPeopleName">
+            <summary>
+            参保人姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.SocialSecurityBase">
+            <summary>
+            社保基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.InsuranceArea">
+            <summary>
+            投保地区
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.SSPayTime">
+            <summary>
+            投保时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.SSAlreadyPayMonthCount">
+            <summary>
+            社保已交月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.SSRemainingMonths">
+            <summary>
+            社保剩余月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.AccumulationFundBase">
+            <summary>
+            公积金基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.AccumulationFundArea">
+            <summary>
+            公积金地区
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.AFPayTime">
+            <summary>
+            公积金投缴时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.AFAlreadyPayMonthCount">
+            <summary>
+            公积金已投月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.AFRemainingMonths">
+            <summary>
+            公积金剩余月数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityPeople">
+            <summary>
+            参保人
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IdentityCard">
+            <summary>
+            身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IdentityCardPhoto">
+            <summary>
+            身份证照片
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.ImgUrls">
+            <summary>
+            身份证照片数组
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.HouseholdProperty">
+            <summary>
+            户口性质
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IsPaySocialSecurity">
+            <summary>
+            是否缴纳社保
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IsPayAccumulationFund">
+            <summary>
+            是否缴纳公积金
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.socialSecurity">
+            <summary>
+            社保信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.accumulationFund">
+            <summary>
+            公积金信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.Status">
+            <summary>
+            客服审核状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IsPay">
+            <summary>
+            是否有订单已经支付过
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.UnInsuredPeople">
+            <summary>
+            未参保人列表信息显示内容(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.IsPaySocialSecurity">
+            <summary>
+            是否缴纳社保
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.IsPayAccumulationFund">
+            <summary>
+            是否缴纳公积金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SSPayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SSPayMonthCount">
+            <summary>
+            缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SocialSecurityBase">
+            <summary>
+            社保基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SSPayProportion">
+            <summary>
+            社保缴费比例
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SSStatus">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AFPayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AFPayMonthCount">
+            <summary>
+            缴费月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AccumulationFundBase">
+            <summary>
+            公积金基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AFPayProportion">
+            <summary>
+            公积金缴费比例
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AFStatus">
+            <summary>
+            公积金状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.SocialSecurityAmount">
+            <summary>
+            社保费用
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AccumulationFundAmount">
+            <summary>
+            公积金费用
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.socialSecurityFirstBacklogCost">
+            <summary>
+            社保第一次代办费用
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.UnInsuredPeople.AccumulationFundFirstBacklogCost">
+            <summary>
+            公积金第一次代办费用
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityPeopleDetail">
+            <summary>
+            参保人详情(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.IsPaySocialSecurity">
+            <summary>
+            是否缴纳社保
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.IsPayAccumulationFund">
+            <summary>
+            是否缴纳公积金
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.IdentityCard">
+            <summary>
+            身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.IdentityCardPhoto">
+            <summary>
+            身份证照片
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.HouseholdProperty">
+            <summary>
+            户口性质
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.Amount">
+            <summary>
+            总额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityPeoples">
+            <summary>
+            参保人列表（Mobile）
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.SSPayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.SSAlreadyPayMonthCount">
+            <summary>
+            已投月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.SSRemainingMonthCount">
+            <summary>
+            剩余月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.SSStatus">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.AFPayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.AFAlreadyPayMonthCount">
+            <summary>
+            已投月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.AFRemainingMonthCount">
+            <summary>
+            剩余月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.AFStatus">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.ApplyTop">
+            <summary>
+            申请停 (Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ApplyTop.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ApplyTop.SocialSecurityPeopleName">
+            <summary>
+            姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ApplyTop.PayTime">
+            <summary>
+            起缴时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ApplyTop.AlreadyPayMonthCount">
+            <summary>
+            已投月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ApplyTop.RemainingMonthCount">
+            <summary>
+            剩余月数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ApplyTop.Status">
+            <summary>
+            社保状态
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.TopSocialSecurityPeoples">
+            <summary>
+            停参保人列表（Mobile）
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.SSStopMethod">
+            <summary>
+            社保停方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.SSStopReason">
+            <summary>
+            社保停原因
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.SSApplyStopDate">
+            <summary>
+            社保申请停时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.SSStopDate">
+            <summary>
+            停保时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.AFStopMethod">
+            <summary>
+            公积金停方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.AFStopReason">
+            <summary>
+            公积金停原因
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.AFApplyStopDate">
+            <summary>
+            公积金申请停时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.AFStopDate">
+            <summary>
+            停公积金时间
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.StopSocialSecurityParameter">
+            <summary>
+            停社保参数 (Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopSocialSecurityParameter.SocialSecurityPeopleID">
+            <summary>
+            社保ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopSocialSecurityParameter.StopReason">
+            <summary>
+            停保原因
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.StopAccumulationFundParameter">
+            <summary>
+            停公积金参数 (Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopAccumulationFundParameter.SocialSecurityPeopleID">
+            <summary>
+            公积金ID
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.SocialSecurityCalculation">
+            <summary>
+            社保计算器
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityCalculation.SocialSecuritAmount">
+            <summary>
+            社保金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityCalculation.AccumulationFundAmount">
+            <summary>
+            公积金金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityCalculation.TotalAmount">
+            <summary>
+            总金额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.Members">
+            <summary>
+            注册用户
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Members.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.MemberName">
+            <summary>
+            用户名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.MemberPhone">
+            <summary>
+            手机号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.Password">
+            <summary>
+            密码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.InviteCode">
+            <summary>
+            注册邀请码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.Fax">
+            <summary>
+            传真
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.BusinessCode">
+            <summary>
+            营业执照编码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.BusinessIdentityCardNo">
+            <summary>
+            经营者身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.BusinessName">
+            <summary>
+            营业执照名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.BusinessUser">
+            <summary>
+            经营者姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.BusinessIdentityPhoto">
+            <summary>
+            经营者身份证正反面
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.BusinessLicensePhoto">
+            <summary>
+            营业执照照片
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseApplyName">
+            <summary>
+            企业申请人姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseApplyIdentityCardNo">
+            <summary>
+            申请人身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseApplyIdentityPhoto">
+            <summary>
+            申请人身份证照片正反面
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseApplyUserPhone">
+            <summary>
+            企业申请人手机
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseApplyUserEmail">
+            <summary>
+            申请人邮箱
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseLicensePhone">
+            <summary>
+            授权协议数照片
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseName">
+            <summary>
+            企业名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseType">
+            <summary>
+            行业类型
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseArea">
+            <summary>
+            所在城市
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseLegal">
+            <summary>
+            法人代表
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseLegalIdentityCardNo">
+            <summary>
+            法人代表身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterprisePeopleNum">
+            <summary>
+            企业人数范围
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.SocialSecurityCreditCode">
+            <summary>
+            社会信用代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseIsThreeInOne">
+            <summary>
+            是否三证合一
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseBusinessLicense">
+            <summary>
+            营业执照
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseTaxRegistrationCertificate">
+            <summary>
+            税务登记证
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseOrganizationCodeCertificate">
+            <summary>
+            组织机构代码证
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.EnterpriseFixedTelePhone">
+            <summary>
+            企业固定电话
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.IsAuthentication">
+            <summary>
+            是否已认证 0:未认证、1：已认证
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.UserType">
+            <summary>
+            用户类型 0：普通用户、1：企业用户、2：个体用户
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.TaxpayerName">
+            <summary>
+            纳税人名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.TaxNumber">
+            <summary>
+            税号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.ContactUser">
+            <summary>
+            联系人
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.ContactUserPhone">
+            <summary>
+            联系人电话
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.OpenAccountPhone">
+            <summary>
+            开户电话
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.Account">
+            <summary>
+            账户余额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.SocialSecurityAmount">
+            <summary>
+            社保账户金额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.AccumulationFundAmount">
+            <summary>
+            公积金账户金额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.ServiceCost">
+            <summary>
+            服务费
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.FirstBacklogCost">
+            <summary>
+            第一次代办费
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Members.Bucha">
+            <summary>
+            补差（冻结金额）
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.MemberSimpleModel">
+            <summary>
+            用户简单信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberSimpleModel.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberSimpleModel.MemberName">
+            <summary>
+            用户名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberSimpleModel.MemberPhone">
+            <summary>
+            手机号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberSimpleModel.Password">
+            <summary>
+            密码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberSimpleModel.HashPassword">
+            <summary>
+            加密后的密码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberRegisterModel">
+            <summary>
+            注册用户
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberRegisterModel.InviteCode">
+            <summary>
+            注册邀请码
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.MemberForgetPasswordModel">
+            <summary>
+            忘记密码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberMidifyPassword">
+            <summary>
+            APP修改密码(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.MemberName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.OldPassword">
+            <summary>
+            原密码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.HashOldPassword">
+            <summary>
+            原密码加密后的密码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.NewPassword">
+            <summary>
+            新密码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.ConfirmPassword">
+            <summary>
+            确认密码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberMidifyPassword.HashNewPassword">
+            <summary>
+            新密码加密后的密码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoginModel">
+            <summary>
+            登录用户(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoginModel.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoginModel.Account">
+            <summary>
+            用户名或手机号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoginModel.MemberName">
+            <summary>
+            用户名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoginModel.MemberPhone">
+            <summary>
+            手机号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoginModel.Password">
+            <summary>
+            密码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoginModel.HashPassword">
+            <summary>
+            加密后的密码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.EnterpriseCertification">
+            <summary>
+            企业资质认证(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseName">
+            <summary>
+            企业名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseType">
+            <summary>
+            行业类型
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseArea">
+            <summary>
+            所在城市
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseLegal">
+            <summary>
+            法人代表
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseLegalIdentityCardNo">
+            <summary>
+            法人代表身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterprisePeopleNum">
+            <summary>
+            企业人数范围
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.SocialSecurityCreditCode">
+            <summary>
+            社会信用代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseBusinessLicense">
+            <summary>
+            营业执照
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.IndividualCertification">
+            <summary>
+            个体认证(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.BusinessIdentityCardNo">
+            <summary>
+            经营者身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.BusinessName">
+            <summary>
+            营业执照名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.BusinessUser">
+            <summary>
+            经营者姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.BusinessIdentityPhoto">
+            <summary>
+            经营者身份证正反面 多张照片用；隔开
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.BusinessLicensePhoto">
+            <summary>
+            营业执照照片 
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.AccountInfo">
+            <summary>
+            账户信息(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccountInfo.MemberName">
+            <summary>
+            用户名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountInfo.Account">
+            <summary>
+            账户余额
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountInfo.Bucha">
+            <summary>
+            补差（冻结金额）
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccountInfo.HeadPortrait">
+            <summary>
+            头像
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.ExtensionInformation">
+            <summary>
+            信息补充(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.IsComplete">
+            <summary>
+            是否补全信息 0：未补全，1：已补全
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.TrueName">
+            <summary>
+            真实姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.CertificateType">
+            <summary>
+            证件类型
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.CertificateNo">
+            <summary>
+            证件号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.PoliticalStatus">
+            <summary>
+            政治面貌
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Education">
+            <summary>
+            学历
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Birthday">
+            <summary>
+            生日
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Sex">
+            <summary>
+            性别0：男，1：女
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Address">
+            <summary>
+            地址
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Phone">
+            <summary>
+            手机号码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Email">
+            <summary>
+            Email
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.QQ">
+            <summary>
+            QQ
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.Alipay">
+            <summary>
+            支付宝账号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.BankCardNo">
+            <summary>
+            银行卡号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.BankAccount">
+            <summary>
+            开户行
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.UserAccount">
+            <summary>
+            开户人
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.SecondContact">
+            <summary>
+            第二联系人
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.SecondContactPhone">
+            <summary>
+            第二联系人手机
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.InsuranceArea">
+            <summary>
+            投保地
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.HouseholdType">
+            <summary>
+            户口性质
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.ExtensionInformationParameter">
+            <summary>
+            补充信息参数(Mobile)
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ExtensionInformationParameter.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MembersStatistics">
+            <summary>
+            后台客户信息统计
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersStatistics.SocialSecurityPeopleCount">
+            <summary>
+            人数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersStatistics.Account">
+            <summary>
+            账户金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersStatistics.AccountStatus">
+            <summary>
+            账户状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersStatistics.IsArrears">
+            <summary>
+            是否欠费
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MembersParameters">
+            <summary>
+            会员参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersParameters.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersParameters.MemberID">
+            <summary>
+            注册用户ID（代理机构）
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersParameters.SocialSecurityPeopleName">
+            <summary>
+            客户名称
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RenewalServiceParameters">
+            <summary>
+            续费服务参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewalServiceParameters.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewalServiceParameters.PayMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewalServiceParameters.Amount">
+            <summary>
+            金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewalServiceParameters.MonthCount">
+             <summary>
+            服务月数
+             </summary>
+        </member>
+        <member name="T:WYJK.Entity.RechargeParameters">
+            <summary>
+            充值服务参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeParameters.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeParameters.PayMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeParameters.Amount">
+            <summary>
+            金额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.HeadPortraitParameters">
+            <summary>
+            头像
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.HeadPortraitParameters.MemberID">
+            <summary>
+            用户ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.HeadPortraitParameters.HeadPortrait">
+            <summary>
+            头像
+            </summary>
+        </member>
+    </members>
+</doc>
