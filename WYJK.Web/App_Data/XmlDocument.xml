@@ -1241,6 +1241,19 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.GetEnterpriseCityList(WYJK.Entity.PagedParameter)">
+            <summary>
+            城市社平管理列表
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.AdjustSocialAvgSalary(System.String,System.String)">
+            <summary>
+            调整社平工资
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.AddEnterprise">
             <summary>
             新增签约企业

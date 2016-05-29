@@ -236,5 +236,31 @@ namespace WYJK.Data.ServiceImpl
 
             return DbHelper.QuerySingle<string>(strsql);
         }
+
+        /// <summary>
+        /// 城市社平管理列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public PagedResult<EnterpriseCity> GetEnterpriseCityList(PagedParameter parameter)
+        {
+            string sqlstr = $"select * from (select ROW_NUMBER() OVER(ORDER BY s.city )AS Row,s.* from (select distinct reverse(SUBSTRING(reverse(EnterpriseArea),charindex('|',reverse(EnterpriseArea))+1,LEN(EnterpriseArea))) city from EnterpriseSocialSecurity) s) ss  WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
+
+            List<EnterpriseCity> modelList = DbHelper.Query<EnterpriseCity>(sqlstr, new
+            {
+                StartIndex = parameter.SkipCount,
+                EndIndex = parameter.TakeCount
+            });
+
+            int totalCount = DbHelper.QuerySingle<int>($"select count(0) from (select distinct reverse(SUBSTRING(reverse(EnterpriseArea),charindex('|',reverse(EnterpriseArea))+1,LEN(EnterpriseArea))) city from EnterpriseSocialSecurity) s");
+
+            return new PagedResult<EnterpriseCity>
+            {
+                PageIndex = parameter.PageIndex,
+                PageSize = parameter.PageSize,
+                TotalItemCount = totalCount,
+                Items = modelList
+            };
+        }
     }
 }

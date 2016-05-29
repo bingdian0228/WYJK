@@ -33,6 +33,34 @@ namespace WYJK.Web.Controllers.Mvc
             return View(EnterpriseSocialSecurityList);
         }
 
+
+        /// <summary>
+        /// 城市社平管理列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public ActionResult GetEnterpriseCityList(PagedParameter parameter)
+        {
+            PagedResult<EnterpriseCity> EnterpriseSocialSecurityList = _enterpriseService.GetEnterpriseCityList(parameter);
+            return View(EnterpriseSocialSecurityList);
+        }
+
+        /// <summary>
+        /// 调整社平工资
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult AdjustSocialAvgSalary(string City, string SocialAvgSalary)
+        {
+            int result = DbHelper.ExecuteSqlCommand($"update EnterpriseSocialSecurity set SocialAvgSalary='{SocialAvgSalary}' where EnterpriseArea like '{City}%'", null);
+
+
+            if (result > 0)
+                return Json(new { status = true, message = "调整成功" });
+            else
+                return Json(new { status = false, message = "调整失败" });
+        }
+
         /// <summary>
         /// 新增签约企业
         /// </summary>

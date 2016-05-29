@@ -1824,6 +1824,7 @@
     <Content Include="Views\Loan\LoanAudit\GetLoanAuditList.cshtml" />
     <Content Include="Views\BaseAudit\GetBaseAuditList.cshtml" />
     <Content Include="Views\Enterprise\GetSocialSecurityList.cshtml" />
+    <Content Include="Views\Enterprise\GetEnterpriseCityList.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
