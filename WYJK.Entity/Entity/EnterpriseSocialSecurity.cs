@@ -196,6 +196,11 @@ namespace WYJK.Entity
         [Required]
         public bool IsDefault { get; set; }
 
+        /// <summary>
+        /// 调整时间
+        /// </summary>
+        public DateTime? AdjustDt { get; set; }
+
     }
 
     /// <summary>

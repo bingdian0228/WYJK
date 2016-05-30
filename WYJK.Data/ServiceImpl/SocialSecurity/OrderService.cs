@@ -68,12 +68,13 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public OrderDetailForMobile GetOrderDetail(int MemberID, string OrderCode)
         {
-            string sql = "declare @OrderCode nvarchar(50),@Names nvarchar(50), @SocialSecurityTotalAmount decimal(18, 2) = 0, @AccumulationFundTotalAmount decimal(18, 2) = 0, @ServiceCost decimal(18, 2) = 0, @FirstBacklogCost decimal(18, 2) = 0, @PaymentMethod nvarchar(50)"
+            string sql = "declare @OrderCode nvarchar(50),@Names nvarchar(50), @SocialSecurityTotalAmount decimal(18, 2) = 0, @AccumulationFundTotalAmount decimal(18, 2) = 0, @ServiceCost decimal(18, 2) = 0, @FirstBacklogCost decimal(18, 2) = 0, @PaymentMethod nvarchar(50),@SocialSecurityBuCha decimal(18,2)=0"
                         + " select @OrderCode =[Order].OrderCode, @Names = ISNULL(@Names + '，', '') + OrderDetails.SocialSecurityPeopleName,"
                         + " @SocialSecurityTotalAmount += OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth,"
                         + " @AccumulationFundTotalAmount += OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth,"
                         + " @ServiceCost += OrderDetails.SocialSecurityServiceCost + OrderDetails.AccumulationFundServiceCost,"
-                        + " @FirstBacklogCost += OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.AccumulationFundFirstBacklogCost"
+                        + " @FirstBacklogCost += OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.AccumulationFundFirstBacklogCost,"
+                        + " @SocialSecurityBuCha += OrderDetails.SocialSecurityBuCha"
                         + " from[Order] right join OrderDetails on[Order].OrderCode = OrderDetails.OrderCode where [Order].MemberID = @MemberID and [order].OrderCode = @OrderCode1"
                         + " select @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
 
@@ -243,7 +244,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool IsExistsWaitingPayOrderByMemberID(int MemberID)
         {
-            string sqlstr = $"select count(*) from Order where MemberID = {MemberID} and Status ={(int)OrderEnum.WaitingPay}";
+            string sqlstr = $"select count(*) from [Order] where MemberID = {MemberID} and Status ={(int)OrderEnum.WaitingPay}";
             int result = DbHelper.QuerySingle<int>(sqlstr);
             return result > 0;
         }

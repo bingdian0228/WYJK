@@ -1293,6 +1293,12 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.ImportPaymentDetails">
+            <summary>
+            导入缴费明细
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.GetEnterpriseCityList(WYJK.Entity.PagedParameter)">
             <summary>
             城市社平管理列表

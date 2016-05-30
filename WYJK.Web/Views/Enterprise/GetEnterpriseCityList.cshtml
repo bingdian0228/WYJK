@@ -65,10 +65,41 @@
                        });
                    })
             });
+
+            //调差
+            $(".action-difference-adjustment").click(function () {
+                layer.confirm('确定调整吗？',
+                   { btn: ['确定', '取消'] },
+                   function () {
+
+                       var index = layer.load(1, {
+                           shade: [0.1, '#000']
+                       });
+
+                       //提交
+                       $.ajax({
+                           url: "@Url.Action("DifferenceAdjustment", "Enterprise")",
+                           dataType: "json",
+                           type: "post",
+                           success: function (response) {
+                               layer.close(index);
+                               if (response.status) {
+                                   layer.msg(response.message);
+                                   refresh();
+                               } else {
+                                   layer.msg(response.message);
+                               }
+                           },
+                           error: function (data) {
+                               layer.close(index);
+                               layer.msg("服务器错误");
+                           }
+                       });
+                   })
+            });
         })
 
         $(function () {
-
             $(".Huialert.Huialert-info").fadeOut(2000);
         })
     </script>
@@ -110,6 +141,9 @@
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="javascript:;" class="btn btn-default radius action-difference-adjustment"><i class="Hui-iconfont">&#xe665;</i> 调差</a>
+        </span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
     </div>
 </div>
