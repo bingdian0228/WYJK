@@ -851,11 +851,6 @@
             办公电话
             </summary>
         </member>
-        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.HouseholdProperty">
-            <summary>
-            户口类型
-            </summary>
-        </member>
         <member name="P:WYJK.Entity.EnterpriseSocialSecurity.OrgAddress">
             <summary>
             机构地址
@@ -1286,6 +1281,31 @@
             状态
             </summary>		
         </member>
+        <member name="T:WYJK.Entity.Message">
+            <summary>
+            消息实体
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Message.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Message.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Message.ContentStr">
+            <summary>
+            消息内容
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.Message.Dt">
+            <summary>
+            生成时间
+            </summary>		
+        </member>
         <member name="T:WYJK.Entity.Order">
             <summary>
             主订单
@@ -1629,6 +1649,126 @@
         <member name="P:WYJK.Entity.Roles.PermissionList">
             <summary>
             权限
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.DrawCash">
+            <summary>
+            提现申请表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.DrawCashID">
+            <summary>
+            主键ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.MemberID">
+            <summary>
+            注册人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.Money">
+            <summary>
+            申请金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.ApplyTime">
+            <summary>
+            申请时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.ApplyStatus">
+            <summary>
+            申请状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.AgreeTime">
+            <summary>
+            同意时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.PaySN">
+            <summary>
+            打款订单
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.DrawCashViewModel">
+            <summary>
+            提现显示模型类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.DrawCashID">
+            <summary>
+            主键ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.MemberID">
+            <summary>
+            注册人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.Money">
+            <summary>
+            申请金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.ApplyTime">
+            <summary>
+            申请时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.ApplyStatus">
+            <summary>
+            申请状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.AgreeTime">
+            <summary>
+            同意时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.PaySN">
+            <summary>
+            打款订单
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.MemberName">
+            <summary>
+            注册人名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.ArrearAmount">
+            <summary>
+            欠款金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.Account">
+            <summary>
+            账户余额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.BankCardNo">
+            <summary>
+            银行卡号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashViewModel.BankAccount">
+            <summary>
+            开户行
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.DrawCashParameter">
+            <summary>
+            提现分页查询类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.DrawCashParameter.Status">
+            <summary>
+            审核状态
             </summary>
         </member>
         <member name="T:WYJK.Entity.Users">

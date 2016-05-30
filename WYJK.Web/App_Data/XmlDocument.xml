@@ -1229,6 +1229,34 @@
             签约单位
             </summary>
         </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.DrawCashController.DrawCashList(WYJK.Entity.DrawCashParameter)">
+            <summary>
+            提现申请列表
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.DrawCashController.NotAgree(System.Int32[])">
+            <summary>
+            不通过提现审核
+            </summary>
+            <param name="DrawCashIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.DrawCashController.AgreeDrawCash(System.Int32[])">
+            <summary>
+            同意提现
+            </summary>
+            <param name="DrawCashIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.DrawCashController.AgreeDrawCash(WYJK.Web.Models.DrawCashModel)">
+            <summary>
+            同意提现填写打款信息
+            </summary>
+            <param name="model"></param>
+            <returns></returns>
+        </member>
         <member name="T:WYJK.Web.Controllers.Mvc.EnterpriseController">
             <summary>
             签约企业

@@ -9,6 +9,7 @@ using WYJK.Data.IServices;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
+using WYJK.Web.Models;
 
 namespace WYJK.Web.Controllers.Mvc
 {
@@ -195,6 +196,40 @@ namespace WYJK.Web.Controllers.Mvc
             return RedirectToAction("SocialSecurityDetail", new { SocialSecurityPeopleID = SocialSecurityPeopleID });
         }
 
+        //异常处理
+        [HttpGet]
+        public ActionResult SocialException(int[] SocialSecurityPeopleIDs)
+        {
+            
+
+            SocialSecurityException model = new SocialSecurityException() {
+                PeopleIds = string.Join(",", SocialSecurityPeopleIDs)
+            };
+            
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SocialException(SocialSecurityException model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await Data.DbHelper.ExecuteSqlCommandAsync($"update SocialSecurityPeople set status=0 where SocialSecurityPeopleid in ({model.PeopleIds});update socialsecurity set SocialSecurityException='{model.Exception}',status=1 where SocialSecurityPeopleid in ({model.PeopleIds})");
+                    string[] strArray = model.PeopleIds.Split(',');
+                    int[] intArray;
+                    intArray = Array.ConvertAll<string, int>(strArray, s => int.Parse(s));
+                    string names = _socialSecurityService.GetSocialPeopleNames(intArray);
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("办理社保异常客户:{0},原因:{1}", names, model.Exception) });
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = ex.Message;
+                }
+            }          
+            return View(model);
+        }
 
     }
 }
