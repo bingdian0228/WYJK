@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>主页</title>
+
+    <!-- Bootstrap -->
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Content/css/common.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="~/Scripts/jquery-1.12.3.min.js"></script>
+</head>
+
+<body>
+    <div class="project">
+        <!--header-->
+        <!--header-->
+        @Html.Partial("~/Views/Navbar.cshtml")
+        <!--logo/搜索-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+                    <a href="index.html">
+                        <img src="~/Content/img/logo.png" width="210" height="66">
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @RenderBody()
+        <!--footer-->
+        <footer class="am-padding-sm">
+            <div class="container am-text-xs">
+                <!--分类链接-->
+                <div class="am-padding-sm text-center">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="index.html" target="_blank" class="text-muted">首页</a>
+                        </li>
+                        <li>
+                            <a href="insurance.html" target="_blank" class="text-muted">社保大厅</a>
+                        </li>
+                        <li>
+                            <a href="loan.html" target="_blank" class="text-muted">无忧借款</a>
+                        </li>
+                        <li>
+                            <a href="#" target="_blank" class="text-muted">帮助中心</a>
+                        </li>
+                        <li>
+                            <a href="about.html" target="_blank" class="text-muted">关于我们</a>
+                        </li>
+                        <li>
+                            <a href="login.html" target="_blank" class="text-muted">登录</a>
+                        </li>
+                        <li>
+                            <a href="register.html" target="_blank" class="text-muted">注册</a>
+                        </li>
+                    </ul>
+                </div>
+                <!--copyright-->
+                <div class="text-center">
+                    <div>
+                        Copyright © 2014 - 2015青岛XXXX有限公司 版权归XXXX所有
+                    </div>
+                    <div>
+                        地址：青岛市崂山区XXXXX
+                    </div>
+                    <div>
+                        <a href="#" class="text-muted">人力资源服务许可证 330108000023</a>
+                    </div>
+                    <div>
+                        <a href="#" class="text-muted">
+                            鲁ICP备15028495号-2 增值电信业务经营许可证：浙B2-20150177
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    
+
+
+
+</body>
+
+
+<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+@RenderSection("scripts", required: false)
+</html>

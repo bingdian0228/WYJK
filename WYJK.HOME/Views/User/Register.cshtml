@@ -1,0 +1,106 @@
+﻿@model WYJK.HOME.Models.RegisterViewModel
+@{
+    Layout = "~/Views/_Layout_white.cshtml";
+}
+
+
+<div class="bg-lightgrey">
+    <div class="container">
+        <div class="clearfix">
+            <div class="pull-left">
+                <img src="~/Content/img/login-left.jpg" width="739" height="452">
+            </div>
+            <div class="pull-right">
+                <div class="bg-white loginBox-w am-padding-lg">
+                    @ViewBag.ErrorMessage
+                    @Html.ValidationSummary()
+                    <form action="" class="form-horizontal" method="post">
+                        <div class="form-group">
+                            <label for="" class="col-lg-3 control-label">用户名</label>
+                            <div class="col-lg-9">
+                                @Html.TextBoxFor(m=>m.MemberName, new { placeholder = "请输入用户名", @class = "form-control", maxlength = 50 } )
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-lg-3 control-label">手机号</label>
+                            <div class="col-lg-9">
+
+                                @Html.TextBoxFor(m => m.MemberPhone, new { placeholder = "请输入手机号", @class = "form-control", maxlength = 13 } )
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-lg-3 am-padding-left-0 control-label">短信验证码</label>
+                            <div class="col-lg-5 am-padding-right-0">
+                                @Html.TextBoxFor(m=>m.SMSCheckCode, new { placeholder = "请输入验证码", @class = "form-control", maxlength = 6 } )
+                            </div>
+                            <div class="col-lg-4">
+                                <button type="button" class="btn btn-info bg-lightblue">获取验证码</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-lg-3 control-label">密码</label>
+                            <div class="col-lg-9">
+                                @Html.PasswordFor(m => m.Password, new { placeholder = "请输入密码", @class = "form-control", maxlength = 50 } )
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword3" class="col-lg-3 control-label">验证码</label>
+                            <div class="col-lg-4 am-padding-right-0">
+                                @Html.TextBoxFor(m => m.CheckCode, new { placeholder = "请输入验证码", @class = "form-control", maxlength = 6 })
+                            </div>
+                            <div class="col-lg-5">
+                                <!--验证码-->
+                                <div class="clearfix" id="re_code">
+                                    <div class="pull-left">
+                                        <div class="codeBox-w">
+                                            <img src="@Url.Action("Captcha", "User", new {}, "http")?1=1" width="88" height="32" id="check_code">
+                                        </div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <button type="button" class="btn btn-info refreshBtn-w"><i class="glyphicon glyphicon-repeat"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="col-lg-3 control-label">邀请码</label>
+                            <div class="col-lg-9">
+                                @Html.TextBoxFor(m => m.InviteCode, new { placeholder = "请输入推荐人邀请码（选填）", @class = "form-control", maxlength = 20 })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-9 col-lg-offset-3">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(m =>m.Agreement)
+                                        我已阅读并同意<a href="#">无忧借款服务协议</a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!--按钮-->
+                        <div class="form-group">
+                            <div class="col-lg-9 col-lg-offset-3">
+                                <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">注册</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end-->
+</div>
+
+<script>
+    $(function () {
+       $("#doLogin").click(function(){
+            $("#userForm").submit();
+       });
+       $("#check_code,#re_code").click(function () {
+           $("#check_code").attr("src", $("#check_code").attr("src") + "&" + $("#check_code").attr("src").length);
+       });
+     
+    });
+</script>

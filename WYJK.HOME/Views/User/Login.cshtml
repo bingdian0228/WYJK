@@ -1,0 +1,95 @@
+﻿@model WYJK.HOME.Models.LoginViewModel
+@{
+    Layout = "~/Views/_Layout_white.cshtml";
+}
+
+<div class="bg-lightgrey">
+    <div class="container">
+        <div class="clearfix">
+            <div class="pull-left">
+                <img src="~/Content/img/login-left.jpg" width="739" height="452">
+            </div>
+            <div class="pull-right">
+                <div class="bg-white loginBox-w am-padding-xl">
+                    <div>
+                        没有账号？<a href="register.html">立即注册</a>
+                    </div>
+                    <div class="row"><div class="col-xs-12 text-warning">
+                            @ViewBag.ErrorMessage
+
+                            @Html.ValidationSummary()
+                        
+                       </div></div>
+                    <form action="Login" method="post" id="userForm">
+                        <div class="input-group am-padding-top-xl">
+                            <span class="input-group-addon" id="">
+                                <i class="glyphicon glyphicon-user"></i>
+                            </span>
+                            @Html.TextBoxFor(m => m.Email, new { placeholder = "请输入手机号/邮箱/用户名", @class = "form-control", maxlength = 50 })
+                            
+                        </div>
+                        
+                        <div class="input-group am-padding-top-xl">
+                            <span class="input-group-addon" id="">
+                                <i class="glyphicon glyphicon-lock"></i>
+                            </span>
+                            @Html.PasswordFor(m => m.Password, new { placeholder = "请输入密码", @class = "form-control", maxlength = 50 })
+                            
+                        </div>
+                        
+                        <div class="row am-padding-top-xl">
+                            <div class="col-lg-6">
+                                
+                                @Html.TextBoxFor(m =>m.CheckCode, new {  placeholder = "请输入验证码", @class = "form-control", maxlength = 4 })
+                               
+                            </div>
+                            <div class="col-lg-6">
+                                <!--验证码-->
+                                <div class="clearfix" id="re_code">
+                                    <div class="pull-left">
+                                        <div class="codeBox-w">
+                                            <img src="@Url.Action("Captcha", "User", new {}, "http")?1=1" width="112" height="32" title="点击刷新" id="check_code" />
+                                        </div>
+                                    </div>
+                                    <div class="pull-left">
+                                        <button type="button" class="btn btn-info refreshBtn-w"><i class="glyphicon glyphicon-repeat"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix am-padding-top-lg">
+                            <div class="pull-left">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.CheckBoxFor(m=>m.RememberMe) 记住登录名
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <div class="am-padding-vertical-sm">
+                                    <a href="password.html">忘记密码</a>
+                                </div>
+                            </div>
+                           
+                            
+                        </div>
+                        <!--登录按钮-->
+                        <div class="am-padding-top-xl">
+                            <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block" >立即登录</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end-->
+</div>
+<script>
+    $(function () {
+      
+       $("#check_code,#re_code").click(function () {
+           $("#check_code").attr("src", $("#check_code").attr("src") + "&" + $("#check_code").attr("src").length);
+       });
+       
+    });
+</script>
