@@ -281,5 +281,12 @@ namespace WYJK.Data.IServices
         /// <param name="parameter"></param>
         /// <returns></returns>
         bool AddAdjustingBase(AdjustingBaseParameter parameter);
+
+        /// <summary>
+        /// 获取该用户下所有参保人的所有待办金额之和
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        decimal GetWaitingHandleTotalByMemberID(int MemberID);
     }
 }

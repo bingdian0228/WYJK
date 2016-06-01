@@ -735,14 +735,14 @@ select @totalAmount";
         /// <returns></returns>
         public void UpdateRenewToNormalByMemberID(int MemberID, int MonthCount)
         {
-            string sqlstr = $@"update SocialSecurity set SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Normal},SocialSecurity.PayMonthCount={MonthCount} where socialsecurity.SocialSecurityID in
+            string sqlstr = $@"update SocialSecurity set SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Normal},SocialSecurity.PayMonthCount= case when SocialSecurity.PayMonthCount>{MonthCount} then SocialSecurity.PayMonthCount else {MonthCount} end where socialsecurity.SocialSecurityID in
   (select SocialSecurity.SocialSecurityID from SocialSecurity
 left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
-  where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew}) and SocialSecurity.PayMonthCount<{MonthCount};
-update AccumulationFund set AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Normal},AccumulationFund.PayMonthCount={MonthCount} where AccumulationFund.AccumulationFundID in
+  where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew});
+update AccumulationFund set AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Normal},AccumulationFund.PayMonthCount= case when AccumulationFund.PayMonthCount> {MonthCount} then AccumulationFund.PayMonthCount else {MonthCount} end where AccumulationFund.AccumulationFundID in
   (select AccumulationFund.AccumulationFundID from AccumulationFund
 left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
-  where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew}) and AccumulationFund.PayMonthCount<{MonthCount}
+  where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew});
   ";
             DbHelper.ExecuteSqlCommand(sqlstr, null);
         }
@@ -833,6 +833,27 @@ select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecuri
             select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase * AccumulationFund.PayProportion / 100 from SocialSecurityPeople
                   left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
                   where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = 4;
+            select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
+select @totalAmount";
+
+            decimal result = DbHelper.QuerySingle<decimal>(sqlstr);
+            return result;
+        }
+
+        /// <summary>
+        ///  获取该用户下所有参保人的所有待办金额之和
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public decimal GetWaitingHandleTotalByMemberID(int MemberID)
+        {
+            string sqlstr = $@"declare @SocialSecurityAmount decimal = 0, @AccumulationFundAmount decimal = 0,@totalAmount decimal =0
+select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase*SocialSecurity.PayMonthCount * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
+      left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+      where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status = 2;
+            select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase *AccumulationFund.PayMonthCount* AccumulationFund.PayProportion / 100 from SocialSecurityPeople
+                  left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+                  where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = 2;
             select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
 select @totalAmount";
 

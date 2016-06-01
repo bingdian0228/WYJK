@@ -19,6 +19,9 @@ using WYJK.Framework.EnumHelper;
 using WYJK.Data.IService;
 using System.Transactions;
 using System.Configuration;
+using System.Threading;
+using System.IO;
+using System.Text;
 
 namespace WYJK.Web.Controllers.Http
 {
@@ -465,12 +468,7 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<List<KeyValuePair<int, decimal>>> GetRenewalServiceList(int MemberID)
         {
             //只有账户状态为待续费状态下才能进行续费服务，付费提供1-12个月的服务，1号前无需缴纳服务费，其它需按设置缴纳，不管续几个月，只缴纳一个月服务费
-            decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(MemberID);
-            Dictionary<int, decimal> dic = new Dictionary<int, decimal>();
-            for (int i = 0; i < 12; i++)
-            {
-                dic.Add(i + 1, RenewMonthTotal * (i + 1));
-            }
+
 
             //计算第一个月
             decimal TotalServiceCost = 0;
@@ -517,20 +515,26 @@ namespace WYJK.Web.Controllers.Http
             }
 
             //不管充几个月服务，都要加上这个服务费，然后减去账户金额
+            decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(MemberID);
             AccountInfo accountInfo = _memberService.GetAccountInfo(MemberID);
             TotalServiceCost = SSServiceCost + AFServiceCost;
+            //获取该用户下所有参保人的所有待办金额之和
+            decimal WaitingHandleTotal = _socialSecurityService.GetWaitingHandleTotalByMemberID(MemberID);
+
+            Dictionary<int, decimal> dic = new Dictionary<int, decimal>();
             for (int i = 0; i < 12; i++)
             {
-                dic[i + 1] = dic[i + 1] + TotalServiceCost - accountInfo.Account;
+                dic.Add(i + 1, RenewMonthTotal * (i + 1) + TotalServiceCost - accountInfo.Account - WaitingHandleTotal);
             }
 
             return new JsonResult<List<KeyValuePair<int, decimal>>>
             {
                 status = true,
-                Message = "获取集合成功",
+                Message = "获取续费服务集合成功",
                 Data = dic.ToList()
             };
 
+            #region 作废
             ////所有服务月-账户余额，如果<0则去除
             //for (int i = 0; i < 12; i++)
             //{
@@ -617,6 +621,7 @@ namespace WYJK.Web.Controllers.Http
             //    Message = "获取集合成功",
             //    Data = dic.ToList()
             //};
+            #endregion
         }
 
         ///// <summary>
@@ -643,7 +648,9 @@ namespace WYJK.Web.Controllers.Http
             {
                 try
                 {
-                    decimal MonthTotal = _socialSecurityService.GetMonthTotalAmountByMemberID(parameter.MemberID);
+                    //获取某用户下的所有待续费金额之和
+                    decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(parameter.MemberID);
+
                     //计算第一个月
                     decimal TotalServiceCost = 0;
                     decimal SSServiceCost = 0;//社保服务费
@@ -651,84 +658,180 @@ namespace WYJK.Web.Controllers.Http
                     AccountInfo accountInfo = _memberService.GetAccountInfo(parameter.MemberID);
 
                     string sqlAccountRecord = "";//记录
-                    if (accountInfo.Account < MonthTotal)
+                    sqlAccountRecord = "";
+                    string ShouNote = "续费：";//收入备注
+                    string ZhiNote = "";//支出备注
+                    int day = DateTime.Now.Day;
+                    //社保待续费人员列表
+                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetSocialSecurityRenewListByMemberID(parameter.MemberID);
+                    //收入
+                    foreach (var socialSecurityPeople in SocialSecurityPeopleList)
                     {
-                        int day = DateTime.Now.Day;
-                        //社保服务费
-                        CostParameterSetting SSParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity);
-                        if (SSParameter != null && !string.IsNullOrEmpty(SSParameter.RenewServiceCost))
+                        ShouNote += string.Format("{0}:{1}个月社保;", socialSecurityPeople.SocialSecurityPeopleName, parameter.MonthCount);
+                    }
+                    //社保服务费
+                    CostParameterSetting SSParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity);
+                    if (SSParameter != null && !string.IsNullOrEmpty(SSParameter.RenewServiceCost))
+                    {
+                        string[] str = SSParameter.RenewServiceCost.Split(';');
+                        foreach (var item in str)
                         {
-                            string[] str = SSParameter.RenewServiceCost.Split(';');
-                            foreach (var item in str)
+                            string[] str1 = item.Split(',');
+
+                            if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
                             {
-                                string[] str1 = item.Split(',');
-
-                                if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
+                                //社保待续费的人数
+                                SSServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
+                                //收入
+                                foreach (var socialSecurityPeople in SocialSecurityPeopleList)
                                 {
-                                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetSocialSecurityRenewListByMemberID(parameter.MemberID);
-                                    //社保待办与正常的人数
-                                    SSServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
-                                    //记录支出
-                                    sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
-values({parameter.MemberID},'','','支出','余额','社保服务费',{SSServiceCost},getdate());";
-                                    //                                    if (SocialSecurityPeopleList.Count > 0)
-                                    //                                    {
-                                    //                                        foreach (var item1 in SocialSecurityPeopleList)
-                                    //                                        {
-                                    //                                            sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
-                                    //values({parameter.MemberID},{item1.SocialSecurityPeopleID},'{item1.SocialSecurityPeopleName}','支出','余额','社保服务费',{str1[2]},getdate());";
-                                    //                                        }
-                                    //                                    }
-                                    break;
+                                    ShouNote += string.Format("{0}:社保服务费:{1};", socialSecurityPeople.SocialSecurityPeopleName, str1[2]);
+                                    ZhiNote += string.Format("{0}:社保服务费:{1};", socialSecurityPeople.SocialSecurityPeopleName, str1[2]);
                                 }
-
+                                break;
                             }
-                        }
-                        //公积金服务费
-                        CostParameterSetting AFParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund);
-                        if (AFParameter != null && !string.IsNullOrEmpty(AFParameter.RenewServiceCost))
-                        {
-                            string[] str = AFParameter.RenewServiceCost.Split(';');
-                            foreach (var item in str)
-                            {
-                                string[] str1 = item.Split(',');
 
-                                if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
+                        }
+                    }
+                    //公积金人员列表
+                    List<SocialSecurityPeople> SocialSecurityPeopleList1 = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
+                    //收入
+                    foreach (var socialSecurityPeople in SocialSecurityPeopleList1)
+                    {
+                        ShouNote += string.Format("{0}:{1}个月公积金;", socialSecurityPeople.SocialSecurityPeopleName, parameter.MonthCount);
+                    }
+                    //公积金服务费
+                    CostParameterSetting AFParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund);
+                    if (AFParameter != null && !string.IsNullOrEmpty(AFParameter.RenewServiceCost))
+                    {
+                        string[] str = AFParameter.RenewServiceCost.Split(';');
+                        foreach (var item in str)
+                        {
+                            string[] str1 = item.Split(',');
+
+                            if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
+                            {
+
+                                //社保待续费的人数*金额
+                                AFServiceCost = SocialSecurityPeopleList1.Count * Convert.ToDecimal(str1[2]);
+                                //收入
+                                foreach (var socialSecurityPeople in SocialSecurityPeopleList1)
                                 {
-                                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
-                                    //社保待办与正常的人数
-                                    AFServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
-                                    //记录支出
-                                    sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
-values({parameter.MemberID},'','','支出','余额','公积金服务费',{AFServiceCost},getdate());";
-                                    //                                    if (SocialSecurityPeopleList.Count > 0)
-                                    //                                    {
-                                    //                                        foreach (var item1 in SocialSecurityPeopleList)
-                                    //                                        {
-                                    //                                            sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
-                                    //values({parameter.MemberID},{item1.SocialSecurityPeopleID},'{item1.SocialSecurityPeopleName}','支出','余额','公积金服务费',{str1[2]},getdate());";
-                                    //                                        }
-                                    //                                    }
-                                    break;
+                                    ShouNote += string.Format("{0}:公积金服务费:{1};", socialSecurityPeople.SocialSecurityPeopleName, str1[2]);
+                                    ZhiNote += string.Format("{0}:公积金服务费:{1};", socialSecurityPeople.SocialSecurityPeopleName, str1[2]);
                                 }
+                                break;
                             }
                         }
                     }
+                    //服务费总数
                     TotalServiceCost = SSServiceCost + AFServiceCost;
+
+
+                    sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','{ShouNote}',{parameter.Amount},{accountInfo.Account + parameter.Amount},getdate());
+                                       insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','{ZhiNote}',{TotalServiceCost},{accountInfo.Account + parameter.Amount - TotalServiceCost},getdate()); ";
+
+
                     //修改账户余额
                     decimal account = parameter.Amount - TotalServiceCost;
                     string sqlMember = $"update Members set Account=ISNULL(Account,0)+{account} where MemberID={parameter.MemberID}";
                     int updateResult = DbHelper.ExecuteSqlCommand(sqlMember, null);
-                    if (!(updateResult > 0)) throw new Exception("更新个人账户失败");
 
-                    //记录收入
-                    sqlAccountRecord += $"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) values({parameter.MemberID},'','','收入','{parameter.PayMethod}','续费',{parameter.Amount},getdate());";
                     //更新记录
                     DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
 
-                    //将所有的待续费变成正常,并将剩余月数变成服务月数  --待修改
+                    //将所有的待续费变成正常,并将剩余月数变成服务月数
                     _socialSecurityService.UpdateRenewToNormalByMemberID(parameter.MemberID, parameter.MonthCount);
 
+                    #region 作废
+                    //                    decimal MonthTotal = _socialSecurityService.GetMonthTotalAmountByMemberID(parameter.MemberID);
+                    //                    //计算第一个月
+                    //                    decimal TotalServiceCost = 0;
+                    //                    decimal SSServiceCost = 0;//社保服务费
+                    //                    decimal AFServiceCost = 0;//公积金服务费
+                    //                    AccountInfo accountInfo = _memberService.GetAccountInfo(parameter.MemberID);
+
+                    //                    string sqlAccountRecord = "";//记录
+                    //                    if (accountInfo.Account < MonthTotal)
+                    //                    {
+                    //                        int day = DateTime.Now.Day;
+                    //                        //社保服务费
+                    //                        CostParameterSetting SSParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity);
+                    //                        if (SSParameter != null && !string.IsNullOrEmpty(SSParameter.RenewServiceCost))
+                    //                        {
+                    //                            string[] str = SSParameter.RenewServiceCost.Split(';');
+                    //                            foreach (var item in str)
+                    //                            {
+                    //                                string[] str1 = item.Split(',');
+
+                    //                                if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
+                    //                                {
+                    //                                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetSocialSecurityRenewListByMemberID(parameter.MemberID);
+                    //                                    //社保待办与正常的人数
+                    //                                    SSServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
+                    //                                    //记录支出
+                    //                                    sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
+                    //values({parameter.MemberID},'','','支出','余额','社保服务费',{SSServiceCost},getdate());";
+                    //                                    //                                    if (SocialSecurityPeopleList.Count > 0)
+                    //                                    //                                    {
+                    //                                    //                                        foreach (var item1 in SocialSecurityPeopleList)
+                    //                                    //                                        {
+                    //                                    //                                            sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
+                    //                                    //values({parameter.MemberID},{item1.SocialSecurityPeopleID},'{item1.SocialSecurityPeopleName}','支出','余额','社保服务费',{str1[2]},getdate());";
+                    //                                    //                                        }
+                    //                                    //                                    }
+                    //                                    break;
+                    //                                }
+
+                    //                            }
+                    //                        }
+                    //                        //公积金服务费
+                    //                        CostParameterSetting AFParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund);
+                    //                        if (AFParameter != null && !string.IsNullOrEmpty(AFParameter.RenewServiceCost))
+                    //                        {
+                    //                            string[] str = AFParameter.RenewServiceCost.Split(';');
+                    //                            foreach (var item in str)
+                    //                            {
+                    //                                string[] str1 = item.Split(',');
+
+                    //                                if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
+                    //                                {
+                    //                                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
+                    //                                    //社保待办与正常的人数
+                    //                                    AFServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
+                    //                                    //记录支出
+                    //                                    sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
+                    //values({parameter.MemberID},'','','支出','余额','公积金服务费',{AFServiceCost},getdate());";
+                    //                                    //                                    if (SocialSecurityPeopleList.Count > 0)
+                    //                                    //                                    {
+                    //                                    //                                        foreach (var item1 in SocialSecurityPeopleList)
+                    //                                    //                                        {
+                    //                                    //                                            sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
+                    //                                    //values({parameter.MemberID},{item1.SocialSecurityPeopleID},'{item1.SocialSecurityPeopleName}','支出','余额','公积金服务费',{str1[2]},getdate());";
+                    //                                    //                                        }
+                    //                                    //                                    }
+                    //                                    break;
+                    //                                }
+                    //                            }
+                    //                        }
+                    //                    }
+                    //                    TotalServiceCost = SSServiceCost + AFServiceCost;
+                    //                    //修改账户余额
+                    //                    decimal account = parameter.Amount - TotalServiceCost;
+                    //                    string sqlMember = $"update Members set Account=ISNULL(Account,0)+{account} where MemberID={parameter.MemberID}";
+                    //                    int updateResult = DbHelper.ExecuteSqlCommand(sqlMember, null);
+                    //                    if (!(updateResult > 0)) throw new Exception("更新个人账户失败");
+
+                    //                    //记录收入
+                    //                    sqlAccountRecord += $"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) values({parameter.MemberID},'','','收入','{parameter.PayMethod}','续费',{parameter.Amount},getdate());";
+                    //                    //更新记录
+                    //                    DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
+
+                    //                    //将所有的待续费变成正常,并将剩余月数变成服务月数  --待修改
+                    //                    _socialSecurityService.UpdateRenewToNormalByMemberID(parameter.MemberID, parameter.MonthCount);
+                    #endregion
 
                     transaction.Complete();
                 }
@@ -758,23 +861,37 @@ values({parameter.MemberID},'','','支出','余额','公积金服务费',{AFServ
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        private JsonResult<dynamic> SubmitRechargeAmount(RechargeParameters parameter)
+        public JsonResult<dynamic> SubmitRechargeAmount(RechargeParameters parameter)
         {
+            //如果账户状态为正常，则随便充值；如果账户状态为待续费，则看充值时间段，1)充值金额 >=待续费金额+服务费,2)充值金额 <待续费金额+服务费
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
                 {
-                    decimal MonthTotal = _socialSecurityService.GetMonthTotalAmountByMemberID(parameter.MemberID);
-                    //计算第一个月                                                             
-                    decimal TotalServiceCost = 0;
-                    decimal SSServiceCost = 0;//社保服务费
-                    decimal AFServiceCost = 0;//公积金服务费
-                    AccountInfo accountInfo = _memberService.GetAccountInfo(parameter.MemberID);
-
-                    string sqlAccountRecord = "";//记录
-                    if (accountInfo.Account < MonthTotal)
+                    AccountInfo info = _memberService.GetAccountInfo(parameter.MemberID);
+                    //检查账户状态
+                    if (!_socialSecurityService.IsExistsRenew(parameter.MemberID))
                     {
+                        //账户记录
+                        DbHelper.ExecuteSqlCommand($@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+                                                values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','充值',{parameter.Amount},{info.Account + parameter.Amount},getdate())", null);
+                        //修改账户余额
+                        DbHelper.ExecuteSqlCommand($@"update Members set Account = ISNULL(Account, 0) +{ parameter.Amount}
+                                                where MemberID = { parameter.MemberID }", null);
+                    }
+                    else {
+                        //计算第一个月
+                        decimal TotalServiceCost = 0;
+                        decimal SSServiceCost = 0;//社保服务费
+                        decimal AFServiceCost = 0;//公积金服务费
+
+                        string sqlAccountRecord = "";//记录
+                        string ShouNote = "充值：";//收入备注
+                        string ZhiNote = "";//支出备注
                         int day = DateTime.Now.Day;
+                        //社保待续费人员列表
+                        List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetSocialSecurityRenewListByMemberID(parameter.MemberID);
+
                         //社保服务费
                         CostParameterSetting SSParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity);
                         if (SSParameter != null && !string.IsNullOrEmpty(SSParameter.RenewServiceCost))
@@ -786,17 +903,17 @@ values({parameter.MemberID},'','','支出','余额','公积金服务费',{AFServ
 
                                 if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
                                 {
-                                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetSocialSecurityRenewListByMemberID(parameter.MemberID);
-                                    //社保待办与正常的人数
+                                    //社保待续费的人数
                                     SSServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
-                                    //记录支出
-                                    sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
-values({parameter.MemberID},'','','支出','余额','社保服务费',{SSServiceCost},getdate());";
+
                                     break;
                                 }
 
                             }
                         }
+                        //公积金人员列表
+                        List<SocialSecurityPeople> SocialSecurityPeopleList1 = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
+
                         //公积金服务费
                         CostParameterSetting AFParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund);
                         if (AFParameter != null && !string.IsNullOrEmpty(AFParameter.RenewServiceCost))
@@ -808,41 +925,50 @@ values({parameter.MemberID},'','','支出','余额','社保服务费',{SSService
 
                                 if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
                                 {
-                                    List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
-                                    //社保待办与正常的人数
-                                    AFServiceCost = SocialSecurityPeopleList.Count * Convert.ToDecimal(str1[2]);
-                                    //记录支出
-                                    sqlAccountRecord += $@"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) 
-values({parameter.MemberID},'','','支出','余额','公积金服务费',{AFServiceCost},getdate());";
+
+                                    //社保待续费的人数*金额
+                                    AFServiceCost = SocialSecurityPeopleList1.Count * Convert.ToDecimal(str1[2]);
+
                                     break;
                                 }
                             }
                         }
+
+                        //服务费总数
+                        TotalServiceCost = SSServiceCost + AFServiceCost;
+
+                        //获取某用户下的所有待续费金额之和
+                        decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(parameter.MemberID);
+                        //获取该用户下所有参保人的所有待办金额之和
+                        decimal WaitingHandleTotal = _socialSecurityService.GetWaitingHandleTotalByMemberID(parameter.MemberID);
+
+                        if (parameter.Amount >= RenewMonthTotal - (info.Account - WaitingHandleTotal) + TotalServiceCost)
+                        {
+                            //交服务费
+                            //账户记录
+                            DbHelper.ExecuteSqlCommand($@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+                                                values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','充值',{parameter.Amount},{info.Account + parameter.Amount},getdate());
+                                                        insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
+                                                 values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','服务费',{TotalServiceCost},{info.Account + parameter.Amount - TotalServiceCost},getdate()); ", null);
+                            //修改账户余额
+                            DbHelper.ExecuteSqlCommand($@"update Members set Account = ISNULL(Account, 0) +{ parameter.Amount - TotalServiceCost}
+                                                where MemberID = { parameter.MemberID }", null);
+
+                            //将所有的待续费变成正常,并将剩余月数变成服务月数
+                            _socialSecurityService.UpdateRenewToNormalByMemberID(parameter.MemberID, 1);
+                        }
+                        else {
+                            //不交服务费
+                            //账户记录
+                            DbHelper.ExecuteSqlCommand($@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+                                                values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','充值',{parameter.Amount},{info.Account + parameter.Amount},getdate())", null);
+                            //修改账户余额
+                            DbHelper.ExecuteSqlCommand($@"update Members set Account = ISNULL(Account, 0) +{ parameter.Amount}
+                                                where MemberID = { parameter.MemberID }", null);
+                        }
+
+                        transaction.Complete();
                     }
-                    TotalServiceCost = SSServiceCost + AFServiceCost;
-                    //修改账户余额
-                    decimal account = parameter.Amount - TotalServiceCost;
-                    string sqlMember = $"update Members set Account=ISNULL(Account,0)+{account} where MemberID={parameter.MemberID}";
-                    int updateResult = DbHelper.ExecuteSqlCommand(sqlMember, null);
-                    if (!(updateResult > 0)) throw new Exception("更新个人账户失败");
-
-                    //记录收入
-                    sqlAccountRecord += $"insert into AccountRecord(MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,CreateTime) values({parameter.MemberID},'','','收入','{parameter.PayMethod}','续费',{parameter.Amount},getdate());";
-                    //更新记录
-                    DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
-
-                    //将所有的待续费变成正常,并将剩余月数变成服务月数  --待修改
-                    string sqlstr = $@"update SocialSecurity set SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Normal} where socialsecurity.SocialSecurityID in
-  (select SocialSecurity.SocialSecurityID from SocialSecurity
-left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
-  where SocialSecurityPeople.MemberID = {parameter.MemberID} and SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew});
-update AccumulationFund set AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Normal} where AccumulationFund.AccumulationFundID in
-  (select AccumulationFund.AccumulationFundID from AccumulationFund
-left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
-  where SocialSecurityPeople.MemberID = {parameter.MemberID} and AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew}) ";
-                    DbHelper.ExecuteSqlCommand(sqlstr, null);
-
-                    transaction.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -895,6 +1021,25 @@ left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = Soci
                 Message = flag ? "上传成功" : "上传失败"
             };
 
+        }
+
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> TestTransaction()
+        {
+            string url = "http://localhost:47565/api/member/GetRenewalServiceList?MemberID";
+
+            HttpWebRequest myHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+
+            HttpWebResponse myHttpWebResponse = (HttpWebResponse)myHttpWebRequest.GetResponse();
+
+            //Stream receiveStream = myHttpWebResponse.GetResponseStream();//得到回写的字节流
+            StreamReader stream = new StreamReader(myHttpWebResponse.GetResponseStream(), Encoding.UTF8);
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "测试成功",
+                Data = stream.ReadToEnd()
+            };
         }
 
 

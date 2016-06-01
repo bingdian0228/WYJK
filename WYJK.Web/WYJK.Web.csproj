@@ -274,6 +274,7 @@
     <Compile Include="Controllers\Mvc\SocialSecurity\AccumulationFundController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\BaseAuditController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\CustomerServiceController.cs" />
+    <Compile Include="Controllers\Mvc\SocialSecurity\DrawCashController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\EnterpriseController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\InformationController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\LoggerController.cs" />
@@ -295,6 +296,8 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\RegionViewModel.cs" />
+    <Compile Include="Models\DrawCashModel.cs" />
+    <Compile Include="Models\SocialSecurityException.cs" />
     <Compile Include="Models\SubjectViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -1828,6 +1831,11 @@
     <Content Include="Views\CustomerService\Payment.cshtml" />
     <Content Include="Views\CustomerService\RePay.cshtml" />
     <Content Include="Views\CustomerService\BuyService.cshtml" />
+    <Content Include="Views\Enterprise\GetEnterpriseCityList.cshtml" />
+    <Content Include="Views\SocialSecurity\SocialException.cshtml" />
+    <Content Include="Views\AccumulationFund\AccumulationException.cshtml" />
+    <Content Include="Views\DrawCash\DrawCashList.cshtml" />
+    <Content Include="Views\DrawCash\AgreeDrawCash.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -69,6 +69,53 @@
                     });
                 });
             });
+
+            //异常处理
+            $(".action-exception").click(function () {
+
+                if ($("input[type='checkbox']:checked").length <= 0) {
+                    layer.msg("请选择异常的客户");
+                    return;
+                }
+                var SocialSecurityPeopleIDs = [];
+                $("input[type='checkbox']:checked").each(function (i) {
+                    SocialSecurityPeopleIDs[i] = $(this).val();
+                });
+                
+                var save = 0;
+                var layerObject = layer.open({
+                    type:2,
+                    title:"异常信息填写",
+                    area:['600px','300px'],
+                    content: "@Url.Action("AccumulationException", "AccumulationFund")?SocialSecurityPeopleIDs=" + SocialSecurityPeopleIDs,
+                    btn:["提交","取消"],
+                yes: function (index, layero) {
+                        
+                    var childIndex = layer.load(1, { shade: [0.1, '#000'] });
+                    debugger;
+                    var form = layer.getChildFrame('form', index);
+                    form.submit();
+               
+                    save = 1;
+                
+                    layer.close(childIndex);  
+                    return false;
+                },
+                end:function(index, layero) {
+                    if (save === 1) {
+                        refresh();
+                    }
+                },
+                success: function (index, layero) {
+                    debugger;
+                    if (save === 1) {
+                        layer.closeAll();
+                        refresh();
+                    }
+                    layer.iframeAuto(layero);
+                }
+            });
+        });
         })
     </script>
 }
@@ -133,5 +180,11 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 业务办结</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 业务办结</a>
+            <a href="javascript:;" class="btn btn-danger radius action-exception"><i class="Hui-iconfont">&#xe6e1;</i> 业务异常</a>
+        </span>
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
 </div>

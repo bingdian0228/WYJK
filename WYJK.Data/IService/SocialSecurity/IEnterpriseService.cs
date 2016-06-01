@@ -27,6 +27,13 @@ namespace WYJK.Data.IService
         PagedResult<EnterpriseSocialSecurity> GetEnterpriseList(EnterpriseSocialSecurityParameter parameter);
 
         /// <summary>
+        /// 城市社平管理列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        PagedResult<EnterpriseCity> GetEnterpriseCityList(PagedParameter parameter);
+
+        /// <summary>
         /// 添加企业
         /// </summary>
         /// <param name="model"></param>
