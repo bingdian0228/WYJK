@@ -76,7 +76,7 @@ namespace WYJK.Data.ServiceImpl
                         + " @FirstBacklogCost += OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.AccumulationFundFirstBacklogCost,"
                         + " @SocialSecurityBuCha += OrderDetails.SocialSecurityBuCha"
                         + " from[Order] right join OrderDetails on[Order].OrderCode = OrderDetails.OrderCode where [Order].MemberID = @MemberID and [order].OrderCode = @OrderCode1"
-                        + " select @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
+                        + " select  @SocialSecurityBuCha SocialSecurityBuCha, @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
 
             OrderDetailForMobile model = DbHelper.QuerySingle<OrderDetailForMobile>(sql, new
             {

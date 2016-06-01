@@ -556,6 +556,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.IsCanLoan(System.Int32)">
+            <summary>
+            是否可以借款
+            </summary>
+            <param name="MemberID"></param>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Http.LoanController.GetApplyloan(System.Int32)">
             <summary>
             申请借款
@@ -1309,6 +1316,12 @@
         <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.AdjustSocialAvgSalary(System.String,System.String)">
             <summary>
             调整社平工资
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.EnterpriseController.DifferenceAdjustment">
+            <summary>
+            差额调整
             </summary>
             <returns></returns>
         </member>
