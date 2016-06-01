@@ -110,6 +110,7 @@ namespace WYJK.Web.Controllers.Http
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
+        [System.Web.Http.HttpGet]
         public JsonResult<AppayLoan> IsCanLoan(int MemberID)
         {
             //判断用户下的社保否在平台缴纳三个月
