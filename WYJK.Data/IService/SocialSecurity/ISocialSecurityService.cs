@@ -35,7 +35,7 @@ namespace WYJK.Data.IServices
         /// 获取未参保人(Mobile)
         /// </summary>
         /// <returns></returns>
-        Task<List<UnInsuredPeople>> GetUnInsuredPeopleList(int memberID, int status);
+        Task<List<UnInsuredPeople>> GetUnInsuredPeopleList(int memberID, int status, int peopleid = 0);
 
         /// <summary>
         /// 删除为参保人(Mobile)

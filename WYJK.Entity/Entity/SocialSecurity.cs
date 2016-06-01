@@ -117,7 +117,7 @@ namespace WYJK.Entity
         public string MemberName { get; set; }
         /// <summary>
         /// 参保人ID
-        /// </summary>		
+        /// </summary>
         public int SocialSecurityPeopleID { get; set; }
         /// <summary>
         /// 姓名

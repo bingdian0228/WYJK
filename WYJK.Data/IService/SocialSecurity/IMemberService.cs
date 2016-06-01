@@ -41,6 +41,12 @@ namespace WYJK.Data.IServices
         Task<Members> GetMemberInfo(int MemberID);
 
         /// <summary>
+        /// 获得用户Id
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        Task<int> GetMemberId(string MemberName);
+        /// <summary>
         /// 获取会员信息
         /// </summary>
         /// <param name="MemberID"></param>

@@ -1,31 +1,42 @@
 ﻿@model RegionViewModel
-<div id="region-container">
+<div id="region-container@(ViewBag.Id)" class="region-container">
     <span class="select-box">
-        @Html.DropDownListFor(m=>m.ProvinceCode, Model.ProvinceList, new { @class = "select", @size = "1" ,id="province-input"})
+        @Html.DropDownListFor(m=> m.ProvinceCode, Model.ProvinceList, new { @class = "select", @size = "1" ,id="province-input" + ViewBag.Id })
     </span>
     <span class="select-box">
-        @Html.DropDownListFor(m => m.CityCode, Model.CityList, new { @class = "select", @size = "1",id="city-input" })
+        @Html.DropDownListFor(m => m.CityCode, Model.CityList, new { @class = "select", @size = "1",id="city-input" + ViewBag.Id })
     </span>
-    <span class="select-box">
-        @Html.DropDownListFor(m=>m.CountyCode, Model.CountyList, new { @class = "select", @size = "1",id="county-input" })
+    <span class="select-box" @Html.Raw((ViewBag.IsHideCounty ?? false) ? "style=\"display:none;\"" : "")>
+        @Html.DropDownListFor(m => m.CountyCode, Model.CountyList, new { @class = "select", @size = "1",id="county-input" + ViewBag.Id })
     </span>   
 </div>
 <div class="col-4">@Html.ValidationMessageFor(m => m.ProvinceCode)</div>
 <div class="col-4">@Html.ValidationMessageFor(m => m.CityCode)</div>
 <div class="col-4">@Html.ValidationMessageFor(m => m.CountyCode)</div>
 <script type="text/javascript">
-    $("#region-container").on("change", "#province-input,#city-input", function () {
-        
-        var proname = $("#province-input").find("option:selected").text();
-        var cityname = $("#city-input").find("option:selected").text();
+    $("#region-container@(ViewBag.Id)").on("change", "#province-input@(ViewBag.Id),#city-input@(ViewBag.Id)", function () {
 
-        $.get("@Url.Action("RegionView", "OptionView")", {
+        var proname = $("#province-input@(ViewBag.Id)").find("option:selected").text();
+        var cityname = $("#city-input@(ViewBag.Id)").find("option:selected").text();
+        var countyname = $("#county-input@(ViewBag.Id)").find("option:selected").text();
+
+        $.get("@Url.Action("RegionView", "OptionView", new { IsHideCounty = ViewBag.IsHideCounty ?? false, CallBack = ViewBag.CallBack, Id = ViewBag.Id, })", {
             "pname": proname,
             "cname": cityname,
-            "coname":""
-        }, function(response) {
-            var html = $(response).filter("#region-container").html();
-            $("#region-container").html(html);
+            "coname": ""
+        }, function (response) {
+            var html = $(response).filter("#region-container@(ViewBag.Id)").html();
+            $("#region-container@(ViewBag.Id)").html(html);
+
+            @if (ViewBag.CallBack + "" != "")
+            {
+                <text>
+                var proname1 = $("#province-input@(ViewBag.Id)").find("option:selected").text();
+                var cityname1 = $("#city-input@(ViewBag.Id)").find("option:selected").text();
+                var countyname1 = $("#county-input@(ViewBag.Id)").find("option:selected").text();
+                @(ViewBag.CallBack + "(proname1,cityname1,countyname1);")
+                </text>
+            }
         }, "html");
     });
 </script>

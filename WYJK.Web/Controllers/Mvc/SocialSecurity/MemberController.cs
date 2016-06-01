@@ -51,9 +51,13 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="MemberID"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ActionResult> EditMemberExtensionInformation(int MemberID, int type)
+        public async Task<ActionResult> EditMemberExtensionInformation(int? MemberID, int type)
         {
-            ExtensionInformationParameter model = await _memberService.GetMemberExtensionInformation(MemberID);
+            ExtensionInformationParameter model = null;
+            if (MemberID == null || MemberID == 0)
+                model = new ExtensionInformationParameter();
+            else
+                model = await _memberService.GetMemberExtensionInformation(MemberID.Value);
 
             #region 证件类型
             var CertificateTypeList = new List<string> { "请选择" }.Concat(GetCertificateType()).Select(
@@ -113,8 +117,8 @@ namespace WYJK.Web.Controllers.Mvc
 
             if (type == 1)
             {
-                ViewData["SocialSecurityList"] = _socialSecurityService.GetSocialSecurityList(MemberID);
-                ViewData["AccumulationFundList"] = _accumulationFundService.GetAccumulationFundList(MemberID);
+                ViewData["SocialSecurityList"] = _socialSecurityService.GetSocialSecurityList(MemberID.Value);
+                ViewData["AccumulationFundList"] = _accumulationFundService.GetAccumulationFundList(MemberID.Value);
             }
 
             return View(model);
@@ -130,6 +134,20 @@ namespace WYJK.Web.Controllers.Mvc
         public async Task<ActionResult> EditMemberExtensionInformation(ExtensionInformationParameter model)
         {
             model.HouseholdType = EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)Convert.ToInt32(model.HouseholdType));
+
+            if (model.MemberID == 0)
+            {
+                var  flag1 = await _memberService.RegisterMember(new MemberRegisterModel() { MemberName = model.MemberName, MemberPhone = model.MemberPhone, Password = model.Password, InviteCode = model.InviteCode });
+                model.MemberID = await _memberService.GetMemberId(model.MemberName);
+
+                if (model.MemberID == 0)
+                {
+                    TempData["Message"] = "保存失败!";
+                    return RedirectToAction("GetMemberList");
+                }
+
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("添加了用户{0}用户", (await _memberService.GetMemberInfo(model.MemberID)).MemberName) });
+            }
 
             bool flag = await _memberService.ModifyMemberExtensionInformation(model);
 

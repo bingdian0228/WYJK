@@ -26,6 +26,39 @@
 <div class="pd-20">
     <form action='@Url.Action("EditMemberExtensionInformation", "Member")' method="post" class="form form-horizontal" id="form-article-add">
         @Html.HiddenFor(n => n.MemberID)
+        @if (Model.MemberID == 0)
+        {
+            <div class="row cl">
+                <label class="form-label col-2">用户名：</label>
+                <div class="formControls col-2">
+                    @Html.TextBoxFor(m => m.MemberName, new { @class = "input-text" })
+                </div>
+                <label class="form-label col-2">密码：</label>
+                <div class="formControls col-2">
+                    @Html.TextBoxFor(m => m.Password, new { @class = "input-text" })
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">手机号：</label>
+                <div class="formControls col-2">
+                    @Html.TextBoxFor(m => m.MemberPhone, new { @class = "input-text" })
+                </div>
+                <label class="form-label col-2">邀请码：</label>
+                <div class="formControls col-2">
+                    @Html.TextBoxFor(m => m.InviteCode, new { @class = "input-text" })
+                </div>
+            </div>
+        }
+        <div class="row cl">
+            <label class="form-label col-2">政治面貌：</label>
+            <div class="formControls col-2">
+                @Html.DropDownListFor(m => m.PoliticalStatus, ViewData["PoliticalStatus"] as List<SelectListItem>, new { @class = "input-text" })
+            </div>
+            <label class="form-label col-2">学历：</label>
+            <div class="formControls col-2">
+                @Html.DropDownListFor(m => m.Education, ViewData["Education"] as List<SelectListItem>, new { @class = "input-text" })
+            </div>
+        </div>
         <div class="row cl">
             <label class="form-label col-2">真实姓名：</label>
             <div class="formControls col-6">

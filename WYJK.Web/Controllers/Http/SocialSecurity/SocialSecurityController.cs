@@ -26,6 +26,7 @@ namespace WYJK.Web.Controllers.Http
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         private readonly IAccumulationFundService _accumulationFundService = new AccumulationFundService();
         private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
+
         /// <summary>
         /// 获取户口性质
         /// </summary>
@@ -72,7 +73,6 @@ namespace WYJK.Web.Controllers.Http
             };
 
         }
-
 
         /// <summary>
         /// 根据参保地获取社保基数范围 社保基数范围：minBase：最小基数，maxBase：最大基数
@@ -193,8 +193,7 @@ namespace WYJK.Web.Controllers.Http
                 Data = list
             };
         }
-
-
+        
         /// <summary>
         /// 添加参保人  SocialSecurityID:社保ID，AccumulationFundID：公积金ID
         /// </summary>
@@ -233,8 +232,7 @@ namespace WYJK.Web.Controllers.Http
                 Message = flag ? "添加成功" : "添加失败"
             };
         }
-
-
+        
         /// <summary>
         /// 修改提交参保人  需要传参：参保人ID，社保ID，公积金ID
         /// </summary>
@@ -287,8 +285,6 @@ namespace WYJK.Web.Controllers.Http
                 Message = flag ? "修改成功" : "修改失败"
             };
         }
-
-
 
         /// <summary>
         /// 获取参保人详情
@@ -353,9 +349,6 @@ namespace WYJK.Web.Controllers.Http
                 Data = model
             };
         }
-
-
-
 
         /// <summary>
         /// 确认社保方案并返回参保信息进行确认 根据以下两个字段来判断是否添加过社保或公积金  IsExistSocialSecurityCase：是否添加社保方案，IsExistaAccumulationFundCase：是否添加公积金方案，socialSecurityFirstBacklogCost：社保第一次代办费，SocialSecurityBase：社保基数，FreezingCharge：冻结金额

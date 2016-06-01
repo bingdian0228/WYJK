@@ -1,0 +1,96 @@
+﻿
+@section Footer{
+    <script src="~/Content/lib/laydate-master/laydate.dev.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            if ('@Request.Params["type"]' == 1) {
+                $('input,select,textarea', $('form')).attr('disabled', true);
+                $('button', $('form')).css('display', 'none');
+            }
+
+        })
+
+        laydate({
+            elem: '#J-xl'
+        });
+    </script>
+    <style>
+        span.lineheight {
+            line-height: 31px;
+        }
+    </style>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 财务管理 <span class="c-gray en">&gt;</span> 社保公积金续费<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <form action='@Url.Action("EditMemberExtensionInformation", "Member")' method="post" class="form form-horizontal" id="form-article-add">
+
+        <div class="row cl">
+            <label class="form-label col-2">客户名称：</label>
+            <div class="formControls col-2">
+                王五
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">交费方式：</label>
+            <div class="formControls col-2">
+                <span class="select-box" style="width: 270px;">
+                    <select class="select">
+                        <option value="现金">现金</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">补交类型：</label>
+            <div class="formControls col-2">
+                <span class="select-box" style="width: 270px;">
+                    <select class="select">
+                        <option value="1">社保</option>
+                        <option value="2">公积金</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">补交时间：</label>
+            <div class="formControls col-2">
+                2015年12月至2016年1月
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">基数：</label>
+            <div class="formControls col-2">
+                2423
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">比例：</label>
+            <div class="formControls col-2">
+                0.394
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">补交金额：</label>
+            <div class="formControls col-2">
+                945.66
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">服务费：</label>
+            <div class="formControls col-2">
+                50
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">总计：</label>
+            <div class="formControls col-2">
+                2016年4月
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-10 col-offset-2">
+                <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 交费</button>
+            </div>
+        </div>
+    </form>
+</div>

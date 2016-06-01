@@ -27,8 +27,12 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="cname"></param>
         /// <param name="coname"></param>
         /// <returns></returns>
-        public PartialViewResult RegionView(string pname, string cname, string coname)
+        public PartialViewResult RegionView(string pname, string cname, string coname, bool? IsHideCounty,string id, string callback)
         {
+            ViewBag.IsHideCounty = IsHideCounty ?? false;
+            ViewBag.Id = id;
+            ViewBag.CallBack = callback;
+
             //根据省市区名称获取对应编号
             string pcode = string.Empty;
             string ccode = string.Empty;

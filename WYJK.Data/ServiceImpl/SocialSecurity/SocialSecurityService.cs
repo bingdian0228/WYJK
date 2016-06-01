@@ -82,7 +82,7 @@ namespace WYJK.Data.ServiceImpl
         /// 获取未参保人列表
         /// </summary>
         /// <returns></returns>
-        public async Task<List<UnInsuredPeople>> GetUnInsuredPeopleList(int memberID, int status)
+        public async Task<List<UnInsuredPeople>> GetUnInsuredPeopleList(int memberID, int status, int peopleid = 0)
         {
             string sql = $@"select SocialSecurityPeople.SocialSecurityPeopleID,SocialSecurityPeople.SocialSecurityPeopleName,IsPaySocialSecurity, IsPayAccumulationFund, 
 SocialSecurity.PayTime SSPayTime, SocialSecurity.PayMonthCount SSPayMonthCount, SocialSecurity.SocialSecurityBase,SocialSecurity.PayProportion SSPayProportion,SocialSecurity.Status SSStatus, 
@@ -93,7 +93,10 @@ on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPe
 left join dbo.AccumulationFund 
 on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID 
 where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @status or AccumulationFund.status=@status) and SocialSecurityPeople.IsPay=0";
-
+            if (peopleid != 0)
+            {
+                sql += $" and SocialSecurityPeople.SocialSecurityPeopleID = {peopleid}";
+            }
             List<UnInsuredPeople> unIsuredPeopleList = await DbHelper.QueryAsync<UnInsuredPeople>(sql, new
             {
                 MemberID = memberID,
@@ -162,7 +165,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         public async Task<bool> ModifySocialSecurityPeople(SocialSecurityPeople socialSecurityPeople)
         {
 
-            DbParameter[] parameters = new DbParameter[]{
+            DbParameter[] parameters = new DbParameter[] {
                 new SqlParameter("@Flag", SqlDbType.Bit) { Direction = ParameterDirection.Output },
                 //参保人
                 new SqlParameter("@SocialSecurityPeopleID", SqlDbType.Int) { Value = socialSecurityPeople.SocialSecurityPeopleID },

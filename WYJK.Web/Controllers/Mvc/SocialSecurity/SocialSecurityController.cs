@@ -147,7 +147,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public JsonResult BatchStop(int[] SocialSecurityPeopleIDs)
         {
-            //修改参保人社保状态
+            // 修改参保人社保状态
             bool flag = _socialSecurityService.ModifySocialStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.AlreadyStop);
 
             #region 记录日志
@@ -188,7 +188,7 @@ namespace WYJK.Web.Controllers.Mvc
             if (flag == true)
             {
                 string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleID});
-                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("更新社保客户:{0}，社保号为：{1}", names,SocialSecurityNo) });
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("更新社保客户:{0}，社保号为：{1}", names, SocialSecurityNo) });
             }
             #endregion
 

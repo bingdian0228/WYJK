@@ -117,6 +117,7 @@
                         <td>
                             <a title="查看" href='@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=1' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
                             <a title="编辑" href='@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=0' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                            <a title="添加参保人" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=@member.MemberID&Type=1&isadd=1' class="ml-5" style="text-decoration:none">添加参保人</a>
                         </td>
                     </tr>
                 }
@@ -124,5 +125,5 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="@Url.Action("EditMemberExtensionInformation","Member")?type=0" class="btn btn-danger radius action-complete">添加注册用户</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
 </div>

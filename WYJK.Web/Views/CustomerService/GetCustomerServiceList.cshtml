@@ -252,5 +252,5 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a> <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
 </div>

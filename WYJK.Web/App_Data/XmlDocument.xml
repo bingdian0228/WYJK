@@ -1162,6 +1162,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.CustomerPaymentManagement(WYJK.Entity.CustomerServiceParameter)">
+            <summary>
+            获取客户管理列表
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.GetMemberList1(System.String)">
             <summary>
             获取用户列表
@@ -1176,7 +1182,7 @@
             <param name="SocialSecurityPeopleIDs"></param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.GetSocialSecurityPeopleDetail(System.Int32,System.Int32,System.Int32)">
+        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.GetSocialSecurityPeopleDetail(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Int32,System.Nullable{System.Int32})">
             <summary>
             根据参保人ID获取详情
             </summary>
@@ -1216,6 +1222,24 @@
         <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.SaveEnterprise(WYJK.Web.Controllers.Mvc.CustomerServiceController.SocialSecurityPeopleDetail)">
             <summary>
             保存
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.Recharge(System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            充值
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.Payment(System.Nullable{System.Int32})">
+            <summary>
+            缴费
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.BuyService(System.Nullable{System.Int32})">
+            <summary>
+            买服务
             </summary>
             <returns></returns>
         </member>
@@ -1359,7 +1383,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Mvc.MemberController.EditMemberExtensionInformation(System.Int32,System.Int32)">
+        <member name="M:WYJK.Web.Controllers.Mvc.MemberController.EditMemberExtensionInformation(System.Nullable{System.Int32},System.Int32)">
             <summary>
             新建编辑
             </summary>
@@ -1396,7 +1420,7 @@
             基础信息控制器
             </summary>
         </member>
-        <member name="M:WYJK.Web.Controllers.Mvc.OptionViewController.RegionView(System.String,System.String,System.String)">
+        <member name="M:WYJK.Web.Controllers.Mvc.OptionViewController.RegionView(System.String,System.String,System.String,System.Nullable{System.Boolean},System.String,System.String)">
             <summary>
             省市区联动
             </summary>
@@ -1600,18 +1624,6 @@
             <summary>
             获取员工列表
             </summary>
-            <returns></returns>
-        </member>
-        <member name="T:WYJK.Web.ModelStateExtensions">
-            <summary>
-            ModelState 的扩展
-            </summary>
-        </member>
-        <member name="M:WYJK.Web.ModelStateExtensions.FirstModelStateError(System.Web.Http.ModelBinding.ModelStateDictionary)">
-            <summary>
-             获取第一个错误信息
-            </summary>
-            <param name="modelState"></param>
             <returns></returns>
         </member>
         <member name="T:WYJK.Web.Filters.CustomAuthorizedAttribute">

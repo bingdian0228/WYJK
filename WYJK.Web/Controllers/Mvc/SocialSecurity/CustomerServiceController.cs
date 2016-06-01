@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -27,11 +29,32 @@ namespace WYJK.Web.Controllers.Mvc
         private readonly IMemberService _memberService = new MemberService();
         private readonly IEnterpriseService _enterpriseService = new EnterpriseService();
         private readonly IUserService _userService = new UserService();
+        private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
+
         /// <summary>
         /// 获取客户管理列表
         /// </summary>
         /// <returns></returns>
         public ActionResult GetCustomerServiceList(CustomerServiceParameter parameter)
+        {
+            PagedResult<CustomerServiceViewModel> customerServiceList = _customerService.GetCustomerServiceList(parameter);
+
+
+            List<SelectListItem> UserTypeList = EnumExt.GetSelectList(typeof(UserTypeEnum));
+            UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
+
+            ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text");
+
+            ViewBag.memberList = _memberService.GetMembersList();
+
+            return View(customerServiceList);
+        }
+
+        /// <summary>
+        /// 获取客户管理列表
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult CustomerPaymentManagement(CustomerServiceParameter parameter)
         {
             PagedResult<CustomerServiceViewModel> customerServiceList = _customerService.GetCustomerServiceList(parameter);
 
@@ -113,14 +136,22 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="SocialSecurityPeopleID"></param>
         /// <param name="MemberID"></param>
         /// <returns></returns>
-        public ActionResult GetSocialSecurityPeopleDetail(int SocialSecurityPeopleID, int MemberID, int Type)
+        public ActionResult GetSocialSecurityPeopleDetail(int? SocialSecurityPeopleID, int? MemberID, int Type, int? IsAdd)
         {
+            SocialSecurityPeople socialSecurityPeople = null;
 
-            SocialSecurityPeople socialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(SocialSecurityPeopleID);
+            if (SocialSecurityPeopleID == null)
+            {
+                socialSecurityPeople = new SocialSecurityPeople() { socialSecurity = new SocialSecurity(), accumulationFund = new AccumulationFund() };
+            }
+            else
+            {
+                socialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(SocialSecurityPeopleID.Value);
+            }
 
             if (socialSecurityPeople.IsPaySocialSecurity)
             {
-                socialSecurityPeople.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID);
+                socialSecurityPeople.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID.Value);
                 //企业签约单位列表
                 List<EnterpriseSocialSecurity> SSList = _socialSecurityService.GetEnterpriseSocialSecurityByAreaList(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
                 EnterpriseSocialSecurity SS = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
@@ -130,7 +161,7 @@ namespace WYJK.Web.Controllers.Mvc
             }
             if (socialSecurityPeople.IsPayAccumulationFund)
             {
-                socialSecurityPeople.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID);
+                socialSecurityPeople.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID.Value);
                 //企业签约单位列表
                 List<EnterpriseSocialSecurity> AFList = _socialSecurityService.GetEnterpriseSocialSecurityByAreaList(socialSecurityPeople.accumulationFund.AccumulationFundArea, socialSecurityPeople.HouseholdProperty);
                 EnterpriseSocialSecurity AF = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.accumulationFund.AccumulationFundArea, socialSecurityPeople.HouseholdProperty);
@@ -140,10 +171,10 @@ namespace WYJK.Web.Controllers.Mvc
             }
 
             //获取会员信息
-            ViewData["member"] = _memberService.GetMemberInfoForAdmin(MemberID);
+            ViewData["member"] = _memberService.GetMemberInfoForAdmin(MemberID.Value);
 
             //获取账户列表
-            ViewData["accountRecordList"] = _memberService.GetAccountRecordList(MemberID).OrderByDescending(n => n.CreateTime).ToList();
+            ViewData["accountRecordList"] = _memberService.GetAccountRecordList(MemberID.Value).OrderByDescending(n => n.CreateTime).ToList();
 
             #region 户口性质
             List<SelectListItem> list = EnumExt.GetSelectList(typeof(HouseholdPropertyEnum));
@@ -163,6 +194,18 @@ namespace WYJK.Web.Controllers.Mvc
 
 
             return View(socialSecurityPeople);
+        }
+
+        public ActionResult GetESList(string area, string household)
+        {
+            var SSList = _socialSecurityService.GetEnterpriseSocialSecurityByAreaList(area, household).Select(a => new { a.EnterpriseID, a.EnterpriseName }).ToList();
+            var SS = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(area, household);
+            return Json(new
+            {
+                SSMaxBase = Math.Round(SS.SocialAvgSalary * SS.MaxSocial / 100),
+                SSMinBase = Math.Round(SS.SocialAvgSalary * SS.MinSocial / 100),
+                List = SSList
+            });
         }
 
         /// <summary>
@@ -194,7 +237,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// </summary>
         /// <param name="EnterpriseID"></param>
         /// <returns></returns>
-        public ActionResult GetSSEnterprise(int EnterpriseID,int HouseholdProperty)
+        public ActionResult GetSSEnterprise(int EnterpriseID, int HouseholdProperty)
         {
             EnterpriseSocialSecurity model = _enterpriseService.GetEnterpriseSocialSecurity(EnterpriseID);
             decimal SSMaxBase = Math.Round(model.SocialAvgSalary * model.MaxSocial / 100);
@@ -296,7 +339,6 @@ namespace WYJK.Web.Controllers.Mvc
                     {
                         #region 更新公积金
                         DbHelper.ExecuteSqlCommand($"update AccumulationFund set AccumulationFundNo='{model.AccumulationFundNo}',AccumulationFundBase='{model.AccumulationFundBase}',RelationEnterprise='{model.AFEnterpriseList}',PayProportion='{model.afPayProportion.TrimEnd('%')}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
-                        
                         #endregion
                     }
                     transaction.Complete();
@@ -313,6 +355,144 @@ namespace WYJK.Web.Controllers.Mvc
             }
             TempData["Message"] = "更新成功";
             return RedirectToAction("GetCustomerServiceList");
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> AddSocialSecurityPeople(SocialSecurityPeople model)
+        {
+            //验证身份证
+            if (!Regex.IsMatch(model.IdentityCard, @"(^\d{18}$)|(^\d{15}$)"))
+            {
+                TempData["Message"] = "身份证号填写错误";
+                return RedirectToAction("GetCustomerServiceList");
+            }
+
+            //判断身份证是否已存在
+            if (_socialSecurityService.IsExistsSocialSecurityPeopleIdentityCard(model.IdentityCard))
+            {
+                TempData["Message"] = "身份证已存在";
+                return RedirectToAction("GetCustomerServiceList");
+            }
+            model.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+
+
+            int SocialSecurityID = 0;
+            decimal SocialSecurityAmount = 0;
+            int SocialSecurityMonthCount = 0;
+            decimal SocialSecurityBacklogCost = 0;
+            int AccumulationFundID = 0;
+            decimal AccumulationFundAmount = 0;
+            int AccumulationFundMonthCount = 0;
+            decimal AccumulationFundBacklogCost = 0;
+
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    //保存社保参保方案
+                    if (model.socialSecurity != null)
+                    {
+                        //if (model.socialSecurity.PayTime.Day > 14)
+                        //    model.socialSecurity.PayTime.AddMonths(1);
+
+                        //返回社保ID
+                        SocialSecurityID = _socialSecurityService.AddSocialSecurity(model.socialSecurity);
+                        //查询社保金额
+                        SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurityID);
+                        //查询社保月数
+                        SocialSecurityMonthCount = _socialSecurityService.GetSocialSecurityMonthCount(SocialSecurityID);
+                    }
+
+                    //保存公积金参保方案
+                    if (model.accumulationFund != null)
+                    {
+                        //if (model.accumulationFund.PayTime.Day > 14)
+                        //    model.accumulationFund.PayTime.AddMonths(1);
+                        //返回公积金ID
+                        AccumulationFundID = _socialSecurityService.AddAccumulationFund(model.accumulationFund);
+                        //查询公积金金额
+                        AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(AccumulationFundID);
+                        //查询公积金月数
+                        AccumulationFundMonthCount = _socialSecurityService.GetAccumulationFundMonthCount(AccumulationFundID);
+                    }
+
+                    transaction.Complete();
+
+
+                    TempData["Message"] = "添加成功";
+                }
+                catch (Exception ex)
+                {
+                    TempData["Message"] = "添加失败";
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+                model.IsPaySocialSecurity = true;
+                model.IsPayAccumulationFund = true;
+
+                model.accumulationFund.AccumulationFundID = AccumulationFundID;
+                model.socialSecurity.SocialSecurityID = SocialSecurityID;
+                var result = await _socialSecurityService.AddSocialSecurityPeople(model);
+
+                TempData["Message"] = result ? "添加成功" : "添加失败";
+            }
+            return RedirectToAction("GetCustomerServiceList");
+        }
+
+        /// <summary>
+        /// 充值
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Recharge(int? id, int? memberid)
+        {
+
+            return View();
+        }
+
+        /// <summary>
+        /// 缴费
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Payment(int? id)
+        {
+            ////未参保状态
+            //int status = (int)SocialSecurityStatusEnum.UnInsured;
+
+            //UnInsuredPeople item = (await _socialSecurityService.GetUnInsuredPeopleList(id.Value, status, peopleid.Value)).FirstOrDefault();
+
+            //if (item.IsPaySocialSecurity)
+            //{
+            //    item.SocialSecurityAmount = item.SocialSecurityBase * item.SSPayProportion / 100 * item.SSPayMonthCount;
+            //    item.socialSecurityFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+            //}
+            //if (item.IsPayAccumulationFund)
+            //{
+            //    item.AccumulationFundAmount = item.AccumulationFundBase * item.AFPayProportion / 100 * item.AFPayMonthCount;
+            //    item.AccumulationFundFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+            //}
+
+            //if (item.SSStatus != (int)SocialSecurityStatusEnum.UnInsured)
+            //{
+            //    item.SSStatus = 0;
+            //}
+
+            //if (item.AFStatus != (int)SocialSecurityStatusEnum.UnInsured)
+            //{
+            //    item.AFStatus = 0;
+            //}
+
+            return View();
+        }
+
+        /// <summary>
+        /// 买服务
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult BuyService(int? id)
+        {
+            return View();
         }
 
         public class SocialSecurityPeopleDetail

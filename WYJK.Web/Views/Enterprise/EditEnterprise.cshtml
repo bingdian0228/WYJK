@@ -86,21 +86,20 @@
                 @if (Model.EnterpriseArea == null)
                 {
                     @Html.Action("RegionView", "OptionView", new
-               {
-                   pname = string.Empty,
-                   cname = string.Empty,
-                   coname = string.Empty
-               })
+                   {
+                       pname = string.Empty,
+                       cname = string.Empty,
+                       coname = string.Empty
+                   })
                 }
                 else
                 {
                     @Html.Action("RegionView", "OptionView", new
-               {
-                   pname = Model.EnterpriseArea.Split('|')[0],
-                   cname = Model.EnterpriseArea.Split('|').Length > 1 ? Model.EnterpriseArea.Split('|')[1] : string.Empty,
-                   coname = Model.EnterpriseArea.Split('|').Length > 2 ? Model.EnterpriseArea.Split('|')[2] : string.Empty
-               })
-
+                   {
+                       pname = Model.EnterpriseArea.Split('|')[0],
+                       cname = Model.EnterpriseArea.Split('|').Length > 1 ? Model.EnterpriseArea.Split('|')[1] : string.Empty,
+                       coname = Model.EnterpriseArea.Split('|').Length > 2 ? Model.EnterpriseArea.Split('|')[2] : string.Empty
+                   })
                 }
 
             </div>

@@ -298,6 +298,14 @@ namespace WYJK.Data.ServiceImpl
             return model;
         }
 
+
+        public async Task<int> GetMemberId(string MemberName)
+        {
+            string sql = $"select MemberId from Members where MemberName='{MemberName}'";
+            ExtensionInformationParameter model = await DbHelper.QuerySingleAsync<ExtensionInformationParameter>(sql);
+            return model.MemberID;
+        }
+
         /// <summary>
         /// 获取补充信息
         /// </summary>

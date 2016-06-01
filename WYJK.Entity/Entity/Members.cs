@@ -461,6 +461,27 @@ namespace WYJK.Entity
     [JsonObject(MemberSerialization.OptOut)]
     public class ExtensionInformation
     {
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        [JsonIgnore]
+        public string MemberName { get; set; }
+        /// <summary>
+        /// 密码
+        /// </summary>
+        [JsonIgnore]
+        public string Password { get; set; }
+        /// <summary>
+        /// 用户手机号
+        /// </summary>
+        [JsonIgnore]
+        public string MemberPhone { get; set; }
+        /// <summary>
+        /// 注册邀请码
+        /// </summary>		
+        [JsonIgnore]
+        public string InviteCode { get; set; }
+
 
         /// <summary>
         /// 是否补全信息 0：未补全，1：已补全
