@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
@@ -30,6 +32,13 @@ namespace WYJK.Web.Controllers.Mvc
         private readonly IEnterpriseService _enterpriseService = new EnterpriseService();
         private readonly IUserService _userService = new UserService();
         private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
+
+        private HttpClient client = new HttpClient();
+        private string url = "http://localhost:47565/api";
+        private JsonMediaTypeFormatter formatter = System.Web.Http.GlobalConfiguration.Configuration.Formatters.Where(f =>
+        {
+            return f.SupportedMediaTypes.Any(v => v.MediaType.Equals("application/json", StringComparison.CurrentCultureIgnoreCase));
+        }).FirstOrDefault() as JsonMediaTypeFormatter;
 
         /// <summary>
         /// 获取客户管理列表
@@ -295,7 +304,6 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpPost]
         public ActionResult SaveEnterprise(SocialSecurityPeopleDetail model)
         {
-
             SocialSecurityPeople socialSecurityPeople = new SocialSecurityPeople();
             socialSecurityPeople.IdentityCard = model.IdentityCard;
 
@@ -395,6 +403,8 @@ namespace WYJK.Web.Controllers.Mvc
                         //if (model.socialSecurity.PayTime.Day > 14)
                         //    model.socialSecurity.PayTime.AddMonths(1);
 
+                        model.socialSecurity.SocialSecurityBase = model.SocialSecurityBase;
+                        model.socialSecurity.PayProportion = model.SSPayProportion;
                         //返回社保ID
                         SocialSecurityID = _socialSecurityService.AddSocialSecurity(model.socialSecurity);
                         //查询社保金额
@@ -408,6 +418,9 @@ namespace WYJK.Web.Controllers.Mvc
                     {
                         //if (model.accumulationFund.PayTime.Day > 14)
                         //    model.accumulationFund.PayTime.AddMonths(1);
+
+                        model.accumulationFund.AccumulationFundBase = model.AccumulationFundBase;
+                        model.accumulationFund.PayProportion = model.SSPayProportion;
                         //返回公积金ID
                         AccumulationFundID = _socialSecurityService.AddAccumulationFund(model.accumulationFund);
                         //查询公积金金额
@@ -445,54 +458,124 @@ namespace WYJK.Web.Controllers.Mvc
         /// 充值
         /// </summary>
         /// <returns></returns>
-        public ActionResult Recharge(int? id, int? memberid)
+        public ActionResult Recharge(int? id)
         {
+            return View(_memberService.GetAccountInfo(id.Value));
+        }
 
-            return View();
+        [HttpPost]
+        public async Task<ActionResult> Recharge(int? id, string PayMethod, decimal? Amount)
+        {
+            try
+            {
+                var req = await client.PostAsJsonAsync(url + "/Member/SubmitRechargeAmount", new { MemberID = id, PayMethod, Amount });
+                var result = await req.Content.ReadAsAsync<JsonResult<object>>();
+
+                TempData["Message"] = result.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "充值失败！";
+            }
+            return RedirectToAction("CustomerPaymentManagement");
         }
 
         /// <summary>
-        /// 缴费
+        /// 交费
         /// </summary>
         /// <returns></returns>
-        public ActionResult Payment(int? id)
+        public async Task<ActionResult> Payment(int? id, int? peopleid)
         {
+            ViewBag.SocialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(peopleid.Value);
+            ViewBag.SocialSecurityDetail = _socialSecurityService.GetSocialSecurityDetail(peopleid.Value);
+            ViewBag.AccumulationFund = _accumulationFundService.GetAccumulationFundDetail(peopleid.Value);
+            ViewBag.AccountInfo = _memberService.GetAccountInfo(id.Value);
+
             ////未参保状态
-            //int status = (int)SocialSecurityStatusEnum.UnInsured;
+            int status = (int)SocialSecurityStatusEnum.UnInsured;
 
-            //UnInsuredPeople item = (await _socialSecurityService.GetUnInsuredPeopleList(id.Value, status, peopleid.Value)).FirstOrDefault();
+            UnInsuredPeople item = (await _socialSecurityService.GetUnInsuredPeopleList(id.Value, status, peopleid.Value)).FirstOrDefault();
 
-            //if (item.IsPaySocialSecurity)
-            //{
-            //    item.SocialSecurityAmount = item.SocialSecurityBase * item.SSPayProportion / 100 * item.SSPayMonthCount;
-            //    item.socialSecurityFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
-            //}
-            //if (item.IsPayAccumulationFund)
-            //{
-            //    item.AccumulationFundAmount = item.AccumulationFundBase * item.AFPayProportion / 100 * item.AFPayMonthCount;
-            //    item.AccumulationFundFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
-            //}
+            if (item.IsPaySocialSecurity)
+            {
+                item.SocialSecurityAmount = item.SocialSecurityBase * item.SSPayProportion / 100 * item.SSPayMonthCount;
+                item.socialSecurityFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+            }
+            if (item.IsPayAccumulationFund)
+            {
+                item.AccumulationFundAmount = item.AccumulationFundBase * item.AFPayProportion / 100 * item.AFPayMonthCount;
+                item.AccumulationFundFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+            }
 
-            //if (item.SSStatus != (int)SocialSecurityStatusEnum.UnInsured)
-            //{
-            //    item.SSStatus = 0;
-            //}
+            if (item.SSStatus != (int)SocialSecurityStatusEnum.UnInsured)
+            {
+                item.SSStatus = 0;
+            }
 
-            //if (item.AFStatus != (int)SocialSecurityStatusEnum.UnInsured)
-            //{
-            //    item.AFStatus = 0;
-            //}
+            if (item.AFStatus != (int)SocialSecurityStatusEnum.UnInsured)
+            {
+                item.AFStatus = 0;
+            }
 
-            return View();
+            return View(item);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Payment(int? id, int? peopleid, string PayMethod, decimal? Amount)
+        {
+            try
+            {
+                var req = await client.PostAsJsonAsync(url + "/Order/GenerateOrder", new { MemberID = id, SocialSecurityPeopleIDS = new[] { peopleid } });
+
+                var result = await req.Content.ReadAsAsync<JsonResult<Dictionary<bool, string>>>();
+                TempData["Message"] = result.Message;
+
+                if (result.status)
+                {
+                    var ordercode = result.Data[true];
+                    var payreq = await client.PostAsJsonAsync(url + "/Order/OrderPayment", new { OrderCode = ordercode, MemberID = id, PaymentMethod = PayMethod, GenerateDate = DateTime.Now, Status = 2, PayTime = DateTime.Now, AuditTime = DateTime.Now });
+
+                    var result1 = await payreq.Content.ReadAsAsync<JsonResult<Dictionary<bool, string>>>();
+                    TempData["Message"] = result1.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "交费失败。";
+            }
+
+            return RedirectToAction("CustomerPaymentManagement");
         }
 
         /// <summary>
         /// 买服务
         /// </summary>
         /// <returns></returns>
-        public ActionResult BuyService(int? id)
+        public async Task<ActionResult> BuyService(int? id)
         {
-            return View();
+            var req = await client.GetAsync(url + $"/Member/GetRenewalServiceList?MemberID={id}");
+            ViewBag.RenewalServiceList = (await req.Content.ReadAsAsync<JsonResult<List<KeyValuePair<int, decimal>>>>()).Data;
+
+            return View(_memberService.GetAccountInfo(id.Value));
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> BuyService(int? id, string PayMethod, string MonthCountAmount)
+        {
+            try
+            {
+                var ma = MonthCountAmount.Split('-');
+                var req = await client.PostAsJsonAsync(url + "/Member/SubmitRenewalService", new { MemberID = id, PayMethod, MonthCount = ma[0], Amount = ma[1] });
+
+                var result = await req.Content.ReadAsAsync<JsonResult<object>>();
+                TempData["Message"] = result.Message;
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = "续费失败。";
+            }
+            return RedirectToAction("CustomerPaymentManagement");
         }
 
         public class SocialSecurityPeopleDetail

@@ -67,7 +67,27 @@ namespace WYJK.Entity
         /// 是否有订单已经支付过
         /// </summary>
         public bool IsPay { get; set; }
+        /// <summary>
+        /// 社保基数
+        /// </summary>
+        [JsonIgnore]
+        public decimal SocialSecurityBase { get; set; }
 
+        /// <summary>
+        /// 公积金基数
+        /// </summary>
+        [JsonIgnore]
+        public decimal AccumulationFundBase { get; set; }
+        /// <summary>
+        /// 社保缴费比例
+        /// </summary>
+        [JsonIgnore]
+        public decimal SSPayProportion { get; set; }
+        /// <summary>
+        /// 公积金缴费比例
+        /// </summary>
+        [JsonIgnore]
+        public decimal AFPayProportion { get; set; }
     }
 
     /// <summary>

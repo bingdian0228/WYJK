@@ -243,7 +243,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool IsExistsWaitingPayOrderByMemberID(int MemberID)
         {
-            string sqlstr = $"select count(*) from Order where MemberID = {MemberID} and Status ={(int)OrderEnum.WaitingPay}";
+            string sqlstr = $"select count(*) from [Order] where MemberID = {MemberID} and Status ={(int)OrderEnum.WaitingPay}";
             int result = DbHelper.QuerySingle<int>(sqlstr);
             return result > 0;
         }

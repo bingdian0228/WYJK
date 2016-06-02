@@ -1,4 +1,4 @@
-﻿
+﻿@model AccountInfo
 @section Footer{
     <script src="~/Content/lib/laydate-master/laydate.dev.js"></script>
     <script type="text/javascript">
@@ -21,31 +21,32 @@
 }
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 财务管理 <span class="c-gray en">&gt;</span> 服务费<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="pd-20">
-    <form action='@Url.Action("EditMemberExtensionInformation", "Member")' method="post" class="form form-horizontal" id="form-article-add">
-
+    <form action='@Url.Action("BuyService")' method="post" class="form form-horizontal" id="form-article-add">
         <div class="row cl">
-            <label class="form-label col-2">客户名称：</label>
+            <label class="form-label col-2">会员名称：</label>
             <div class="formControls col-2">
-                王五
+                @Model.MemberName
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-2">交费方式：</label>
             <div class="formControls col-2">
                 <span class="select-box" style="width: 270px;">
-                    <select class="select">
-                        <option value="1">1个月</option>
-                        <option value="2">2个月</option>
-                        <option value="3">3个月</option>
-                        <option value="4">4个月</option>
-                        <option value="5">5个月</option>
-                        <option value="6">6个月</option>
-                        <option value="7">7个月</option>
-                        <option value="8">8个月</option>
-                        <option value="9">9个月</option>
-                        <option value="10">10个月</option>
-                        <option value="11">11个月</option>
-                        <option value="12">12个月</option>
+                    <select class="select" name="PayMethod">
+                        <option value="现金">现金</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">服务月数：</label>
+            <div class="formControls col-2">
+                <span class="select-box" style="width: 270px;">
+                    <select class="select" name="MonthCountAmount">
+                        @foreach (var item in ViewBag.RenewalServiceList as List<KeyValuePair<int, decimal>>)
+                        {
+                            <option value="@(item.Key)-@item.Value">@(item.Key)个月￥@item.Value</option>
+                        }
                     </select>
                 </span>
             </div>

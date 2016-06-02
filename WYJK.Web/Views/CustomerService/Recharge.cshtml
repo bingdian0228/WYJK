@@ -1,4 +1,4 @@
-﻿
+﻿@model AccountInfo
 @section Footer{
     <script src="~/Content/lib/laydate-master/laydate.dev.js"></script>
     <script type="text/javascript">
@@ -7,7 +7,6 @@
                 $('input,select,textarea', $('form')).attr('disabled', true);
                 $('button', $('form')).css('display', 'none');
             }
-
         })
 
         laydate({
@@ -22,24 +21,24 @@
 }
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 财务管理 <span class="c-gray en">&gt;</span> 账户充值<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="pd-20">
-    <form action='@Url.Action("EditMemberExtensionInformation", "Member")' method="post" class="form form-horizontal" id="form-article-add">
+    <form action='@Url.Action("Recharge")' method="post" class="form form-horizontal" id="form-article-add">
         <div class="row cl">
-            <label class="form-label col-2">客户名称：</label>
+            <label class="form-label col-2">会员名称：</label>
             <div class="formControls col-2">
-                李四
+                @Model.MemberName
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-2">个人账户余额：</label>
             <div class="formControls col-2">
-                600.00
+                @Model.Account.ToString("0.00")
             </div>
         </div>
         <div class="row cl">
             <label class="form-label col-2">充值方式：</label>
             <div class="formControls col-2">
                 <span class="select-box" style="width: 270px;">
-                    <select class="select">
+                    <select class="select" name="PayMethod">
                         <option value="现金">现金</option>
                     </select>
                 </span>
@@ -48,7 +47,7 @@
         <div class="row cl">
             <label class="form-label col-2">充值金额：</label>
             <div class="formControls col-2">
-                <input type="text" name="" value="" class="input-text" />
+                <input type="text" name="Amount" value="" class="input-text" />
             </div>
         </div>
         <div class="row cl">

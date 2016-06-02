@@ -176,7 +176,7 @@
         <table class="table table-border table-bordered table-bg table-hover table-sort">
             <thead>
                 <tr class="text-c">
-                    <th width="25"><input type="checkbox" name="" value=""></th>
+                    <th width="25"></th>
                     <th width="80">用户类型</th>
                     <th width="80">代理机构</th>
                     <th width="80">电话</th>
@@ -200,7 +200,7 @@
                 @foreach (var customerService in Model.Items)
                 {
                     <tr class="text-c">
-                        <td><input type="checkbox" value="@customerService.SocialSecurityPeopleID" name="customer"></td>
+                        <td><input type="radio" value="@customerService.SocialSecurityPeopleID" memberid="@customerService.MemberID" name="customer"></td>
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)(Convert.ToInt32(customerService.UserType)))
                         </td>
@@ -251,5 +251,5 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="@Url.Action("Payment", "CustomerService")" class="btn btn-danger radius ">社保公积金交费</a> <a href="@Url.Action("Recharge","CustomerService")" class="btn btn-danger radius">账户充值</a> <a href="@Url.Action("BuyService","CustomerService")" class="btn btn-danger radius">服务交费</a> </span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a> <a href="#" class="btn btn-danger radius "  onmousedown="if ($('[name=customer]:checked:first').val()) {$(this).attr('href', '@Url.Action("Payment", "CustomerService")/' + $('[name=customer]:checked:first').attr('memberid') + '/?peopleid=' + $('[name=customer]:checked:first').val()) } else { alert('请选择参保人');}">社保公积金交费</a> <a href="#" class="btn btn-danger radius" onmousedown="if ($('#MemberID').val()) { $(this).attr('href', '@Url.Action("Recharge", "CustomerService")/' + $('#MemberID').val()) } else { alert('请选择机构');}">账户充值</a> <a href="#" onmousedown="if ($('#MemberID').val()) { $(this).attr('href', '@Url.Action("BuyService", "CustomerService")/' + $('#MemberID').val()) } else { alert('请选择机构');}" class="btn btn-danger radius">服务交费</a> </span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
 </div>
