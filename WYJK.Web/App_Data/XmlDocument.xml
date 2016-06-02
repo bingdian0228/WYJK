@@ -1231,7 +1231,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.Payment(System.Nullable{System.Int32})">
+        <member name="M:WYJK.Web.Controllers.Mvc.CustomerServiceController.Payment(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             缴费
             </summary>
