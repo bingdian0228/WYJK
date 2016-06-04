@@ -293,8 +293,8 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         {
             EnterpriseSocialSecurity model = GetDefaultEnterpriseSocialSecurityByArea(accumulationFund.AccumulationFundArea, accumulationFund.HouseholdProperty);
             decimal PayProportion = model.CompProportion + model.PersonalProportion;
-            string sql = "insert into AccumulationFund(SocialSecurityPeopleID,AccumulationFundArea,AccumulationFundBase,PayProportion,PayTime,PayMonthCount,PayBeforeMonthCount,Note,Status,RelationEnterprise)"
-                + $" values(@SocialSecurityPeopleID,@AccumulationFundArea,@AccumulationFundBase,@PayProportion,@PayTime,@PayMonthCount,@PayBeforeMonthCount,@Note,{(int)SocialSecurityStatusEnum.UnInsured},@RelationEnterprise)";
+            string sql = "insert into AccumulationFund(SocialSecurityPeopleID,AccumulationFundArea,AccumulationFundBase,PayProportion,PayTime,PayMonthCount,PayBeforeMonthCount,Note,Status,RelationEnterprise,AccumulationFundType)"
+                + $" values(@SocialSecurityPeopleID,@AccumulationFundArea,@AccumulationFundBase,@PayProportion,@PayTime,@PayMonthCount,@PayBeforeMonthCount,@Note,{(int)SocialSecurityStatusEnum.UnInsured},@RelationEnterprise,@AccumulationFundType)";
             DbParameter[] parameters = new DbParameter[] {
                 new SqlParameter("@SocialSecurityPeopleID",accumulationFund.SocialSecurityPeopleID),
                 new SqlParameter("@AccumulationFundArea",accumulationFund.AccumulationFundArea),
@@ -304,7 +304,8 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
                 new SqlParameter("@PayMonthCount",accumulationFund.PayMonthCount),
                 new SqlParameter("@PayBeforeMonthCount",accumulationFund.PayBeforeMonthCount),
                 new SqlParameter("@Note",accumulationFund.Note ?? ""),
-                new SqlParameter("@RelationEnterprise",model.EnterpriseID)
+                new SqlParameter("@RelationEnterprise",model.EnterpriseID),
+                new SqlParameter("@AccumulationFundType",model.AccumulationFundCode)
             };
 
             int result = DbHelper.ExecuteSqlCommandScalar(sql, parameters);

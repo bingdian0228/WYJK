@@ -395,10 +395,10 @@ namespace WYJK.Web.Controllers
             }
             sbHtml.Append("</tr>");
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 10; i++)
             {
                 sbHtml.Append("<tr>");
-                sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>{0}</td>", i);
+                sbHtml.AppendFormat("<td>{0}</td>", i);
                 sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>屌丝{0}号</td>", i);
                 sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>{0}</td>", new Random().Next(20, 30) + i);
                 sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>{0}</td>", DateTime.Now);
@@ -407,7 +407,8 @@ namespace WYJK.Web.Controllers
             sbHtml.Append("</table>");
 
             //第一种:使用FileContentResult
-            byte[] fileContents = Encoding.Default.GetBytes(sbHtml.ToString());
+            
+            byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
             return File(fileContents, "application/ms-excel", "fileContents.xls");
 
             ////第二种:使用FileStreamResult

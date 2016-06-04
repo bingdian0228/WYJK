@@ -72,5 +72,31 @@ namespace WYJK.Entity
         /// 社保类型
         /// </summary>
         public string SocialSecurityType { get; set; }
+
+        /// <summary>
+        /// 当年只能导入一份
+        /// </summary>
+        public int Year { get; set; }
+
+        /// <summary>
+        /// 明细
+        /// </summary>
+        public string PaymentDetails { get; set; }
+
+        /// <summary>
+        /// 合计
+        /// </summary>
+        public decimal TotalCount { get; set; }
+    }
+
+
+    /// <summary>
+    /// 企业缴费明细
+    /// </summary>
+    public class PaymentDetailsParameter : PagedParameter
+    {
+        public string IdentityCard { get; set; }
+        public string CompanyName { get; set; }
+        public string Year { get; set; }
     }
 }

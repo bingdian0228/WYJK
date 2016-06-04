@@ -155,13 +155,13 @@
         </span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20">
+    @*<div class="cl pd-5 bg-1 bk-gray mt-20">
         @using (Html.BeginForm("ImportPaymentDetails", "Enterprise", FormMethod.Post, new { name = "shiye", enctype = "multipart/form-data" }))
         {
             <p>
-                失业缴费明细：<input id="FileUpload" type="file" name="files" />
+                失业缴费明细：<input id="FileUpload" type="file" name="files" multiple  />
                 <input id="shiye" type="submit" value="导入" style="width:60px;" />
             </p>
         }
-    </div>
+    </div>*@
 </div>

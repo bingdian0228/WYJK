@@ -30,6 +30,8 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public JsonResult<dynamic> GenerateOrder(GenerateOrderParameter parameter)
         {
+            //var headers = HttpContext.Current.Request.Headers["Content-Type"];
+
             Dictionary<bool, string> dic = null;
             using (TransactionScope transaction = new TransactionScope())
             {

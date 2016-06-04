@@ -87,6 +87,10 @@ namespace WYJK.Entity
         /// </summary>
         public int RelationEnterprise { get; set; }
 
+        /// <summary>
+        /// 公积金类型
+        /// </summary>
+        public string AccumulationFundType { get; set; }
     }
 
     /// <summary>

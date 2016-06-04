@@ -185,6 +185,17 @@ namespace WYJK.Framework.EnumHelper
         NoPass = 3
     }
 
+    /// <summary>
+    /// 公积金办理类型
+    /// </summary>
+    public enum AccumulationFundTypeEnum
+    {
+        [EnumDisplayName("新开户")]
+        NewAccount = 1,
+        [EnumDisplayName("转移")]
+        Transfer = 2
+    }
+
 
     public class SelectListClass
     {

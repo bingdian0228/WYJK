@@ -231,7 +231,7 @@ namespace WYJK.Web.Controllers.Http
                 Data = list
             };
         }
-        
+
         /// <summary>
         /// 添加参保人  SocialSecurityID:社保ID，AccumulationFundID：公积金ID
         /// </summary>
@@ -270,7 +270,7 @@ namespace WYJK.Web.Controllers.Http
                 Message = flag ? "添加成功" : "添加失败"
             };
         }
-        
+
         /// <summary>
         /// 修改提交参保人  需要传参：参保人ID，社保ID，公积金ID
         /// </summary>
@@ -689,6 +689,43 @@ namespace WYJK.Web.Controllers.Http
 
 
         /// <summary>
+        /// 获取公积金办理类型
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult<dynamic> GetAccumulationFundTypeList()
+        {
+            List<Property> list = SelectListClass.GetSelectList(typeof(AccumulationFundTypeEnum));
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = list
+            };
+        }
+
+        /// <summary>
+        /// 选择公积金转移时获取企业公积金编号与企业名称
+        /// </summary>
+        /// <param name="area"></param>
+        /// <param name="HouseholdProperty"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> AccumulationFundTransferShow(string area, string HouseholdProperty)
+        {
+            EnterpriseSocialSecurity model = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(area, HouseholdProperty);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = new
+                {
+                    EnterpriseName = model.EnterpriseName,
+                    AccumulationFundCode = model.AccumulationFundCode
+                }
+            };
+        }
+
+        /// <summary>
         /// 添加社保方案 返回社保ID:SocialSecurityID,公积金ID:AccumulationFundID，总金额:Amount
         /// </summary>
         /// <param name="socialSecurityPeople"></param>
@@ -794,7 +831,7 @@ namespace WYJK.Web.Controllers.Http
                 {
                     SocialSecurityID = SocialSecurityID,
                     AccumulationFundID = AccumulationFundID,
-                    Amount = SocialSecurityAmount * SocialSecurityMonthCount + AccumulationFundAmount * AccumulationFundMonthCount + SocialSecurityBacklogCost + AccumulationFundBacklogCost+ FreezingCharge
+                    Amount = SocialSecurityAmount * SocialSecurityMonthCount + AccumulationFundAmount * AccumulationFundMonthCount + SocialSecurityBacklogCost + AccumulationFundBacklogCost + FreezingCharge
                 }
             };
         }

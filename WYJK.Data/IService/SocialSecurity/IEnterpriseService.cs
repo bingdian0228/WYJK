@@ -77,5 +77,13 @@ namespace WYJK.Data.IService
         /// <param name="EnterpriseIDs"></param>
         /// <returns></returns>
         string GetEnterpriseNames(int[] EnterpriseIDs);
+
+
+        /// <summary>
+        /// 获取企业缴费明细列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        PagedResult<PaymentDetail> GetPaymentDetailsList(PaymentDetailsParameter parameter);
     }
 }

@@ -40,21 +40,36 @@ namespace WYJK.Web.Controllers.Mvc
         }
 
         /// <summary>
+        /// 获取企业缴费明细列表
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetPaymentDetailsList(PaymentDetailsParameter parameter)
+        {
+            PagedResult<PaymentDetail> list = _enterpriseService.GetPaymentDetailsList(parameter);
+            string wheresqlstr = $" where IdentityCard like '%{parameter.IdentityCard}%' and CompanyName like '%{parameter.CompanyName}%' and Year like '%{parameter.Year}%'";
+            ViewData["totalCount"] = DbHelper.QuerySingle<decimal>($"select ISNULL(sum(PersonalExpenses+ CompanyExpenses),0) TotalCount from PaymentDetail {wheresqlstr}");
+
+            return View(list);
+        }
+
+
+        /// <summary>
         /// 导入缴费明细
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         public ActionResult ImportPaymentDetails()
         {
-
-            HttpPostedFileBase file = Request.Files["files"];
+            HttpFileCollectionBase files = Request.Files;
+            HttpPostedFileBase file = files[0];//Request.Files["files"];
             string FileName;
             string savePath;
             string NoFileName;
             if (file == null || file.ContentLength <= 0)
             {
-                TempData["Message"] = "文件不能为空";
-                return RedirectToAction("GetEnterpriseList");
+                //TempData["Message"] = "文件不能为空";
+                //return RedirectToAction("GetPaymentDetailsList");
+                return Json(new { Status = false, Message = "文件不能为空" });
             }
             else
             {
@@ -68,13 +83,14 @@ namespace WYJK.Web.Controllers.Mvc
                 FileName = NoFileName + DateTime.Now.ToString("yyyyMMddhhmmss") + fileEx;
                 if (!FileType.Contains(fileEx))
                 {
-                    TempData["Message"] = "文件类型不对，只能导入xls和xlsx格式的文件";
-                    return RedirectToAction("GetEnterpriseList");
+                    //TempData["Message"] = "文件类型不对，只能导入xls和xlsx格式的文件";
+                    return Json(new { Status = false, Message = "文件类型不对，只能导入xls和xlsx格式的文件" });
                 }
                 if (filesize >= Maxsize)
                 {
-                    TempData["Message"] = "上传文件超过4M，不能上传";
-                    return RedirectToAction("GetEnterpriseList");
+                    //TempData["Message"] = "上传文件超过4M，不能上传";
+                    //return RedirectToAction("GetPaymentDetailsList");
+                    return Json(new { Status = false, Message = "上传文件超过4M，不能上传" });
                 }
 
                 string path = AppDomain.CurrentDomain.BaseDirectory + "uploads/excel/";
@@ -100,8 +116,9 @@ namespace WYJK.Web.Controllers.Mvc
             }
             catch (Exception ex)
             {
-                TempData["Message"] = ex.Message;
-                return RedirectToAction("GetEnterpriseList");
+                //TempData["Message"] = ex.Message;
+                //return RedirectToAction("GetPaymentDetailsList");
+                return Json(new { Status = false, Message = ex.Message });
             }
             DataTable table = myDataSet.Tables["ExcelInfo"].DefaultView.ToTable();
 
@@ -114,20 +131,74 @@ namespace WYJK.Web.Controllers.Mvc
                     for (int i = 1; i < table.Rows.Count; i++)
                     {
                         PaymentDetail paymentDetail = new PaymentDetail();
-                        paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
-                        paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
-                        paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
-                        paymentDetail.PayTime = table.Rows[i][3].ToString();//缴费年月
-                        paymentDetail.BusinessTime = table.Rows[i][4].ToString();//业务年月
-                        paymentDetail.PaymentType = table.Rows[i][5].ToString();//缴费类型
-                        paymentDetail.SocialInsuranceBase = Convert.ToInt32(table.Rows[i][6]);//缴费基数
-                        paymentDetail.PersonalExpenses = Convert.ToDecimal(table.Rows[i][7]);//个人缴费
-                        paymentDetail.CompanyExpenses = Convert.ToDecimal(table.Rows[i][8]);//单位缴费
-                        paymentDetail.PaymentMark = table.Rows[i][9].ToString();//缴费标志
-                        paymentDetail.CompanyNumber = table.Rows[i][10].ToString();//单位编号
-                        paymentDetail.CompanyName = table.Rows[i][11].ToString();//单位名称
-                        paymentDetail.SettlementMethod = table.Rows[i][12].ToString();//结算方式
-                        paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
+                        if (NoFileName == "工伤缴费明细"|| NoFileName == "生育缴费明细")
+                        {
+                            paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
+                            paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
+                            paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
+                            paymentDetail.PayTime = table.Rows[i][3].ToString();//缴费年月
+                            paymentDetail.BusinessTime = table.Rows[i][4].ToString();//业务年月
+                            paymentDetail.PaymentType = table.Rows[i][5].ToString();//缴费类型
+                            paymentDetail.SocialInsuranceBase = Convert.ToInt32(table.Rows[i][6]);//缴费基数
+                            paymentDetail.PersonalExpenses = 0;//个人缴费
+                            paymentDetail.CompanyExpenses = Convert.ToDecimal(table.Rows[i][7]);//单位缴费
+                            paymentDetail.PaymentMark = table.Rows[i][8].ToString();//缴费标志
+                            paymentDetail.CompanyNumber = table.Rows[i][9].ToString();//单位编号
+                            paymentDetail.CompanyName = table.Rows[i][10].ToString();//单位名称
+                            paymentDetail.SettlementMethod = table.Rows[i][11].ToString();//结算方式
+                            paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
+                        }
+                        else if (NoFileName == "失业缴费明细")
+                        {
+                            paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
+                            paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
+                            paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
+                            paymentDetail.PayTime = table.Rows[i][3].ToString();//缴费年月
+                            paymentDetail.BusinessTime = table.Rows[i][4].ToString();//业务年月
+                            paymentDetail.PaymentType = table.Rows[i][5].ToString();//缴费类型
+                            paymentDetail.SocialInsuranceBase = Convert.ToInt32(table.Rows[i][6]);//缴费基数
+                            paymentDetail.PersonalExpenses = Convert.ToDecimal(table.Rows[i][7]);//个人缴费
+                            paymentDetail.CompanyExpenses = Convert.ToDecimal(table.Rows[i][8]);//单位缴费
+                            paymentDetail.PaymentMark = table.Rows[i][9].ToString();//缴费标志
+                            paymentDetail.CompanyNumber = table.Rows[i][10].ToString();//单位编号
+                            paymentDetail.CompanyName = table.Rows[i][11].ToString();//单位名称
+                            paymentDetail.SettlementMethod = table.Rows[i][12].ToString();//结算方式
+                            paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
+                        }
+                        else if (NoFileName == "养老缴费明细")
+                        {
+                            paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
+                            paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
+                            paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
+                            paymentDetail.PayTime = table.Rows[i][3].ToString();//缴费年月
+                            paymentDetail.BusinessTime = table.Rows[i][4].ToString();//业务年月
+                            paymentDetail.PaymentType = table.Rows[i][5].ToString();//缴费类型
+                            paymentDetail.SocialInsuranceBase = Convert.ToInt32(table.Rows[i][6]);//缴费基数
+                            paymentDetail.PersonalExpenses = Convert.ToDecimal(table.Rows[i][7]);//个人缴费
+                            paymentDetail.CompanyExpenses = Convert.ToDecimal(table.Rows[i][8]);//单位缴费
+                            paymentDetail.PaymentMark = table.Rows[i][10].ToString();//缴费标志
+                            paymentDetail.CompanyNumber = table.Rows[i][11].ToString();//单位编号
+                            paymentDetail.CompanyName = table.Rows[i][12].ToString();//单位名称
+                            paymentDetail.SettlementMethod = table.Rows[i][13].ToString();//结算方式
+                            paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
+                        }
+                        else if (NoFileName == "医疗缴费明细") {
+                            paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
+                            paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
+                            paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
+                            paymentDetail.PayTime = table.Rows[i][3].ToString();//缴费年月
+                            paymentDetail.BusinessTime = table.Rows[i][4].ToString();//业务年月
+                            paymentDetail.PaymentType = table.Rows[i][6].ToString();//缴费类型
+                            paymentDetail.SocialInsuranceBase = Convert.ToInt32(table.Rows[i][7]);//缴费基数
+                            paymentDetail.PersonalExpenses = Convert.ToDecimal(table.Rows[i][8]);//个人缴费
+                            paymentDetail.CompanyExpenses = Convert.ToDecimal(table.Rows[i][9]);//单位缴费
+                            paymentDetail.PaymentMark = table.Rows[i][11].ToString();//缴费标志
+                            paymentDetail.CompanyNumber = table.Rows[i][12].ToString();//单位编号
+                            paymentDetail.CompanyName = table.Rows[i][13].ToString();//单位名称
+                            paymentDetail.SettlementMethod = table.Rows[i][14].ToString();//结算方式
+                            paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
+                        }
+
                         list.Add(paymentDetail);
                     }
 
@@ -137,12 +208,13 @@ namespace WYJK.Web.Controllers.Mvc
                 }
                 catch (Exception ex)
                 {
-                    TempData["Message"] = ex.Message;
-                    return RedirectToAction("GetEnterpriseList");
+                    //TempData["Message"] = ex.Message;
+                    //return RedirectToAction("GetPaymentDetailsList");
+                    return Json(new { Status = false, Message = ex.Message });
                 }
             }
-            TempData["Message"] = "上传成功";
-            return RedirectToAction("GetEnterpriseList");
+            //TempData["Message"] = "上传成功";
+            return Json(new { Status = true, Message = "上传成功" });
         }
 
         /// <summary>

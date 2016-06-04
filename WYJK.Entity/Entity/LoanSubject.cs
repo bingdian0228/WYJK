@@ -59,7 +59,7 @@ namespace WYJK.Entity
         /// <summary>
         /// 课题答案对应组合
         /// </summary>
-        public SubjectAnswerRelation[] RelList { get; set; }
+        public List<SubjectAnswerRelation> RelList { get; set; }
     }
 
     /// <summary>

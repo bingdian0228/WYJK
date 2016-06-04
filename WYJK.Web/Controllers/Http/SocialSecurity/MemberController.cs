@@ -1142,6 +1142,85 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
 
+        #region 缴费明细
+
+        /// <summary>
+        /// 根据用户ID获取参保人列表
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> GetSocialSecurityPeopleList(int memberID)
+        {
+            string sqlstr = $"select * from SocialSecurityPeople where MemberID={memberID}";
+            List<SocialSecurityPeople> list = DbHelper.Query<SocialSecurityPeople>(sqlstr);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = list.SelectMany(item =>
+                {
+                    List<dynamic> newList = new List<dynamic>();
+                    newList.Add(new
+                    {
+                        SocialSecurityPeopleID = item.SocialSecurityPeopleID,
+                        IdentityCard = item.IdentityCard,
+                        SocialSecurityPeopleName = item.SocialSecurityPeopleName
+                    });
+                    return newList;
+                })
+            };
+        }
+
+        /// <summary>
+        /// 获取缴费列表  type:0/社保,1/公积金
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> GetPaymentList(int socialSecurityPeopleID, int year, int type = 0)
+        {
+            //年份列表
+
+            List<int> dateList = new List<int> { DateTime.Now.Year }.Concat(DbHelper.Query<DateTime>($"select CreateTime from AccountRecord where SocialSecurityPeopleID ={socialSecurityPeopleID} and Type={type}").Select(date => date.Year).ToList()).Distinct().ToList();
+
+            //流水记录
+            List<AccountRecord> accountRecordList = DbHelper.Query<AccountRecord>($"select * from AccountRecord where SocialSecurityPeopleID={socialSecurityPeopleID} and Type ={type} and YEAR(CreateTime) = {year}");
+
+            //组织查询列表
+            List<dynamic> payList = new List<dynamic>();
+            for (int i = 1; i <= 12; i++)
+            {
+                bool flag = false;
+                foreach (var accountRecord in accountRecordList)
+                {
+                    if (accountRecord.CreateTime.Month == i)
+                    {
+                        flag = true;
+                        payList.Add(new { PayMonth = i + "月", Cost = accountRecord.Cost, IsPay = "已购买" });
+                        break;
+                    }
+
+                }
+
+                if (flag == false)
+                    payList.Add(new { PayMonth = i + "月", Cost = 0, IsPay = "未购买" });
+
+            }
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = new
+                {
+                    dateList = dateList,
+                    payList = payList
+                }
+            };
+        }
+
+        #endregion
+
         ///// <summary>
         ///// 获取多个错误
         ///// </summary>

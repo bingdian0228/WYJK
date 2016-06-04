@@ -9,14 +9,14 @@
 {
     <link rel="stylesheet" type="text/css" href="/Content/lib/webuploader/0.1.5/webuploader.css" />
     <style>
-        
-        .region-container .select-box{
+        .region-container .select-box {
             width: 130px;
         }
     </style>
 
 }
 @section Footer{
+
     <style>
         span.lineheight {
             line-height: 31px;
@@ -24,6 +24,15 @@
     </style>
     <script>
         $(function () {
+            //放大图片
+            $("a[name='img']").imgbox({
+                'speedIn': 0,
+                'speedOut': 0,
+                'alignment': 'center',
+                'overlayShow': true,
+                'allowMultiple': false
+            });
+
 
             //手动更改社保基数
             $("[name='SocialSecurityBase']").blur(function () {
@@ -212,12 +221,13 @@
         uploader.on('fileQueued', function (file) {
             var $li = $(
                     '<div id="' + file.id + '" class="item ">' +
-                    '<div class="pic-box"><img></div>' +
+                    '<div class="pic-box"><a target="_blank"><img></a></div>' +
                     // '<div class="info">' + file.name + '</div>' +
                     //'<p class="state">等待上传...</p>' +
                     '</div>'
                 ),
                 $img = $li.find('img');
+            $a = $li.find('a');
             $list.append($li);
             thumbnailWidth = 100;
             thumbnailHeight = 100;
@@ -231,6 +241,7 @@
                 }
 
                 $img.attr('src', src);
+                $a.attr('href', src);
             }, thumbnailWidth, thumbnailHeight);
         });
         uploader.on('uploadBeforeSend', function (obj, data, headers) {
@@ -407,21 +418,22 @@
         </div>
         @{
             var ImgUrls = string.IsNullOrEmpty(Model.IdentityCardPhoto) ? new string[] { } : Model.IdentityCardPhoto.Split(';');
+
         }
         @if (type == "0")
-                    {
+        {
             <div class="row cl">
                 <label class="form-label col-3">身份证照：</label>
                 @if (ImgUrls != null && ImgUrls.Length > 0)
+                {
+                    foreach (var ImgUrl in ImgUrls)
                     {
-                        foreach (var ImgUrl in ImgUrls)
-                        {
 
-                        <div class="formControls col-2">
-                            <img src="/@ImgUrl" height="100" />
+                        <div class="formControls col-2" style="position:relative">
+                         <a  href="/@ImgUrl" target="_blank" name="img"><img src="/@ImgUrl" height="100" width="100" /></a>   
                         </div>
                     }
-            }
+                }
             </div>
         }
         else if (type == "1" || isadd)
@@ -432,13 +444,13 @@
                     <div class="uploader-thum-container">
                         <div id="fileList" class="uploader-list">
                             @if (ImgUrls != null && ImgUrls.Length > 0)
-            {
-                for (int i = 0, len = ImgUrls.Length; i < len; i++)
-                {
+                            {
+                                for (int i = 0, len = ImgUrls.Length; i < len; i++)
+                                {
                                     <div class="item upload-state-done">
                                         <div class="pic-box">
-                                            <img src="/@ImgUrls[i]" style="width: 100px; height: 100px" />
-
+                                            <a name="img" href="/@ImgUrls[i]" target="_blank" ><img src="/@ImgUrls[i]" style="width: 100px; height: 100px;cursor:pointer" /></a>
+                                            
                                         </div>
                                         <span class="iconfont icon-iconfontwiconguanbi uploader-remove" title="删除" onclick="removeFile(this)">
                                             <input type="hidden" name="ImgUrls[@i]" class="wyjk-images" value="@ImgUrls[i]" />
@@ -453,21 +465,30 @@
                 </div>
             </div>
         }
+        @*<script>
+            $(function () {
+                $("img").mouseenter(function () {
+                    $(this).next().css("display", "block");
+                }).mouseleave(function () {
+                    $(this).next().css("display", "none");
+                });
+            })
+        </script>*@
 
         <br />
 
 
         @if (Model.socialSecurity != null)
             {
-                @Html.Hidden("IsPaySocialSecurity", true)
-                <div class="row cl" style="text-align:center;">
+            @Html.Hidden("IsPaySocialSecurity", true)
+            <div class="row cl" style="text-align:center;">
                 <label style="font-size:24px;font-weight:bold;">@(Model.SocialSecurityPeopleName)@(string.IsNullOrEmpty(Model.SocialSecurityPeopleName) ? "" : "的")社保业务信息</label>
             </div>
             <div class="row cl">
                 <label class="form-label col-3">客户社保号：</label>
                 <div class="formControls col-2">
                     @if (type == "0")
-            {
+                    {
                         <span class="lineheight">
                             @if (string.IsNullOrWhiteSpace(Model.socialSecurity.SocialSecurityNo))
                             {
@@ -556,14 +577,14 @@
                         @if (isadd)
                         {
                             @Html.Action("RegionView", "OptionView", new
-                            {
-                                pname = string.Empty,
-                                cname = string.Empty,
-                                coname = string.Empty,
-                                IsHideCounty = true,
-                                Id = "AF",
-                                CallBack = "afCallback",
-                            });
+                       {
+                           pname = string.Empty,
+                           cname = string.Empty,
+                           coname = string.Empty,
+                           IsHideCounty = true,
+                           Id = "AF",
+                           CallBack = "afCallback",
+                       });
                             <input type="hidden" name="socialSecurity.InsuranceArea" value="" />
                             <script>
                                 function afCallback(p, city) {
@@ -622,69 +643,69 @@
                 </div>
                 @if (!isadd)
                 {
-                <label class="form-label col-3">交费至：</label>
-                <div class="formControls col-2">
-                    <span class="lineheight">
-                        @Model.socialSecurity.PayTime.AddMonths(Model.socialSecurity.PayMonthCount - 1).ToString("yyyy/MM")
-                    </span>
-                </div>
+                    <label class="form-label col-3">交费至：</label>
+                    <div class="formControls col-2">
+                        <span class="lineheight">
+                            @Model.socialSecurity.PayTime.AddMonths(Model.socialSecurity.PayMonthCount - 1).ToString("yyyy/MM")
+                        </span>
+                    </div>
                 }
             </div>
-            if (isadd)
-            {
-                <div class="row cl">
-                    <label class="form-label col-3">缴费月数：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            <input type="text" value="@Model.socialSecurity.PayMonthCount" placeholder="" name="socialSecurity.PayMonthCount" class="input-text" />
-                        </span>
-                    </div>
-                    <label class="form-label col-3">补交月数：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            <input type="text" value="@Model.socialSecurity.PayBeforeMonthCount" placeholder="" name="socialSecurity.PayBeforeMonthCount" class="input-text" />
-                        </span>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="row cl">
-                    <label class="form-label col-3">业务办停时间：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            @(Model.socialSecurity.StopDate == null ? "--" : Convert.ToString(Model.socialSecurity.StopDate))
-                        </span>
-                    </div>
-                    <label class="form-label col-3">业务办理时间：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            @(Model.socialSecurity.HandleDate == null ? "--" : Convert.ToString(Model.socialSecurity.HandleDate))
-                        </span>
-                    </div>
-                </div>
-            }
+                            if (isadd)
+                            {
+                                <div class="row cl">
+                                    <label class="form-label col-3">缴费月数：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            <input type="text" value="@Model.socialSecurity.PayMonthCount" placeholder="" name="socialSecurity.PayMonthCount" class="input-text" />
+                                        </span>
+                                    </div>
+                                    <label class="form-label col-3">补交月数：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            <input type="text" value="@Model.socialSecurity.PayBeforeMonthCount" placeholder="" name="socialSecurity.PayBeforeMonthCount" class="input-text" />
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row cl">
+                                    <label class="form-label col-3">业务办停时间：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            @(Model.socialSecurity.StopDate == null ? "--" : Convert.ToString(Model.socialSecurity.StopDate))
+                                        </span>
+                                    </div>
+                                    <label class="form-label col-3">业务办理时间：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            @(Model.socialSecurity.HandleDate == null ? "--" : Convert.ToString(Model.socialSecurity.HandleDate))
+                                        </span>
+                                    </div>
+                                </div>
+                            }
 
-            <div class="row cl">
-                <label class="form-label col-3">备注：</label>
-                <div class="formControls col-2">
-                    <span class="lineheight">
-                        @if (isadd)
-                        {
-                            <input type="text" value="@Model.socialSecurity.Note" placeholder="" name="socialSecurity.Note" class="input-text" />
-                        }
-                        else
-                        {
-                            @Model.socialSecurity.Note
-                        }
-                    </span>
-                </div>
-            </div>
-        }
-        else
-        {
-            @Html.Hidden("IsPaySocialSecurity", false)
-        }
+                            <div class="row cl">
+                                <label class="form-label col-3">备注：</label>
+                                <div class="formControls col-2">
+                                    <span class="lineheight">
+                                        @if (isadd)
+                                        {
+                                            <input type="text" value="@Model.socialSecurity.Note" placeholder="" name="socialSecurity.Note" class="input-text" />
+                                        }
+                                        else
+                                        {
+                                            @Model.socialSecurity.Note
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            }
+                            else
+                            {
+                                @Html.Hidden("IsPaySocialSecurity", false)
+                            }
 
         @if (Model.accumulationFund != null)
         {
@@ -782,14 +803,14 @@
                         @if (isadd)
                         {
                             @Html.Action("RegionView", "OptionView", new
-                            {
-                                pname = string.Empty,
-                                cname = string.Empty,
-                                coname = string.Empty,
-                                IsHideCounty = true,
-                                Id ="SO",
-                                CallBack = "soCallback",
-                            });
+                       {
+                           pname = string.Empty,
+                           cname = string.Empty,
+                           coname = string.Empty,
+                           IsHideCounty = true,
+                           Id = "SO",
+                           CallBack = "soCallback",
+                       });
                             <input type="hidden" name="accumulationFund.AccumulationFundArea" value="" />
                             <script>
                                 function soCallback(p, city) {
@@ -856,60 +877,60 @@
                     </div>
                 }
             </div>
-            if (isadd)
-            {
-                <div class="row cl">
-                    <label class="form-label col-3">缴费月数：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            <input type="text" value="@Model.accumulationFund.PayMonthCount" placeholder="" name="accumulationFund.PayMonthCount" class="input-text" />
-                        </span>
-                    </div>
-                    <label class="form-label col-3">补交月数：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            <input type="text" value="@Model.accumulationFund.PayBeforeMonthCount" placeholder="" name="accumulationFund.PayBeforeMonthCount" class="input-text" />
-                        </span>
-                    </div>
-                </div>
-            }
-            else
-            {
-                <div class="row cl">
-                    <label class="form-label col-3">业务办停时间：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            @(Model.accumulationFund.StopDate == null ? "--" : Convert.ToString(Model.accumulationFund.StopDate))
-                        </span>
-                    </div>
-                    <label class="form-label col-3">业务办理时间：</label>
-                    <div class="formControls col-2">
-                        <span class="lineheight">
-                            @(Model.accumulationFund.HandleDate == null ? "--" : Convert.ToString(Model.accumulationFund.HandleDate))
-                        </span>
-                    </div>
-                </div>
-            }
+                            if (isadd)
+                            {
+                                <div class="row cl">
+                                    <label class="form-label col-3">缴费月数：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            <input type="text" value="@Model.accumulationFund.PayMonthCount" placeholder="" name="accumulationFund.PayMonthCount" class="input-text" />
+                                        </span>
+                                    </div>
+                                    <label class="form-label col-3">补交月数：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            <input type="text" value="@Model.accumulationFund.PayBeforeMonthCount" placeholder="" name="accumulationFund.PayBeforeMonthCount" class="input-text" />
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="row cl">
+                                    <label class="form-label col-3">业务办停时间：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            @(Model.accumulationFund.StopDate == null ? "--" : Convert.ToString(Model.accumulationFund.StopDate))
+                                        </span>
+                                    </div>
+                                    <label class="form-label col-3">业务办理时间：</label>
+                                    <div class="formControls col-2">
+                                        <span class="lineheight">
+                                            @(Model.accumulationFund.HandleDate == null ? "--" : Convert.ToString(Model.accumulationFund.HandleDate))
+                                        </span>
+                                    </div>
+                                </div>
+                            }
 
-            <div class="row cl">
-                <label class="form-label col-3">备注：</label>
-                <div class="formControls col-2">
-                    <span class="lineheight">
-                        @if (isadd)
-                        {
-                            <input type="text" value="@Model.accumulationFund.Note" placeholder="" name="accumulationFund.Note" class="input-text" />
-                        }
-                        else
-                        {
-                            @Model.accumulationFund.Note
-                        }
-                    </span>
-                </div>
-            </div>
-        }
-        else {
-            @Html.Hidden("IsPayAccumulationFund", false)
-        }
+                            <div class="row cl">
+                                <label class="form-label col-3">备注：</label>
+                                <div class="formControls col-2">
+                                    <span class="lineheight">
+                                        @if (isadd)
+                                        {
+                                            <input type="text" value="@Model.accumulationFund.Note" placeholder="" name="accumulationFund.Note" class="input-text" />
+                                        }
+                                        else
+                                        {
+                                            @Model.accumulationFund.Note
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                            }
+                            else {
+                                @Html.Hidden("IsPayAccumulationFund", false)
+                            }
         @if (type == "1" || isadd)
         {
             <div class="row cl">
@@ -920,7 +941,7 @@
         }
     </form>
     <div class="row cl" style="text-align:center;">
-        <label style="font-size:24px;font-weight:bold;">@(member.MemberName)的账户信息</label>
+        <label style="font-size:24px;font-weight:bold;">关联账户@(member.MemberName)的账户信息</label>
     </div>
     <div class="mt-20">
         <table class="table table-border table-bordered table-bg table-hover table-sort">
