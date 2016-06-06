@@ -20,6 +20,31 @@ namespace WYJK.Web.Controllers.Mvc
         IAccumulationFundService _accumulationFundService = new AccumulationFundService();
 
         /// <summary>
+        /// 公积金业务总览
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> AccumulationFundOverview(AccumulationFundParameter parameter)
+        {
+            ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
+            ViewData["IdentityCard"] = parameter.IdentityCard;
+
+            PagedResult<AccumulationFundShowModel> list = await _accumulationFundService.GetAccumulationFundList(parameter);
+
+            List<SelectListItem> UserTypeList = EnumExt.GetSelectList(typeof(UserTypeEnum));
+            UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
+
+            ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
+
+            List<SelectListItem> StatusList = EnumExt.GetSelectList(typeof(SocialSecurityStatusEnum));
+            StatusList.Insert(0, new SelectListItem { Text = "全部", Value = "", Selected = true });
+
+            ViewData["Status"] = new SelectList(StatusList, "Value", "Text", parameter.Status);
+
+            return View(list);
+        }
+
+        /// <summary>
         /// 公积金待办业务
         /// </summary>
         /// <param name="parameter"></param>

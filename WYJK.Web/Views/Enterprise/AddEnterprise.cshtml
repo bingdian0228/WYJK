@@ -138,6 +138,13 @@
             <div class="col-2">@Html.ValidationMessageFor(m => m.HouseholdProperty)</div>*@
         </div>
         <div class="row cl">
+            <label class="form-label col-2">企业税号：</label>
+            <div class="formControls col-2">
+                @Html.TextBoxFor(m => m.EnterpriseTax, new { @class = "input-text" })
+            </div>
+            <div class="col-2"></div>
+        </div>
+        <div class="row cl">
             <label class="form-label col-2">机构地址：</label>
             <div class="formControls col-8">
                 @Html.TextAreaFor(m => m.OrgAddress, new { style = "height: 100px; max-height: 200px;width: 100%;resize:vertical;" })

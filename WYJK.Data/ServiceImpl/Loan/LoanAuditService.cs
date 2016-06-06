@@ -26,7 +26,7 @@ namespace WYJK.Data.ServiceImpl
 
             builder.Append($" and Members.MemberName like '%{parameter.MemberName}%'");
 
-            string innersqlstr = $@"select MemberLoanAudit.ID,Members.MemberID,Members.MemberName,members.MemberPhone,
+            string innersqlstr = $@"select MemberLoanAudit.ID,Members.MemberID,Members.MemberName,Members.UserType,members.MemberPhone,members.EnterpriseName,members.BusinessName,
 MemberLoan.TotalAmount,memberloan.AlreadyUsedAmount,memberloan.AvailableAmount,
 MemberLoanAudit.ApplyAmount,MemberLoanAudit.Status,MemberLoanAudit.ApplyDate,MemberLoanAudit.AuditDate
 from MemberLoanAudit

@@ -36,7 +36,7 @@
                 $this = $(this);
 
                 $.ajax({
-                    url: '@Url.Action("GetMemberList1", "Member")?UserType=' + $this.val(),
+                    url: '@Url.Action("GetMemberList1", "CustomerService")?UserType=' + $this.val(),
                     dataType: "json",
                     type: "get",
                     success: function (data) {
@@ -161,7 +161,7 @@
                 }
                 @Html.DropDownList("MemberID", list, new { @class = "select" })
             </span>
-                @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+            @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
                     @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
                     <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
 
@@ -204,19 +204,23 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)(Convert.ToInt32(customerService.UserType)))
                         </td>
-                        <td>@customerService.MemberName</td>
+                        <td>@(customerService.UserType == "0" ? customerService.MemberName : (customerService.UserType == "1" ? customerService.EnterpriseName : customerService.BusinessName))</td>
+                        @*<td>@customerService.MemberName</td>*@
                         <td>@customerService.MemberPhone</td>
                         <td>@customerService.Account</td>
                         @*<td class="td-status">
-                            <span class="label label-success radius order-view" style="cursor:pointer;" data-id="@customerService.SocialSecurityPeopleID">查看</span>
-                        </td>*@
+                                <span class="label label-success radius order-view" style="cursor:pointer;" data-id="@customerService.SocialSecurityPeopleID">查看</span>
+                            </td>*@
                         <td>@customerService.OrderCode</td>
                         <td>@EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus)) </td>
                         <td></td>
                         <td></td>
                         <td>@customerService.SocialSecurityPeopleName</td>
                         <td>@customerService.IdentityCard</td>
-                        <td>@customerService.ArrearAmount.ToString("N2")</td>
+                        <td>
+                            @(customerService.Account < 0 ? Math.Abs(customerService.Account) : 0)
+                            @*@customerService.ArrearAmount.ToString("N2")*@
+                        </td>
                         <td>
                             @if (!string.IsNullOrEmpty(customerService.SSstatus))
                             {

@@ -57,6 +57,7 @@
     <Compile Include="Entity\CustomerService.cs" />
     <Compile Include="Entity\EnterpriseSocialSecurity.cs" />
     <Compile Include="Entity\Information.cs" />
+    <Compile Include="Entity\InsuredIntroduce.cs" />
     <Compile Include="Entity\LoanAnswer.cs" />
     <Compile Include="Entity\LoanSubject.cs" />
     <Compile Include="Entity\Log.cs" />

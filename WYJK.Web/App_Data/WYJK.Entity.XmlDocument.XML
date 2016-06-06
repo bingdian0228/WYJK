@@ -321,6 +321,26 @@
             关联签约企业号
             </summary>
         </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundType">
+            <summary>
+            公积金类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundTopType">
+            <summary>
+            公积金办停类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.CompanyName">
+            <summary>
+            新单位全称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.CompanyAccumulationFundCode">
+            <summary>
+            新单位公积金编号
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.AccumulationFundShowModel">
             <summary>
             公积金业务显示列表（Admin）
@@ -334,6 +354,11 @@
         <member name="P:WYJK.Entity.AccumulationFundShowModel.MemberName">
             <summary>
             
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.Account">
+            <summary>
+            账户余额
             </summary>
         </member>
         <member name="P:WYJK.Entity.AccumulationFundShowModel.SocialSecurityPeopleID">
@@ -961,6 +986,11 @@
             公积金编号
             </summary>
         </member>
+        <member name="P:WYJK.Entity.EnterpriseSocialSecurity.EnterpriseTax">
+            <summary>
+            企业税号
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.EnterpriseSocialSecurityParameter">
             <summary>
             签约企业参数
@@ -1020,6 +1050,26 @@
             <summary>
             标题
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.InformationParameter.Type">
+            <summary>
+            类型
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.InsuredIntroduce">
+            <summary>
+            参保介绍
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.InsuredIntroduce.Name">
+            <summary>
+            标题
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.InsuredIntroduce.StrContent">
+            <summary>
+            详情
+            </summary>
         </member>
         <member name="T:WYJK.Entity.LoanAnswer">
             <summary>
@@ -2136,6 +2186,11 @@
             
             </summary>
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.Account">
+            <summary>
+            账户余额
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityShowModel.SocialSecurityPeopleID">
             <summary>
             参保人ID
@@ -2213,7 +2268,7 @@
         </member>
         <member name="P:WYJK.Entity.SocialSecurityShowModel.StopDate">
             <summary>
-            停保原因
+            停保时间
             </summary>
         </member>
         <member name="P:WYJK.Entity.SocialSecurityShowModel.IsArrears">
@@ -2701,6 +2756,21 @@
             公积金ID
             </summary>
         </member>
+        <member name="P:WYJK.Entity.StopAccumulationFundParameter.AccumulationFundTopType">
+            <summary>
+            公积金办停类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopAccumulationFundParameter.CompanyName">
+            <summary>
+            新单位全称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopAccumulationFundParameter.CompanyAccumulationFundCode">
+            <summary>
+            新单位公积金编号
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.SocialSecurityCalculation">
             <summary>
             社保计算器
@@ -3076,6 +3146,11 @@
             企业名称
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseTax">
+            <summary>
+            企业税号
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.EnterpriseCertification.EnterpriseType">
             <summary>
             行业类型
@@ -3319,6 +3394,11 @@
         <member name="P:WYJK.Entity.MembersStatistics.Account">
             <summary>
             账户金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersStatistics.Bucha">
+            <summary>
+            冻结费
             </summary>
         </member>
         <member name="P:WYJK.Entity.MembersStatistics.AccountStatus">

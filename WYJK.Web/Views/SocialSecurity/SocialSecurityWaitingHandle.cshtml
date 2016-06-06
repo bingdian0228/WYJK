@@ -22,7 +22,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard';
 
                 }
             }
@@ -81,7 +81,7 @@
                 $("input[type='checkbox']:checked").each(function (i) {
                     SocialSecurityPeopleIDs[i] = $(this).val();
                 });
-                
+
                 var save = 0;
                 var layerObject = layer.open({
                     type:2,
@@ -90,15 +90,15 @@
                     content: "@Url.Action("SocialException", "SocialSecurity")?SocialSecurityPeopleIDs=" + SocialSecurityPeopleIDs,
                     btn:["提交","取消"],
                     yes: function (index, layero) {
-                        
+
                         var childIndex = layer.load(1, { shade: [0.1, '#000'] });
                         debugger;
                         var form = layer.getChildFrame('form', index);
                         form.submit();
-                      
+
                         save = 1;
-                        
-                        layer.close(childIndex);  
+
+                        layer.close(childIndex);
                         return false;
                     },
                     end:function(index, layero) {
@@ -107,7 +107,7 @@
                         }
                     },
                     success: function (index, layero) {
-                        
+
                         if (save === 1) {
                             layer.close;
                             refresh();
@@ -164,7 +164,7 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(socialSecurity.UserType))
                         </td>
-                        <td>@socialSecurity.MemberName</td>
+                        <td>@(socialSecurity.UserType == "0" ? socialSecurity.MemberName : (socialSecurity.UserType == "1" ? socialSecurity.EnterpriseName : socialSecurity.BusinessName))</td>
                         <td>@socialSecurity.SocialSecurityPeopleName</td>
                         <td>@socialSecurity.IdentityCard</td>
                         <td>@socialSecurity.PayTime.ToString("yyyy/MM")</td>

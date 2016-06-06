@@ -68,13 +68,13 @@ namespace WYJK.Data.ServiceImpl
                                                                   + ",MaxSocial,CompYangLao,CompYiLiao,CompShiYe,CompGongShang,CompShengYu"
                                                                   + ",PersonalYangLao,PersonalYiLiao,PersonalShiYeTown,PersonalShiYeRural,PersonalGongShang"
                                                                   + ",PersonalShengYu,MinAccumulationFund,MaxAccumulationFund,CompProportion"
-                                                                  + ",PersonalProportion,IsDefault,AccumulationFundCode)"
+                                                                  + ",PersonalProportion,IsDefault,AccumulationFundCode,EnterpriseTax)"
                                                                   + " values(@EnterpriseName,@EnterpriseArea,@ContactUser,@ContactTel,@Fax,@Email"
                                                                   + ",@OfficeTel,@OrgAddress,@SocialAvgSalary,@MinSocial"
                                                                   + ",@MaxSocial,@CompYangLao,@CompYiLiao,@CompShiYe,@CompGongShang,@CompShengYu"
                                                                   + ",@PersonalYangLao,@PersonalYiLiao,@PersonalShiYeTown,@PersonalShiYeRural,@PersonalGongShang"
                                                                   + ",@PersonalShengYu,@MinAccumulationFund,@MaxAccumulationFund,@CompProportion"
-                                                                  + ",@PersonalProportion,@IsDefault,@AccumulationFundCode)";
+                                                                  + ",@PersonalProportion,@IsDefault,@AccumulationFundCode,@EnterpriseTax)";
             SqlParameter[] sqlparameters = new SqlParameter[] {
                 new SqlParameter("EnterpriseName",model.EnterpriseName),
                 new SqlParameter("EnterpriseArea",model.EnterpriseArea),
@@ -106,7 +106,8 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("CompProportion",model.CompProportion),
                 new SqlParameter("PersonalProportion",model.PersonalProportion),
                 new SqlParameter("IsDefault",model.IsDefault),
-                new SqlParameter("AccumulationFundCode",model.AccumulationFundCode)
+                new SqlParameter("AccumulationFundCode",model.AccumulationFundCode),
+                new SqlParameter("EnterpriseTax",model.EnterpriseTax)
             };
 
             int result = DbHelper.ExecuteSqlCommandScalar(sqlStr, sqlparameters);
@@ -151,7 +152,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool UpdateEnterprise(EnterpriseSocialSecurity model)
         {
-            string sqlstr = "update EnterpriseSocialSecurity set EnterpriseName=@EnterpriseName,EnterpriseArea=@EnterpriseArea,ContactUser=@ContactUser,ContactTel=@ContactTel,Fax=@Fax,Email=@Email,OfficeTel=@OfficeTel,OrgAddress=@OrgAddress,SocialAvgSalary=@SocialAvgSalary,MinSocial=@MinSocial,MaxSocial=@MaxSocial,CompYangLao=@CompYangLao,CompYiLiao=@CompYiLiao,CompShiYe=@CompShiYe,CompGongShang=@CompGongShang,CompShengYu=@CompShengYu,PersonalYangLao=@PersonalYangLao,PersonalYiLiao=@PersonalYiLiao,PersonalShiYeTown=@PersonalShiYeTown,PersonalShiYeRural=@PersonalShiYeRural,PersonalGongShang=@PersonalGongShang,PersonalShengYu=@PersonalShengYu,MinAccumulationFund=@MinAccumulationFund,MaxAccumulationFund=@MaxAccumulationFund,CompProportion=@CompProportion,PersonalProportion=@PersonalProportion,IsDefault=@IsDefault,AccumulationFundCode=@AccumulationFundCode where EnterpriseID=@EnterpriseID";
+            string sqlstr = "update EnterpriseSocialSecurity set EnterpriseName=@EnterpriseName,EnterpriseArea=@EnterpriseArea,ContactUser=@ContactUser,ContactTel=@ContactTel,Fax=@Fax,Email=@Email,OfficeTel=@OfficeTel,OrgAddress=@OrgAddress,SocialAvgSalary=@SocialAvgSalary,MinSocial=@MinSocial,MaxSocial=@MaxSocial,CompYangLao=@CompYangLao,CompYiLiao=@CompYiLiao,CompShiYe=@CompShiYe,CompGongShang=@CompGongShang,CompShengYu=@CompShengYu,PersonalYangLao=@PersonalYangLao,PersonalYiLiao=@PersonalYiLiao,PersonalShiYeTown=@PersonalShiYeTown,PersonalShiYeRural=@PersonalShiYeRural,PersonalGongShang=@PersonalGongShang,PersonalShengYu=@PersonalShengYu,MinAccumulationFund=@MinAccumulationFund,MaxAccumulationFund=@MaxAccumulationFund,CompProportion=@CompProportion,PersonalProportion=@PersonalProportion,IsDefault=@IsDefault,AccumulationFundCode=@AccumulationFundCode,EnterpriseTax=@EnterpriseTax where EnterpriseID=@EnterpriseID";
 
 
             int result = DbHelper.ExecuteSqlCommand(sqlstr, new
@@ -187,7 +188,8 @@ namespace WYJK.Data.ServiceImpl
                 PersonalProportion = model.PersonalProportion,
                 IsDefault = model.IsDefault,
                 EnterpriseID = model.EnterpriseID,
-                AccumulationFundCode=model.AccumulationFundCode
+                AccumulationFundCode=model.AccumulationFundCode,
+                EnterpriseTax=model.EnterpriseTax
             });
 
             return result > 0;

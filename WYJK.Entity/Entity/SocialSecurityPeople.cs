@@ -376,6 +376,18 @@ namespace WYJK.Entity
         /// 公积金ID
         /// </summary>
         public int SocialSecurityPeopleID { get; set; }
+        /// <summary>
+        /// 公积金办停类型
+        /// </summary>
+        public string AccumulationFundTopType { get; set; }
+        /// <summary>
+        /// 新单位全称
+        /// </summary>
+        public string CompanyName { get; set; }
+        /// <summary>
+        /// 新单位公积金编号
+        /// </summary>
+        public string CompanyAccumulationFundCode { get; set; }
 
     }
 

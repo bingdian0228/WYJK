@@ -1,5 +1,4 @@
-﻿
-@model PagedResult<Information>
+﻿@model PagedResult<Information>
 @{
     ViewBag.Title = "信息管理";
     string Name = Request.Params["Name"];
@@ -168,5 +167,5 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" class="btn btn-danger radius action-delete-info"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="@Url.Action("InformationAdd", "Information")" class="btn btn-primary radius action-add-info"><i class="Hui-iconfont">&#xe600;</i> 添加信息</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" class="btn btn-danger radius action-delete-info"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="@Url.Action("InsuredIntroduceAdd", "Information")?Type=@Request.Params["Type"]" class="btn btn-primary radius action-add-info"><i class="Hui-iconfont">&#xe600;</i> 添加信息</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
 </div>

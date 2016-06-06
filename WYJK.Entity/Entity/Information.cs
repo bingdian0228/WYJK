@@ -32,6 +32,8 @@ namespace WYJK.Entity
         /// StrContent
         /// </summary>		
         public string StrContent { get; set; }
+
+        public string Type { get; set; }
     }
 
     /// <summary>
@@ -43,6 +45,11 @@ namespace WYJK.Entity
         /// 标题
         /// </summary>		
         public string Name { get; set; }
+
+        /// <summary>
+        /// 类型
+        /// </summary>
+        public string Type { get; set; }
     }
 
 

@@ -22,7 +22,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard';
 
                 }
             }
@@ -74,7 +74,7 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(accumulationFund.UserType))
                         </td>
-                        <td>@accumulationFund.MemberName</td>
+                        <td>@(accumulationFund.UserType == "0" ? accumulationFund.MemberName : (accumulationFund.UserType == "1" ? accumulationFund.EnterpriseName : accumulationFund.BusinessName))</td>
                         <td>@accumulationFund.SocialSecurityPeopleName</td>
                         <td>@accumulationFund.IdentityCard</td>
                         <td>@accumulationFund.PayTime.ToString("yyyy/MM")</td>

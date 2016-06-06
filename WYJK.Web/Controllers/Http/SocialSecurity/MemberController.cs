@@ -1123,7 +1123,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         [System.Web.Http.HttpGet]
-        public JsonResult<dynamic> TestTransaction()
+        private JsonResult<dynamic> TestTransaction()
         {
             string url = "http://localhost:47565/api/member/GetRenewalServiceList?MemberID";
 

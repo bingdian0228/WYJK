@@ -19,7 +19,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public PagedResult<MemberLoanList> GetMemberLoanList(MemberLoanParameter parameter)
         {
-            string innersqlstr = $"select Members.MemberID,Members.MemberName,members.MemberPhone,MemberLoan.TotalAmount,memberloan.AlreadyUsedAmount,memberloan.AvailableAmount from MemberLoan left join Members on members.MemberID= MemberLoan.MemberID where Members.MemberName like '%{parameter.MemberName}%'";
+            string innersqlstr = $"select Members.MemberID,Members.UserType,Members.MemberName,Members.EnterpriseName,Members.BusinessName,members.MemberPhone,MemberLoan.TotalAmount,memberloan.AlreadyUsedAmount,memberloan.AvailableAmount from MemberLoan left join Members on members.MemberID= MemberLoan.MemberID where Members.MemberName like '%{parameter.MemberName}%'";
 
             string sqlstr = "select * from (select ROW_NUMBER() OVER(ORDER BY t.MemberID )AS Row,t.* from"
                              + $" ({innersqlstr}) t) tt"

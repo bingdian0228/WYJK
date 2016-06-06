@@ -28,6 +28,7 @@ namespace WYJK.Web.Controllers.Http
         private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
         private readonly IMemberService _memberService = new MemberService();
         private readonly IEnterpriseService _enterpriseService = new EnterpriseService();
+        private readonly IInsuredIntroduceService _insuredIntroduceService = new InsuredIntroduceService();
         /// <summary>
         /// 获取户口性质
         /// </summary>
@@ -726,6 +727,21 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 获取公积金办停类型
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult<dynamic> GetAccumulationFundTopTypeList()
+        {
+            List<Property> list = SelectListClass.GetSelectList(typeof(AccumulationFundTopTypeEnum));
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = list
+            };
+        }
+
+        /// <summary>
         /// 添加社保方案 返回社保ID:SocialSecurityID,公积金ID:AccumulationFundID，总金额:Amount
         /// </summary>
         /// <param name="socialSecurityPeople"></param>
@@ -1247,6 +1263,23 @@ where SocialSecurityPeople.MemberID = {MemberID}";
             };
         }
 
+        #region 参保介绍列表
+        /// <summary>
+        /// 获取参保介绍列表
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult<List<InsuredIntroduce>>> GetInsuredIntroduceList()
+        {
+            List<InsuredIntroduce> insuredIntroduceList = await _insuredIntroduceService.GetInsuredIntroduceList();
+
+            return new JsonResult<List<InsuredIntroduce>>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = insuredIntroduceList
+            };
+        }
+        #endregion
 
         ///// <summary>
         ///// 是否存在续费

@@ -61,6 +61,7 @@
             <dt><i class="Hui-iconfont">&#xe616;</i> 社保业务办理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    <li><a _href='@Url.Action("SocialSecurityOverview","SocialSecurity")' data-title="社保业务总览" href="javascript:void(0)">社保业务总览</a></li>
                     <li><a _href='@Url.Action("SocialSecurityWaitingHandle","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.WaitingHandle)' data-title="社保待办业务" href="javascript:void(0)">社保待办业务</a></li>
                     <li><a _href='@Url.Action("SocialSecurityNormal","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.Normal)' data-title="社保归档业务" href="javascript:void(0)">社保归档业务</a></li>
                     <li><a _href='@Url.Action("SocialSecurityRenew","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.Renew)' data-title="社保待续费业务" href="javascript:void(0)">社保待续费业务</a></li>
@@ -73,6 +74,7 @@
             <dt><i class="Hui-iconfont">&#xe616;</i> 公积金业务办理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
+                    <li><a _href='@Url.Action("AccumulationFundOverview","AccumulationFund")' data-title="公积金业务总览" href="javascript:void(0)">公积金业务总览</a></li>
                     <li><a _href='@Url.Action("AccumulationFundWaitingHandle","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.WaitingHandle)' data-title="公积金待办业务" href="javascript:void(0)">公积金待办业务</a></li>
                     <li><a _href='@Url.Action("AccumulationFundNormal","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.Normal)' data-title="公积金归档业务" href="javascript:void(0)">公积金归档业务</a></li>
                     <li><a _href='@Url.Action("AccumulationFundRenew","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.Renew)' data-title="公积金待续费业务" href="javascript:void(0)">公积金待续费业务</a></li>
@@ -105,9 +107,11 @@
             <dd>
                 <ul>
                     <li><a _href="@Url.Action("GetAllRoles","User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
+                    <li><a _href="@Url.Action("GetAllRoles","User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
                     <li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>
                     @*<li><a _href="@Url.Action("GetInformationList","Information")" data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
                     <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
+                    <li><a _href="@Url.Action("GetInsuredIntroduceList","InsuredIntroduce")" data-title="参保介绍管理" href="javascript:void(0)">参保介绍管理</a></li>
                     <li><a _href="@Url.Action("GetUserList","User")" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
                     <li><a _href="@Url.Action("GetEnterpriseCityList","Enterprise")" data-title="城市社平管理" href="javascript:void(0)">城市社平管理</a></li>
                     <li><a _href="@Url.Action("GetEnterpriseList","Enterprise")" data-title="签约企业管理" href="javascript:void(0)">签约企业管理</a></li>

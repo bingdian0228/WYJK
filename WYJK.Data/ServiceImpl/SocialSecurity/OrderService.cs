@@ -106,7 +106,7 @@ namespace WYJK.Data.ServiceImpl
                 builder.Append($" and orders.Status = {parameter.Status}");
             }
 
-            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberName,"
+            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberName,members.EnterpriseName,members.BusinessName,"
                             + " (select COUNT(*) from OrderDetails where OrderDetails.OrderCode = Orders.OrderCode) payUserCount,"
                             + " orders.PaymentMethod,"
                             + " (select  SUM(OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth + OrderDetails.SocialSecurityServiceCost + OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.SocialSecurityBuCha + OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth + OrderDetails.AccumulationFundServiceCost + OrderDetails.AccumulationFundFirstBacklogCost)  from OrderDetails where OrderDetails.OrderCode = orders.OrderCode) Amounts,"

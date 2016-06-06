@@ -277,6 +277,7 @@
     <Compile Include="Controllers\Mvc\SocialSecurity\DrawCashController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\EnterpriseController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\InformationController.cs" />
+    <Compile Include="Controllers\Mvc\SocialSecurity\InsuredIntroduceController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\LoggerController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\MemberController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\OptionViewController.cs" />
@@ -1870,6 +1871,12 @@
     <Content Include="Views\DrawCash\DrawCashList.cshtml" />
     <Content Include="Views\DrawCash\AgreeDrawCash.cshtml" />
     <Content Include="Views\Enterprise\GetPaymentDetailsList.cshtml" />
+    <Content Include="Views\Information\InsuredIntroduceAdd.cshtml" />
+    <Content Include="Views\InsuredIntroduce\GetInsuredIntroduceList.cshtml" />
+    <Content Include="Views\InsuredIntroduce\InsuredIntroduceAdd.cshtml" />
+    <Content Include="Views\InsuredIntroduce\InsuredIntroduceEdit.cshtml" />
+    <Content Include="Views\SocialSecurity\SocialSecurityOverview.cshtml" />
+    <Content Include="Views\AccumulationFund\AccumulationFundOverview.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

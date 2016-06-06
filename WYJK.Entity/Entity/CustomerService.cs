@@ -25,6 +25,11 @@ namespace WYJK.Entity
         /// 代理机构
         /// </summary>
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+
         /// <summary>
         /// 用户电话
         /// </summary>

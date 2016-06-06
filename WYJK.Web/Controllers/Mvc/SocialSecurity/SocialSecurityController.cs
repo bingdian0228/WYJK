@@ -19,6 +19,31 @@ namespace WYJK.Web.Controllers.Mvc
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
 
         /// <summary>
+        /// 社保业务总览
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> SocialSecurityOverview(SocialSecurityParameter parameter) {
+            ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
+            ViewData["IdentityCard"] = parameter.IdentityCard;
+
+            PagedResult<SocialSecurityShowModel> list = await _socialSecurityService.GetSocialSecurityList(parameter);
+
+            List<SelectListItem> UserTypeList = EnumExt.GetSelectList(typeof(UserTypeEnum));
+            UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "", Selected = true });
+
+            ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
+
+            List<SelectListItem> StatusList = EnumExt.GetSelectList(typeof(SocialSecurityStatusEnum));
+            StatusList.Insert(0, new SelectListItem { Text = "全部", Value = "", Selected = true });
+
+            ViewData["Status"] = new SelectList(StatusList, "Value", "Text", parameter.Status);
+
+
+            return View(list);
+        }
+
+        /// <summary>
         /// 社保待办业务
         /// </summary>
         /// <param name="parameter"></param>

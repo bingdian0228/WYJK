@@ -206,6 +206,11 @@ namespace WYJK.Entity
         /// </summary>
         public string AccumulationFundCode { get; set; }
 
+        /// <summary>
+        /// 企业税号
+        /// </summary>
+        public string EnterpriseTax { get; set; }
+
     }
 
     /// <summary>

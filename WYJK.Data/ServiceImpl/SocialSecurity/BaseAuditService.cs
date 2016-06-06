@@ -37,7 +37,7 @@ namespace WYJK.Data.ServiceImpl
             }
 
 
-            string innersqlstr = $@" select ssp.SocialSecurityPeopleName SocialSecurityPeopleName,m.UserType UserType,m.MemberName MemberName,  t.* 
+            string innersqlstr = $@" select ssp.SocialSecurityPeopleName SocialSecurityPeopleName,m.UserType UserType,m.MemberName MemberName,m.EnterpriseName,m.BusinessName,  t.* 
  from BaseAudit t
 left join SocialSecurity ss on t.SocialSecurityPeopleID = ss.SocialSecurityPeopleID
 left join AccumulationFund af on t.SocialSecurityPeopleID = af.SocialSecurityPeopleID

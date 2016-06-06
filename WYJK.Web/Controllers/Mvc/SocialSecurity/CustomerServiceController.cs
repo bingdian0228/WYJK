@@ -45,7 +45,13 @@ namespace WYJK.Web.Controllers.Mvc
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text");
 
-            ViewBag.memberList = _memberService.GetMembersList();
+            List<Members> memberList = _memberService.GetMembersList();
+                memberList.ForEach(item =>
+                {
+                    item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+                });
+            ViewBag.memberList = memberList;
+            //.Select(item => new { MemberID = item.MemberID, MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName) }); ;
 
             return View(customerServiceList);
         }
@@ -77,7 +83,7 @@ namespace WYJK.Web.Controllers.Mvc
         {
             List<Members> memberList = _memberService.GetMembersList();
             var list = memberList.Where(n => UserType == string.Empty ? true : n.UserType == UserType)
-                .Select(item => new { MemberID = item.MemberID, MemberName = item.MemberName });
+                .Select(item => new { MemberID = item.MemberID, MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName) });
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 

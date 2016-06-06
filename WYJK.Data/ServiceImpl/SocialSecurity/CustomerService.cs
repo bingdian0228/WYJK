@@ -40,7 +40,7 @@ namespace WYJK.Data.ServiceImpl
                 builder.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%'");
             }
 
-            string sqlCs = $@"select members.MemberID,members.UserType,Members.MemberName,Members.MemberPhone,members.Account, SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurityPeople.SocialSecurityPeopleID ,SocialSecurityPeople.Status CustomerServiceStatus, SocialSecurityPeople.IdentityCard,SocialSecurity.Status SSstatus, socialsecurity.SocialSecurityException,AccumulationFund.Status AFStatus, AccumulationFund.AccumulationFundException,[order].OrderCode,[order].Status OrderStatus,
+            string sqlCs = $@"select members.MemberID,members.UserType,Members.MemberName,Members.MemberPhone,members.Account,members.EnterpriseName,members.BusinessName, SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurityPeople.SocialSecurityPeopleID ,SocialSecurityPeople.Status CustomerServiceStatus, SocialSecurityPeople.IdentityCard,SocialSecurity.Status SSstatus, socialsecurity.SocialSecurityException,AccumulationFund.Status AFStatus, AccumulationFund.AccumulationFundException,[order].OrderCode,[order].Status OrderStatus,
                               ISNULL((select SUM(SocialSecurity.SocialSecurityBase*socialsecurity.PayProportion/100) from SocialSecurityPeople
  left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
  where MemberID = Members.MemberID and SocialSecurity.Status = 4 ),0) +

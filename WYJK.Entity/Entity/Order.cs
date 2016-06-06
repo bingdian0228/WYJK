@@ -64,6 +64,10 @@ namespace WYJK.Entity
         /// 代理机构名称
         /// </summary>
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
         /// <summary>
         /// 用户支付数
         /// </summary>

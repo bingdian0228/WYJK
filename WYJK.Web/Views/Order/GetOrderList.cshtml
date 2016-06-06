@@ -20,7 +20,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr;
+                    location.href = '?PageIndex=' + e.curr + '&MemberID=' + '@Request.Params["MemberID"]' + '&OrderCode=' + '@Request.Params["OrderCode"]' + '&Status='+'@Request.Params["Status"]';
                 }
             }
         });
@@ -130,8 +130,9 @@
                         <td><input type="checkbox" value="@item.OrderCode" name=""></td>
                         <td>@item.OrderCode</td>
                         <td>@item.PayTime.ToString("yyyy/MM/dd HH:mm")</td>
-                        <td>@EnumExt.GetEnumCustomDescription((UserTypeEnum)@item.UserType.AsInt())</td>
-                        <td>@item.MemberName</td>
+                        <td>@EnumExt.GetEnumCustomDescription((UserTypeEnum)item.UserType.AsInt())</td>
+                        <td>@(item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName))</td>
+                        @*<td>@item.MemberName</td>*@
                         <td>@item.payUserCount</td>
                         <td>@item.PaymentMethod</td>
                         <td>@item.Amounts</td>

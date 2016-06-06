@@ -115,6 +115,15 @@ namespace WYJK.Entity
         /// 
         /// </summary>
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+        public string Account { get; set; }
         /// <summary>
         /// 参保人ID
         /// </summary>
@@ -178,7 +187,7 @@ namespace WYJK.Entity
         /// </summary>
         public DateTime? ApplyStopDate { get; set; }
         /// <summary>
-        /// 停保原因
+        /// 停保时间
         /// </summary>
         public DateTime? StopDate { get; set; }
 

@@ -91,6 +91,19 @@ namespace WYJK.Entity
         /// 公积金类型
         /// </summary>
         public string AccumulationFundType { get; set; }
+
+        /// <summary>
+        /// 公积金办停类型
+        /// </summary>
+        public string AccumulationFundTopType { get; set; }
+        /// <summary>
+        /// 新单位全称
+        /// </summary>
+        public string CompanyName { get; set; }
+        /// <summary>
+        /// 新单位公积金编号
+        /// </summary>
+        public string CompanyAccumulationFundCode { get; set; }
     }
 
     /// <summary>
@@ -107,6 +120,15 @@ namespace WYJK.Entity
         /// 
         /// </summary>
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+        public string Account { get; set; }
         /// <summary>
         /// 参保人ID
         /// </summary>		

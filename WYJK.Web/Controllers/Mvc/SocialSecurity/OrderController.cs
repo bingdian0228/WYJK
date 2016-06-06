@@ -29,7 +29,12 @@ namespace WYJK.Web.Controllers.Mvc
         {
             PagedResult<FinanceOrder> orderList = orderService.GetFinanceOrderList(parameter);
 
-            ViewData["memberList"] = _memberService.GetMembersList();
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
             return View(orderList);
         }
 

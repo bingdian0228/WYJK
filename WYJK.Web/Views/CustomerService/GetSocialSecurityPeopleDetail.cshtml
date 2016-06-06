@@ -322,7 +322,7 @@
             </div>
             <label class="form-label col-3">代理机构：</label>
             <div class="formControls col-2">
-                <span class="lineheight">@member.MemberName</span>
+                <span class="lineheight">@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))</span>
             </div>
         </div>
         <div class="row cl">
@@ -941,7 +941,7 @@
         }
     </form>
     <div class="row cl" style="text-align:center;">
-        <label style="font-size:24px;font-weight:bold;">关联账户@(member.MemberName)的账户信息</label>
+        <label style="font-size:24px;font-weight:bold;">关联账户@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))的账户信息</label>
     </div>
     <div class="mt-20">
         <table class="table table-border table-bordered table-bg table-hover table-sort">

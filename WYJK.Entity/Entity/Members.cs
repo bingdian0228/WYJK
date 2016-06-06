@@ -368,6 +368,10 @@ namespace WYJK.Entity
         /// </summary>		
         public string EnterpriseName { get; set; }
         /// <summary>
+        /// 企业税号
+        /// </summary>
+        public string EnterpriseTax { get; set; }
+        /// <summary>
         /// 行业类型
         /// </summary>		
         public string EnterpriseType { get; set; }
@@ -585,6 +589,10 @@ namespace WYJK.Entity
         public int MemberID { get; set; }
         public string UserType { get; set; }
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
         public string MemberPhone { get; set; }
         /// <summary>
         /// 人数
@@ -594,6 +602,11 @@ namespace WYJK.Entity
         /// 账户金额
         /// </summary>
         public string Account { get; set; }
+
+        /// <summary>
+        /// 冻结费
+        /// </summary>
+        public string Bucha { get; set; }
         /// <summary>
         /// 账户状态
         /// </summary>

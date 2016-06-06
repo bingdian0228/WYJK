@@ -131,7 +131,7 @@ namespace WYJK.Web.Controllers.Mvc
                     for (int i = 1; i < table.Rows.Count; i++)
                     {
                         PaymentDetail paymentDetail = new PaymentDetail();
-                        if (NoFileName == "工伤缴费明细"|| NoFileName == "生育缴费明细")
+                        if (NoFileName == "工伤缴费明细" || NoFileName == "生育缴费明细")
                         {
                             paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
                             paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
@@ -182,7 +182,8 @@ namespace WYJK.Web.Controllers.Mvc
                             paymentDetail.SettlementMethod = table.Rows[i][13].ToString();//结算方式
                             paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
                         }
-                        else if (NoFileName == "医疗缴费明细") {
+                        else if (NoFileName == "医疗缴费明细")
+                        {
                             paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
                             paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
                             paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
@@ -399,6 +400,15 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         [HttpPost]
         public ActionResult BatchDelete(int[] EnterpriseIDs)
         {
+            //判断签约企业下是否有人投保或公积金
+            string EnterpriseIDstr = string.Join("','", EnterpriseIDs);
+            string sqlstr = $"select (SELECT COUNT(*)FROM SocialSecurity where RelationEnterprise in('{EnterpriseIDstr}')) + (select COUNT(*)from AccumulationFund  where RelationEnterprise in('{EnterpriseIDstr}'))";
+
+            int count = DbHelper.QuerySingle<int>(sqlstr);
+
+            if (count > 0)
+                return Json(new { status = false, message = "该签约企业下有人投保或公积金，不能删除" });
+
             bool flag = _enterpriseService.BatchDeleteEnterprise(EnterpriseIDs);
 
             #region 记录日志

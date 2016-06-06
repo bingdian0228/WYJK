@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
                       dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, 
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, 
-                      dbo.Members.MemberName, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate, dbo.Members.MemberID,
+                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate, dbo.Members.MemberID,
                         case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
@@ -59,7 +59,8 @@ namespace WYJK.Data.ServiceImpl
                       INNER JOIN dbo.SocialSecurity ON dbo.SocialSecurityPeople.SocialSecurityPeopleID = dbo.SocialSecurity.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";
 
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.SocialSecurityID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and Status = {parameter.Status} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
+            string sqlstr = string.IsNullOrEmpty(parameter.Status) ? "1=1" : $" Status = {parameter.Status}";
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.SocialSecurityID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
 
             List<SocialSecurityShowModel> modelList = await DbHelper.QueryAsync<SocialSecurityShowModel>(sql, new
             {
@@ -67,7 +68,7 @@ namespace WYJK.Data.ServiceImpl
                 EndIndex = parameter.TakeCount
             });
 
-            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) t  where  " + userTypeSql + $" and Status = {parameter.Status} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
+            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) t  where  " + userTypeSql + $" and {sqlstr} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
 
             return new PagedResult<SocialSecurityShowModel>
             {
@@ -380,7 +381,17 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public bool ModifySocialStatus(int[] SocialSecurityPeopleIDs, int status)
         {
-            string sql = $"update SocialSecurity set Status={status} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
+            string sqlstr = "";
+            if (status == (int)SocialSecurityStatusEnum.Normal)
+            {
+                sqlstr = "HandleDate=getdate()";
+            }
+            else if (status == (int)SocialSecurityStatusEnum.AlreadyStop)
+            {
+                sqlstr = "StopDate=getdate()";
+            }
+
+            string sql = $"update SocialSecurity set Status={status},{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 
@@ -423,7 +434,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public bool ApplyTopAccumulationFund(StopAccumulationFundParameter parameter)
         {
-            string sql = $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate() where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
+            string sql = $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate(),AccumulationFundTopType={parameter.AccumulationFundTopType},CompanyName='{parameter.CompanyName}',CompanyAccumulationFundCode='{parameter.CompanyAccumulationFundCode}' where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 

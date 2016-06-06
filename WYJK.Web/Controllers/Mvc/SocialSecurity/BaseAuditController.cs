@@ -26,7 +26,12 @@ namespace WYJK.Web.Controllers.Mvc
         {
             PagedResult<BaseAuditList> list = _baseAuditService.GetBaseAuditList(parameter);
 
-            ViewBag.memberList = _memberService.GetMembersList();
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
 
             List<SelectListItem> selectList = new List<SelectListItem> { new SelectListItem() { Value = "", Text = "全部" } };
             selectList.AddRange(EnumExt.GetSelectList(typeof(BaseAuditEnum)));
