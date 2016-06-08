@@ -221,15 +221,38 @@ namespace WYJK.Web.Controllers.Http
         /// 选择停保原因
         /// </summary>
         /// <returns></returns>
-        public JsonResult<List<string>> GetStopSocialSecurityReason()
+        public JsonResult<dynamic> GetStopSocialSecurityReason()
         {
+            //13号到15号不允许点击停保
+            if (DateTime.Now.Day >= 13 && DateTime.Now.Day <= 15)
+            {
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "13号到15号不允许点击停保"
+                };
+            }
+            //提示时间
+            string dateTip = string.Empty;
+            if (DateTime.Now.Day < 13)
+            {
+                dateTip = "缴费月数截止到" + DateTime.Now.Year + "年" + DateTime.Now.Month + "月";
+            }
+            if (DateTime.Now.Day > 15)
+            {
+                DateTime datetime = DateTime.Now.AddMonths(1);
+                dateTip = "缴费月数截止到" + datetime.Year + "年" + datetime.Month + "月";
+            }
+            //材料收取方式
+            List<Property> CollectTypeList = SelectListClass.GetSelectList(typeof(SocialSecurityCollectTypeEnum));
+
             string StopSocialSecurityReason = "劳动合同到期|企业解除劳动合同|企业经济性裁员|企业破产|企业撤销解散|个人申请解除劳动合同";
             List<string> list = StopSocialSecurityReason.Split('|').ToList();
-            return new JsonResult<List<string>>
+            return new JsonResult<dynamic>
             {
                 status = true,
                 Message = "获取成功",
-                Data = list
+                Data = new { dateTip = dateTip, CollectTypeList = CollectTypeList, list = list }
             };
         }
 
@@ -710,6 +733,7 @@ namespace WYJK.Web.Controllers.Http
         /// <param name="area"></param>
         /// <param name="HouseholdProperty"></param>
         /// <returns></returns>
+        [System.Web.Http.HttpGet]
         public JsonResult<dynamic> AccumulationFundTransferShow(string area, string HouseholdProperty)
         {
             EnterpriseSocialSecurity model = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(area, HouseholdProperty);
@@ -732,12 +756,33 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public JsonResult<dynamic> GetAccumulationFundTopTypeList()
         {
+            //13号到15号不允许点击停保
+            if (DateTime.Now.Day >= 13 && DateTime.Now.Day <= 15)
+            {
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "13号到15号不允许点击停公积金"
+                };
+            }
+            //提示时间
+            string dateTip = string.Empty;
+            if (DateTime.Now.Day < 13)
+            {
+                dateTip = "缴费月数截止到" + DateTime.Now.Year + "年" + DateTime.Now.Month + "月";
+            }
+            if (DateTime.Now.Day > 15)
+            {
+                DateTime datetime = DateTime.Now.AddMonths(1);
+                dateTip = "缴费月数截止到" + datetime.Year + "年" + datetime.Month + "月";
+            }
+
             List<Property> list = SelectListClass.GetSelectList(typeof(AccumulationFundTopTypeEnum));
             return new JsonResult<dynamic>
             {
                 status = true,
                 Message = "获取成功",
-                Data = list
+                Data = new { dateTip = dateTip, list = list }
             };
         }
 
@@ -1073,6 +1118,8 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public JsonResult<dynamic> ApplyStopSocialSecurity(StopSocialSecurityParameter parameter)
         {
+
+
             bool flag = _socialSecurityService.ApplyTopSocialSecurity(parameter);
 
             //查看是否处于待续费状态，如果是，则判断余额-待办是否够交待续费的钱，如果够则将待续费变成正常
@@ -1133,13 +1180,13 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
-        /// 获取已停列表
+        /// 获取已停列表  1、自取 2、邮寄
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
         public JsonResult<List<TopSocialSecurityPeoples>> GetAlreadyStop(int MemberID)
         {
-            string sql = "select ssp.SocialSecurityPeopleID,ssp.SocialSecurityPeopleName,ss.PayTime SSPayTime,ISNULL(ss.AlreadyPayMonthCount,0) SSAlreadyPayMonthCount,ss.Status SSStatus,ss.StopReason SSStopReason, ss.ApplyStopDate SSApplyStopDate,ss.PayMonthCount SSRemainingMonthCount, af.PayTime AFPayTime,ISNULL(af.AlreadyPayMonthCount,0) AFAlreadyPayMonthCount,af.Status AFStatus,af.ApplyStopDate AFApplyStopDate,af.PayMonthCount AFRemainingMonthCount"
+            string sql = "select ssp.SocialSecurityPeopleID,ssp.SocialSecurityPeopleName,ss.CollectType,ss.MailOrder,ss.ExpressCompany, ss.PayTime SSPayTime,ISNULL(ss.AlreadyPayMonthCount,0) SSAlreadyPayMonthCount,ss.Status SSStatus,ss.StopReason SSStopReason, ss.ApplyStopDate SSApplyStopDate,ss.PayMonthCount SSRemainingMonthCount, af.PayTime AFPayTime,ISNULL(af.AlreadyPayMonthCount,0) AFAlreadyPayMonthCount,af.Status AFStatus,af.ApplyStopDate AFApplyStopDate,af.PayMonthCount AFRemainingMonthCount"
             + " from SocialSecurityPeople ssp"
             + " left join SocialSecurity ss on ssp.SocialSecurityPeopleID = ss.SocialSecurityPeopleID"
             + " left join AccumulationFund af on ssp.SocialSecurityPeopleID = af.SocialSecurityPeopleID"

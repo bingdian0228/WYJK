@@ -52,6 +52,7 @@
     <Compile Include="IService\Loan\ILoanSubjectService.cs" />
     <Compile Include="IService\SocialSecurity\IBaseAuditService.cs" />
     <Compile Include="IService\SocialSecurity\IAccumulationFundService.cs" />
+    <Compile Include="IService\SocialSecurity\ICertificationAuditService.cs" />
     <Compile Include="IService\SocialSecurity\ICustomerService.cs" />
     <Compile Include="IService\SocialSecurity\IEnterpriseService.cs" />
     <Compile Include="IService\SocialSecurity\IInformationService.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="ServiceImpl\Loan\LoanSubjectService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\AccumulationFundService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\BaseAuditService.cs" />
+    <Compile Include="ServiceImpl\SocialSecurity\CertificationAuditService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\CustomerService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\EnterpriseService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\InformationService.cs" />

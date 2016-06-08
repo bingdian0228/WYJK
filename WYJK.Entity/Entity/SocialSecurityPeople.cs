@@ -334,6 +334,18 @@ namespace WYJK.Entity
         /// 停保时间
         /// </summary>
         public DateTime? SSStopDate { get; set; }
+        /// <summary>
+        /// 收取方式
+        /// </summary>
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄单号
+        /// </summary>
+        public string MailOrder { get; set; }
+        /// <summary>
+        /// 快递公司
+        /// </summary>
+        public string ExpressCompany { get; set; }
 
         /// <summary>
         /// 公积金停方式
@@ -362,6 +374,22 @@ namespace WYJK.Entity
         /// 社保ID
         /// </summary>
         public int SocialSecurityPeopleID { get; set; }
+        /// <summary>
+        /// 收取方式
+        /// </summary>
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄地址
+        /// </summary>
+        public string MailAddress { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>
+        public string ContactsPhone { get; set; }
+        /// <summary>
+        /// 联系人
+        /// </summary>
+        public string ContactsUser { get; set; }
         /// <summary>
         /// 停保原因
         /// </summary>

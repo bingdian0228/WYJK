@@ -285,12 +285,12 @@ namespace WYJK.Web.Controllers.Mvc
                         List<SocialSecurityPeople> socialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>($"select * from SocialSecurityPeople where MemberID = {member.MemberID}");
                         foreach (var socialSecurityPeople in socialSecurityPeopleList)
                         {
-                            List<PaymentDetail> PaymentDetailList = DbHelper.Query<PaymentDetail>($"select * from PaymentDetail where IdentityCard='{socialSecurityPeople.IdentityCard}' and PaymentType='社平调整补差' and PaymentMark='已实缴'");
+                            List<PaymentDetail> PaymentDetailList = DbHelper.Query<PaymentDetail>($"select * from PaymentDetail where IdentityCard='{socialSecurityPeople.IdentityCard}' and PaymentType='社平调整补差' and PaymentMark='已实缴' and  SettlementMethod='统一征收'");
                             foreach (var paymentDetail in PaymentDetailList)
                             {
                                 BuchaAmount += paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses;
                                 string Note = string.Format("{0}:{1}{2},个人缴费:{3},单位缴费:{4}", paymentDetail.SocialSecurityType, socialSecurityPeople.SocialSecurityPeopleName, paymentDetail.PayTime, paymentDetail.PersonalExpenses, paymentDetail.CompanyExpenses);//缴费类型：哪个参保人什么时间个人缴费多少，单位缴费多少
-                                builderBuchaRecord.Append($"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime) values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurityPeople.SocialSecurityPeopleID},{socialSecurityPeople.SocialSecurityPeopleName},'支出','冻结费',{Note},{paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses},{member.Account},getdate());");
+                                builderBuchaRecord.Append($"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime) values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurityPeople.SocialSecurityPeopleID},'{socialSecurityPeople.SocialSecurityPeopleName}','支出','冻结费','{Note}',{paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses},{member.Account},getdate());");
                             }
                         }
                         builderReduceBucha.Append($"update Members set Bucha-={BuchaAmount} where MemberID={member.MemberID};");
@@ -299,8 +299,8 @@ namespace WYJK.Web.Controllers.Mvc
                     if (builderReduceBucha.ToString().Trim() != string.Empty)
                         DbHelper.ExecuteSqlCommand(builderReduceBucha.ToString(), null);
 
-                    //将补差转到余额
-                    DbHelper.ExecuteSqlCommand("update Members set Account=+Bucha,Bucha=0", null);
+                    ////将补差转到余额
+                    //DbHelper.ExecuteSqlCommand("update Members set Account=+Bucha,Bucha=0", null);
                     //遍历所有用户
                     foreach (var member in memberList)
                     {
@@ -316,7 +316,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { status = false, message = "调整失败" });
+                    return Json(new { status = false, message = ex.ToString() });
                 }
                 finally
                 {

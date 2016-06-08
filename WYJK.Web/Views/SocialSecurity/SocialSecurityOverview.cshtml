@@ -1,0 +1,95 @@
+﻿@model PagedResult<SocialSecurityShowModel>
+@{
+    ViewBag.Title = "社保业务总览";
+    string SocialSecurityPeopleName = Request.Params["SocialSecurityPeopleName"]; //ViewData["SocialSecurityPeopleName"] == null ? string.Empty : ViewData["SocialSecurityPeopleName"].ToString();
+    string IdentityCard = ViewData["IdentityCard"] == null ? string.Empty : ViewData["IdentityCard"].ToString();
+
+}
+@section Header
+{
+    <script type="text/javascript" src="~/Content/lib/laypage/1.3/laypage.js"></script>
+}
+@section Footer
+{
+    <script type="text/javascript">
+        laypage({
+            cont: $('#pager'),
+            skin: '#AF0000', //皮肤
+            pages: '@Model.TotalPageCount', //可以叫服务端把总页数放在某一个隐藏域，再获取。假设我们获取到的是18
+            curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/PageIndex=(\d+)/);
+                return page ? page[1] : 1;
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard' + "&Status=" + '@Request.Params["Status"]';
+
+                }
+            }
+        });
+
+    </script>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 社保业务办理 <span class="c-gray en">&gt;</span> 社保业务总览<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="text-c">
+        @using (Html.BeginForm("SocialSecurityOverview", "SocialSecurity", FormMethod.Get))
+        {
+            @Html.Raw("客户类型:")
+            <span class="select-box inline">
+                @Html.DropDownList("UserType", ViewData["UserType"] as SelectList, new { @class = "select" })
+            </span>
+
+            @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+            @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
+            @:状态:
+            <span class="select-box inline">
+                @Html.DropDownList("Status", ViewData["Status"] as SelectList, new { @class = "select" })
+            </span>
+            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+
+        }
+    </div>
+
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    <th width="80">用户类型</th>
+                    <th width="80">代理机构</th>
+                    <th width="80">客户名称</th>
+                    <th width="80">身份证</th>
+                    <th width="80">起始日期</th>
+                    <th width="80">社保交至</th>
+                    <th width="80">基数</th>
+                    <th width="80">比例</th>
+                    <th width="80">每月交费</th>
+                    <th width="120">状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var socialSecurity in Model.Items)
+                {
+                    @*@EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)(socialSecurity.HouseholdProperty.AsInt()))*@
+                    <tr class="text-c">
+                        <td>
+                            @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(socialSecurity.UserType))
+                        </td>
+                        <td>@(socialSecurity.UserType == "0" ? socialSecurity.MemberName : (socialSecurity.UserType == "1" ? socialSecurity.EnterpriseName : socialSecurity.BusinessName))</td>
+                        @*<td>@socialSecurity.MemberName</td>*@
+                        <td>@socialSecurity.SocialSecurityPeopleName</td>
+                        <td>@socialSecurity.IdentityCard</td>
+                        <td>@socialSecurity.PayTime.ToString("yyyy/MM")</td>
+                        <td>@socialSecurity.PayTime.AddMonths(socialSecurity.PayMonthCount).ToString("yyyy/MM")</td>
+                        <td>@socialSecurity.SocialSecurityBase.ToString("N2")</td>
+                        <td>@socialSecurity.PayProportion.ToString("N2")</td>
+                        <td>@Convert.ToDecimal(socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100).ToString("N2")</td>
+                        <td class="td-status"><span class="label label-success radius">@EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)(Convert.ToInt32(socialSecurity.Status)))</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="pager" style="margin-top: 20px;"></div>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">  <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+</div>

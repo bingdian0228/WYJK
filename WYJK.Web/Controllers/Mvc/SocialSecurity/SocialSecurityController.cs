@@ -10,6 +10,7 @@ using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
 using WYJK.Web.Models;
+using WYJK.Data;
 
 namespace WYJK.Web.Controllers.Mvc
 {
@@ -23,7 +24,8 @@ namespace WYJK.Web.Controllers.Mvc
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<ActionResult> SocialSecurityOverview(SocialSecurityParameter parameter) {
+        public async Task<ActionResult> SocialSecurityOverview(SocialSecurityParameter parameter)
+        {
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -150,7 +152,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult BatchComplete(int[] SocialSecurityPeopleIDs)
+        public JsonResult BatchComplete(int SocialSecurityPeopleIDs)
         {
             //修改参保人社保状态
             bool flag = _socialSecurityService.ModifySocialStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.Normal);
@@ -158,7 +160,8 @@ namespace WYJK.Web.Controllers.Mvc
             #region 记录日志
             if (flag == true)
             {
-                string names = _socialSecurityService.GetSocialPeopleNames(SocialSecurityPeopleIDs);
+
+                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleIDs });
                 LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办结，客户:{0}", names) });
             }
             #endregion
@@ -167,24 +170,74 @@ namespace WYJK.Web.Controllers.Mvc
         }
 
         /// <summary>
-        /// 批量办停
+        /// 社保办停
         /// </summary>
         /// <param name="SocialSecurityPeopleIDs"></param>
         /// <returns></returns>
-        public JsonResult BatchStop(int[] SocialSecurityPeopleIDs)
+        public JsonResult BatchStop(int SocialSecurityPeopleIDs)
         {
             // 修改参保人社保状态
-            bool flag = _socialSecurityService.ModifySocialStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.AlreadyStop);
+            string sql = $"update SocialSecurity set Status={(int)SocialSecurityStatusEnum.AlreadyStop},StopDate=getdate() where SocialSecurityPeopleID in({SocialSecurityPeopleIDs})";
+
+            int result = DbHelper.ExecuteSqlCommand(sql, null);
 
             #region 记录日志
-            if (flag == true)
+            if (result > 0)
             {
-                string names = _socialSecurityService.GetSocialPeopleNames(SocialSecurityPeopleIDs);
+                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleIDs });
                 LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办停，客户:{0}", names) });
             }
             #endregion
 
-            return Json(new { status = flag, Message = flag ? "办停成功" : "办停失败" });
+            return Json(new { status = result > 0, Message = result > 0 ? "办停成功" : "办停失败" });
+        }
+
+        /// <summary>
+        /// 社保邮寄办停  填写邮寄单号和快递公司
+        /// </summary>
+        /// <param name="SocialSecurityPeopleIDs"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult SocialSecurityMailStop(int SocialSecurityPeopleIDs)
+        {
+            SocialSecurityMailStop model = new SocialSecurityMailStop
+            {
+                SocialSecurityPeopleIDs = SocialSecurityPeopleIDs
+            };
+            return View(model);
+        }
+
+        /// <summary>
+        ///  社保邮寄办停  填写邮寄单号和快递公司
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult SocialSecurityMailStop(SocialSecurityMailStop model)
+        {
+            if (!ModelState.IsValid) return View();
+            string message = string.Empty;
+
+            // 修改参保人社保状态
+            string sql = $"update SocialSecurity set Status={(int)SocialSecurityStatusEnum.AlreadyStop},StopDate=getdate(),MailOrder='{model.MailOrder}',ExpressCompany='{model.ExpressCompany}' where SocialSecurityPeopleID in({model.SocialSecurityPeopleIDs})";
+
+            int result = DbHelper.ExecuteSqlCommand(sql, null);
+
+
+            #region 记录日志
+            if (result > 0)
+            {
+                message = "办停成功";
+                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { model.SocialSecurityPeopleIDs });
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办停，客户:{0}", names) });
+            }
+            else {
+                message = "办停失败";
+            }
+
+            #endregion
+            return Content(message);
+            //return Json(new { status = result > 0, Message = result > 0 ? "办停成功" : "办停失败" });
         }
 
         /// <summary>
@@ -213,7 +266,7 @@ namespace WYJK.Web.Controllers.Mvc
             #region 记录日志
             if (flag == true)
             {
-                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleID});
+                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleID });
                 LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("更新社保客户:{0}，社保号为：{1}", names, SocialSecurityNo) });
             }
             #endregion
@@ -225,12 +278,13 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpGet]
         public ActionResult SocialException(int[] SocialSecurityPeopleIDs)
         {
-            
 
-            SocialSecurityException model = new SocialSecurityException() {
+
+            SocialSecurityException model = new SocialSecurityException()
+            {
                 PeopleIds = string.Join(",", SocialSecurityPeopleIDs)
             };
-            
+
             return View(model);
         }
 
@@ -252,7 +306,7 @@ namespace WYJK.Web.Controllers.Mvc
                 {
                     ViewBag.ErrorMessage = ex.Message;
                 }
-            }          
+            }
             return View(model);
         }
 

@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
                       dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, 
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, 
-                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate, dbo.Members.MemberID,
+                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,
                         case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
@@ -391,7 +391,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
                 sqlstr = "StopDate=getdate()";
             }
 
-            string sql = $"update SocialSecurity set Status={status},{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
+            string sql = $"update SocialSecurity set Status={status},{sqlstr} where SocialSecurityPeopleID in({SocialSecurityPeopleIDs})";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 
@@ -421,7 +421,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public bool ApplyTopSocialSecurity(StopSocialSecurityParameter parameter)
         {
-            string sql = $"update SocialSecurity set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate(),StopReason='{parameter.StopReason}' where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
+            string sql = $"update SocialSecurity set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate(),StopReason='{parameter.StopReason}',CollectType='{parameter.CollectType}',MailAddress='{parameter.MailAddress}',ContactsPhone='{parameter.ContactsPhone}',ContactsUser='{parameter.ContactsUser}' where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 

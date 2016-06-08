@@ -636,6 +636,126 @@
             调整后的公积金基数
             </summary>
         </member>
+        <member name="T:WYJK.Entity.CertificationAudit">
+            <summary>
+            认证审核
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.ID">
+            <summary>
+            ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.MemberName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.MemberPhone">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.Status">
+            <summary>
+            审核状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.UserType">
+            <summary>
+            认证类型
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.ApplyDate">
+            <summary>
+            申请时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.AuditDate">
+            <summary>
+            审核时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseName">
+            <summary>
+            企业名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseType">
+            <summary>
+            行业类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseTax">
+            <summary>
+            企业税号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseArea">
+            <summary>
+            所在城市
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseLegal">
+            <summary>
+            法人
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseLegalIdentityCardNo">
+            <summary>
+            法人身份证
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterprisePeopleNum">
+            <summary>
+            企业人数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.SocialSecurityCreditCode">
+            <summary>
+            社会信用代码
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterpriseBusinessLicense">
+            <summary>
+            营业执照
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.BusinessName">
+            <summary>
+            营业执照名称
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.BusinessUser">
+            <summary>
+            经营者姓名
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.BusinessIdentityCardNo">
+            <summary>
+            经营者身份证号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.BusinessIdentityPhoto">
+            <summary>
+            经营者身份证
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.BusinessLicensePhoto">
+            <summary>
+            经营者营业执照
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.CertificationAuditParameter">
+            <summary>
+            认证参数
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.CostParameterSetting">
             <summary>
             费用参数设置
@@ -2281,6 +2401,36 @@
             状态
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.CollectType">
+            <summary>
+            收取方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.MailAddress">
+            <summary>
+            邮寄地址
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.ContactsPhone">
+            <summary>
+            联系电话
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.ContactsUser">
+            <summary>
+            联系人
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.MailOrder">
+            <summary>
+            邮编
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.ExpressCompany">
+            <summary>
+            快递公司
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.SocialSecurityParameter">
             <summary>
             社保参数(Admin)
@@ -2711,6 +2861,21 @@
             停保时间
             </summary>
         </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.CollectType">
+            <summary>
+            收取方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.MailOrder">
+            <summary>
+            邮寄单号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TopSocialSecurityPeoples.ExpressCompany">
+            <summary>
+            快递公司
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.TopSocialSecurityPeoples.AFStopMethod">
             <summary>
             公积金停方式
@@ -2739,6 +2904,26 @@
         <member name="P:WYJK.Entity.StopSocialSecurityParameter.SocialSecurityPeopleID">
             <summary>
             社保ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopSocialSecurityParameter.CollectType">
+            <summary>
+            收取方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopSocialSecurityParameter.MailAddress">
+            <summary>
+            邮寄地址
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopSocialSecurityParameter.ContactsPhone">
+            <summary>
+            联系电话
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.StopSocialSecurityParameter.ContactsUser">
+            <summary>
+            联系人
             </summary>
         </member>
         <member name="P:WYJK.Entity.StopSocialSecurityParameter.StopReason">

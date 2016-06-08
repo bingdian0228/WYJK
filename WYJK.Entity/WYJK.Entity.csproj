@@ -53,6 +53,7 @@
     <Compile Include="Entity\AccountRecord.cs" />
     <Compile Include="Entity\AccumulationFund.cs" />
     <Compile Include="Entity\BaseAudit.cs" />
+    <Compile Include="Entity\CertificationAudit.cs" />
     <Compile Include="Entity\CostParameterSetting.cs" />
     <Compile Include="Entity\CustomerService.cs" />
     <Compile Include="Entity\EnterpriseSocialSecurity.cs" />

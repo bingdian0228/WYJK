@@ -1,0 +1,44 @@
+﻿@model SocialSecurityMailStop
+@section Footer{
+    <style>
+        span.lineheight {
+            line-height: 31px;
+        }
+    </style>
+    <script>
+        $(function () {
+            $(".Huialert.Huialert-info").fadeOut(2000);
+        })
+    </script>
+}
+<div class="pd-20">
+    @using (Html.BeginForm())
+    {
+        @Html.HiddenFor(m=>m.SocialSecurityPeopleIDs)
+        if (string.IsNullOrWhiteSpace(ViewBag.Message + "") == false)
+        {
+            <div class="Huialert Huialert-info">@(ViewBag.Message)</div>
+        }
+        <div class="row cl">
+            <label class="form-label col-2">邮寄单号：</label>
+            <div class="formControls col-8">
+                @Html.TextBoxFor(m => m.MailOrder, new { @class = "input-text" })
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2"> </label>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.MailOrder)</div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">快递公司：</label>
+            <div class="formControls col-8">
+                @Html.TextBoxFor(m => m.ExpressCompany, new { @class = "input-text" })
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2"> </label>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.ExpressCompany)</div>
+        </div>
+    }
+
+</div>

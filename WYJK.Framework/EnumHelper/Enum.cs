@@ -188,8 +188,9 @@ namespace WYJK.Framework.EnumHelper
     /// <summary>
     /// 认证审核
     /// </summary>
-    public enum CertificationAuditEnum {
-        [EnumDisplayName("未审核")]
+    public enum CertificationAuditEnum
+    {
+        [EnumDisplayName("审核中")]
         NoAudited = 1,
         [EnumDisplayName("已通过")]
         Pass = 2,
@@ -217,6 +218,17 @@ namespace WYJK.Framework.EnumHelper
         Sealed = 1,
         [EnumDisplayName("转移")]
         Transfer = 2
+    }
+
+    /// <summary>
+    /// 社保材料收取类型
+    /// </summary>
+    public enum SocialSecurityCollectTypeEnum
+    {
+        [EnumDisplayName("自取")]
+        PickUp = 1,
+        [EnumDisplayName("邮寄")]
+        Mail = 2
     }
 
     /// <summary>

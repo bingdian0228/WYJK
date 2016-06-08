@@ -264,7 +264,7 @@ namespace WYJK.Web.Controllers.Http
             return new JsonResult<dynamic>
             {
                 status = flag,
-                Message = flag ? "企业认证成功" : "企业认证失败"
+                Message = flag ? "企业认证申请中" : "企业认证错误"
             };
         }
 
@@ -279,7 +279,7 @@ namespace WYJK.Web.Controllers.Http
             return new JsonResult<dynamic>
             {
                 status = flag,
-                Message = flag ? "个体认证成功" : "个体认证失败"
+                Message = flag ? "个体认证申请中" : "个体认证错误"
             };
         }
         /// <summary>

@@ -284,12 +284,12 @@ namespace WYJK.Data.ServiceImpl
        max(BusinessTime) BusinessTime,
        max(SocialInsuranceBase) SocialInsuranceBase,
        max(CompanyName) CompanyName,
-       (select '['+SocialSecurityType+']'+'[个人]'+ CAST(PersonalExpenses as varchar(50))+'[单位]'+CAST(CompanyExpenses as varchar(50))+CHAR(10) from [PaymentDetail] where IdentityCard=a.IdentityCard and CompanyName=a.CompanyName and Year=a.Year for xml path('')) PaymentDetails,
+       (select '['+SocialSecurityType+']'+'[个人]'+ CAST(PersonalExpenses as varchar(50))+'[单位]'+CAST(CompanyExpenses as varchar(50))+CHAR(10) from [PaymentDetail] where IdentityCard=a.IdentityCard and PayTime=a.PayTime and CompanyName=a.CompanyName and Year=a.Year for xml path('')) PaymentDetails,
        sum(PersonalExpenses+ CompanyExpenses) TotalCount
       ,Year
   FROM [WYJK].[dbo].[PaymentDetail] a
   {wheresqlstr}
-  group by IdentityCard,CompanyName,Year";
+  group by IdentityCard,PayTime,CompanyName,Year";
 
             string sqlstr = $"select * from (select ROW_NUMBER() OVER(ORDER BY t.PersonnelNumber )AS Row,t.* from ({innersqlstr}) t ) tt  WHERE tt.Row BETWEEN @StartIndex AND @EndIndex";
 

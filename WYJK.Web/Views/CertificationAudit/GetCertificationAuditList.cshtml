@@ -1,0 +1,89 @@
+﻿@model PagedResult<CertificationAudit>
+@{
+    var memberList = ViewBag.memberList as List<Members>;
+}
+@section Header
+{
+    <script type="text/javascript" src="/Content/lib/laypage/1.3/laypage.js"></script>
+
+}
+@section Footer
+{
+    <script type="text/javascript">
+        laypage({
+            cont: $('#pager'),
+            skin: '#AF0000', //皮肤
+            pages: '@Model.TotalPageCount', //可以叫服务端把总页数放在某一个隐藏域，再获取。假设我们获取到的是18
+            curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/PageIndex=(\d+)/);
+                return page ? page[1] : 1;
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr + "&MemberName=" + '@Request.Params["MemberName"]' + "&MemberPhone=" + '@Request.Params["MemberPhone"]' + "&UserType=" + '@Request.Params["UserType"]' + "&Status=" + '@Request.Params["Status"]';
+                }
+            }
+        });
+    </script>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 认证审核 <span class="c-gray en">&gt;</span> 认证审核管理 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="text-c">
+        @using (Html.BeginForm("GetCertificationAuditList", "CertificationAudit", FormMethod.Get))
+        {
+            @:用户名： @Html.TextBox("MemberName", null, new { style = "width:250px", @class = "input-text", placeholder = "用户名" })
+            @:手机号： @Html.TextBox("MemberPhone", null, new { style = "width:250px", @class = "input-text", placeholder = "手机号" })
+            @:用户类型:
+            <span class="select-box inline">
+                @Html.DropDownList("UserType", ViewData["UserTypeList"] as List<SelectListItem>, new { @class = "select" })
+            </span>
+            @:审核状态:
+            <span class="select-box inline">
+                @Html.DropDownList("Status", ViewData["StatusType"] as List<SelectListItem>, new { @class = "select" })
+            </span>
+            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+
+        }
+    </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    @*<th width="25"><input type="checkbox" name="" value=""></th>*@
+                    <th width="80">用户民</th>
+                    <th width="80">手机号</th>
+                    <th width="80">用户类型</th>
+                    <th width="80">申请时间</th>
+                    <th width="80">审核时间</th>
+                    <th width="80">审核状态</th>
+                    <th width="80">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="text-c">
+                        @*<td><input type="checkbox" value="@item.ID" name="CertificationAudit"></td>*@
+                        <td>@item.MemberName</td>
+                        <td>@item.MemberPhone</td>
+                        <td>@(EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(item.UserType)))</td>
+                        <td>@item.ApplyDate</td>
+                        <td>@(item.AuditDate == null ? "--" : Convert.ToString(item.AuditDate))</td>
+                        <td>@EnumExt.GetEnumCustomDescription((CertificationAuditEnum)Convert.ToInt32(item.Status)) </td>
+                        <td><a title="详情" href='@Url.Action("GetCertificationAuditDetail","CertificationAudit")?ID=@item.ID' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a> </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="pager" style="margin-top: 20px;"></div>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        @*@if (Request.Params["Status"] == Convert.ToInt32(BaseAuditEnum.NoAudited).ToString())
+        {
+            <span class="l">
+                <a href="javascript:;" class="btn btn-primary radius action-audit-pass"><i class="Hui-iconfont">&#xe6e1;</i> 通过</a>
+                <a href="javascript:;" class="btn btn-danger radius action-audit-nopass"><i class="Hui-iconfont">&#xe6dd;</i> 不通过</a>
+            </span>}*@
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
+</div>

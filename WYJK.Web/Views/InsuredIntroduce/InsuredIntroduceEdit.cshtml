@@ -1,0 +1,173 @@
+﻿@model InsuredIntroduce
+@{
+    ViewBag.Title = "参保信息编辑";
+}
+@section Header
+{
+    <link rel="stylesheet" type="text/css" href="/Content/lib/webuploader/0.1.5/webuploader.css" />
+}
+@section Footer{
+    <script type="text/javascript" src="/Content/lib/webuploader/0.1.5/webuploader.min.js"></script>
+
+<script src="~/Content/lib/ueditor/1.4.3/ueditor.config.js"></script>
+<script src="~/Content/lib/ueditor/1.4.3/ueditor.all.min.js"></script>
+<script src="~/Content/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript">
+        var ue = UE.getEditor('editor',{ initialFrameHeight :300});
+        window.config.Webuploader = null;
+
+        function removeFile(current) {
+            var $this = $(current).parents(".item");
+            var id = $this.attr("id");
+            $this.remove().empty();
+
+            $(".wyjk-images").each(function (i) {
+                $(this).attr("name", 'ImgUrls[' + i + ']');
+            });
+            if (id) {
+                window.config.Webuploader.removeFile(id);
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        $list = $("#fileList"),
+            $btn = $("#btn-star"),
+            state = "pending";
+        var uploader = window.config.Webuploader = WebUploader.create({
+            auto: true,
+            swf: '/Content/lib/webuploader/0.1.5/Uploader.swf',
+
+            // 文件接收服务端。
+            server: '/api/upload/MultiUpload',
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+
+            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+            resize: false,
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader.on('fileQueued', function (file) {
+            var $li = $(
+                    '<div id="' + file.id + '" class="item ">' +
+                    '<div class="pic-box"><img></div>' +
+                    // '<div class="info">' + file.name + '</div>' +
+                    //'<p class="state">等待上传...</p>' +
+                    '</div>'
+                ),
+                $img = $li.find('img');
+            $list.append($li);
+            thumbnailWidth = 100;
+            thumbnailHeight = 100;
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            // thumbnailWidth x thumbnailHeight 为 100 x 100
+            uploader.makeThumb(file, function (error, src) {
+                if (error) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+
+                $img.attr('src', src);
+            }, thumbnailWidth, thumbnailHeight);
+        });
+        uploader.on('uploadBeforeSend', function (obj, data, headers) {
+            @*headers.UserId = @Model.UserId;*@
+        });
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+
+            var $li = $('#' + file.id),
+                $percent = $li.find('.progress-box .sr-only');
+
+            // 避免重复创建
+            if (!$percent.length) {
+                $percent = $('<div class="progress-box"><span class="progress-bar radius"><span class="sr-only" style="width:0%"></span></span></div>').appendTo($li).find('.sr-only');
+            }
+            //$li.find(".state").text("上传中");
+            $percent.css('width', percentage * 100 + '%');
+        });
+        //uploader.on('uploadAccept', function (obj, response) {
+        //    return response.status === 'true';
+        //});
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on('uploadSuccess', function (file, response) {
+            var index = $(".upload-state-done").length;
+            //alert("上传成功");
+
+            var html = '<span class="iconfont icon-iconfontwiconguanbi uploader-remove" title="删除" onclick="removeFile(this)"><input type="hidden"  class="wyjk-images"  name="ImgUrls[' + index + ']" value="' + response.Data[0] + '"/></span>';
+            $('#' + file.id).addClass('upload-state-done').append(html);
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on('uploadError', function (file) {
+            //alert("上传失败");
+            $('#' + file.id).addClass('upload-state-error').find(".state").text("上传出错");
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader.on('uploadComplete', function (file) {
+            //alert("上传完成");
+            $('#' + file.id).find('.progress-box').fadeOut();
+        });
+        uploader.on('all', function (type) {
+            if (type === 'startUpload') {
+                state = 'uploading';
+            } else if (type === 'stopUpload') {
+                state = 'paused';
+            } else if (type === 'uploadFinished') {
+                state = 'done';
+            }
+
+            if (state === 'uploading') {
+                $btn.text('暂停上传');
+            } else {
+                $btn.text('开始上传');
+            }
+        });
+
+        $btn.on('click', function () {
+            if (state === 'uploading') {
+                uploader.stop();
+            } else {
+                uploader.upload();
+            }
+        });
+
+    </script>
+}
+<div class="pd-20">
+    @using (Html.BeginForm("InsuredIntroduceEdit", "InsuredIntroduce", FormMethod.Post, new { id = "form-article-add", @class = "form form-horizontal" }))
+    {
+        if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage + "") == false)
+        {
+            <div class="Huialert Huialert-info">@(ViewBag.ErrorMessage)</div>
+        }
+        @Html.HiddenFor(n => n.ID)
+        <div class="row cl">
+            <label class="form-label col-2">名称：</label>
+            <div class="formControls col-8">
+                @Html.TextBoxFor(m => m.Name, new { @class = "input-text radius" })
+            </div>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.Name)</div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">详情：</label>
+            <div class="formControls col-8">
+                @Html.TextAreaFor(m => m.StrContent, new { id = "editor" })
+            </div>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.StrContent)</div>
+        </div>
+        <div class="row cl">
+            <div class="col-10 col-offset-2">
+                <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+            </div>
+        </div>
+    }
+</div>

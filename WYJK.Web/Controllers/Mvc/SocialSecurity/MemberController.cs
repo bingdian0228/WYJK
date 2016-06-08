@@ -39,6 +39,13 @@ namespace WYJK.Web.Controllers.Mvc
             return View(membersStatisticsList);
         }
 
+        [HttpPost]
+        public JsonResult BuchaToAccount()
+        {
+            string sqlstr = "update Members set Account=ISNULL(Account,0)+Bucha,Bucha=0";
+            DbHelper.ExecuteSqlCommand(sqlstr, null);
+            return Json(new { status = true, message = "调整成功" });
+        }
 
         /// <summary>
         /// 调整补差费用
@@ -221,5 +228,7 @@ namespace WYJK.Web.Controllers.Mvc
             };
             return list;
         }
+
+
     }
 }

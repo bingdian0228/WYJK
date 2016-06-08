@@ -81,31 +81,31 @@
                            shade: [0.1, '#000']
                        });
 
-                       var memberID = $this.closest("td").attr("data-memberid");
-                       var bucha = $this.prev().val();
+                       //var memberID = $this.closest("td").attr("data-memberid");
+                       //var bucha = $this.prev().val();
 
                        //提交
                        $.ajax({
-                           url: "@Url.Action("AdjustBucha", "Member")",
-                           data: { "memberID": memberID, "bucha": bucha },
-                       dataType: "json",
-                       type: "post",
-                       success: function (response) {
-                           layer.close(index);
-                           if (response.status) {
-                               layer.msg(response.message);
-                               refresh();
-                           } else {
-                               layer.msg(response.message);
+                           url: "@Url.Action("BuchaToAccount", "Member")",
+                           //data: { "memberID": memberID, "bucha": bucha },
+                           dataType: "json",
+                           type: "post",
+                           success: function (response) {
+                               layer.close(index);
+                               if (response.status) {
+                                   layer.msg(response.message);
+                                   refresh();
+                               } else {
+                                   layer.msg(response.message);
+                               }
+                           },
+                           error: function (data) {
+                               layer.close(index);
+                               layer.msg("服务器错误");
                            }
-                       },
-                       error: function (data) {
-                           layer.close(index);
-                           layer.msg("服务器错误");
-                       }
-                   });
-            })
-        });
+                       });
+                   })
+            });
 
             $("#UserType").change(function () {
                 $this = $(this);
@@ -156,6 +156,14 @@
                 @Html.DropDownList("MemberID", list, new { @class = "select" })
             </span>
             @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+
+
+
+
+
+
+
+
 
 
 

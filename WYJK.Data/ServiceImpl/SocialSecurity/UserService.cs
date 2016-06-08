@@ -212,7 +212,7 @@ namespace WYJK.Data.ServiceImpl
                 EndIndex = parameter.TakeCount
             });
 
-            int totalCount = DbHelper.QuerySingle<int>("select * from Users");
+            int totalCount = DbHelper.QuerySingle<int>("select count(*) from Users");
 
             return new PagedResult<Users>
             {

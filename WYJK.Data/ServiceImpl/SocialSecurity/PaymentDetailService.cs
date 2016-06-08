@@ -17,7 +17,7 @@ namespace WYJK.Data.ServiceImpl
             foreach (var paymentDetail in list)
             {
                 builder.Append($@"
-                    if exists(select 1 from PaymentDetail where IdentityCard='{paymentDetail.IdentityCard}' and CompanyName='{paymentDetail.CompanyName}' and SocialSecurityType='{paymentDetail.SocialSecurityType}' and Year={DateTime.Now.Year})
+                    if exists(select 1 from PaymentDetail where IdentityCard='{paymentDetail.IdentityCard}' and PayTime='{paymentDetail.PayTime}' and CompanyName='{paymentDetail.CompanyName}' and SocialSecurityType='{paymentDetail.SocialSecurityType}' and Year={DateTime.Now.Year})
                     begin
                         update PaymentDetail set  
                                 PersonnelNumber='{paymentDetail.PersonnelNumber}',
@@ -31,7 +31,7 @@ namespace WYJK.Data.ServiceImpl
                                 PaymentMark='{paymentDetail.PaymentMark}',
                                 CompanyNumber='{paymentDetail.CompanyNumber}',
                                 SettlementMethod='{paymentDetail.SettlementMethod}'
-                            where IdentityCard='{paymentDetail.IdentityCard}' and CompanyName='{paymentDetail.CompanyName}' and SocialSecurityType='{paymentDetail.SocialSecurityType}' and Year={DateTime.Now.Year}
+                            where IdentityCard='{paymentDetail.IdentityCard}' and PayTime='{paymentDetail.PayTime}' and CompanyName='{paymentDetail.CompanyName}' and SocialSecurityType='{paymentDetail.SocialSecurityType}' and Year={DateTime.Now.Year}
                     end
                     else
                     begin
@@ -49,7 +49,7 @@ namespace WYJK.Data.ServiceImpl
                             , CompanyNumber
                             , CompanyName
                             , SettlementMethod
-                            , SocialSecurityType)
+                            , SocialSecurityType,Year)
                     values(
                             '{paymentDetail.PersonnelNumber}'
                             ,'{paymentDetail.IdentityCard}'
@@ -64,7 +64,7 @@ namespace WYJK.Data.ServiceImpl
                             ,'{paymentDetail.CompanyNumber}'
                             ,'{paymentDetail.CompanyName}'
                             ,'{paymentDetail.SettlementMethod}'
-                            ,'{paymentDetail.SocialSecurityType}');
+                            ,'{paymentDetail.SocialSecurityType}',{DateTime.Now.Year});
                     end");
             }
 

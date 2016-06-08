@@ -2,6 +2,8 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Data;
+using System.ComponentModel.DataAnnotations;
+
 namespace WYJK.Entity
 {
     /// <summary>
@@ -200,6 +202,31 @@ namespace WYJK.Entity
         /// 状态
         /// </summary>		
         public string Status { get; set; }
+
+        /// <summary>
+        /// 收取方式
+        /// </summary>
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄地址
+        /// </summary>
+        public string MailAddress { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>
+        public string ContactsPhone { get; set; }
+        /// <summary>
+        /// 联系人
+        /// </summary>
+        public string ContactsUser { get; set; }
+        /// <summary>
+        /// 邮编
+        /// </summary>
+        public string MailOrder { get; set; }
+        /// <summary>
+        /// 快递公司
+        /// </summary>
+        public string ExpressCompany { get; set; }
     }
 
     /// <summary>
@@ -286,6 +313,15 @@ namespace WYJK.Entity
         /// 公积金剩余月数
         /// </summary>
         public int AFRemainingMonths { get; set; }
+    }
+
+    public class SocialSecurityMailStop
+    {
+        public int SocialSecurityPeopleIDs { get; set; }
+        [Required(ErrorMessage = "必填")]
+        public string MailOrder { get; set; }
+        [Required(ErrorMessage = "必填")]
+        public string ExpressCompany { get; set; }
     }
 }
 

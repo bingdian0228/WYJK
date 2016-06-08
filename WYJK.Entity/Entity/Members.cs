@@ -358,11 +358,11 @@ namespace WYJK.Entity
     /// </summary>
     public class EnterpriseCertification
     {
-
         /// <summary>
         /// 用户ID
         /// </summary>
         public int MemberID { get; set; }
+
         /// <summary>
         /// 企业名称
         /// </summary>		
