@@ -70,14 +70,14 @@ case when exists(
             string sqlstr = "";
             if (status == (int)SocialSecurityStatusEnum.Normal)
             {
-                sqlstr = "HandleDate=getdate()";
+                sqlstr = ",HandleDate=getdate()";
             }
             else if (status == (int)SocialSecurityStatusEnum.AlreadyStop)
             {
-                sqlstr = "StopDate=getdate()";
+                sqlstr = ",StopDate=getdate()";
             }
 
-            string sql = $"update AccumulationFund set Status={status},{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
+            string sql = $"update AccumulationFund set Status={status}{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 

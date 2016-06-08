@@ -306,7 +306,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
                 new SqlParameter("@PayBeforeMonthCount",accumulationFund.PayBeforeMonthCount),
                 new SqlParameter("@Note",accumulationFund.Note ?? ""),
                 new SqlParameter("@RelationEnterprise",model.EnterpriseID),
-                new SqlParameter("@AccumulationFundType",model.AccumulationFundCode)
+                new SqlParameter("@AccumulationFundType",accumulationFund.AccumulationFundType)
             };
 
             int result = DbHelper.ExecuteSqlCommandScalar(sql, parameters);
@@ -384,14 +384,14 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
             string sqlstr = "";
             if (status == (int)SocialSecurityStatusEnum.Normal)
             {
-                sqlstr = "HandleDate=getdate()";
+                sqlstr = ",HandleDate=getdate()";
             }
             else if (status == (int)SocialSecurityStatusEnum.AlreadyStop)
             {
-                sqlstr = "StopDate=getdate()";
+                sqlstr = ",StopDate=getdate()";
             }
 
-            string sql = $"update SocialSecurity set Status={status},{sqlstr} where SocialSecurityPeopleID in({SocialSecurityPeopleIDs})";
+            string sql = $"update SocialSecurity set Status={status}{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 
