@@ -212,7 +212,7 @@
                                 <span class="label label-success radius order-view" style="cursor:pointer;" data-id="@customerService.SocialSecurityPeopleID">查看</span>
                             </td>*@
                         <td>@customerService.OrderCode</td>
-                        <td>@EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus)) </td>
+                        <td>@(string.IsNullOrEmpty(customerService.OrderStatus) ? "--" : EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus))) </td>
                         <td></td>
                         <td></td>
                         <td>@customerService.SocialSecurityPeopleName</td>
@@ -229,7 +229,7 @@
                             }
                             else
                             {
-                                @:无
+                                @:--
                             }
                         </td>
                         <td>@customerService.SocialSecurityException</td>
@@ -241,7 +241,7 @@
                             }
                             else
                             {
-                                @:无
+                                @:--
                             }
                         </td>
                         <td>@customerService.AccumulationFundException</td>

@@ -105,6 +105,9 @@ namespace WYJK.Data.ServiceImpl
             {
                 builder.Append($" and orders.Status = {parameter.Status}");
             }
+            else {
+                builder.Append($" and orders.Status in(1,2)");
+            }
 
             string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberName,members.EnterpriseName,members.BusinessName,"
                             + " (select COUNT(*) from OrderDetails where OrderDetails.OrderCode = Orders.OrderCode) payUserCount,"

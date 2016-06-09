@@ -16,7 +16,7 @@ namespace WYJK.Web.Controllers.Mvc
     [Authorize]
     public class OrderController : Controller
     {
-        IOrderService orderService = new OrderService();
+        private readonly IOrderService orderService = new OrderService();
         private readonly IMemberService _memberService = new MemberService();
 
         /// <summary>
@@ -66,8 +66,11 @@ namespace WYJK.Web.Controllers.Mvc
                             //是否通过客服审核，若通过，则修改社保和公积金状态
                             if (Convert.ToInt32(socialSecurityPeople.Status) == (int)CustomerServiceAuditEnum.Pass)
                             {
-                                string sqlStr2 = $"update SocialSecurity set Status = {(int)SocialSecurityStatusEnum.WaitingHandle} where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};update AccumulationFund set Status = {(int)SocialSecurityStatusEnum.WaitingHandle}  where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};";
-                                DbHelper.ExecuteSqlCommand(sqlStr2, null);
+                                if (orderDetail.IsPaySocialSecurity)
+                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set Status = {(int)SocialSecurityStatusEnum.WaitingHandle} where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};", null);
+                                if (orderDetail.IsPayAccumulationFund)
+                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set Status = {(int)SocialSecurityStatusEnum.WaitingHandle}  where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};", null);
+
                             }
                         }
 

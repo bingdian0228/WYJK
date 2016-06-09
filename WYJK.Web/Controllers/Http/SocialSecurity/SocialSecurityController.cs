@@ -171,43 +171,42 @@ namespace WYJK.Web.Controllers.Http
                     item.AFStatus = 0;
                 }
 
-                #region 补差费
-                //每人每月补差费用
-                decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
-
-                //参保月份、参保月数、签约单位ID
-                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
-                decimal BuchaAmount = 0;
-                if (socialSecurity != null)
+                if (item.IsPaySocialSecurity)
                 {
-                    int payMonth = socialSecurity.PayTime.Month;
-                    int monthCount = socialSecurity.PayMonthCount;
-                    //相对应的签约单位城市是否已调差（社平工资）
-                    EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
-                                                                                                                                                          //已调,当年以后知道年末都不需交，直到一月份开始交
-                    if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                    #region 补差费
+                    //每人每月补差费用
+                    decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+
+                    //参保月份、参保月数、签约单位ID
+                    SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
+                    decimal BuchaAmount = 0;
+                    if (socialSecurity != null)
                     {
-                        int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
-                        int BuchaMonthCount = monthCount - freeBuchaMonthCount;
-                        if (freeBuchaMonthCount < monthCount)
+                        int payMonth = socialSecurity.PayTime.Month;
+                        int monthCount = socialSecurity.PayMonthCount;
+                        //相对应的签约单位城市是否已调差（社平工资）
+                        EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                                                                                                                                                              //已调,当年以后知道年末都不需交，直到一月份开始交
+                        if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
                         {
+                            int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
+                            int BuchaMonthCount = monthCount - freeBuchaMonthCount;
+                            if (freeBuchaMonthCount < monthCount)
+                            {
+                                BuchaAmount = FreezingAmount * BuchaMonthCount;
+                            }
+                        }
+                        //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
+                        if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                        {
+                            int BuchaMonthCount = payMonth - 1 + monthCount;
                             BuchaAmount = FreezingAmount * BuchaMonthCount;
                         }
                     }
-                    //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
-                    if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
-                    {
-                        int BuchaMonthCount = payMonth - 1 + monthCount;
-                        BuchaAmount = FreezingAmount * BuchaMonthCount;
-                    }
+                    item.Bucha = BuchaAmount;
+                    #endregion
                 }
-                item.Bucha = BuchaAmount;
-                #endregion
-
-
             });
-
-
 
             return new JsonResult<List<UnInsuredPeople>>
             {
@@ -898,18 +897,18 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
-        /// 获取待办理列表    状态为 1和2的都显示为待办
+        /// 获取待办理列表    状态为 1和2的都显示为待办,当判断未参保1的时候，还需要判断ssIsPay afIsPay 是否支付过，只有支付过才显示
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
         public JsonResult<List<SocialSecurityPeoples>> GetWaitingHandleListByStatus(int MemberID)
         {
 
-            string sql = "select ssp.SocialSecurityPeopleID,ssp.SocialSecurityPeopleName,ss.PayTime SSPayTime,ISNULL(ss.AlreadyPayMonthCount,0) SSAlreadyPayMonthCount,ss.Status SSStatus,ss.PayMonthCount SSRemainingMonthCount, af.PayTime AFPayTime,ISNULL(af.AlreadyPayMonthCount,0) AFAlreadyPayMonthCount,af.Status AFStatus,af.PayMonthCount AFRemainingMonthCount"
+            string sql = "select ssp.SocialSecurityPeopleID,ssp.SocialSecurityPeopleName,ss.IsPay ssIsPay, ss.PayTime SSPayTime,ISNULL(ss.AlreadyPayMonthCount,0) SSAlreadyPayMonthCount,ss.Status SSStatus,ss.PayMonthCount SSRemainingMonthCount,af.IsPay afIsPay, af.PayTime AFPayTime,ISNULL(af.AlreadyPayMonthCount,0) AFAlreadyPayMonthCount,af.Status AFStatus,af.PayMonthCount AFRemainingMonthCount"
             + " from SocialSecurityPeople ssp"
             + " left join SocialSecurity ss on ssp.SocialSecurityPeopleID = ss.SocialSecurityPeopleID"
             + " left join AccumulationFund af on ssp.SocialSecurityPeopleID = af.SocialSecurityPeopleID"
-            + $" where ((ss.Status = {(int)SocialSecurityStatusEnum.WaitingHandle} or af.Status = {(int)SocialSecurityStatusEnum.WaitingHandle}) or((ss.Status = {(int)SocialSecurityStatusEnum.UnInsured} or af.Status = {(int)SocialSecurityStatusEnum.UnInsured}) and ssp.IsPay =1)) and ssp.MemberID = {MemberID}";
+            + $" where (ss.Status = {(int)SocialSecurityStatusEnum.WaitingHandle} or af.Status = {(int)SocialSecurityStatusEnum.WaitingHandle} or (ss.Status = {(int)SocialSecurityStatusEnum.UnInsured} and ss.IsPay=1) or (af.Status = {(int)SocialSecurityStatusEnum.UnInsured} and af.IsPay =1)) and ssp.MemberID = {MemberID}";
             List<SocialSecurityPeoples> socialSecurityPeopleList = DbHelper.Query<SocialSecurityPeoples>(sql);
 
             socialSecurityPeopleList.ForEach(item =>

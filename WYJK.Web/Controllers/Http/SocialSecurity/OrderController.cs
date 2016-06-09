@@ -385,7 +385,11 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
                     //支出记录
                     foreach (var orderDetail in orderDetailList)
                     {
-                        sqlSocialSecurityPeople += $"update SocialSecurityPeople set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
+                        if (orderDetail.IsPaySocialSecurity)
+                            sqlSocialSecurityPeople += $"update SocialSecurity set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
+                        if (orderDetail.IsPayAccumulationFund)
+                            sqlSocialSecurityPeople += $"update AccumulationFund set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
+
 
                         accountNum += orderDetail.SocialSecurityAmount * orderDetail.SocialSecuritypayMonth + orderDetail.SocialSecurityFirstBacklogCost + orderDetail.SocialSecurityBuCha
                             + orderDetail.AccumulationFundAmount * orderDetail.AccumulationFundpayMonth + orderDetail.AccumulationFundFirstBacklogCost;
@@ -551,7 +555,10 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     decimal accountNum = 0;//订单总额
                     foreach (var orderDetail in orderDetailList)
                     {
-                        sqlSocialSecurityPeople += $"update SocialSecurityPeople set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
+                        if (orderDetail.IsPaySocialSecurity)
+                            sqlSocialSecurityPeople += $"update SocialSecurity set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
+                        if (orderDetail.IsPayAccumulationFund)
+                            sqlSocialSecurityPeople += $"update AccumulationFund set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
 
                         accountNum += orderDetail.SocialSecurityAmount * orderDetail.SocialSecuritypayMonth + orderDetail.SocialSecurityFirstBacklogCost + orderDetail.SocialSecurityBuCha
                             + orderDetail.AccumulationFundAmount * orderDetail.AccumulationFundpayMonth + orderDetail.AccumulationFundFirstBacklogCost;

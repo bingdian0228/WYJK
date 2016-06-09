@@ -237,6 +237,10 @@ namespace WYJK.Entity
 
         #region 社保信息
         /// <summary>
+        /// 社保是否支付过
+        /// </summary>
+        public bool ssIsPay { get; set; }
+        /// <summary>
         /// 起缴时间
         /// </summary>		
         public DateTime? SSPayTime { get; set; }
@@ -257,6 +261,10 @@ namespace WYJK.Entity
         #endregion
 
         #region 公积金信息
+        /// <summary>
+        /// 公积金是否支付过
+        /// </summary>
+        public bool afIsPay { get; set; }
         /// <summary>
         /// 起缴时间
         /// </summary>		

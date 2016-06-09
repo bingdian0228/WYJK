@@ -1751,6 +1751,16 @@
             公积金第一次代办费
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.OrderDetails.IsPaySocialSecurity">
+            <summary>
+            是否缴纳社保
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetails.IsPayAccumulationFund">
+            <summary>
+            是否缴纳公积金
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.PaymentDetail">
             <summary>
             缴费明细
@@ -2761,6 +2771,11 @@
             姓名
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.ssIsPay">
+            <summary>
+            社保是否支付过
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityPeoples.SSPayTime">
             <summary>
             起缴时间
@@ -2779,6 +2794,11 @@
         <member name="P:WYJK.Entity.SocialSecurityPeoples.SSStatus">
             <summary>
             社保状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeoples.afIsPay">
+            <summary>
+            公积金是否支付过
             </summary>
         </member>
         <member name="P:WYJK.Entity.SocialSecurityPeoples.AFPayTime">

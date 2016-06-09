@@ -20,7 +20,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + '&MemberID=' + '@Request.Params["MemberID"]' + '&OrderCode=' + '@Request.Params["OrderCode"]' + '&Status='+'@Request.Params["Status"]';
+                    location.href = '?PageIndex=' + e.curr + '&MemberID=' + '@Request.Params["MemberID"]' + '&OrderCode=' + '@Request.Params["OrderCode"]' + '&Status=' + '@Request.Params["Status"]';
                 }
             }
         });
@@ -92,7 +92,9 @@
                     <span class="select-box inline">
                         @{
                             var list1 = new List<SelectListItem> { new SelectListItem { Text = "全部", Value = "" } };
-                            list1.AddRange(EnumExt.GetSelectList(typeof(OrderEnum)));
+                            List<SelectListItem> list2 = EnumExt.GetSelectList(typeof(OrderEnum));
+                            list2.RemoveAt(0);
+                            list1.AddRange(list2);
                         }
                         @Html.DropDownList("Status", list1, new { @class = "select" })
                     </span>
@@ -145,10 +147,13 @@
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
-        <span class="l">
-            <a href="javascript:;" class="btn btn-primary radius action-pass"><i class="Hui-iconfont">&#xe6e1;</i>审核通过</a>
-            @*<a href="javascript:;" class="btn btn-danger radius action-fail"><i class="Hui-iconfont">&#xe6dd;</i>不通过</a>*@
-        </span>
-        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+            @if (Request.Params["Status"] == Convert.ToInt32(OrderEnum.Auditing).ToString())
+            {
+                <span class="l">
+                    <a href="javascript:;" class="btn btn-primary radius action-pass"><i class="Hui-iconfont">&#xe6e1;</i>审核通过</a>
+                    @*<a href="javascript:;" class="btn btn-danger radius action-fail"><i class="Hui-iconfont">&#xe6dd;</i>不通过</a>*@
+                </span>
+            }
+            <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+        </div>
     </div>
-</div>
