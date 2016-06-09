@@ -251,7 +251,9 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<dynamic>> CommitEnterpriseCertification(EnterpriseCertification parameter)
         {
-            bool flag = await _memberService.CommitEnterpriseCertification(parameter);
+            await _memberService.CommitEnterpriseCertification(parameter);
+
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
 
             ////验证身份证
             //if (!Regex.IsMatch(parameter.EnterpriseLegalIdentityCardNo, @"(^\d{18}$)|(^\d{15}$)"))
@@ -263,8 +265,8 @@ namespace WYJK.Web.Controllers.Http
 
             return new JsonResult<dynamic>
             {
-                status = flag,
-                Message = flag ? "企业认证申请中" : "企业认证错误"
+                status = true,
+                Message = "企业认证中"
             };
         }
 
@@ -274,12 +276,14 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public async Task<JsonResult<dynamic>> CommitPersonCertification(IndividualCertification parameter)
         {
-            bool flag = await _memberService.CommitPersonCertification(parameter);
+            await _memberService.CommitPersonCertification(parameter);
+
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
 
             return new JsonResult<dynamic>
             {
-                status = flag,
-                Message = flag ? "个体认证申请中" : "个体认证错误"
+                status = true,
+                Message = "个体认证中"
             };
         }
         /// <summary>

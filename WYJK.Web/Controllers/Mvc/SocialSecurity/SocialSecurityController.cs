@@ -152,7 +152,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult BatchComplete(int SocialSecurityPeopleIDs)
+        public JsonResult BatchComplete(int[] SocialSecurityPeopleIDs)
         {
             //修改参保人社保状态
             bool flag = _socialSecurityService.ModifySocialStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.Normal);
@@ -161,7 +161,7 @@ namespace WYJK.Web.Controllers.Mvc
             if (flag == true)
             {
 
-                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleIDs });
+                string names = _socialSecurityService.GetSocialPeopleNames(SocialSecurityPeopleIDs);
                 LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办结，客户:{0}", names) });
             }
             #endregion

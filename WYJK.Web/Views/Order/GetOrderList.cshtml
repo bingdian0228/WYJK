@@ -46,7 +46,7 @@
                         });
 
                         $.ajax({
-                            url: "@Url.Action("BatchAuditing", "Order")?OrderCodes=" + OrderCodes + "&Type=0",
+                            url: "@Url.Action("BatchAuditing", "Order")?OrderCodeStr=" + OrderCodes + "&Type=0",
                             //data: { "OrderCodes": OrderCodes, "Type": 0 },
                             dataType: "json",
                             type: "GET",

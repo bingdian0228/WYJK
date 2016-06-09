@@ -132,7 +132,7 @@ namespace WYJK.Entity
         /// </summary>		
         public string EnterpriseFixedTelePhone { get; set; }
         /// <summary>
-        /// 是否已认证 0:未认证、1：已认证
+        /// 是否已认证 0:未认证、1：已认证、2：认证中
         /// </summary>		
         public string IsAuthentication { get; set; }
         /// <summary>

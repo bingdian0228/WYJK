@@ -56,7 +56,7 @@ namespace WYJK.Data.ServiceImpl
                left join [order] on[order].OrderCode = OrderDetails.OrderCode"
             + builder.ToString();
 
-            string sqlStr = $"select * from (select ROW_NUMBER() OVER(ORDER BY Cs.MemberID )AS Row,Cs.* from ({sqlCs}) Cs ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex  order by ss.CreateDt desc";
+            string sqlStr = $"select * from (select ROW_NUMBER() OVER(ORDER BY Cs.CreateDt desc )AS Row,Cs.* from ({sqlCs}) Cs ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
 
             List<CustomerServiceViewModel> modelList = DbHelper.Query<CustomerServiceViewModel>(sqlStr, new
             {

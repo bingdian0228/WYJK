@@ -1186,7 +1186,7 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public JsonResult<List<TopSocialSecurityPeoples>> GetAlreadyStop(int MemberID)
         {
-            string sql = "select ssp.SocialSecurityPeopleID,ssp.SocialSecurityPeopleName,ss.CollectType,ss.MailOrder,ss.ExpressCompany, ss.PayTime SSPayTime,ISNULL(ss.AlreadyPayMonthCount,0) SSAlreadyPayMonthCount,ss.Status SSStatus,ss.StopReason SSStopReason, ss.ApplyStopDate SSApplyStopDate,ss.PayMonthCount SSRemainingMonthCount, af.PayTime AFPayTime,ISNULL(af.AlreadyPayMonthCount,0) AFAlreadyPayMonthCount,af.Status AFStatus,af.ApplyStopDate AFApplyStopDate,af.PayMonthCount AFRemainingMonthCount"
+            string sql = "select ssp.SocialSecurityPeopleID,ssp.SocialSecurityPeopleName,ss.CollectType,ss.MailOrder,ss.ExpressCompany, ss.PayTime SSPayTime,ISNULL(ss.AlreadyPayMonthCount,0) SSAlreadyPayMonthCount,ss.Status SSStatus,ss.StopReason SSStopReason, ss.ApplyStopDate SSApplyStopDate,ss.StopDate SSStopDate,af.StopDate AFStopDate, ss.PayMonthCount SSRemainingMonthCount, af.PayTime AFPayTime,ISNULL(af.AlreadyPayMonthCount,0) AFAlreadyPayMonthCount,af.Status AFStatus,af.ApplyStopDate AFApplyStopDate,af.PayMonthCount AFRemainingMonthCount"
             + " from SocialSecurityPeople ssp"
             + " left join SocialSecurity ss on ssp.SocialSecurityPeopleID = ss.SocialSecurityPeopleID"
             + " left join AccumulationFund af on ssp.SocialSecurityPeopleID = af.SocialSecurityPeopleID"

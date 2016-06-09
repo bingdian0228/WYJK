@@ -44,15 +44,15 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="OrderCodes"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult BatchAuditing(string[] OrderCodes, int Type)
+        public ActionResult BatchAuditing(string OrderCodeStr, int Type)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
                 {
-                    string OrderCodeStr = string.Join("','", OrderCodes);
+                    string[] OrderCodes = OrderCodeStr.Split(',');
                     //修改订单状态
-                    bool flag1 = orderService.ModifyOrderStatus(OrderCodeStr);
+                    bool flag1 = orderService.ModifyOrderStatus(string.Join("','", OrderCodes));
                     //修改订单对应的参保人的社保和公积金状态  SocialSecurityStatusEnum.WaitingHandle
                     //首先需要判断参保人是否已经通过客服审核
                     foreach (var orderCode in OrderCodes)

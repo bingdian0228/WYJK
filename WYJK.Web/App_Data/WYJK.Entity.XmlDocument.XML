@@ -3133,7 +3133,7 @@
         </member>
         <member name="P:WYJK.Entity.Members.IsAuthentication">
             <summary>
-            是否已认证 0:未认证、1：已认证
+            是否已认证 0:未认证、1：已认证、2：认证中
             </summary>		
         </member>
         <member name="P:WYJK.Entity.Members.UserType">
