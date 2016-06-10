@@ -279,18 +279,122 @@ namespace WYJK.Web.Controllers.Http
             //    };
 
             //判断身份证是否已存在
+            //if (_socialSecurityService.IsExistsSocialSecurityPeopleIdentityCard(socialSecurityPeople.IdentityCard))
+            //    return new JsonResult<dynamic>
+            //    {
+            //        status = false,
+            //        Message = "身份证已存在"
+            //    };
+
             if (_socialSecurityService.IsExistsSocialSecurityPeopleIdentityCard(socialSecurityPeople.IdentityCard))
+            {
+                int PayFlag = 0;
+
+                int sscount = DbHelper.QuerySingle<int>($@"select COUNT(0) from SocialSecurity 
+  left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = socialsecurity.SocialSecurityPeopleID
+  where SocialSecurityPeople.IdentityCard = '{socialSecurityPeople.IdentityCard}'");
+                int afcount = DbHelper.QuerySingle<int>($@"select COUNT(0) from AccumulationFund 
+  left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+  where SocialSecurityPeople.IdentityCard = '{socialSecurityPeople.IdentityCard}'");
+
+                if (sscount == 1 && afcount == 0)
+                {
+                    if (socialSecurityPeople.accumulationFund.AccumulationFundID > 0)
+                    {
+                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IsPayAccumulationFund=1 where IdentityCard='{socialSecurityPeople.IdentityCard}'", null);
+                        int socialSecurityPeopleID = DbHelper.QuerySingle<int>($"select SocialSecurityPeopleID from SocialSecurityPeople where IdentityCard='{socialSecurityPeople.IdentityCard}'");
+                        DbHelper.ExecuteSqlCommand($"update AccumulationFund set SocialSecurityPeopleID = {socialSecurityPeopleID} where AccumulationFundID = {socialSecurityPeople.accumulationFund.AccumulationFundID }", null);
+                    }
+                    else {
+
+                        return new JsonResult<dynamic>
+                        {
+                            status = false,
+                            Message = "请添加公积金方案"
+                        };
+                    }
+                }
+                else if (sscount == 0 && afcount == 1)
+                {
+                    if (socialSecurityPeople.socialSecurity.SocialSecurityID > 0)
+                    {
+                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IsPaySocialSecurity=1 where IdentityCard='{socialSecurityPeople.IdentityCard}'", null);
+                        int socialSecurityPeopleID = DbHelper.QuerySingle<int>($"select SocialSecurityPeopleID from SocialSecurityPeople where IdentityCard='{socialSecurityPeople.IdentityCard}'");
+                        DbHelper.ExecuteSqlCommand($"update SocialSecurity set SocialSecurityPeopleID = {socialSecurityPeopleID} where SocialSecurityID = {socialSecurityPeople.socialSecurity.SocialSecurityID}", null);
+                    }
+                    else {
+
+                        return new JsonResult<dynamic>
+                        {
+                            status = false,
+                            Message = "请添加社保方案"
+                        };
+                    }
+                }
+                else if (sscount == 1 && afcount == 1)
+                {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "您之前已经添加过社保和公积金"
+                    };
+                }
+
+
+
                 return new JsonResult<dynamic>
                 {
-                    status = false,
-                    Message = "身份证已存在"
+                    status = true,
+                    Message = "添加成功"
                 };
+            }
+            else
+            {
+                bool flag = await _socialSecurityService.AddSocialSecurityPeople(socialSecurityPeople);
+                return new JsonResult<dynamic>
+                {
+                    status = flag,
+                    Message = flag ? "添加成功" : "添加失败"
+                };
+            }
 
-            bool flag = await _socialSecurityService.AddSocialSecurityPeople(socialSecurityPeople);
+
+        }
+
+
+        /// <summary>
+        /// 点击选择参保方案
+        /// 查看是否有这个身份证号，如果没有，前台需要提示填写户籍性质，跟之前的正常流程一样；如果有，则需要判断那项没交
+        /// 没交过：0；交了社保：1；交了公积金：2；都交了：3   从data中获取
+        /// </summary>
+        /// <param name="IdentityCard"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> SelectSocialSecurityScheme(string IdentityCard)
+        {
+            int PayFlag = 0;
+
+            int sscount = DbHelper.QuerySingle<int>($@"select COUNT(0) from SocialSecurity 
+  left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = socialsecurity.SocialSecurityPeopleID
+  where SocialSecurityPeople.IdentityCard = '{IdentityCard}'");
+            int afcount = DbHelper.QuerySingle<int>($@"select COUNT(0) from AccumulationFund 
+  left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+  where SocialSecurityPeople.IdentityCard = '{IdentityCard}'");
+
+            if (sscount == 0 && afcount == 0)
+                PayFlag = 0;
+            else if (sscount == 1 && afcount == 0)
+                PayFlag = 1;
+            else if (sscount == 0 && afcount == 1)
+                PayFlag = 2;
+            else if (sscount == 1 && afcount == 1)
+                PayFlag = 3;
+
             return new JsonResult<dynamic>
             {
-                status = flag,
-                Message = flag ? "添加成功" : "添加失败"
+                status = true,
+                Message = "获取成功",
+                Data = PayFlag
             };
         }
 
@@ -626,6 +730,7 @@ namespace WYJK.Web.Controllers.Http
                     //保存社保参保方案
                     if (socialSecurityPeople.socialSecurity != null)
                     {
+
                         socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
                         //if (socialSecurityPeople.socialSecurity.PayTime.Day > 14)
                         //    socialSecurityPeople.socialSecurity.PayTime.AddMonths(1);

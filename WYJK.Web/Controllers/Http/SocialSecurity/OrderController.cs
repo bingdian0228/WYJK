@@ -91,11 +91,11 @@ namespace WYJK.Web.Controllers.Http
                         //遍历订单下的所有子订单
                         foreach (var orderDetails in orderDetailsList)
                         {
-                            //参保月份、参保月数、签约单位ID
-                            SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={orderDetails.SocialSecurityPeopleID}");
                             decimal BuchaAmount = 0;
-                            if (socialSecurity != null)
+                            if (orderDetails.IsPaySocialSecurity)
                             {
+                                //参保月份、参保月数、签约单位ID
+                                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={orderDetails.SocialSecurityPeopleID}");
                                 int payMonth = socialSecurity.PayTime.Month;
                                 int monthCount = socialSecurity.PayMonthCount;
                                 //相对应的签约单位城市是否已调差（社平工资）
