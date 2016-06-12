@@ -68,6 +68,11 @@ namespace WYJK.Entity
         /// </summary>
         public bool IsPay { get; set; }
 
+        /// <summary>
+        /// 是否重新办理
+        /// </summary>
+        public bool IsReApply { get; set; }
+
     }
 
     /// <summary>
@@ -215,6 +220,8 @@ namespace WYJK.Entity
         /// 是否可修改
         /// </summary>
         public bool IsCanModify { get; set; }
+
+
     }
 
     /// <summary>

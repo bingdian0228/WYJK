@@ -373,6 +373,7 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<dynamic> SelectSocialSecurityScheme(string IdentityCard)
         {
             int PayFlag = 0;
+            string HouseholdProperty = string.Empty;
 
             int sscount = DbHelper.QuerySingle<int>($@"select COUNT(0) from SocialSecurity 
   left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = socialsecurity.SocialSecurityPeopleID
@@ -384,9 +385,19 @@ namespace WYJK.Web.Controllers.Http
             if (sscount == 0 && afcount == 0)
                 PayFlag = 0;
             else if (sscount == 1 && afcount == 0)
+            {
+                HouseholdProperty = DbHelper.QuerySingle<string>($@"select SocialSecurityPeople.HouseholdProperty from SocialSecurity 
+  left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = socialsecurity.SocialSecurityPeopleID
+  where SocialSecurityPeople.IdentityCard = '{IdentityCard}'");
                 PayFlag = 1;
+            }
             else if (sscount == 0 && afcount == 1)
+            {
+                HouseholdProperty = DbHelper.QuerySingle<string>($@"select SocialSecurityPeople.HouseholdProperty from AccumulationFund 
+  left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+  where SocialSecurityPeople.IdentityCard = '{IdentityCard}'");
                 PayFlag = 2;
+            }
             else if (sscount == 1 && afcount == 1)
                 PayFlag = 3;
 
@@ -394,7 +405,7 @@ namespace WYJK.Web.Controllers.Http
             {
                 status = true,
                 Message = "获取成功",
-                Data = PayFlag
+                Data = new { HouseholdProperty = HouseholdProperty, PayFlag = PayFlag }
             };
         }
 
@@ -524,6 +535,8 @@ namespace WYJK.Web.Controllers.Http
                 model.IsCanModify = true;
             }
 
+
+
             return new JsonResult<SocialSecurityPeopleDetail>
             {
                 status = true,
@@ -533,24 +546,62 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
-        /// 获取参保方案信息
+        ///  获取参保方案信息
         /// </summary>
         /// <param name="SocialSecurityPeopleID"></param>
+        /// <param name="ReApply">是否重新办理</param>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-        public JsonResult<SocialSecurityPeople> GetSocialSecurityScheme(int SocialSecurityPeopleID)
+        public JsonResult<SocialSecurityPeople> GetSocialSecurityScheme(int SocialSecurityPeopleID, bool ReApply = false)
         {
             SocialSecurityPeople model = new SocialSecurityPeople();
             //获取参保人信息
             string sql = $"select *  from SocialSecurityPeople where SocialSecurityPeopleID={SocialSecurityPeopleID}";
             model = DbHelper.QuerySingle<SocialSecurityPeople>(sql);
-            model.IdentityCardPhoto = ConfigurationManager.AppSettings["ServerUrl"] + model.IdentityCardPhoto.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
-            //获取社保信息
-            if (model.IsPaySocialSecurity)
-                model.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID);
-            //获取公积金信息
-            if (model.IsPayAccumulationFund)
-                model.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID);
+            if (ReApply == true)
+            {
+                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 6");
+                if (socialSecurity != null)
+                {
+                    model.IsPaySocialSecurity = true;
+                    model.socialSecurity = socialSecurity;
+                }
+
+                AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 6");
+                if (accumulationFund != null)
+                {
+                    model.IsPayAccumulationFund = true;
+                    model.accumulationFund = accumulationFund;
+                }
+            }
+            else
+            {
+                //model.IdentityCardPhoto = ConfigurationManager.AppSettings["ServerUrl"] + model.IdentityCardPhoto.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
+                ////获取社保信息
+                //if (model.IsPaySocialSecurity)
+                //    model.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID);
+                ////获取公积金信息
+                //if (model.IsPayAccumulationFund)
+                //    model.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID);
+
+                //社保未参保并且未生成订单（订单的个数==重新办理次数）的可以修改
+
+
+                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and ReApplyNum=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPaySocialSecurity=1)");
+                if (socialSecurity != null)
+                {
+                    model.IsPaySocialSecurity = true;
+                    model.socialSecurity = socialSecurity;
+                }
+
+                AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and ReApplyNum=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPaySocialSecurity=1)");
+                if (accumulationFund != null)
+                {
+                    model.IsPayAccumulationFund = true;
+                    model.accumulationFund = accumulationFund;
+                }
+            }
+
             return new JsonResult<SocialSecurityPeople>
             {
                 status = true,
@@ -702,6 +753,7 @@ namespace WYJK.Web.Controllers.Http
 
         /// <summary>
         /// 更新参保方案   socialSecurityPeople下的SocialSecurityPeopleID也需要传
+        /// 1、从已停过来的 2、从修改过来的（第一次办理的和重新办理的） 分情况考虑
         /// </summary>
         /// <param name="socialSecurityPeople"></param>
         /// <returns></returns>
@@ -717,6 +769,26 @@ namespace WYJK.Web.Controllers.Http
             int AccumulationFundMonthCount = 0;
             decimal AccumulationFundBacklogCost = 0;
 
+            //如果是从重新办理过来的
+            if (socialSecurityPeople.IsReApply)
+            {
+                //需要将已停的记录复制到中间表
+                //保存社保参保方案
+                if (socialSecurityPeople.socialSecurity != null)
+                {
+                    //复制到中间表备用
+                    DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityID={socialSecurityPeople.socialSecurity.SocialSecurityID}", null);
+                    //更新社保方案
+
+
+                }
+                //保存公积金参保方案
+                if (socialSecurityPeople.accumulationFund != null)
+                {
+                    //复制到中间表备用
+                    DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where AccumulationFundID={socialSecurityPeople.accumulationFund.AccumulationFundID}", null);
+                }
+            }
 
             using (TransactionScope transaction = new TransactionScope())
             {
@@ -730,6 +802,7 @@ namespace WYJK.Web.Controllers.Http
                     //保存社保参保方案
                     if (socialSecurityPeople.socialSecurity != null)
                     {
+
 
                         socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
                         //if (socialSecurityPeople.socialSecurity.PayTime.Day > 14)
