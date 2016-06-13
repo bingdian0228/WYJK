@@ -526,7 +526,7 @@ namespace WYJK.Web.Controllers.Http
             model.Amount = SocialSecurityAmount + AccumulationFundAmount + SocialSecurityBacklogCost + AccumulationFundBacklogCost + FreezingCharge;
             model.IdentityCardPhoto = ConfigurationManager.AppSettings["ServerUrl"] + model.IdentityCardPhoto.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
 
-            //检测该参保人下是否有订单
+            //检测该参保人下是否有订单  --是否修改参保人
             if (DbHelper.QuerySingle<int>($"select count(1) from OrderDetails where SocialSecurityPeopleID={SocialSecurityPeopleID}") > 0)
             {
                 model.IsCanModify = false;
@@ -535,7 +535,19 @@ namespace WYJK.Web.Controllers.Http
                 model.IsCanModify = true;
             }
 
+            //如果社保订单大于重新办理次数并公积金订单大于重新办理次数，则修改按钮无效
+            int ssReApplyNum = DbHelper.QuerySingle<int>($"select ISNULL(ReApplyNum,0) from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID}");
+            int afReApplyNum = DbHelper.QuerySingle<int>($"select ISNULL(ReApplyNum,0) from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID}");
+            int ssOrderNum = DbHelper.QuerySingle<int>($"select count(0) from OrderDetails where SocialSecurityPeopleID={SocialSecurityPeopleID} and IsPaySocialSecurity=1");
+            int afOrderNum = DbHelper.QuerySingle<int>($"select count(0) from OrderDetails where SocialSecurityPeopleID={SocialSecurityPeopleID} and IsPayAccumulationFund=1");
 
+            if (ssOrderNum > ssReApplyNum && afOrderNum > afReApplyNum)
+            {
+                model.IsDisplayModify = false;
+            }
+            else {
+                model.IsDisplayModify = true;
+            }
 
             return new JsonResult<SocialSecurityPeopleDetail>
             {
@@ -563,42 +575,81 @@ namespace WYJK.Web.Controllers.Http
                 SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 6");
                 if (socialSecurity != null)
                 {
+                    //可显示
+                    //可修改
                     model.IsPaySocialSecurity = true;
+                    model.IsModifySocialSecurity = true;
                     model.socialSecurity = socialSecurity;
+                }
+                else {
+                    //不显示
+                    //不修改
+                    model.IsPaySocialSecurity = false;
+                    model.IsModifySocialSecurity = false;
                 }
 
                 AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 6");
                 if (accumulationFund != null)
                 {
                     model.IsPayAccumulationFund = true;
+                    model.IsModifyAccumulationFund = true;
                     model.accumulationFund = accumulationFund;
+                }
+                else {
+                    //不显示
+                    //不修改
+                    model.IsPayAccumulationFund = false;
+                    model.IsModifyAccumulationFund = false;
                 }
             }
             else
             {
-                //model.IdentityCardPhoto = ConfigurationManager.AppSettings["ServerUrl"] + model.IdentityCardPhoto.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
-                ////获取社保信息
-                //if (model.IsPaySocialSecurity)
-                //    model.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID);
-                ////获取公积金信息
-                //if (model.IsPayAccumulationFund)
-                //    model.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID);
-
                 //社保未参保并且未生成订单（订单的个数==重新办理次数）的可以修改
 
-
-                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and ReApplyNum=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPaySocialSecurity=1)");
+                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and ISNULL(ReApplyNum,0)=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPaySocialSecurity=1)");
                 if (socialSecurity != null)
                 {
+                    //可显示
+                    //可修改
                     model.IsPaySocialSecurity = true;
+                    model.IsModifySocialSecurity = true;
                     model.socialSecurity = socialSecurity;
                 }
+                else {
+                    //不显示
+                    model.IsPaySocialSecurity = false;
+                    SocialSecurity socialSecurity1 = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID}");
+                    if (socialSecurity1 != null)
+                    {
+                        //不修改
+                        model.IsModifySocialSecurity = false;
+                    }
+                    else {
+                        //可修改
+                        model.IsModifySocialSecurity = true;
+                    }
+                }
 
-                AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and ReApplyNum=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPaySocialSecurity=1)");
+                AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and  ISNULL(ReApplyNum,0)=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPayAccumulationFund=1)");
                 if (accumulationFund != null)
                 {
                     model.IsPayAccumulationFund = true;
+                    model.IsModifyAccumulationFund = true;
                     model.accumulationFund = accumulationFund;
+                }
+                else {
+                    //不显示
+                    model.IsPayAccumulationFund = false;
+                    AccumulationFund accumulationFund1 = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID}");
+                    if (accumulationFund1 != null)
+                    {
+                        //不修改
+                        model.IsModifyAccumulationFund = false;
+                    }
+                    else {
+                        //可修改
+                        model.IsModifyAccumulationFund = true;
+                    }
                 }
             }
 
@@ -752,7 +803,7 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
-        /// 更新参保方案   socialSecurityPeople下的SocialSecurityPeopleID也需要传
+        /// 更新参保方案   socialSecurityPeople下的SocialSecurityPeopleID也需要传   IsReApply 表明是否是重新办理
         /// 1、从已停过来的 2、从修改过来的（第一次办理的和重新办理的） 分情况考虑
         /// </summary>
         /// <param name="socialSecurityPeople"></param>
@@ -769,97 +820,441 @@ namespace WYJK.Web.Controllers.Http
             int AccumulationFundMonthCount = 0;
             decimal AccumulationFundBacklogCost = 0;
 
-            //如果是从重新办理过来的
-            if (socialSecurityPeople.IsReApply)
-            {
-                //需要将已停的记录复制到中间表
-                //保存社保参保方案
-                if (socialSecurityPeople.socialSecurity != null)
-                {
-                    //复制到中间表备用
-                    DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityID={socialSecurityPeople.socialSecurity.SocialSecurityID}", null);
-                    //更新社保方案
-
-
-                }
-                //保存公积金参保方案
-                if (socialSecurityPeople.accumulationFund != null)
-                {
-                    //复制到中间表备用
-                    DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where AccumulationFundID={socialSecurityPeople.accumulationFund.AccumulationFundID}", null);
-                }
-            }
-
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
                 {
-                    //删除该参保人下的参保方案
-                    string sqlDel = $"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};"
-                               + $" delete from AccumulationFund where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};";
-                    DbHelper.ExecuteSqlCommand(sqlDel, null);
-
-                    //保存社保参保方案
-                    if (socialSecurityPeople.socialSecurity != null)
+                    //如果是从重新办理过来的
+                    if (socialSecurityPeople.IsReApply)
                     {
-
-
-                        socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
-                        //if (socialSecurityPeople.socialSecurity.PayTime.Day > 14)
-                        //    socialSecurityPeople.socialSecurity.PayTime.AddMonths(1);
-                        SocialSecurityID = _socialSecurityService.AddSocialSecurity(socialSecurityPeople.socialSecurity);
-                        //查询社保金额
-                        SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurityID);
-                        //查询社保月数
-                        SocialSecurityMonthCount = _socialSecurityService.GetSocialSecurityMonthCount(SocialSecurityID);
-                        SocialSecurityBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
-
-                        #region 补差费
-                        EnterpriseSocialSecurity enterpriseSocialSecurity = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
-                        //每人每月补差费用
-                        decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
-
-                        //参保月份、参保月数、签约单位ID
-                        //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
-
-                        int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
-                        int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
-                        //相对应的签约单位城市是否已调差（社平工资）
-                        //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
-                        //已调,当年以后知道年末都不需交，直到一月份开始交
-                        if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                        //保存社保参保方案
+                        if (socialSecurityPeople.socialSecurity != null)
                         {
-                            int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
-                            int BuchaMonthCount = monthCount - freeBuchaMonthCount;
-                            if (freeBuchaMonthCount < monthCount)
+                            #region 签约公司ID，缴费比例查询
+                            socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                            string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.socialSecurity.InsuranceArea}%' and IsDefault = 1";
+                            EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>(sql);
+
+                            decimal value = 0;
+                            //model.PersonalShiYeTown
+                            if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
+                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
                             {
+                                value = model.PersonalShiYeRural;
+                            }
+                            else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
+                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                            {
+                                value = model.PersonalShiYeTown;
+                            }
+
+                            decimal PayProportion = model.CompYangLao + model.CompYiLiao + model.CompShiYe + model.CompGongShang + model.CompShengYu
+                                + model.PersonalYangLao + model.PersonalYiLiao + value + model.PersonalGongShang + model.PersonalShengYu;
+                            #endregion
+
+
+                            //复制到中间表备用
+                            DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}", null);
+                            //更新社保方案
+                            DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',AlreadyPayMonthCount='{socialSecurityPeople.socialSecurity.AlreadyPayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+  where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
+
+                            //算费用
+                            SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(DbHelper.QuerySingle<int>($"select SocialSecurityID from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}"));
+                            //查询社保月数
+                            SocialSecurityMonthCount = _socialSecurityService.GetSocialSecurityMonthCount(DbHelper.QuerySingle<int>($"select SocialSecurityID from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}"));
+                            SocialSecurityBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+
+                            #region 补差费
+                            EnterpriseSocialSecurity enterpriseSocialSecurity = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
+                            //每人每月补差费用
+                            decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+
+                            //参保月份、参保月数、签约单位ID
+                            //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
+
+                            int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                            int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
+                            //相对应的签约单位城市是否已调差（社平工资）
+                            //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                            //已调,当年以后知道年末都不需交，直到一月份开始交
+                            if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                            {
+                                int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
+                                int BuchaMonthCount = monthCount - freeBuchaMonthCount;
+                                if (freeBuchaMonthCount < monthCount)
+                                {
+                                    FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                }
+                            }
+                            //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
+                            if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                            {
+                                int BuchaMonthCount = payMonth - 1 + monthCount;
                                 FreezingCharge = FreezingAmount * BuchaMonthCount;
                             }
+                            #endregion
+
+
                         }
-                        //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
-                        if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                        //保存公积金参保方案
+                        if (socialSecurityPeople.accumulationFund != null)
                         {
-                            int BuchaMonthCount = payMonth - 1 + monthCount;
-                            FreezingCharge = FreezingAmount * BuchaMonthCount;
+                            socialSecurityPeople.accumulationFund.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                            string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.socialSecurity.InsuranceArea}%' and IsDefault = 1";
+                            EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>(sql);
+
+                            decimal value = 0;
+                            //model.PersonalShiYeTown
+                            if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
+                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+                            {
+                                value = model.PersonalShiYeRural;
+                            }
+                            else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
+                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                            {
+                                value = model.PersonalShiYeTown;
+                            }
+
+                            decimal PayProportion = model.CompYangLao + model.CompYiLiao + model.CompShiYe + model.CompGongShang + model.CompShengYu
+                                + model.PersonalYangLao + model.PersonalYiLiao + value + model.PersonalGongShang + model.PersonalShengYu;
+
+                            //复制到中间表备用
+                            DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
+
+                            //更新公积金方案
+                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID},IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+  where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
+
+
+                            AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID }"));
+                            //查询公积金月数
+                            AccumulationFundMonthCount = _socialSecurityService.GetAccumulationFundMonthCount(DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID }"));
+                            AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+
+
                         }
-                        #endregion
-
                     }
+                    else {
+                        //查看前台有没有保存社保，
+                        //如果有，则查询参保人ID对应的社保信息，如果有社保信息，则判断是否是重新办理的用户，如果是重新办理的用户，则进行更新操作，如果不是则删除后添加；如果没有社保信息，则添加
+                        //如果没有，则查询参保人ID对应的社保信息，如果有社保信息，则判断是否是重新办理的用户，如果是重新办理的用户，回滚（）变成停保，如果不是则删除原有记录；如果没有社保信息，则不操作
 
-                    //保存公积金参保方案
-                    if (socialSecurityPeople.accumulationFund != null)
-                    {
-                        socialSecurityPeople.accumulationFund.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
-                        //if (socialSecurityPeople.accumulationFund.PayTime.Day > 14)
-                        //    socialSecurityPeople.accumulationFund.PayTime.AddMonths(1);
-                        AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
-                        //查询公积金金额
-                        AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(AccumulationFundID);
-                        //查询公积金月数
-                        AccumulationFundMonthCount = _socialSecurityService.GetAccumulationFundMonthCount(AccumulationFundID);
-                        AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+                        ////删除该参保人下的参保方案
+                        //string sqlDel = $"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};"
+                        //           + $" delete from AccumulationFund where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};";
+                        //DbHelper.ExecuteSqlCommand(sqlDel, null);
+
+                        //保存社保参保方案
+                        if (socialSecurityPeople.socialSecurity != null)
+                        {
+                            #region 签约公司ID，缴费比例查询
+                            socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                            SocialSecurity SocialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID={ socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}");
+                            if (SocialSecurity != null)
+                            {
+                                socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                                string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.socialSecurity.InsuranceArea}%' and IsDefault = 1";
+                                EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>(sql);
+
+                                decimal value = 0;
+                                //model.PersonalShiYeTown
+                                if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
+                        socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+                                {
+                                    value = model.PersonalShiYeRural;
+                                }
+                                else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
+                                  socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                                {
+                                    value = model.PersonalShiYeTown;
+                                }
+
+                                decimal PayProportion = model.CompYangLao + model.CompYiLiao + model.CompShiYe + model.CompGongShang + model.CompShengYu
+                                    + model.PersonalYangLao + model.PersonalYiLiao + value + model.PersonalGongShang + model.PersonalShengYu;
+
+                                #endregion
+
+                                if (SocialSecurity.ReApplyNum > 0)
+                                {
+                                    //更新社保方案
+                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+  where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
+
+                                    //查询社保金额
+                                    SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurity.SocialSecurityID);
+                                    //查询社保月数
+                                    SocialSecurityMonthCount = _socialSecurityService.GetSocialSecurityMonthCount(SocialSecurity.SocialSecurityID);
+                                    SocialSecurityBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+
+                                    #region 补差费
+                                    EnterpriseSocialSecurity enterpriseSocialSecurity = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
+                                    //每人每月补差费用
+                                    decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+
+                                    //参保月份、参保月数、签约单位ID
+                                    //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
+
+                                    int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                                    int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
+                                    //相对应的签约单位城市是否已调差（社平工资）
+                                    //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                                    //已调,当年以后知道年末都不需交，直到一月份开始交
+                                    if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                                    {
+                                        int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
+                                        int BuchaMonthCount = monthCount - freeBuchaMonthCount;
+                                        if (freeBuchaMonthCount < monthCount)
+                                        {
+                                            FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                        }
+                                    }
+                                    //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
+                                    if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                                    {
+                                        int BuchaMonthCount = payMonth - 1 + monthCount;
+                                        FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                    }
+                                    #endregion
+
+                                }
+
+                                else {
+                                    //删除参保方案
+                                    DbHelper.ExecuteSqlCommand($"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+
+
+                                    SocialSecurityID = _socialSecurityService.AddSocialSecurity(socialSecurityPeople.socialSecurity);
+                                    //查询社保金额
+                                    SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurityID);
+                                    //查询社保月数
+                                    SocialSecurityMonthCount = _socialSecurityService.GetSocialSecurityMonthCount(SocialSecurityID);
+                                    SocialSecurityBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+
+                                    #region 补差费
+                                    EnterpriseSocialSecurity enterpriseSocialSecurity = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
+                                    //每人每月补差费用
+                                    decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+
+                                    //参保月份、参保月数、签约单位ID
+                                    //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
+
+                                    int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                                    int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
+                                    //相对应的签约单位城市是否已调差（社平工资）
+                                    //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                                    //已调,当年以后知道年末都不需交，直到一月份开始交
+                                    if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                                    {
+                                        int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
+                                        int BuchaMonthCount = monthCount - freeBuchaMonthCount;
+                                        if (freeBuchaMonthCount < monthCount)
+                                        {
+                                            FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                        }
+                                    }
+                                    //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
+                                    if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                                    {
+                                        int BuchaMonthCount = payMonth - 1 + monthCount;
+                                        FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                    }
+                                    #endregion
+                                }
+                            }
+                            else {
+
+                                SocialSecurityID = _socialSecurityService.AddSocialSecurity(socialSecurityPeople.socialSecurity);
+                                //查询社保金额
+                                SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurityID);
+                                //查询社保月数
+                                SocialSecurityMonthCount = _socialSecurityService.GetSocialSecurityMonthCount(SocialSecurityID);
+                                SocialSecurityBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+
+                                #region 补差费
+                                EnterpriseSocialSecurity enterpriseSocialSecurity = _socialSecurityService.GetDefaultEnterpriseSocialSecurityByArea(socialSecurityPeople.socialSecurity.InsuranceArea, socialSecurityPeople.HouseholdProperty);
+                                //每人每月补差费用
+                                decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+
+                                //参保月份、参保月数、签约单位ID
+                                //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
+
+                                int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                                int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
+                                //相对应的签约单位城市是否已调差（社平工资）
+                                //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                                //已调,当年以后知道年末都不需交，直到一月份开始交
+                                if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                                {
+                                    int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
+                                    int BuchaMonthCount = monthCount - freeBuchaMonthCount;
+                                    if (freeBuchaMonthCount < monthCount)
+                                    {
+                                        FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                    }
+                                }
+                                //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
+                                if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                                {
+                                    int BuchaMonthCount = payMonth - 1 + monthCount;
+                                    FreezingCharge = FreezingAmount * BuchaMonthCount;
+                                }
+                                #endregion
+                            }
+                        }
+                        else {
+                            // socialSecurityPeople.socialSecurity.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                            SocialSecurity SocialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
+                            if (SocialSecurity != null)
+                            {
+                                if (SocialSecurity.ReApplyNum > 0)
+                                {
+                                    //从中间表回滚社保表，并删除中间表记录
+                                    SocialSecurity SocialSecurityTemp = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurityTemp where SocialSecurityPeopleID={  socialSecurityPeople.SocialSecurityPeopleID}");
+                                    DbHelper.ExecuteSqlCommand($@"UPDATE SocialSecurity
+                                                                   SET SocialSecurityPeopleID = '{SocialSecurityTemp.SocialSecurityPeopleID}'
+                                                                      ,InsuranceArea = '{SocialSecurityTemp.InsuranceArea}'
+                                                                      ,SocialSecurityBase = '{SocialSecurityTemp.SocialSecurityBase}'
+                                                                      ,PayProportion = '{SocialSecurityTemp.PayProportion}'
+                                                                      ,PayTime = '{SocialSecurityTemp.PayTime}'
+                                                                      ,PayMonthCount = '{SocialSecurityTemp.PayMonthCount}'
+                                                                      ,AlreadyPayMonthCount = '{SocialSecurityTemp.AlreadyPayMonthCount}'
+                                                                      ,PayBeforeMonthCount = '{SocialSecurityTemp.PayBeforeMonthCount}'
+                                                                      ,BankPayMonth = '{SocialSecurityTemp.BankPayMonth}'
+                                                                      ,EnterprisePayMonth ='{SocialSecurityTemp.EnterprisePayMonth}'
+                                                                      ,Note = '{SocialSecurityTemp.Note}'
+                                                                      ,Status ='{SocialSecurityTemp.Status}'
+                                                                      ,RelationEnterprise ='{SocialSecurityTemp.RelationEnterprise}'
+                                                                      ,PayedMonthCount = '{SocialSecurityTemp.PayedMonthCount}'
+                                                                      ,StopMethod = '{SocialSecurityTemp.StopMethod}'
+                                                                      ,StopReason = '{SocialSecurityTemp.StopReason}'
+                                                                      ,ApplyStopDate = '{SocialSecurityTemp.ApplyStopDate}'
+                                                                      ,StopDate = '{SocialSecurityTemp.StopDate}'
+                                                                      ,SocialSecurityNo = '{SocialSecurityTemp.SocialSecurityNo}'
+                                                                      ,SocialSecurityException = '{SocialSecurityTemp.SocialSecurityException}'
+                                                                      ,HandleDate ='{SocialSecurityTemp.HandleDate}'
+                                                                      ,MailAddress = '{SocialSecurityTemp.MailAddress}'
+                                                                      ,ContactsPhone = '{SocialSecurityTemp.ContactsPhone}'
+                                                                      ,ContactsUser = '{SocialSecurityTemp.ContactsUser}'
+                                                                      ,CollectType = '{SocialSecurityTemp.CollectType}'
+                                                                      ,MailOrder = '{SocialSecurityTemp.MailOrder}'
+                                                                      ,ExpressCompany = '{SocialSecurityTemp.ExpressCompany}'
+                                                                      ,IsPay ='{SocialSecurityTemp.IsPay}'
+                                                                      ,CustomerServiceAuditStatus = '{SocialSecurityTemp.CustomerServiceAuditStatus}'
+                                                                      ,IsReApply = '{SocialSecurityTemp.IsReApply}'
+                                                                      ,ReApplyNum = '{SocialSecurityTemp.ReApplyNum}'
+                                                                 WHERE SocialSecurityID={SocialSecurityTemp.SocialSecurityID}", null);
+                                    //删除社保临时表
+                                    DbHelper.ExecuteSqlCommand($"delete from SocialSecurityTemp where SocialSecurityPeopleID={  socialSecurityPeople.SocialSecurityPeopleID}", null);
+                                }
+                                else {
+                                    //删除参保方案
+                                    DbHelper.ExecuteSqlCommand($"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+
+                                }
+                            }
+                        }
+
+                        //保存公积金参保方案
+                        if (socialSecurityPeople.accumulationFund != null)
+                        {
+                            socialSecurityPeople.accumulationFund.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                            AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID={ socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}");
+
+                            if (accumulationFund != null)
+                            {
+                                #region 签约公司ID，缴费比例查询
+                                EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>($"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.accumulationFund.AccumulationFundArea}%' and IsDefault = 1");
+
+                                decimal PayProportion = model.CompProportion + model.PersonalProportion;
+                                #endregion
+                                if (accumulationFund.ReApplyNum > 0)
+                                {
+                                    //更新公积金方案
+                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+  where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
+
+                                    //AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
+                                    //查询公积金金额
+                                    AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(accumulationFund.AccumulationFundID);
+                                    //查询公积金月数
+                                    AccumulationFundMonthCount = _socialSecurityService.GetAccumulationFundMonthCount(accumulationFund.AccumulationFundID);
+                                    AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+                                    /**********************/
+                                }
+                                else {
+                                    //删除公积金方案
+                                    DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+
+                                    AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
+                                    //查询公积金金额
+                                    AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(AccumulationFundID);
+                                    //查询公积金月数
+                                    AccumulationFundMonthCount = _socialSecurityService.GetAccumulationFundMonthCount(AccumulationFundID);
+                                    AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+                                }
+                            }
+                            else {
+                                AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
+                                //查询公积金金额
+                                AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(AccumulationFundID);
+                                //查询公积金月数
+                                AccumulationFundMonthCount = _socialSecurityService.GetAccumulationFundMonthCount(AccumulationFundID);
+                                AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
+                            }
+                        }
+                        else {
+                            //socialSecurityPeople.accumulationFund.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
+                            AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
+                            if (accumulationFund != null)
+                            {
+                                if (accumulationFund.ReApplyNum > 0)
+                                {
+                                    ////从中间表回滚社保表，并删除中间表记录
+                                    AccumulationFund AccumulationFundTemp = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFundTemp where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
+                                    DbHelper.ExecuteSqlCommand($@"UPDATE WYJK.dbo.AccumulationFund
+                                                               SET SocialSecurityPeopleID = '{AccumulationFundTemp.SocialSecurityPeopleID}'
+                                                                  ,AccumulationFundArea = '{AccumulationFundTemp.AccumulationFundArea}'
+                                                                  ,AccumulationFundBase = '{AccumulationFundTemp.AccumulationFundBase}'
+                                                                  ,PayProportion = '{AccumulationFundTemp.PayProportion}'
+                                                                  ,PayTime = '{AccumulationFundTemp.PayTime}'
+                                                                  ,PayMonthCount = '{AccumulationFundTemp.PayMonthCount}'
+                                                                  ,AlreadyPayMonthCount = '{AccumulationFundTemp.AlreadyPayMonthCount}'
+                                                                  ,PayBeforeMonthCount = '{AccumulationFundTemp.PayBeforeMonthCount}'
+                                                                  ,Note = '{AccumulationFundTemp.Note}'
+                                                                  ,Status = '{AccumulationFundTemp.Status}'
+                                                                  ,RelationEnterprise = '{AccumulationFundTemp.RelationEnterprise}'
+                                                                  ,PayedMonthCount = '{AccumulationFundTemp.PayedMonthCount}'
+                                                                  ,StopMethod = '{AccumulationFundTemp.StopMethod}'
+                                                                  ,ApplyStopDate = '{AccumulationFundTemp.ApplyStopDate}'
+                                                                  ,StopDate = '{AccumulationFundTemp.StopDate}'
+                                                                  ,AccumulationFundNo = '{AccumulationFundTemp.AccumulationFundNo}'
+                                                                  ,AccumulationFundException = '{AccumulationFundTemp.AccumulationFundException}'
+                                                                  ,HandleDate ='{AccumulationFundTemp.HandleDate}'
+                                                                  ,AccumulationFundType = '{AccumulationFundTemp.AccumulationFundType}'
+                                                                  ,CompanyName = '{AccumulationFundTemp.CompanyName}'
+                                                                  ,CompanyAccumulationFundCode = '{AccumulationFundTemp.CompanyAccumulationFundCode}'
+                                                                  ,AccumulationFundTopType = '{AccumulationFundTemp.AccumulationFundTopType}'
+                                                                  ,IsPay ='{AccumulationFundTemp.IsPay}'
+                                                                  ,CustomerServiceAuditStatus ='{AccumulationFundTemp.CustomerServiceAuditStatus}'
+                                                                  ,IsReApply = '{AccumulationFundTemp.IsReApply}'
+                                                                  ,ReApplyNum ='{AccumulationFundTemp.ReApplyNum}'
+                                                                 WHERE SocialSecurityID={AccumulationFundTemp.AccumulationFundID}", null);
+                                    //删除社保临时表
+                                    DbHelper.ExecuteSqlCommand($"delete from AccumulationFundTemp where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID}", null);
+                                }
+                                else {
+                                    //删除参保方案
+                                    DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+
+                                }
+
+                            }
+
+                            transaction.Complete();
+                        }
                     }
-                    transaction.Complete();
                 }
                 catch (Exception ex)
                 {

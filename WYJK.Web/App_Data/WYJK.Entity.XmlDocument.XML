@@ -231,16 +231,6 @@
             公积金信息表
             </summary>
         </member>
-        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundID">
-            <summary>
-            公积金ID
-            </summary>		
-        </member>
-        <member name="P:WYJK.Entity.AccumulationFund.SocialSecurityPeopleID">
-            <summary>
-            参保人ID
-            </summary>		
-        </member>
         <member name="P:WYJK.Entity.AccumulationFund.SocialSecurityPeopleName">
             <summary>
             参保人名称
@@ -250,6 +240,16 @@
             <summary>
             户口性质
             </summary>
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundID">
+            <summary>
+            公积金ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundArea">
             <summary>
@@ -279,12 +279,7 @@
         <member name="P:WYJK.Entity.AccumulationFund.AlreadyPayMonthCount">
             <summary>
             已投月数
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.AccumulationFund.RemainingMonths">
-            <summary>
-            剩余月数
-            </summary>
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.PayBeforeMonthCount">
             <summary>
@@ -301,45 +296,85 @@
             状态
             </summary>		
         </member>
-        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundNo">
+        <member name="P:WYJK.Entity.AccumulationFund.RelationEnterprise">
             <summary>
-            公积金号
-            </summary>
+            关联企业
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.PayedMonthCount">
+            <summary>
+            PayedMonthCount
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.StopMethod">
+            <summary>
+            待停方式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.ApplyStopDate">
+            <summary>
+            申请停止时间
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.StopDate">
             <summary>
-            业务办停时间
-            </summary>
+            停止时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundNo">
+            <summary>
+            公积金号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundException">
+            <summary>
+            AccumulationFundException
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.HandleDate">
             <summary>
-            业务办理时间
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.AccumulationFund.RelationEnterprise">
-            <summary>
-            关联签约企业号
-            </summary>
+            HandleDate
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundType">
             <summary>
-            公积金类型
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundTopType">
-            <summary>
-            公积金办停类型
-            </summary>
+            AccumulationFundType
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.CompanyName">
             <summary>
-            新单位全称
-            </summary>
+            新单位名称
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.AccumulationFund.CompanyAccumulationFundCode">
             <summary>
             新单位公积金编号
-            </summary>
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.AccumulationFundTopType">
+            <summary>
+            公积金办停类型  1、封存 2、转移
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.IsPay">
+            <summary>
+            IsPay
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.CustomerServiceAuditStatus">
+            <summary>
+            0：未审核，1：已通过
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.IsReApply">
+            <summary>
+            IsReApply
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.ReApplyNum">
+            <summary>
+            重新办理次数
+            </summary>		
         </member>
         <member name="T:WYJK.Entity.AccumulationFundShowModel">
             <summary>
@@ -2211,14 +2246,9 @@
             参保人ID
             </summary>		
         </member>
-        <member name="P:WYJK.Entity.SocialSecurity.HouseholdProperty">
-            <summary>
-            户口性质
-            </summary>
-        </member>
         <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityPeopleName">
             <summary>
-            参保人姓名
+            参保人名称
             </summary>
         </member>
         <member name="P:WYJK.Entity.SocialSecurity.InsuranceArea">
@@ -2249,23 +2279,14 @@
         <member name="P:WYJK.Entity.SocialSecurity.AlreadyPayMonthCount">
             <summary>
             已投月数
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.SocialSecurity.RemainingMonths">
-            <summary>
-            剩余月数
-            </summary>
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.SocialSecurity.PayBeforeMonthCount">
             <summary>
             补交月数
             </summary>		
         </member>
-        <member name="P:WYJK.Entity.SocialSecurity.BankPayMonth">
-            <summary>
-            银行缴费月数
-            </summary>		
-        </member>
+        <!-- Badly formed XML comment ignored for member "P:WYJK.Entity.SocialSecurity.BankPayMonth" -->
         <member name="P:WYJK.Entity.SocialSecurity.EnterprisePayMonth">
             <summary>
             企业缴费月数
@@ -2281,24 +2302,104 @@
             状态
             </summary>		
         </member>
-        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityNo">
-            <summary>
-            社保号
-            </summary>
-        </member>
         <member name="P:WYJK.Entity.SocialSecurity.RelationEnterprise">
             <summary>
-            关联签约企业
-            </summary>
+            关联企业
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.PayedMonthCount">
+            <summary>
+            已投月数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.StopMethod">
+            <summary>
+            待停方式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.StopReason">
+            <summary>
+            待停原因
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.ApplyStopDate">
+            <summary>
+            申请停止时间
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.SocialSecurity.StopDate">
             <summary>
-            业务办停时间
-            </summary>
+            停止时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityNo">
+            <summary>
+            社保号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.SocialSecurityException">
+            <summary>
+            SocialSecurityException
+            </summary>		
         </member>
         <member name="P:WYJK.Entity.SocialSecurity.HandleDate">
             <summary>
-            业务办理时间
+            HandleDate
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.MailAddress">
+            <summary>
+            邮寄地址
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.ContactsPhone">
+            <summary>
+            联系电话
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.ContactsUser">
+            <summary>
+            联系人
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.CollectType">
+            <summary>
+            材料收取方式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.MailOrder">
+            <summary>
+            邮寄单号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.ExpressCompany">
+            <summary>
+            ExpressCompany
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.IsPay">
+            <summary>
+            IsPay
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.CustomerServiceAuditStatus">
+            <summary>
+            0：未审核，1：已通过
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.IsReApply">
+            <summary>
+            是否重新办理
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.ReApplyNum">
+            <summary>
+            重新办理次数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurity.HouseholdProperty">
+            <summary>
+            户籍性质
             </summary>
         </member>
         <member name="T:WYJK.Entity.SocialSecurityShowModel">
@@ -2578,13 +2679,23 @@
         </member>
         <member name="P:WYJK.Entity.SocialSecurityPeople.IsPaySocialSecurity">
             <summary>
-            是否缴纳社保
+            是否展示社保信息
             </summary>		
         </member>
         <member name="P:WYJK.Entity.SocialSecurityPeople.IsPayAccumulationFund">
             <summary>
-            是否缴纳公积金
+            是否展示公积金信息
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IsModifySocialSecurity">
+            <summary>
+            是否可修改社保信息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IsModifyAccumulationFund">
+            <summary>
+            是否可修改公积金信息
+            </summary>
         </member>
         <member name="P:WYJK.Entity.SocialSecurityPeople.socialSecurity">
             <summary>
@@ -2604,6 +2715,11 @@
         <member name="P:WYJK.Entity.SocialSecurityPeople.IsPay">
             <summary>
             是否有订单已经支付过
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.IsReApply">
+            <summary>
+            是否重新办理
             </summary>
         </member>
         <member name="T:WYJK.Entity.UnInsuredPeople">
@@ -2751,9 +2867,14 @@
             总额
             </summary>
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.IsDisplayModify">
+            <summary>
+            是否显示修改
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.IsCanModify">
             <summary>
-            是否可修改
+            是否可修改参保人
             </summary>
         </member>
         <member name="T:WYJK.Entity.SocialSecurityPeoples">

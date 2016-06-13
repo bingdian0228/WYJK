@@ -9,6 +9,16 @@ namespace WYJK.Entity
     /// </summary>
     public class AccumulationFund
     {
+        /// <summary>
+        /// 参保人名称
+        /// </summary>
+        public string SocialSecurityPeopleName { get; set; }
+
+
+        /// <summary>
+        /// 户口性质
+        /// </summary>
+        public string HouseholdProperty { get; set; }
 
         /// <summary>
         /// 公积金ID
@@ -18,15 +28,6 @@ namespace WYJK.Entity
         /// 参保人ID
         /// </summary>		
         public int SocialSecurityPeopleID { get; set; }
-        /// <summary>
-        /// 参保人名称
-        /// </summary>
-        public string SocialSecurityPeopleName { get; set; }
-
-        /// <summary>
-        /// 户口性质
-        /// </summary>
-        public string HouseholdProperty { get; set; }
         /// <summary>
         /// 参公积金地
         /// </summary>		
@@ -49,12 +50,8 @@ namespace WYJK.Entity
         public int PayMonthCount { get; set; }
         /// <summary>
         /// 已投月数
-        /// </summary>
+        /// </summary>		
         public int AlreadyPayMonthCount { get; set; }
-        /// <summary>
-        /// 剩余月数
-        /// </summary>
-        public int RemainingMonths { get; set; }
         /// <summary>
         /// 补交月数
         /// </summary>		
@@ -68,42 +65,70 @@ namespace WYJK.Entity
         /// </summary>		
         public string Status { get; set; }
         /// <summary>
-        /// 公积金号
-        /// </summary>
-        public string AccumulationFundNo { get; set; }
-
-
-        /// <summary>
-        /// 业务办停时间
-        /// </summary>
-        public DateTime? StopDate { get; set; }
-        /// <summary>
-        /// 业务办理时间
-        /// </summary>
-        public DateTime? HandleDate { get; set; }
-
-        /// <summary>
-        /// 关联签约企业号
-        /// </summary>
+        /// 关联企业
+        /// </summary>		
         public int RelationEnterprise { get; set; }
-
         /// <summary>
-        /// 公积金类型
-        /// </summary>
+        /// PayedMonthCount
+        /// </summary>		
+        public int PayedMonthCount { get; set; }
+        /// <summary>
+        /// 待停方式
+        /// </summary>		
+        public string StopMethod { get; set; }
+        /// <summary>
+        /// 申请停止时间
+        /// </summary>		
+        public DateTime ApplyStopDate { get; set; }
+        /// <summary>
+        /// 停止时间
+        /// </summary>		
+        public DateTime StopDate { get; set; }
+        /// <summary>
+        /// 公积金号
+        /// </summary>		
+        public string AccumulationFundNo { get; set; }
+        /// <summary>
+        /// AccumulationFundException
+        /// </summary>		
+        public string AccumulationFundException { get; set; }
+        /// <summary>
+        /// HandleDate
+        /// </summary>		
+        public DateTime HandleDate { get; set; }
+        /// <summary>
+        /// AccumulationFundType
+        /// </summary>		
         public string AccumulationFundType { get; set; }
-
         /// <summary>
-        /// 公积金办停类型
-        /// </summary>
-        public string AccumulationFundTopType { get; set; }
-        /// <summary>
-        /// 新单位全称
-        /// </summary>
+        /// 新单位名称
+        /// </summary>		
         public string CompanyName { get; set; }
         /// <summary>
         /// 新单位公积金编号
-        /// </summary>
+        /// </summary>		
         public string CompanyAccumulationFundCode { get; set; }
+        /// <summary>
+        /// 公积金办停类型  1、封存 2、转移
+        /// </summary>		
+        public string AccumulationFundTopType { get; set; }
+        /// <summary>
+        /// IsPay
+        /// </summary>		
+        public bool IsPay { get; set; }
+        /// <summary>
+        /// 0：未审核，1：已通过
+        /// </summary>		
+        public string CustomerServiceAuditStatus { get; set; }
+        /// <summary>
+        /// IsReApply
+        /// </summary>		
+        public bool IsReApply { get; set; }
+        /// <summary>
+        /// 重新办理次数
+        /// </summary>		
+        public int ReApplyNum { get; set; }
+
     }
 
     /// <summary>

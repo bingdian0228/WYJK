@@ -41,18 +41,28 @@ namespace WYJK.Entity
         /// </summary>		
         public string HouseholdProperty { get; set; }
         /// <summary>
-        /// 是否缴纳社保
+        /// 是否展示社保信息
         /// </summary>		
         public bool IsPaySocialSecurity { get; set; }
         /// <summary>
-        /// 是否缴纳公积金
+        /// 是否展示公积金信息
         /// </summary>		
         public bool IsPayAccumulationFund { get; set; }
 
         /// <summary>
+        /// 是否可修改社保信息
+        /// </summary>
+        public bool IsModifySocialSecurity { get; set; }
+
+        /// <summary>
+        /// 是否可修改公积金信息
+        /// </summary>
+        public bool IsModifyAccumulationFund { get; set; }
+        /// <summary>
         /// 社保信息
         /// </summary>
         public SocialSecurity socialSecurity { get; set; }
+
 
         /// <summary>
         /// 公积金信息
@@ -216,8 +226,14 @@ namespace WYJK.Entity
         /// 总额
         /// </summary>
         public decimal Amount { get; set; }
+
         /// <summary>
-        /// 是否可修改
+        /// 是否显示修改
+        /// </summary>
+        public bool IsDisplayModify { get; set; }
+
+        /// <summary>
+        /// 是否可修改参保人
         /// </summary>
         public bool IsCanModify { get; set; }
 

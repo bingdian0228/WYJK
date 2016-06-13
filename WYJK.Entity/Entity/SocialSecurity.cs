@@ -11,7 +11,6 @@ namespace WYJK.Entity
     /// </summary>
     public class SocialSecurity
     {
-
         /// <summary>
         /// 社保ID
         /// </summary>		
@@ -22,11 +21,7 @@ namespace WYJK.Entity
         public int SocialSecurityPeopleID { get; set; }
 
         /// <summary>
-        /// 户口性质
-        /// </summary>
-        public string HouseholdProperty { get; set; }
-        /// <summary>
-        /// 参保人姓名
+        /// 参保人名称
         /// </summary>
         public string SocialSecurityPeopleName { get; set; }
         /// <summary>
@@ -51,19 +46,15 @@ namespace WYJK.Entity
         public int PayMonthCount { get; set; }
         /// <summary>
         /// 已投月数
-        /// </summary>
+        /// </summary>		
         public int AlreadyPayMonthCount { get; set; }
-
-        /// <summary>
-        /// 剩余月数
-        /// </summary>
-        public int RemainingMonths { get; set; }
         /// <summary>
         /// 补交月数
         /// </summary>		
         public int PayBeforeMonthCount { get; set; }
         /// <summary>
         /// 银行缴费月数
+
         /// </summary>		
         public int BankPayMonth { get; set; }
         /// <summary>
@@ -78,28 +69,87 @@ namespace WYJK.Entity
         /// 状态
         /// </summary>		
         public string Status { get; set; }
-
+        /// <summary>
+        /// 关联企业
+        /// </summary>		
+        public int RelationEnterprise { get; set; }
+        /// <summary>
+        /// 已投月数
+        /// </summary>		
+        public int PayedMonthCount { get; set; }
+        /// <summary>
+        /// 待停方式
+        /// </summary>		
+        public string StopMethod { get; set; }
+        /// <summary>
+        /// 待停原因
+        /// </summary>		
+        public string StopReason { get; set; }
+        /// <summary>
+        /// 申请停止时间
+        /// </summary>		
+        public DateTime ApplyStopDate { get; set; }
+        /// <summary>
+        /// 停止时间
+        /// </summary>		
+        public DateTime StopDate { get; set; }
         /// <summary>
         /// 社保号
-        /// </summary>
+        /// </summary>		
         public string SocialSecurityNo { get; set; }
+        /// <summary>
+        /// SocialSecurityException
+        /// </summary>		
+        public string SocialSecurityException { get; set; }
+        /// <summary>
+        /// HandleDate
+        /// </summary>		
+        public DateTime HandleDate { get; set; }
+        /// <summary>
+        /// 邮寄地址
+        /// </summary>		
+        public string MailAddress { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>		
+        public string ContactsPhone { get; set; }
+        /// <summary>
+        /// 联系人
+        /// </summary>		
+        public string ContactsUser { get; set; }
+        /// <summary>
+        /// 材料收取方式
+        /// </summary>		
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄单号
+        /// </summary>		
+        public string MailOrder { get; set; }
+        /// <summary>
+        /// ExpressCompany
+        /// </summary>		
+        public string ExpressCompany { get; set; }
+        /// <summary>
+        /// IsPay
+        /// </summary>		
+        public bool IsPay { get; set; }
+        /// <summary>
+        /// 0：未审核，1：已通过
+        /// </summary>		
+        public string CustomerServiceAuditStatus { get; set; }
+        /// <summary>
+        /// 是否重新办理
+        /// </summary>		
+        public bool IsReApply { get; set; }
+        /// <summary>
+        /// 重新办理次数
+        /// </summary>		
+        public int ReApplyNum { get; set; }
 
         /// <summary>
-        /// 关联签约企业
+        /// 户籍性质
         /// </summary>
-        public int RelationEnterprise { get; set; }
-
-
-        /// <summary>
-        /// 业务办停时间
-        /// </summary>
-        public DateTime? StopDate { get; set; }
-
-
-        /// <summary>
-        /// 业务办理时间
-        /// </summary>
-        public DateTime? HandleDate { get; set; }
+        public string HouseholdProperty { get; set; }
 
     }
 
