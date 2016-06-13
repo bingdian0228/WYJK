@@ -127,11 +127,13 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 try
                 {
+                    string SocialSecurityType = table.Columns[0].ColumnName;
                     List<PaymentDetail> list = new List<PaymentDetail>();
                     for (int i = 1; i < table.Rows.Count; i++)
                     {
+                        
                         PaymentDetail paymentDetail = new PaymentDetail();
-                        if (NoFileName == "工伤缴费明细" || NoFileName == "生育缴费明细")
+                        if (SocialSecurityType == "工伤缴费明细" || SocialSecurityType == "生育缴费明细")
                         {
                             paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
                             paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
@@ -148,7 +150,7 @@ namespace WYJK.Web.Controllers.Mvc
                             paymentDetail.SettlementMethod = table.Rows[i][11].ToString();//结算方式
                             paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
                         }
-                        else if (NoFileName == "失业缴费明细")
+                        else if (SocialSecurityType == "失业缴费明细")
                         {
                             paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
                             paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
@@ -165,7 +167,7 @@ namespace WYJK.Web.Controllers.Mvc
                             paymentDetail.SettlementMethod = table.Rows[i][12].ToString();//结算方式
                             paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
                         }
-                        else if (NoFileName == "养老缴费明细")
+                        else if (SocialSecurityType == "养老缴费明细")
                         {
                             paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
                             paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
@@ -182,7 +184,7 @@ namespace WYJK.Web.Controllers.Mvc
                             paymentDetail.SettlementMethod = table.Rows[i][13].ToString();//结算方式
                             paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
                         }
-                        else if (NoFileName == "医疗缴费明细")
+                        else if (SocialSecurityType == "医疗缴费明细")
                         {
                             paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
                             paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证

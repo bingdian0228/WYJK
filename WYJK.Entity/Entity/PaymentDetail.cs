@@ -95,6 +95,7 @@ namespace WYJK.Entity
     /// </summary>
     public class PaymentDetailsParameter : PagedParameter
     {
+        public override int PageSize { set; get; } = 1000;
         public string IdentityCard { get; set; }
         public string CompanyName { get; set; }
         public string Year { get; set; }
