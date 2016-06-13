@@ -66,6 +66,17 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpGet]
         public async Task<JsonResult<dynamic>> DeleteUninsuredPeople(int SocialSecurityPeopleID)
         {
+            //如果存在订单，则不能删除
+            int count = DbHelper.QuerySingle<int>($@"select count(0) from SocialSecurityPeople 
+left join OrderDetails on SocialSecurityPeople.SocialSecurityPeopleID = OrderDetails.SocialSecurityPeopleID
+where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
+            if (count > 0)
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "此参保人不能删除"
+                };
+
             bool flag = await _socialSecurityService.DeleteUninsuredPeople(SocialSecurityPeopleID);
 
             return new JsonResult<dynamic>
@@ -924,7 +935,7 @@ namespace WYJK.Web.Controllers.Http
                             DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
 
                             //更新公积金方案
-                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID},IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID},IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0
   where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
 
 
