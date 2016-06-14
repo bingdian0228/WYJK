@@ -173,15 +173,15 @@ namespace WYJK.Data.ServiceImpl
         public List<FinanceSubOrder> GetSubOrderList(string OrderCode)
         {
             string sql = $"select OrderDetails.OrderCode, OrderDetails.SocialSecurityPeopleName ,SocialSecurityPeople.HouseholdProperty,"
-                        + " CONVERT(varchar(7), SocialSecurity.PayTime, 120) ssStartTime,"
-                        + " CONVERT(varchar(7), DATEADD(MONTH, socialsecurity.PayMonthCount, SocialSecurity.PayTime), 120)  ssEndTime,"
-                        + " SocialSecurity.SocialSecurityBase,"
+                        + " CONVERT(varchar(7), OrderDetails.SSPayTime, 120) ssStartTime,"
+                        + " CONVERT(varchar(7), DATEADD(MONTH, OrderDetails.SocialSecurityAmount, OrderDetails.SSPayTime), 120)  ssEndTime,"
+                        //+ " SocialSecurity.SocialSecurityBase,"
                         + " OrderDetails.SocialSecurityAmount* orderdetails.SocialSecuritypayMonth ssAmount,"
                         + " OrderDetails.SocialSecurityServiceCost,"
                         + " OrderDetails.SocialSecurityFirstBacklogCost,"
                         + " orderdetails.SocialSecurityBuCha,"
-                        + " CONVERT(varchar(7), AccumulationFund.PayTime, 120) afStartTime,"
-                        + " CONVERT(varchar(7), DATEADD(MONTH, AccumulationFund.PayMonthCount, AccumulationFund.PayTime), 120)  afEndTime,"
+                        + " CONVERT(varchar(7), OrderDetails.AFPayTime, 120) afStartTime,"
+                        + " CONVERT(varchar(7), DATEADD(MONTH, OrderDetails.AccumulationFundAmount, OrderDetails.AFPayTime), 120)  afEndTime,"
                         + " orderdetails.AccumulationFundAmount* OrderDetails.AccumulationFundpayMonth afAmount,"
                         + " OrderDetails.AccumulationFundServiceCost,"
                         + " OrderDetails.AccumulationFundFirstBacklogCost,"
@@ -209,6 +209,11 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool CancelOrder(string OrderCode)
         {
+            DbHelper.ExecuteSqlCommand($@"update SocialSecurity set IsGenerateOrder=0 
+  where SocialSecurityPeopleID in(select SocialSecurityPeopleID from OrderDetails where OrderCode in('{OrderCode}') and IsPaySocialSecurity = 1);
+ update AccumulationFund set IsGenerateOrder=0 
+  where SocialSecurityPeopleID in(select SocialSecurityPeopleID from OrderDetails where OrderCode in('{OrderCode}') and IsPayAccumulationFund = 1)",null);
+
             string sql = $"delete from [Order] where OrderCode in('{OrderCode}')";
             int result = DbHelper.ExecuteSqlCommand(sql, null);
             return result > 0;

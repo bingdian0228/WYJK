@@ -465,6 +465,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         [System.Web.Http.HttpPost]
         public JsonResult<dynamic> CancelOrder(OrderCodeArrayParameter parameter)
         {
+
+
             string OrderCodeStrs = string.Join("','", parameter.OrderCode);
             bool flag = _orderService.CancelOrder(OrderCodeStrs);
             return new JsonResult<dynamic>

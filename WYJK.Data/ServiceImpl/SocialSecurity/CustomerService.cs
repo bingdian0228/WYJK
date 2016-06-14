@@ -41,7 +41,7 @@ namespace WYJK.Data.ServiceImpl
             }
             //builder.Append(" order by SocialSecurityPeople.CreateDt desc");
 
-            string sqlCs = $@"select members.MemberID,members.UserType,Members.MemberName,Members.MemberPhone,members.Account,members.EnterpriseName,members.BusinessName,SocialSecurityPeople.CreateDt, SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurityPeople.SocialSecurityPeopleID ,SocialSecurityPeople.Status CustomerServiceStatus, SocialSecurityPeople.IdentityCard,SocialSecurity.Status SSstatus, socialsecurity.SocialSecurityException,AccumulationFund.Status AFStatus, AccumulationFund.AccumulationFundException,[order].OrderCode,[order].Status OrderStatus,
+            string sqlCs = $@"select members.MemberID,members.UserType,Members.MemberName,Members.MemberPhone,members.Account,members.EnterpriseName,members.BusinessName,SocialSecurityPeople.CreateDt, SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurityPeople.SocialSecurityPeopleID ,SocialSecurityPeople.Status CustomerServiceStatus, SocialSecurityPeople.IdentityCard,SocialSecurity.Status SSstatus, socialsecurity.SocialSecurityException,AccumulationFund.Status AFStatus, AccumulationFund.AccumulationFundException,
                               ISNULL((select SUM(SocialSecurity.SocialSecurityBase*socialsecurity.PayProportion/100) from SocialSecurityPeople
  left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
  where MemberID = Members.MemberID and SocialSecurity.Status = 4 ),0) +
@@ -51,9 +51,9 @@ namespace WYJK.Data.ServiceImpl
                           from Members
                            left join SocialSecurityPeople on Members.MemberID = SocialSecurityPeople.MemberID
                            left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = socialsecurity.SocialSecurityPeopleID
-                           left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
-               left join OrderDetails on socialsecuritypeople.SocialSecurityPeopleID = OrderDetails.SocialSecurityPeopleID
-               left join [order] on[order].OrderCode = OrderDetails.OrderCode"
+                           left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"
+               //left join OrderDetails on socialsecuritypeople.SocialSecurityPeopleID = OrderDetails.SocialSecurityPeopleID"
+               //left join [order] on[order].OrderCode = OrderDetails.OrderCode"
             + builder.ToString();
 
             string sqlStr = $"select * from (select ROW_NUMBER() OVER(ORDER BY Cs.CreateDt desc )AS Row,Cs.* from ({sqlCs}) Cs ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";

@@ -487,9 +487,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             decimal AccumulationFundAmount = 0;
             decimal AccumulationFundBacklogCost = 0;
             SocialSecurityPeopleDetail model = _socialSecurityService.GetSocialSecurityPeopleDetail(SocialSecurityPeopleID);
-            if (model.IsPaySocialSecurity)
+            SocialSecurity socialSecurity2 = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID = {model.SocialSecurityPeopleID} and IsPay=0");
+            if (socialSecurity2 != null)
             {
-                string sql = $"select SocialSecurityBase * PayProportion/100*PayMonthCount from SocialSecurity where SocialSecurityPeopleID = {model.SocialSecurityPeopleID}";
+                string sql = $"select ISNULL(SocialSecurityBase * PayProportion/100*PayMonthCount,0) from SocialSecurity where SocialSecurityPeopleID = {model.SocialSecurityPeopleID} and IsPay=0";
                 SocialSecurityAmount = DbHelper.QuerySingle<decimal>(sql);
                 SocialSecurityBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
 
@@ -498,7 +499,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
 
                 //参保月份、参保月数、签约单位ID
-                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={SocialSecurityPeopleID}");
+                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={SocialSecurityPeopleID} and IsPay=0");
                 decimal BuchaAmount = 0;
                 if (socialSecurity != null)
                 {
@@ -528,9 +529,11 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
             }
 
-            if (model.IsPayAccumulationFund)
+            AccumulationFund accumulationFund2 = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID = {model.SocialSecurityPeopleID} and IsPay=0");
+
+            if (accumulationFund2 != null)
             {
-                string sql = $"select AccumulationFundBase * PayProportion/100*PayMonthCount from AccumulationFund where SocialSecurityPeopleID = {model.SocialSecurityPeopleID}";
+                string sql = $"select AccumulationFundBase * PayProportion/100*PayMonthCount from AccumulationFund where SocialSecurityPeopleID = {model.SocialSecurityPeopleID} and IsPay=0";
                 AccumulationFundAmount = DbHelper.QuerySingle<decimal>(sql);
                 AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
             }
@@ -546,13 +549,18 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 model.IsCanModify = true;
             }
 
-            //如果社保订单大于重新办理次数并公积金订单大于重新办理次数，则修改按钮无效
-            int ssReApplyNum = DbHelper.QuerySingle<int>($"select ISNULL(ReApplyNum,0) from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID}");
-            int afReApplyNum = DbHelper.QuerySingle<int>($"select ISNULL(ReApplyNum,0) from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID}");
-            int ssOrderNum = DbHelper.QuerySingle<int>($"select count(0) from OrderDetails where SocialSecurityPeopleID={SocialSecurityPeopleID} and IsPaySocialSecurity=1");
-            int afOrderNum = DbHelper.QuerySingle<int>($"select count(0) from OrderDetails where SocialSecurityPeopleID={SocialSecurityPeopleID} and IsPayAccumulationFund=1");
 
-            if (ssOrderNum > ssReApplyNum && afOrderNum > afReApplyNum)
+            bool IsGenerateSSOrder = false;
+            bool IsGenerateAFOrder = false;
+            SocialSecurity socialSecurity1 = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where  SocialSecurityPeopleID={SocialSecurityPeopleID} and IsGenerateOrder=1 ");
+            if (socialSecurity1 != null)
+                IsGenerateSSOrder = true;
+            AccumulationFund accumulationFund1 = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where  SocialSecurityPeopleID={SocialSecurityPeopleID} and IsGenerateOrder=1 ");
+            if (accumulationFund1 != null)
+                IsGenerateAFOrder = true;
+
+
+            if (IsGenerateSSOrder == true && IsGenerateAFOrder == true)
             {
                 model.IsDisplayModify = false;
             }
@@ -615,9 +623,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             }
             else
             {
-                //社保未参保并且未生成订单（订单的个数==重新办理次数）的可以修改
-
-                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and ISNULL(ReApplyNum,0)=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPaySocialSecurity=1)");
+                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select *  from SocialSecurity where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and IsGenerateOrder=0");
                 if (socialSecurity != null)
                 {
                     //可显示
@@ -641,7 +647,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                     }
                 }
 
-                AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and  ISNULL(ReApplyNum,0)=(select COUNT(0) from OrderDetails where SocialSecurityPeopleID = {SocialSecurityPeopleID} and IsPayAccumulationFund=1)");
+                AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select *  from AccumulationFund where SocialSecurityPeopleID={SocialSecurityPeopleID} and Status = 1 and IsGenerateOrder=0");
                 if (accumulationFund != null)
                 {
                     model.IsPayAccumulationFund = true;
@@ -864,12 +870,15 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             #endregion
 
 
+
                             //复制到中间表备用
                             DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}", null);
                             //更新社保方案
-                            DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',AlreadyPayMonthCount='{socialSecurityPeople.socialSecurity.AlreadyPayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0
+                            DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',AlreadyPayMonthCount='{socialSecurityPeople.socialSecurity.AlreadyPayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
   where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
 
+
+                            SocialSecurityID = DbHelper.QuerySingle<int>($"select SocialSecurityID from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}");
                             //算费用
                             SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(DbHelper.QuerySingle<int>($"select SocialSecurityID from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}"));
                             //查询社保月数
@@ -908,11 +917,15 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
 
                         }
+                        else {
+                            //
+                            //SocialSecurityID = DbHelper.Query<SocialSecurity>("select * from ");
+                        }
                         //保存公积金参保方案
                         if (socialSecurityPeople.accumulationFund != null)
                         {
                             socialSecurityPeople.accumulationFund.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
-                            string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.socialSecurity.InsuranceArea}%' and IsDefault = 1";
+                            string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.accumulationFund.AccumulationFundArea}%' and IsDefault = 1";
                             EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>(sql);
 
                             decimal value = 0;
@@ -935,9 +948,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
 
                             //更新公积金方案
-                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID},IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0
+                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
   where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
 
+                            AccumulationFundID = DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}");
 
                             AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID }"));
                             //查询公积金月数
@@ -990,9 +1004,11 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 if (SocialSecurity.ReApplyNum > 0)
                                 {
                                     //更新社保方案
-                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
   where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
 
+
+                                    SocialSecurityID = SocialSecurity.SocialSecurityID;
                                     //查询社保金额
                                     SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurity.SocialSecurityID);
                                     //查询社保月数
@@ -1183,10 +1199,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 if (accumulationFund.ReApplyNum > 0)
                                 {
                                     //更新公积金方案
-                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0'
+                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
   where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
 
-                                    //AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
+                                    AccumulationFundID = accumulationFund.AccumulationFundID;
                                     //查询公积金金额
                                     AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(accumulationFund.AccumulationFundID);
                                     //查询公积金月数
@@ -1263,9 +1279,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
                             }
 
-                            transaction.Complete();
+
                         }
                     }
+                    transaction.Complete();
                 }
                 catch (Exception ex)
                 {

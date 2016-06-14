@@ -38,7 +38,7 @@
                     <th width="80">户籍性质</th>
                     <th width="80">社保起缴月份</th>
                     <th width="80">社保结束月份</th>
-                    <th width="80">社保基数</th>
+                    @*<th width="80">社保基数</th>*@
                     <th width="80">社保金额</th>
                     <th width="80">社保服务费</th>
                     <th width="80">社保代办费</th>
@@ -75,15 +75,15 @@
                     <tr class="text-c">
                         <td>@item.SocialSecurityPeopleName</td>
                         <td>@item.HouseholdProperty</td>
-                        <td>@(item.ssStartTime == null ? "无" : item.ssStartTime.Value.ToString("yyyy/MM"))</td>
-                        <td>@(item.ssEndTime == null ? "无" : item.ssStartTime.Value.ToString("yyyy/MM"))</td>
-                        <td>@item.SocialSecurityBase</td>
+                        <td>@(item.ssStartTime == null ? "--" : item.ssStartTime.Value.ToString("yyyy/MM"))</td>
+                        <td>@(item.ssEndTime == null ? "--" : item.ssStartTime.Value.ToString("yyyy/MM"))</td>
+                        @*<td>@item.SocialSecurityBase</td>*@
                         <td name="ssAmount">@item.ssAmount.ToString("N2")</td>
                         <td name="SocialSecurityServiceCost">@item.SocialSecurityServiceCost.ToString("N2")</td>
                         <td name="SocialSecurityFirstBacklogCost">@item.SocialSecurityFirstBacklogCost.ToString("N2")</td>
                         <td name="SocialSecurityBuCha">@item.SocialSecurityBuCha.ToString("N2")</td>
-                        <td>@(item.afStartTime == null ? "无" : item.afStartTime.Value.ToString("yyyy/MM"))</td>
-                        <td>@(item.afEndTime == null ? "无" : item.afStartTime.Value.ToString("yyyy/MM"))</td>
+                        <td>@(item.afStartTime == null ? "--" : item.afStartTime.Value.ToString("yyyy/MM"))</td>
+                        <td>@(item.afEndTime == null ? "--" : item.afStartTime.Value.ToString("yyyy/MM"))</td>
                         <td name="afAmount">@item.afAmount.ToString("N2")</td>
                         <td name="AccumulationFundServiceCost">@item.AccumulationFundServiceCost.ToString("N2")</td>
                         <td name="AccumulationFundFirstBacklogCost">@item.AccumulationFundFirstBacklogCost.ToString("N2")</td>

@@ -1070,8 +1070,9 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                                                 where MemberID = { parameter.MemberID }", null);
                         }
 
-                        transaction.Complete();
+                       
                     }
+                    transaction.Complete();
                 }
                 catch (Exception ex)
                 {
