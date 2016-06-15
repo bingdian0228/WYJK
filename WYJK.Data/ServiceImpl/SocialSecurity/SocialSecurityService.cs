@@ -482,8 +482,8 @@ where tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1";
         /// <returns></returns>
         public SocialSecurityDetail GetSocialSecurityAndAccumulationFundDetail(int SocialSecurityPeopleID)
         {
-            string sql = $"select SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurity.SocialSecurityBase,SocialSecurity.InsuranceArea,SocialSecurity.PayTime SSPayTime, ISNULL(SocialSecurity.AlreadyPayMonthCount, 0) SSAlreadyPayMonthCount,SocialSecurity.PayMonthCount SSRemainingMonths,"
-                            + " AccumulationFund.AccumulationFundBase,AccumulationFund.AccumulationFundArea,AccumulationFund.PayTime AFPayTime, ISNULL(AccumulationFund.AlreadyPayMonthCount, 0) AFAlreadyPayMonthCount,AccumulationFund.PayMonthCount AFRemainingMonths"
+            string sql = $"select SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurity.Status SSStatus, SocialSecurity.SocialSecurityBase,SocialSecurity.InsuranceArea,SocialSecurity.PayTime SSPayTime, ISNULL(SocialSecurity.AlreadyPayMonthCount, 0) SSAlreadyPayMonthCount,SocialSecurity.PayMonthCount SSRemainingMonths,"
+                            + " AccumulationFund.Status AFStatus,AccumulationFund.AccumulationFundBase,AccumulationFund.AccumulationFundArea,AccumulationFund.PayTime AFPayTime, ISNULL(AccumulationFund.AlreadyPayMonthCount, 0) AFAlreadyPayMonthCount,AccumulationFund.PayMonthCount AFRemainingMonths"
                             + " from SocialSecurityPeople"
                             + " left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
                             + " left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"

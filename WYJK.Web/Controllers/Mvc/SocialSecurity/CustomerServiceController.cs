@@ -51,6 +51,12 @@ namespace WYJK.Web.Controllers.Mvc
                     item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
                 });
             ViewBag.memberList = memberList;
+
+            List<SelectListItem> CustomerServiceAudit = EnumExt.GetSelectList(typeof(CustomerServiceAuditEnum));
+            CustomerServiceAudit.Insert(0, new SelectListItem { Text = "全部", Value = "" });
+
+            ViewData["CustomerServiceStatus"] = new SelectList(CustomerServiceAudit, "Value", "Text");
+
             //.Select(item => new { MemberID = item.MemberID, MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName) }); ;
 
             return View(customerServiceList);
@@ -101,24 +107,36 @@ namespace WYJK.Web.Controllers.Mvc
                 {
                     foreach (var socialSecurityPeopleID in SocialSecurityPeopleIDs)
                     {
+                        //参保人变成已审核状态
+                        _customerService.ModifyCustomerServiceStatus(new int[] { socialSecurityPeopleID }, (int)CustomerServiceAuditEnum.Pass);
+
+
+
+
                         List<Order> orderList = _orderService.GetOrderList(socialSecurityPeopleID);
-                        bool flag = false;
+
                         foreach (var order in orderList)
                         {
-                            if (Convert.ToInt32(order.Status) == (int)OrderEnum.Auditing || Convert.ToInt32(order.Status) == (int)OrderEnum.completed)
-                            {
-                                _customerService.ModifyCustomerServiceStatus(new int[] { socialSecurityPeopleID }, (int)CustomerServiceAuditEnum.Pass);
-                                flag = true;
-                            }
+                            //if (Convert.ToInt32(order.Status) == (int)OrderEnum.Auditing || Convert.ToInt32(order.Status) == (int)OrderEnum.completed)
+                            //{
+                            //    _customerService.ModifyCustomerServiceStatus(new int[] { socialSecurityPeopleID }, (int)CustomerServiceAuditEnum.Pass);
+                            //    flag = true;
+                            //}
 
-                            if (Convert.ToInt32(order.Status) == (int)OrderEnum.completed)
-                            {
-                                //更新社保和公积金为待办状态
-                                _socialSecurityService.ModifySocialStatus(new int[] { socialSecurityPeopleID }, (int)SocialSecurityStatusEnum.WaitingHandle);
-                                _accumulationFundService.ModifyAccumulationFundStatus(new int[] { socialSecurityPeopleID }, (int)SocialSecurityStatusEnum.WaitingHandle);
-                            }
+                            //if (Convert.ToInt32(order.Status) == (int)OrderEnum.completed)
+                            //{
+                            //    //更新社保和公积金为待办状态
+                            //    _socialSecurityService.ModifySocialStatus(new int[] { socialSecurityPeopleID }, (int)SocialSecurityStatusEnum.WaitingHandle);
+                            //    _accumulationFundService.ModifyAccumulationFundStatus(new int[] { socialSecurityPeopleID }, (int)SocialSecurityStatusEnum.WaitingHandle);
+                            //}
+
+                            //有关这个人社保的所有订单审核通过了，社保才能从未参保变成待办
+
+
+                            //有关这个人公积金的所有订单审核通过了，公积金才能从未参保变成待办
+
                         }
-                        if (!flag) throw new Exception("所选参保人不符合申请条件");
+                        
                     }
 
                     transaction.Complete();
@@ -335,6 +353,11 @@ namespace WYJK.Web.Controllers.Mvc
                     DbHelper.ExecuteSqlCommand($"update Members set InviteCode='{inviteCode}' where MemberID={model.MemberID}", null);
                     #endregion
 
+                    #region 生成子订单
+
+
+                    #endregion
+
                     if (model.IsPaySocialSecurity)
                     {
                         #region 更新社保
@@ -347,6 +370,9 @@ namespace WYJK.Web.Controllers.Mvc
                         DbHelper.ExecuteSqlCommand($"update AccumulationFund set AccumulationFundNo='{model.AccumulationFundNo}',AccumulationFundBase='{model.AccumulationFundBase}',RelationEnterprise='{model.AFEnterpriseList}',PayProportion='{model.afPayProportion.TrimEnd('%')}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
                         #endregion
                     }
+
+
+
                     transaction.Complete();
                 }
                 catch (Exception ex)

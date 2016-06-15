@@ -34,6 +34,9 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
             });
+
+
+            ViewBag.TotalAmount = orderList.Sum(n => n.Amounts);
             ViewBag.memberList = memberList;
             return View(orderList);
         }

@@ -23,7 +23,8 @@
                     + "&UserType=" + '@Request.QueryString["UserType"]'
                     + "&MemberID=" + '@Request.QueryString["MemberID"]'
                     + "&SocialSecurityPeopleName=" + '@Request.QueryString["SocialSecurityPeopleName"]'
-                    + "&IdentityCard=" + '@Request.QueryString["IdentityCard"]';
+                    + "&IdentityCard=" + '@Request.QueryString["IdentityCard"]'
+                    + "&CustomerServiceStatus=" + '@Request.QueryString["CustomerServiceStatus"]';
 
                 }
             }
@@ -163,6 +164,12 @@
             </span>
             @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
                     @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
+                    @Html.Raw("审核状态:")
+                    <span class="select-box inline">
+
+                        @Html.DropDownList("CustomerServiceStatus", ViewData["Status"] as List<SelectListItem>, new { @class = "select" })
+                    </span>
+
                     <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
 
                     }
@@ -182,9 +189,9 @@
                     <th width="80">电话</th>
                     <th width="80">个人账户</th>
                     @*<th width="80">订单号</th>
-                    <th width="80">订单状态</th>
-                    <th width="80">关联订单号</th>
-                    <th width="80">关联订单状态</th>*@
+                        <th width="80">订单状态</th>
+                        <th width="80">关联订单号</th>
+                        <th width="80">关联订单状态</th>*@
                     <th width="80">客户名称</th>
                     <th width="80">身份证</th>
                     <th width="80">欠费金额</th>
@@ -212,9 +219,9 @@
                                 <span class="label label-success radius order-view" style="cursor:pointer;" data-id="@customerService.SocialSecurityPeopleID">查看</span>
                             </td>*@
                         @*<td>@customerService.OrderCode</td>
-                        <td>@(string.IsNullOrEmpty(customerService.OrderStatus) ? "--" : EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus))) </td>
-                        <td></td>
-                        <td></td>*@
+                            <td>@(string.IsNullOrEmpty(customerService.OrderStatus) ? "--" : EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus))) </td>
+                            <td></td>
+                            <td></td>*@
                         <td>@customerService.SocialSecurityPeopleName</td>
                         <td>@customerService.IdentityCard</td>
                         <td>
@@ -256,5 +263,15 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a> <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
-</div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a>
+            @if (Request.QueryString["CustomerServiceStatus"] == Convert.ToInt32(CustomerServiceAuditEnum.NoAudited).ToString())
+            {
+                <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a>
+            }
+                
+            </span>
+            <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+        </div>
+    </div>

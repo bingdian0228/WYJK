@@ -150,6 +150,10 @@ namespace WYJK.Entity
         /// 户籍性质
         /// </summary>
         public string HouseholdProperty { get; set; }
+        /// <summary>
+        /// 是否生成订单
+        /// </summary>
+        public int IsGenerateOrder { get; set; }
 
     }
 
@@ -314,10 +318,20 @@ namespace WYJK.Entity
         /// 是否交社保
         /// </summary>
         public bool IsSocialSecurity { get; set; }
+
+        /// <summary>
+        /// 社保状态
+        /// </summary>
+        public int? SSStatus { get; set; }
         /// <summary>
         /// 是否交公积金
         /// </summary>
         public bool IsAccumulationFund { get; set; }
+
+        /// <summary>
+        /// 公积金状态
+        /// </summary>
+        public int? AFStatus { get; set; }
         /// <summary>
         /// 参保人姓名
         /// </summary>

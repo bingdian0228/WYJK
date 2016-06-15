@@ -918,8 +918,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
                         }
                         else {
-                            //
-                            //SocialSecurityID = DbHelper.Query<SocialSecurity>("select * from ");
+                            SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID }");
+                            if (socialSecurity != null)
+                                SocialSecurityID = socialSecurity.SocialSecurityID;
                         }
                         //保存公积金参保方案
                         if (socialSecurityPeople.accumulationFund != null)
@@ -930,13 +931,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
                             decimal value = 0;
                             //model.PersonalShiYeTown
-                            if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+                            if (socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
+                    socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
                             {
                                 value = model.PersonalShiYeRural;
                             }
-                            else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                            else if (socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
+                              socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
                             {
                                 value = model.PersonalShiYeTown;
                             }
@@ -948,10 +949,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
 
                             //更新公积金方案
-                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
+                            DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0,AccumulationFundType='{socialSecurityPeople.accumulationFund.AccumulationFundType}'
   where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
 
-                            AccumulationFundID = DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}");
+                            AccumulationFundID = DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}");
 
                             AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(DbHelper.QuerySingle<int>($"select AccumulationFundID from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID }"));
                             //查询公积金月数
@@ -959,6 +960,11 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
 
 
+                        }
+                        else {
+                            AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID }");
+                            if (accumulationFund != null)
+                                AccumulationFundID = accumulationFund.AccumulationFundID;
                         }
                     }
                     else {
@@ -1004,7 +1010,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 if (SocialSecurity.ReApplyNum > 0)
                                 {
                                     //更新社保方案
-                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
+                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}'
   where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
 
 
@@ -1171,6 +1177,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                                                       ,CustomerServiceAuditStatus = '{SocialSecurityTemp.CustomerServiceAuditStatus}'
                                                                       ,IsReApply = '{SocialSecurityTemp.IsReApply}'
                                                                       ,ReApplyNum = '{SocialSecurityTemp.ReApplyNum}'
+                                                                      ，IsGenerateOrder='{SocialSecurityTemp.IsGenerateOrder}'
                                                                  WHERE SocialSecurityID={SocialSecurityTemp.SocialSecurityID}", null);
                                     //删除社保临时表
                                     DbHelper.ExecuteSqlCommand($"delete from SocialSecurityTemp where SocialSecurityPeopleID={  socialSecurityPeople.SocialSecurityPeopleID}", null);
@@ -1199,7 +1206,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 if (accumulationFund.ReApplyNum > 0)
                                 {
                                     //更新公积金方案
-                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
+                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',AccumulationFundType='{socialSecurityPeople.accumulationFund.AccumulationFundType}'
   where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
 
                                     AccumulationFundID = accumulationFund.AccumulationFundID;
@@ -1267,6 +1274,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                                                   ,CustomerServiceAuditStatus ='{AccumulationFundTemp.CustomerServiceAuditStatus}'
                                                                   ,IsReApply = '{AccumulationFundTemp.IsReApply}'
                                                                   ,ReApplyNum ='{AccumulationFundTemp.ReApplyNum}'
+                                                                  ，IsGenerateOrder='{AccumulationFundTemp.IsGenerateOrder}'
                                                                  WHERE SocialSecurityID={AccumulationFundTemp.AccumulationFundID}", null);
                                     //删除社保临时表
                                     DbHelper.ExecuteSqlCommand($"delete from AccumulationFundTemp where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID}", null);
@@ -1276,10 +1284,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                     DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
 
                                 }
-
                             }
-
-
                         }
                     }
                     transaction.Complete();
@@ -1635,9 +1640,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //model.SSRemainingMonths = _socialSecurityService.GetRemainingMonth(MemberID);
             //model.AFRemainingMonths = _socialSecurityService.GetRemainingMonth(MemberID);
 
-            if (!string.IsNullOrEmpty(model.SocialSecurityBase))
+            if (model.SSStatus != null && model.SSStatus == 3)
                 model.IsSocialSecurity = true;
-            if (!string.IsNullOrEmpty(model.AccumulationFundBase))
+            if (model.AFStatus != null && model.AFStatus == 3)
                 model.IsAccumulationFund = true;
 
             return new JsonResult<SocialSecurityDetail>

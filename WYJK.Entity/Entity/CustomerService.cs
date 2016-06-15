@@ -120,5 +120,10 @@ namespace WYJK.Entity
         /// 身份证号
         /// </summary>
         public string IdentityCard { get; set; }
+
+        /// <summary>
+        /// 客服审核状态
+        /// </summary>
+        public string CustomerServiceStatus { get; set; }
     }
 }

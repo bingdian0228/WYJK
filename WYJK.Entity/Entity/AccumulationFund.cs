@@ -128,6 +128,10 @@ namespace WYJK.Entity
         /// 重新办理次数
         /// </summary>		
         public int ReApplyNum { get; set; }
+        /// <summary>
+        /// 是否生成订单
+        /// </summary>
+        public int IsGenerateOrder { get; set; }
 
     }
 

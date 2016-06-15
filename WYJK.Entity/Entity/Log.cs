@@ -13,6 +13,7 @@ namespace WYJK.Entity
     {
         public int ID { get; set; }
         public string UserName { get; set; }
+        public int? MemberID { get; set; }
         public string Contents { get; set; }
         public DateTime Dt { get; set; }
     }

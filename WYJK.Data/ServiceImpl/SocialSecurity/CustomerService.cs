@@ -39,6 +39,11 @@ namespace WYJK.Data.ServiceImpl
             {
                 builder.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%'");
             }
+
+            if (!string.IsNullOrEmpty(parameter.CustomerServiceStatus)) {
+                builder.Append($" and SocialSecurityPeople.Status={parameter.CustomerServiceStatus}");
+            }
+
             //builder.Append(" order by SocialSecurityPeople.CreateDt desc");
 
             string sqlCs = $@"select members.MemberID,members.UserType,Members.MemberName,Members.MemberPhone,members.Account,members.EnterpriseName,members.BusinessName,SocialSecurityPeople.CreateDt, SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurityPeople.SocialSecurityPeopleID ,SocialSecurityPeople.Status CustomerServiceStatus, SocialSecurityPeople.IdentityCard,SocialSecurity.Status SSstatus, socialsecurity.SocialSecurityException,AccumulationFund.Status AFStatus, AccumulationFund.AccumulationFundException,

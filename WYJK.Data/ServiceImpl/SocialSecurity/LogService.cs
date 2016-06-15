@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
         /// <param name="log"></param>
         public static void WriteLogInfo(Log log)
         {
-            string sqlstr = $"insert into Log(UserName,Contents) values('{log.UserName}','{log.Contents}')";
+            string sqlstr = $"insert into Log(UserName,MemberID,Contents) values('{log.UserName}','{log.MemberID}''{log.Contents}')";
 
             DbHelper.ExecuteSqlCommand(sqlstr, null);
         }
