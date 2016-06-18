@@ -290,7 +290,7 @@ namespace WYJK.Web.Controllers.Mvc
                             {
                                 BuchaAmount += paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses;
                                 string Note = string.Format("{0}:{1}{2},个人缴费:{3},单位缴费:{4}", paymentDetail.SocialSecurityType, socialSecurityPeople.SocialSecurityPeopleName, paymentDetail.PayTime, paymentDetail.PersonalExpenses, paymentDetail.CompanyExpenses);//缴费类型：哪个参保人什么时间个人缴费多少，单位缴费多少
-                                builderBuchaRecord.Append($"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime) values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurityPeople.SocialSecurityPeopleID},'{socialSecurityPeople.SocialSecurityPeopleName}','支出','冻结费','{Note}',{paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses},{member.Account},getdate());");
+                                builderBuchaRecord.Append($"insert into AccountRecord(Type,SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime) values(2,{DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurityPeople.SocialSecurityPeopleID},'{socialSecurityPeople.SocialSecurityPeopleName}','支出','冻结费','{Note}',{paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses},{member.Account},getdate());");
                             }
                         }
                         builderReduceBucha.Append($"update Members set Bucha-={BuchaAmount} where MemberID={member.MemberID};");
@@ -301,12 +301,12 @@ namespace WYJK.Web.Controllers.Mvc
 
                     ////将补差转到余额
                     //DbHelper.ExecuteSqlCommand("update Members set Account=+Bucha,Bucha=0", null);
-                    //遍历所有用户
-                    foreach (var member in memberList)
-                    {
-                        builderBuchaRecord.Append($@"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime)
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},'','','收入','冻结费','冻结费：{member.Bucha}',{member.Bucha},{member.Account + member.Bucha},getdate());");
-                    }
+//                    //遍历所有用户
+//                    foreach (var member in memberList)
+//                    {
+//                        builderBuchaRecord.Append($@"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime)
+//values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},'','','收入','冻结费','冻结费：{member.Bucha}',{member.Bucha},{member.Account + member.Bucha},getdate());");
+//                    }
 
                     //记录
                     if (builderBuchaRecord.ToString().Trim() != string.Empty)

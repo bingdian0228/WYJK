@@ -226,6 +226,11 @@
             流水号
             </summary>
         </member>
+        <member name="P:WYJK.Entity.AccountRecord.Type">
+            <summary>
+            社保公积金类型
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.AccumulationFund">
             <summary>
             公积金信息表
@@ -375,6 +380,11 @@
             <summary>
             重新办理次数
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.AccumulationFund.IsGenerateOrder">
+            <summary>
+            是否生成订单
+            </summary>
         </member>
         <member name="T:WYJK.Entity.AccumulationFundShowModel">
             <summary>
@@ -969,6 +979,11 @@
         <member name="P:WYJK.Entity.CustomerServiceParameter.IdentityCard">
             <summary>
             身份证号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceParameter.CustomerServiceStatus">
+            <summary>
+            客服审核状态
             </summary>
         </member>
         <member name="T:WYJK.Entity.EnterpriseSocialSecurity">
@@ -1594,6 +1609,11 @@
         <member name="P:WYJK.Entity.FinanceOrder.MemberName">
             <summary>
             代理机构名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.EnterpriseName">
+            <summary>
+            代理机构ID
             </summary>
         </member>
         <member name="P:WYJK.Entity.FinanceOrder.payUserCount">
@@ -2402,6 +2422,11 @@
             户籍性质
             </summary>
         </member>
+        <member name="P:WYJK.Entity.SocialSecurity.IsGenerateOrder">
+            <summary>
+            是否生成订单
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.SocialSecurityShowModel">
             <summary>
             社保业务显示列表(Admin)
@@ -2577,9 +2602,19 @@
             是否交社保
             </summary>
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.SSStatus">
+            <summary>
+            社保状态
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityDetail.IsAccumulationFund">
             <summary>
             是否交公积金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityDetail.AFStatus">
+            <summary>
+            公积金状态
             </summary>
         </member>
         <member name="P:WYJK.Entity.SocialSecurityDetail.SocialSecurityPeopleName">

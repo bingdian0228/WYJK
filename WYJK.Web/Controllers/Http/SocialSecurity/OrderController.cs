@@ -51,7 +51,7 @@ namespace WYJK.Web.Controllers.Http
                     List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr);
                     foreach (var socialSecurity in socialSecurityList)
                     {
-                        if (socialSecurity.PayTime.Month < DateTime.Now.Month || (socialSecurity.PayTime.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if (socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
                         {
                             return new JsonResult<dynamic>
                             {
@@ -65,7 +65,7 @@ namespace WYJK.Web.Controllers.Http
                     List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
                     foreach (var accumulationFund in accumulationFundList)
                     {
-                        if (accumulationFund.PayTime.Month < DateTime.Now.Month || (accumulationFund.PayTime.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if (accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
                         {
                             return new JsonResult<dynamic>
                             {
@@ -96,7 +96,7 @@ namespace WYJK.Web.Controllers.Http
                             {
                                 //参保月份、参保月数、签约单位ID
                                 SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={orderDetails.SocialSecurityPeopleID}");
-                                int payMonth = socialSecurity.PayTime.Month;
+                                int payMonth = socialSecurity.PayTime.Value.Month;
                                 int monthCount = socialSecurity.PayMonthCount;
                                 //相对应的签约单位城市是否已调差（社平工资）
                                 EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -176,7 +176,7 @@ namespace WYJK.Web.Controllers.Http
             List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr2);
             foreach (var socialSecurity in socialSecurityList)
             {
-                if (socialSecurity.PayTime.Month < DateTime.Now.Month || (socialSecurity.PayTime.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                if (socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
                 {
                     return new JsonResult<dynamic>
                     {
@@ -190,7 +190,7 @@ namespace WYJK.Web.Controllers.Http
             List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
             foreach (var accumulationFund in accumulationFundList)
             {
-                if (accumulationFund.PayTime.Month < DateTime.Now.Month || (accumulationFund.PayTime.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                if (accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
                 {
                     return new JsonResult<dynamic>
                     {
@@ -254,7 +254,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
                 decimal BuchaAmount = 0;
                 if (socialSecurity != null)
                 {
-                    int payMonth = socialSecurity.PayTime.Month;
+                    int payMonth = socialSecurity.PayTime.Value.Month;
                     int monthCount = socialSecurity.PayMonthCount;
                     //相对应的签约单位城市是否已调差（社平工资）
                     EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -335,7 +335,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
                             decimal BuchaAmount = 0;
                             if (socialSecurity != null)
                             {
-                                int payMonth = socialSecurity.PayTime.Month;
+                                int payMonth = socialSecurity.PayTime.Value.Month;
                                 int monthCount = socialSecurity.PayMonthCount;
                                 //相对应的签约单位城市是否已调差（社平工资）
                                 EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -465,9 +465,17 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         [System.Web.Http.HttpPost]
         public JsonResult<dynamic> CancelOrder(OrderCodeArrayParameter parameter)
         {
-
-
             string OrderCodeStrs = string.Join("','", parameter.OrderCode);
+
+            if (DbHelper.QuerySingle<int>($"select count(0) from Order where OrderCode in('{OrderCodeStrs}') and IsNotCancel=1") > 0)
+            {
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "订单不允许删除"
+                };
+            }
+
             bool flag = _orderService.CancelOrder(OrderCodeStrs);
             return new JsonResult<dynamic>
             {
@@ -521,7 +529,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr);
                     foreach (var socialSecurity in socialSecurityList)
                     {
-                        if (socialSecurity.PayTime.Month < DateTime.Now.Month || (socialSecurity.PayTime.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if (socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
                         {
                             return new JsonResult<dynamic>
                             {
@@ -535,7 +543,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
                     foreach (var accumulationFund in accumulationFundList)
                     {
-                        if (accumulationFund.PayTime.Month < DateTime.Now.Month || (accumulationFund.PayTime.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if (accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
                         {
                             return new JsonResult<dynamic>
                             {

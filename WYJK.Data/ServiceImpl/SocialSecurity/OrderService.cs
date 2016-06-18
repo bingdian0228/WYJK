@@ -99,6 +99,10 @@ namespace WYJK.Data.ServiceImpl
                 builder.AppendFormat(" and Members.MemberID = {0}", parameter.MemberID);
             }
 
+            if (!string.IsNullOrEmpty(parameter.PaymentMethod)) {
+                builder.AppendFormat($" and orders.PaymentMethod='{parameter.PaymentMethod}'");
+            }
+
             builder.Append($" and OrderCode like '%{parameter.OrderCode}%'");
 
             if (!string.IsNullOrEmpty(parameter.Status))
@@ -125,7 +129,7 @@ namespace WYJK.Data.ServiceImpl
                 builder.Append($"and PayTime between '{parameter.StartTime}' and '{parameter.EndTime.Value.AddDays(1)}'");
             }
 
-            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberName,members.EnterpriseName,members.BusinessName,"
+            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberID,members.MemberName,members.EnterpriseName,members.BusinessName,"
                             + " (select COUNT(*) from OrderDetails where OrderDetails.OrderCode = Orders.OrderCode) payUserCount,"
                             + " orders.PaymentMethod,"
                             + " (select  SUM(OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth + OrderDetails.SocialSecurityServiceCost + OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.SocialSecurityBuCha + OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth + OrderDetails.AccumulationFundServiceCost + OrderDetails.AccumulationFundFirstBacklogCost)  from OrderDetails where OrderDetails.OrderCode = orders.OrderCode) Amounts,"
@@ -188,7 +192,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public List<FinanceSubOrder> GetSubOrderList(string OrderCode)
         {
-            string sql = $"select OrderDetails.OrderCode, OrderDetails.SocialSecurityPeopleName ,SocialSecurityPeople.HouseholdProperty,"
+            string sql = $"select OrderDetails.OrderCode,[Order].Status, OrderDetails.SocialSecurityPeopleName ,SocialSecurityPeople.HouseholdProperty,"
                         + " CONVERT(varchar(7), OrderDetails.SSPayTime, 120) ssStartTime,"
                         + " CONVERT(varchar(7), DATEADD(MONTH, OrderDetails.SocialSecurityAmount, OrderDetails.SSPayTime), 120)  ssEndTime,"
                         //+ " SocialSecurity.SocialSecurityBase,"
@@ -209,6 +213,7 @@ namespace WYJK.Data.ServiceImpl
                         + " OrderDetails.AccumulationFundServiceCost +"
                         + " OrderDetails.AccumulationFundFirstBacklogCost totalAmount"
                         + " from OrderDetails"
+                        + " left join [Order] on [Order].OrderCode = OrderDetails.OrderCode "
                         + " left join SocialSecurityPeople on OrderDetails.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID"
                         + " left join SocialSecurity on OrderDetails.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
                         + " left join AccumulationFund on OrderDetails.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"

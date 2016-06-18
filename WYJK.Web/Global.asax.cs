@@ -122,8 +122,8 @@ namespace WYJK.Web
 
                                 yue -= account;
                                 //社保流水账
-                                sqlStr += $"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)"
-                                           + $" values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurity.SocialSecurityPeopleID},'{socialSecurity.SocialSecurityPeopleName}','支出','余额','社保费',{account},{yue},getdate());";
+                                sqlStr += $"insert into AccountRecord(Type,SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)"
+                                           + $" values(0,{DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurity.SocialSecurityPeopleID},'{socialSecurity.SocialSecurityPeopleName}','支出','余额','社保费',{account},{yue},getdate());";
                                 //已投月数+1,剩余月数-1
                                 sqlStr += $"update SocialSecurity set AlreadyPayMonthCount=ISNULL(AlreadyPayMonthCount,0)+1,PayMonthCount=ISNULL(PayMonthCount,0)-1  where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
                             }
@@ -140,8 +140,8 @@ namespace WYJK.Web
 
                                 yue -= account;
                                 //公积金流水账
-                                sqlStr += $"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)"
-                                           + $" values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{accumulationFund.SocialSecurityPeopleID},'{accumulationFund.SocialSecurityPeopleName}','支出','余额','公积金费',{account},{yue},getdate());";
+                                sqlStr += $"insert into AccountRecord(Type,SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)"
+                                           + $" values(1,{DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{accumulationFund.SocialSecurityPeopleID},'{accumulationFund.SocialSecurityPeopleName}','支出','余额','公积金费',{account},{yue},getdate());";
                                 //已投月数+1,剩余月数-1
                                 sqlStr += $"update AccumulationFund set AlreadyPayMonthCount=ISNULL(AlreadyPayMonthCount,0)+1,PayMonthCount=ISNULL(PayMonthCount,0)-1 where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
                             }

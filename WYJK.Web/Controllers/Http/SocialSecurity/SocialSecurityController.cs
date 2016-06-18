@@ -193,7 +193,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                     decimal BuchaAmount = 0;
                     if (socialSecurity != null)
                     {
-                        int payMonth = socialSecurity.PayTime.Month;
+                        int payMonth = socialSecurity.PayTime.Value.Month;
                         int monthCount = socialSecurity.PayMonthCount;
                         //相对应的签约单位城市是否已调差（社平工资）
                         EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -503,7 +503,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 decimal BuchaAmount = 0;
                 if (socialSecurity != null)
                 {
-                    int payMonth = socialSecurity.PayTime.Month;
+                    int payMonth = socialSecurity.PayTime.Value.Month;
                     int monthCount = socialSecurity.PayMonthCount;
                     //相对应的签约单位城市是否已调差（社平工资）
                     EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -697,9 +697,19 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             decimal SocialSecurityAmount = 0;
             if (socialSecurityPeople.socialSecurity != null)
             {
+                if (Convert.ToDateTime(socialSecurityPeople.socialSecurity.PayTime.Value.ToString("yyyy-MM")) < Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM")) || (socialSecurityPeople.socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "参保人日期已失效，请修改"
+                    };
+                }
+
+
                 IsExistSocialSecurityCase = true;
-                socialSecurityStartTime = socialSecurityPeople.socialSecurity.PayTime;
-                socialSecurityEndTime = socialSecurityPeople.socialSecurity.PayTime.AddMonths(socialSecurityPeople.socialSecurity.PayMonthCount - 1);
+                socialSecurityStartTime = socialSecurityPeople.socialSecurity.PayTime.Value;
+                socialSecurityEndTime = socialSecurityPeople.socialSecurity.PayTime.Value.AddMonths(socialSecurityPeople.socialSecurity.PayMonthCount - 1);
                 socialSecuritypayMonth = socialSecurityPeople.socialSecurity.PayMonthCount;
                 socialSecurityFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
                 SocialSecurityBase = socialSecurityPeople.socialSecurity.SocialSecurityBase;
@@ -738,7 +748,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 //参保月份、参保月数、签约单位ID
                 //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
 
-                int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                int payMonth = socialSecurityPeople.socialSecurity.PayTime.Value.Month;
                 int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
                 //相对应的签约单位城市是否已调差（社平工资）
                 //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -771,9 +781,18 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             decimal AccumulationFundAmount = 0;
             if (socialSecurityPeople.accumulationFund != null)
             {
+                if (Convert.ToDateTime(socialSecurityPeople.accumulationFund.PayTime.Value.ToString("yyyy-MM")) < Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM")) || (socialSecurityPeople.accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "参保人日期已失效，请修改"
+                    };
+                }
+
                 IsExistaAccumulationFundCase = true;
-                AccumulationFundStartTime = socialSecurityPeople.accumulationFund.PayTime;
-                AccumulationFundEndTime = socialSecurityPeople.accumulationFund.PayTime.AddMonths(socialSecurityPeople.accumulationFund.PayMonthCount - 1);
+                AccumulationFundStartTime = socialSecurityPeople.accumulationFund.PayTime.Value;
+                AccumulationFundEndTime = socialSecurityPeople.accumulationFund.PayTime.Value.AddMonths(socialSecurityPeople.accumulationFund.PayMonthCount - 1);
                 AccumulationFundpayMonth = socialSecurityPeople.accumulationFund.PayMonthCount;
                 AccumulationFundFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
                 AccumulationFundBase = socialSecurityPeople.accumulationFund.AccumulationFundBase;
@@ -872,7 +891,12 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
 
                             //复制到中间表备用
-                            DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}", null);
+                            try
+                            {
+                                DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}", null);
+                            }
+                            catch { }
+
                             //更新社保方案
                             DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',AlreadyPayMonthCount='{socialSecurityPeople.socialSecurity.AlreadyPayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
   where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
@@ -893,7 +917,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             //参保月份、参保月数、签约单位ID
                             //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
 
-                            int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                            int payMonth = socialSecurityPeople.socialSecurity.PayTime.Value.Month;
                             int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
                             //相对应的签约单位城市是否已调差（社平工资）
                             //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -929,24 +953,15 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.accumulationFund.AccumulationFundArea}%' and IsDefault = 1";
                             EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>(sql);
 
-                            decimal value = 0;
-                            //model.PersonalShiYeTown
-                            if (socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-                    socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
-                            {
-                                value = model.PersonalShiYeRural;
-                            }
-                            else if (socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-                              socialSecurityPeople.accumulationFund.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
-                            {
-                                value = model.PersonalShiYeTown;
-                            }
-
-                            decimal PayProportion = model.CompYangLao + model.CompYiLiao + model.CompShiYe + model.CompGongShang + model.CompShengYu
-                                + model.PersonalYangLao + model.PersonalYiLiao + value + model.PersonalGongShang + model.PersonalShengYu;
+                            decimal PayProportion = model.CompProportion + model.PersonalProportion;
 
                             //复制到中间表备用
-                            DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
+                            try
+                            {
+                                DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
+                            }
+                            catch { }
+
 
                             //更新公积金方案
                             DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0,AccumulationFundType='{socialSecurityPeople.accumulationFund.AccumulationFundType}'
@@ -1029,7 +1044,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                     //参保月份、参保月数、签约单位ID
                                     //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
 
-                                    int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                                    int payMonth = socialSecurityPeople.socialSecurity.PayTime.Value.Month;
                                     int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
                                     //相对应的签约单位城市是否已调差（社平工资）
                                     //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -1073,7 +1088,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                     //参保月份、参保月数、签约单位ID
                                     //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
 
-                                    int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                                    int payMonth = socialSecurityPeople.socialSecurity.PayTime.Value.Month;
                                     int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
                                     //相对应的签约单位城市是否已调差（社平工资）
                                     //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -1113,7 +1128,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 //参保月份、参保月数、签约单位ID
                                 //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
 
-                                int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                                int payMonth = socialSecurityPeople.socialSecurity.PayTime.Value.Month;
                                 int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
                                 //相对应的签约单位城市是否已调差（社平工资）
                                 //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -1141,8 +1156,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             SocialSecurity SocialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
                             if (SocialSecurity != null)
                             {
-                                if (SocialSecurity.ReApplyNum > 0)
+                                if (SocialSecurity.ReApplyNum > 0 && SocialSecurity.Status == "1")
                                 {
+                                    SocialSecurityID = SocialSecurity.SocialSecurityID;
+
                                     //从中间表回滚社保表，并删除中间表记录
                                     SocialSecurity SocialSecurityTemp = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurityTemp where SocialSecurityPeopleID={  socialSecurityPeople.SocialSecurityPeopleID}");
                                     DbHelper.ExecuteSqlCommand($@"UPDATE SocialSecurity
@@ -1177,12 +1194,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                                                       ,CustomerServiceAuditStatus = '{SocialSecurityTemp.CustomerServiceAuditStatus}'
                                                                       ,IsReApply = '{SocialSecurityTemp.IsReApply}'
                                                                       ,ReApplyNum = '{SocialSecurityTemp.ReApplyNum}'
-                                                                      ，IsGenerateOrder='{SocialSecurityTemp.IsGenerateOrder}'
+                                                                      ,IsGenerateOrder='{SocialSecurityTemp.IsGenerateOrder}'
                                                                  WHERE SocialSecurityID={SocialSecurityTemp.SocialSecurityID}", null);
                                     //删除社保临时表
                                     DbHelper.ExecuteSqlCommand($"delete from SocialSecurityTemp where SocialSecurityPeopleID={  socialSecurityPeople.SocialSecurityPeopleID}", null);
                                 }
-                                else {
+                                if (SocialSecurity.ReApplyNum == 0 && SocialSecurity.Status == "1")
+                                {
                                     //删除参保方案
                                     DbHelper.ExecuteSqlCommand($"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
 
@@ -1243,8 +1261,11 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
                             if (accumulationFund != null)
                             {
-                                if (accumulationFund.ReApplyNum > 0)
+                                if (accumulationFund.ReApplyNum > 0 && accumulationFund.Status == "1")
                                 {
+                                    AccumulationFundID = accumulationFund.AccumulationFundID;
+
+
                                     ////从中间表回滚社保表，并删除中间表记录
                                     AccumulationFund AccumulationFundTemp = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFundTemp where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
                                     DbHelper.ExecuteSqlCommand($@"UPDATE WYJK.dbo.AccumulationFund
@@ -1274,12 +1295,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                                                   ,CustomerServiceAuditStatus ='{AccumulationFundTemp.CustomerServiceAuditStatus}'
                                                                   ,IsReApply = '{AccumulationFundTemp.IsReApply}'
                                                                   ,ReApplyNum ='{AccumulationFundTemp.ReApplyNum}'
-                                                                  ，IsGenerateOrder='{AccumulationFundTemp.IsGenerateOrder}'
-                                                                 WHERE SocialSecurityID={AccumulationFundTemp.AccumulationFundID}", null);
+                                                                  ,IsGenerateOrder='{AccumulationFundTemp.IsGenerateOrder}'
+                                                                 WHERE AccumulationFundID={AccumulationFundTemp.AccumulationFundID}", null);
                                     //删除社保临时表
                                     DbHelper.ExecuteSqlCommand($"delete from AccumulationFundTemp where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID}", null);
                                 }
-                                else {
+                                if (accumulationFund.ReApplyNum == 0 && accumulationFund.Status == "1")
+                                {
                                     //删除参保方案
                                     DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
 
@@ -1434,7 +1456,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                         //参保月份、参保月数、签约单位ID
                         //SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={item.SocialSecurityPeopleID}");
 
-                        int payMonth = socialSecurityPeople.socialSecurity.PayTime.Month;
+                        int payMonth = socialSecurityPeople.socialSecurity.PayTime.Value.Month;
                         int monthCount = socialSecurityPeople.socialSecurity.PayMonthCount;
                         //相对应的签约单位城市是否已调差（社平工资）
                         //EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
@@ -1549,9 +1571,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //查询剩余月数
             socialSecurityPeopleList.ForEach(n =>
             {
-                //n.SSRemainingMonthCount = monthCount;//待修改
-                //n.AFRemainingMonthCount = monthCount;//待修改
-                if (n.SSStatus != Status)
+        //n.SSRemainingMonthCount = monthCount;//待修改
+        //n.AFRemainingMonthCount = monthCount;//待修改
+        if (n.SSStatus != Status)
                 {
                     n.SSStatus = 0;
                     n.SSPayTime = null;
@@ -1601,10 +1623,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //查询剩余月数
             socialSecurityPeopleList.ForEach(n =>
             {
-                //n.SSRemainingMonthCount = monthCount;
-                //n.AFRemainingMonthCount = monthCount;
+        //n.SSRemainingMonthCount = monthCount;
+        //n.AFRemainingMonthCount = monthCount;
 
-                if (n.SSStatus != (int)SocialSecurityStatusEnum.WaitingStop)
+        if (n.SSStatus != (int)SocialSecurityStatusEnum.WaitingStop)
                 {
                     n.SSStatus = 0;
                 }
@@ -1802,9 +1824,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //查询剩余月数
             socialSecurityPeopleList.ForEach(n =>
             {
-                //n.SSRemainingMonthCount = 0;//待修改
-                //n.AFRemainingMonthCount = 0;//待修改
-                if (n.SSStatus != (int)SocialSecurityStatusEnum.AlreadyStop)
+        //n.SSRemainingMonthCount = 0;//待修改
+        //n.AFRemainingMonthCount = 0;//待修改
+        if (n.SSStatus != (int)SocialSecurityStatusEnum.AlreadyStop)
                 {
                     n.SSStatus = 0;
                     n.SSPayTime = null;

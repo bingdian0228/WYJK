@@ -46,10 +46,10 @@ namespace WYJK.Web.Controllers.Mvc
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text");
 
             List<Members> memberList = _memberService.GetMembersList();
-                memberList.ForEach(item =>
-                {
-                    item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
-                });
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
             ViewBag.memberList = memberList;
 
             List<SelectListItem> CustomerServiceAudit = EnumExt.GetSelectList(typeof(CustomerServiceAuditEnum));
@@ -101,42 +101,34 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public JsonResult BatchComplete(int[] SocialSecurityPeopleIDs)
         {
+            int socialSecurityPeopleID = SocialSecurityPeopleIDs[0];
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
                 {
-                    foreach (var socialSecurityPeopleID in SocialSecurityPeopleIDs)
+                    //参保人变成已审核状态
+                    _customerService.ModifyCustomerServiceStatus(new int[] { socialSecurityPeopleID }, (int)CustomerServiceAuditEnum.Pass);
+
+                    //有关这个人社保的所有订单审核通过了，并且这个人社保的订单为已生成， 社保才能从未参保变成待办
+                    SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeopleID}");
+                    if (socialSecurity != null && socialSecurity.IsGenerateOrder)
                     {
-                        //参保人变成已审核状态
-                        _customerService.ModifyCustomerServiceStatus(new int[] { socialSecurityPeopleID }, (int)CustomerServiceAuditEnum.Pass);
+                        //这个人的所有社保订单都已经审核通过了
+                        int result = DbHelper.QuerySingle<int>($"select count(0) from OrderDetails left join [Order] on [Order].OrderCode=OrderDetails.OrderCode where OrderDetails.SocialSecurityPeopleID={socialSecurityPeopleID} and [Order].Status in(0,1) and OrderDetails.IsPaySocialSecurity=1");
+                        //社保从未参保变成待办
+                        if (result == 0)
+                            DbHelper.ExecuteSqlCommand($"update SocialSecurity set Status=2 where SocialSecurityPeopleID={socialSecurityPeopleID} and Status=1", null);
+                    }
 
-
-
-
-                        List<Order> orderList = _orderService.GetOrderList(socialSecurityPeopleID);
-
-                        foreach (var order in orderList)
-                        {
-                            //if (Convert.ToInt32(order.Status) == (int)OrderEnum.Auditing || Convert.ToInt32(order.Status) == (int)OrderEnum.completed)
-                            //{
-                            //    _customerService.ModifyCustomerServiceStatus(new int[] { socialSecurityPeopleID }, (int)CustomerServiceAuditEnum.Pass);
-                            //    flag = true;
-                            //}
-
-                            //if (Convert.ToInt32(order.Status) == (int)OrderEnum.completed)
-                            //{
-                            //    //更新社保和公积金为待办状态
-                            //    _socialSecurityService.ModifySocialStatus(new int[] { socialSecurityPeopleID }, (int)SocialSecurityStatusEnum.WaitingHandle);
-                            //    _accumulationFundService.ModifyAccumulationFundStatus(new int[] { socialSecurityPeopleID }, (int)SocialSecurityStatusEnum.WaitingHandle);
-                            //}
-
-                            //有关这个人社保的所有订单审核通过了，社保才能从未参保变成待办
-
-
-                            //有关这个人公积金的所有订单审核通过了，公积金才能从未参保变成待办
-
-                        }
-                        
+                    //有关这个人公积金的所有订单审核通过了，并且这个人公积金的订单为已生成， 公积金才能从未参保变成待办
+                    AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeopleID}");
+                    if (accumulationFund != null && accumulationFund.IsGenerateOrder)
+                    {
+                        //这个人的所有公积金订单都已经审核通过了
+                        int result = DbHelper.QuerySingle<int>($"select count(0) from OrderDetails left join [Order] on [Order].OrderCode=OrderDetails.OrderCode where OrderDetails.SocialSecurityPeopleID={socialSecurityPeopleID} and [Order].Status in(0,1) and OrderDetails.IsPayAccumulationFund=1");
+                        //公积金从未参保变成待办
+                        if (result == 0)
+                            DbHelper.ExecuteSqlCommand($"update AccumulationFund set Status=2 where SocialSecurityPeopleID={socialSecurityPeopleID} and Status=1", null);
                     }
 
                     transaction.Complete();
@@ -173,7 +165,7 @@ namespace WYJK.Web.Controllers.Mvc
                 socialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(SocialSecurityPeopleID.Value);
             }
 
-            if (socialSecurityPeople.IsPaySocialSecurity)
+            if (_socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID.Value) != null)
             {
                 socialSecurityPeople.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID.Value);
                 //企业签约单位列表
@@ -183,7 +175,7 @@ namespace WYJK.Web.Controllers.Mvc
                 ViewData["SSMaxBase"] = Math.Round(SS.SocialAvgSalary * SS.MaxSocial / 100);
                 ViewData["SSMinBase"] = Math.Round(SS.SocialAvgSalary * SS.MinSocial / 100);
             }
-            if (socialSecurityPeople.IsPayAccumulationFund)
+            if (_accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID.Value) != null)
             {
                 socialSecurityPeople.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID.Value);
                 //企业签约单位列表
@@ -197,8 +189,21 @@ namespace WYJK.Web.Controllers.Mvc
             //获取会员信息
             ViewData["member"] = _memberService.GetMemberInfoForAdmin(MemberID.Value);
 
+
+            List<AccountRecord> accountRecordList = _memberService.GetAccountRecordList(MemberID.Value).OrderByDescending(n => n.CreateTime).ToList();
             //获取账户列表
-            ViewData["accountRecordList"] = _memberService.GetAccountRecordList(MemberID.Value).OrderByDescending(n => n.CreateTime).ToList();
+            ViewData["accountRecordList"] = accountRecordList;
+
+            //获取社保缴费明细
+            ViewData["SSAccountRecordList"] = accountRecordList.Where(n => n.SocialSecurityPeopleID == SocialSecurityPeopleID.Value && n.Type == "0").ToList();
+            
+
+            //获取公积金缴费明细
+            ViewData["AFAccountRecordList"]= accountRecordList.Where(n => n.SocialSecurityPeopleID == SocialSecurityPeopleID.Value && n.Type == "1").ToList();
+
+            //调整社平工资的缴费明细
+            ViewData["SocialAvgSalaryRecordList"] = accountRecordList.Where(n => n.SocialSecurityPeopleID == SocialSecurityPeopleID.Value && n.Type == "2").ToList();
+
 
             #region 户口性质
             List<SelectListItem> list = EnumExt.GetSelectList(typeof(HouseholdPropertyEnum));
@@ -339,7 +344,12 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 try
                 {
+                    //日志记录
+                    string logStr = string.Empty;
+
                     #region 更新参保人
+
+
                     socialSecurityPeople.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
                     DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IdentityCard='{socialSecurityPeople.IdentityCard}',HouseholdProperty='{socialSecurityPeople.HouseholdProperty}',IdentityCardPhoto='{socialSecurityPeople.IdentityCardPhoto}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
                     #endregion
@@ -355,16 +365,72 @@ namespace WYJK.Web.Controllers.Mvc
 
                     #region 生成子订单
 
+                    //查看是否有未付款的订单，如果有，则更改原来的订单，如果没有
+                    //然后查看参保人是否已经支付，如果已经支付则需要生成一个待支付的差额订单
+
+                    //查找参保人对应的社保和公积金的交费金额
+                    decimal OldSSAmount = 0, NewSSAmount = 0, OldAFAmount = 0, NewAFAmount = 0;
+                    if (_socialSecurityService.GetSocialSecurityDetail(model.SocialSecurityPeopleID) != null)
+                    {
+                        OldSSAmount = Math.Round(DbHelper.QuerySingle<decimal>($"select SocialSecurityBase*PayProportion/100 from SocialSecurity where SocialSecurityPeopleID={ model.SocialSecurityPeopleID}"), 2);
+                        NewSSAmount = Math.Round(Convert.ToDecimal(model.SocialSecurityBase) * Convert.ToDecimal(model.ssPayProportion.TrimEnd('%')) / 100, 2);//现在社保金额
+                    }
+
+                    if (_accumulationFundService.GetAccumulationFundDetail(model.SocialSecurityPeopleID) != null)
+                    {
+                        OldAFAmount = Math.Round(DbHelper.QuerySingle<decimal>($"select AccumulationFundBase*PayProportion/100 from AccumulationFund where SocialSecurityPeopleID={ model.SocialSecurityPeopleID}"), 2);
+                        NewAFAmount = Math.Round(Convert.ToDecimal(model.AccumulationFundBase) * Convert.ToDecimal(model.afPayProportion.TrimEnd('%')) / 100, 2);//现在公积金金额
+                    }
+                    //如果新社保金额大于原来金额
+                    if (NewSSAmount > OldSSAmount)
+                    {
+                        //查看是否存在社保未付款的订单
+                        if (DbHelper.QuerySingle<int>($"select count(0) from [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPaySocialSecurity=1 and [Order].Status=0") > 0)
+                        {
+                            DbHelper.ExecuteSqlCommand($"update OrderDetails set SocialSecurityAmount='{NewSSAmount}' where OrderDetailID=(select OrderDetails.OrderDetailID form [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPaySocialSecurity=1 and [Order].Status=0)", null);
+                        }
+                        //查看参保人是否已经支付，如果已经支付则需要生成一个待支付的差额订单
+                        else if (DbHelper.QuerySingle<bool>($"select IsPay from SocialSecurity where SocialSecurityPeopleID={ model.SocialSecurityPeopleID}"))
+                        {
+                            SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where  SocialSecurityPeopleID={ model.SocialSecurityPeopleID}");
+                            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+                            DbHelper.ExecuteSqlCommand($@"insert into [Order](OrderCode,MemberID,GenerateDate,Status,IsNotCancel) 
+values('{orderCode}',{model.MemberID},'{DateTime.Now}',0,1);
+insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleName,SSPayTime,SocialSecurityAmount,SocialSecuritypayMonth,IsPaySocialSecurity)
+ values('{orderCode}',{model.SocialSecurityPeopleID},'{model.SocialSecurityPeopleName}','{socialSecurity.PayTime}',{NewSSAmount - OldSSAmount},{socialSecurity.PayMonthCount},1)", null);
+                        }
+                    }
+
+                    //如果新公积金金额大于原来金额
+                    if (NewAFAmount > OldAFAmount)
+                    {
+                        //查看是否存在公积金未付款订单
+                        if (DbHelper.QuerySingle<int>($"select count(0) from [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPayAccumulationFund=1 and [Order].Status=0") > 0)
+                        {
+                            DbHelper.ExecuteSqlCommand($"update OrderDetails set AccumulationFundAmount='{NewAFAmount}' where OrderDetailID=(select OrderDetails.OrderDetailID form [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPayAccumulationFund=1 and [Order].Status=0)", null);
+                        }
+                        else if (DbHelper.QuerySingle<bool>($"select IsPay from AccumulationFund where SocialSecurityPeopleID={ model.SocialSecurityPeopleID}"))
+                        {
+                            AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where  SocialSecurityPeopleID={ model.SocialSecurityPeopleID}");
+                            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+                            DbHelper.ExecuteSqlCommand($@"insert into [Order](OrderCode,MemberID,GenerateDate,Status,IsNotCancel) 
+values('{orderCode}',{model.MemberID},'{DateTime.Now}',0,1);
+insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleName,AFPayTime,AccumulationFundAmount,AccumulationFundpayMonth,IsPayAccumulationFund)
+ values('{orderCode}',{model.SocialSecurityPeopleID},'{model.SocialSecurityPeopleName}','{accumulationFund.PayTime}',{NewAFAmount - OldAFAmount},{accumulationFund.PayMonthCount},1)", null);
+                        }
+                    }
+
 
                     #endregion
 
-                    if (model.IsPaySocialSecurity)
+
+                    if (_socialSecurityService.GetSocialSecurityDetail(model.SocialSecurityPeopleID) != null)
                     {
                         #region 更新社保
                         DbHelper.ExecuteSqlCommand($"update SocialSecurity set SocialSecurityNo='{model.SocialSecurityNo}',SocialSecurityBase='{model.SocialSecurityBase}',RelationEnterprise='{model.SSEnterpriseList}',PayProportion='{model.ssPayProportion.TrimEnd('%')}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
                         #endregion
                     }
-                    if (model.IsPayAccumulationFund)
+                    if (_accumulationFundService.GetAccumulationFundDetail(model.SocialSecurityPeopleID) != null)
                     {
                         #region 更新公积金
                         DbHelper.ExecuteSqlCommand($"update AccumulationFund set AccumulationFundNo='{model.AccumulationFundNo}',AccumulationFundBase='{model.AccumulationFundBase}',RelationEnterprise='{model.AFEnterpriseList}',PayProportion='{model.afPayProportion.TrimEnd('%')}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
@@ -530,6 +596,7 @@ namespace WYJK.Web.Controllers.Mvc
         public class SocialSecurityPeopleDetail
         {
             public int SocialSecurityPeopleID { get; set; }
+            public string SocialSecurityPeopleName { get; set; }
             public string IdentityCard { get; set; }
             public string HouseholdProperty { get; set; }
             public string[] ImgUrls { get; set; }

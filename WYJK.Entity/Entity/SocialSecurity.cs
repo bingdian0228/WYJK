@@ -39,7 +39,7 @@ namespace WYJK.Entity
         /// <summary>
         /// 起缴时间
         /// </summary>		
-        public DateTime PayTime { get; set; }
+        public DateTime? PayTime { get; set; }
         /// <summary>
         /// 缴费月数
         /// </summary>		
@@ -88,11 +88,11 @@ namespace WYJK.Entity
         /// <summary>
         /// 申请停止时间
         /// </summary>		
-        public DateTime ApplyStopDate { get; set; }
+        public DateTime? ApplyStopDate { get; set; }
         /// <summary>
         /// 停止时间
         /// </summary>		
-        public DateTime StopDate { get; set; }
+        public DateTime? StopDate { get; set; }
         /// <summary>
         /// 社保号
         /// </summary>		
@@ -104,7 +104,7 @@ namespace WYJK.Entity
         /// <summary>
         /// HandleDate
         /// </summary>		
-        public DateTime HandleDate { get; set; }
+        public DateTime? HandleDate { get; set; }
         /// <summary>
         /// 邮寄地址
         /// </summary>		
@@ -153,7 +153,7 @@ namespace WYJK.Entity
         /// <summary>
         /// 是否生成订单
         /// </summary>
-        public int IsGenerateOrder { get; set; }
+        public bool IsGenerateOrder { get; set; }
 
     }
 
@@ -167,6 +167,8 @@ namespace WYJK.Entity
         /// </summary>
         public string UserType { get; set; }
 
+
+        public string MemberID { get; set; }
         /// <summary>
         /// 
         /// </summary>

@@ -34,6 +34,9 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
             });
+            //费用来源
+            
+            ViewData["PaymentMethod"] = new SelectList(DbHelper.Query<Order>("select * from [Order]").Select(n => new { PaymentMethod = n.PaymentMethod }).Distinct().ToList(), "PaymentMethod", "PaymentMethod");
 
 
             ViewBag.TotalAmount = orderList.Sum(n => n.Amounts);
@@ -47,39 +50,37 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="OrderCodes"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult BatchAuditing(string OrderCodeStr, int Type)
+        public ActionResult BatchAuditing(string OrderCodeStr,string Amount, int Type)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
                 {
-                    string[] OrderCodes = OrderCodeStr.Split(',');
+                    string orderCode = OrderCodeStr;
                     //修改订单状态
-                    bool flag1 = orderService.ModifyOrderStatus(string.Join("','", OrderCodes));
+                    bool flag1 = orderService.ModifyOrderStatus(orderCode);
                     //修改订单对应的参保人的社保和公积金状态  SocialSecurityStatusEnum.WaitingHandle
                     //首先需要判断参保人是否已经通过客服审核
-                    foreach (var orderCode in OrderCodes)
+
+                    string sqlstr = $"select SocialSecurityPeopleID from OrderDetails where OrderCode ='{orderCode}'";
+                    List<OrderDetails> orderDetailList = DbHelper.Query<OrderDetails>(sqlstr);
+                    foreach (var orderDetail in orderDetailList)
                     {
-                        string sqlstr = $"select SocialSecurityPeopleID from OrderDetails where OrderCode ='{orderCode}'";
-                        List<OrderDetails> orderDetailList = DbHelper.Query<OrderDetails>(sqlstr);
-                        foreach (var orderDetail in orderDetailList)
+                        string sqlStr1 = $"select * from SocialSecurityPeople where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID}";
+                        SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>(sqlStr1);
+                        //是否通过客服审核，若通过，则修改社保和公积金状态
+                        if (Convert.ToInt32(socialSecurityPeople.Status) == (int)CustomerServiceAuditEnum.Pass)
                         {
-                            string sqlStr1 = $"select * from SocialSecurityPeople where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID}";
-                            SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>(sqlStr1);
-                            //是否通过客服审核，若通过，则修改社保和公积金状态
-                            if (Convert.ToInt32(socialSecurityPeople.Status) == (int)CustomerServiceAuditEnum.Pass)
-                            {
-                                if (orderDetail.IsPaySocialSecurity)
-                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set Status = {(int)SocialSecurityStatusEnum.WaitingHandle} where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};", null);
-                                if (orderDetail.IsPayAccumulationFund)
-                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set Status = {(int)SocialSecurityStatusEnum.WaitingHandle}  where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};", null);
+                            if (orderDetail.IsPaySocialSecurity)
+                                DbHelper.ExecuteSqlCommand($@"update SocialSecurity set Status = {(int)SocialSecurityStatusEnum.WaitingHandle} where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};", null);
+                            if (orderDetail.IsPayAccumulationFund)
+                                DbHelper.ExecuteSqlCommand($@"update AccumulationFund set Status = {(int)SocialSecurityStatusEnum.WaitingHandle}  where SocialSecurityPeopleID ={socialSecurityPeople.SocialSecurityPeopleID};", null);
 
-                            }
                         }
-
-                        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("审核通过了订单：{0}", orderCode) });
-
                     }
+
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = "财务审核通过了订单：" + orderCode + "，金额：" + Amount + "，客户：{0}" ,MemberID=DbHelper.QuerySingle<int>($"select MemberID from [Order] where OrderCode='{orderCode}';") }) ;
+
 
                     transaction.Complete();
                 }

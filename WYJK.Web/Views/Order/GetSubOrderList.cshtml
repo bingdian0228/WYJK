@@ -103,13 +103,18 @@
         <span class="l">公积金待办费：@AccumulationFundFirstBacklogCost.ToString("N2")</span>
         <span class="l">总金额：@totalAmount.ToString("N2")</span>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20">
+    @{
+        var OrderCode = Model.Count > 0 ? Model[0].OrderCode.ToString() : string.Empty;
+        var OrderStatus = Model.Count > 0 ? Model[0].Status.ToString() : string.Empty;
+    }
+    @if (OrderStatus == "1")
+    { <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
-            @{
-                var OrderCode = Model.Count > 0 ? Model[0].OrderCode.ToString() : string.Empty;
-            }
-            <a href="@Url.Action("BatchAuditing","Order")?OrderCodes=@OrderCode&Type=1" class="btn btn-primary radius action-pass"><i class="Hui-iconfont">&#xe6e1;</i>审核通过</a>
-            @*<a href="javascript:;" class="btn btn-danger radius action-fail"><i class="Hui-iconfont">&#xe6dd;</i>不通过</a>*@
+            <a href="@Url.Action("BatchAuditing","Order")?OrderCodeStr=@OrderCode&Amount=@totalAmount&Type=1" class="btn btn-primary radius action-pass"><i class="Hui-iconfont">&#xe6e1;</i>审核通过</a>
         </span>
     </div>
+
+    }
+    @*<a href="javascript:;" class="btn btn-danger radius action-fail"><i class="Hui-iconfont">&#xe6dd;</i>不通过</a>*@
+
 </div>

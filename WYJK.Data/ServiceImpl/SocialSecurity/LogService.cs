@@ -15,7 +15,7 @@ namespace WYJK.Data.ServiceImpl
     {
         public PagedResult<Log> GetLogList(PagedParameter parameter)
         {
-            string inner_sql_str = @"select Log.* from Log";
+            string inner_sql_str = @"select Log.*,Members.UserType,Members.MemberName,Members.EnterpriseName,Members.BusinessName from Log left join Members on Members.MemberID=Log.MemberID";
 
             string sqlstr = $@"select * from 
                             (select ROW_NUMBER() OVER(ORDER BY t.Dt desc )AS Row,t.* from ({inner_sql_str}) t) tt 
@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
         /// <param name="log"></param>
         public static void WriteLogInfo(Log log)
         {
-            string sqlstr = $"insert into Log(UserName,MemberID,Contents) values('{log.UserName}','{log.MemberID}''{log.Contents}')";
+            string sqlstr = $"insert into Log(UserName,MemberID,SocialSecurityPeopleID,Contents) values('{log.UserName}','{log.MemberID}','{log.SocialSecurityPeopleID}','{log.Contents}')";
 
             DbHelper.ExecuteSqlCommand(sqlstr, null);
         }

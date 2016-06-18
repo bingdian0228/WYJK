@@ -23,18 +23,19 @@ using WYJK.Data.ServiceImpl;
 using System.Data.SqlClient;
 using System.Text;
 
-namespace WYJK.Web.Controllers
+namespace WYJK.Web.Controllers.Mvc
 {
     /// <summary>
     /// 员工
     /// </summary>
-
+    //[Authorize]
     public class UserController : Controller
     {
         IUserService _userService = new UserService();
 
-        //
-        // GET: /Account/Login
+
+        ////
+        //// GET: /Account/Login
         [AllowAnonymous]
         [HttpGet]
         public ActionResult Login()
@@ -128,29 +129,29 @@ namespace WYJK.Web.Controllers
         /// <param name="data"></param>
         private void SetAuthCookie(string account, string data)
         {
-            FormsAuthenticationTicket Ticket = new FormsAuthenticationTicket(1, account, DateTime.Now, DateTime.Now.AddHours(12), true, data);
-            HttpCookie Cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(Ticket));//加密身份信息，保存至Cookie
-            Response.Cookies.Add(Cookie);
+            //FormsAuthenticationTicket Ticket = new FormsAuthenticationTicket(1, account, DateTime.Now, DateTime.Now.AddDays(1), false, data);
+            //HttpCookie Cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(Ticket));//加密身份信息，保存至Cookie
+            //Response.Cookies.Add(Cookie);
 
 
 
-            //int expiration = 1440;
-            //FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(2, account, DateTime.Now, DateTime.Now.AddDays(1), true, data);
-            //string cookieValue = FormsAuthentication.Encrypt(ticket);
-            //HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, cookieValue)
-            //{
-            //    HttpOnly = true,
-            //    Secure = FormsAuthentication.RequireSSL,
-            //    Domain = FormsAuthentication.CookieDomain,
-            //    Path = FormsAuthentication.FormsCookiePath
-            //};
-            //if (expiration > 0)
-            //{
-            //    cookie.Expires = DateTime.Now.AddMinutes(expiration);
-            //}
+            int expiration = 1440;
+            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(2, account, DateTime.Now, DateTime.Now.AddDays(1), true, data);
+            string cookieValue = FormsAuthentication.Encrypt(ticket);
+            HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, cookieValue)
+            {
+                HttpOnly = true,
+                Secure = FormsAuthentication.RequireSSL,
+                Domain = FormsAuthentication.CookieDomain,
+                Path = FormsAuthentication.FormsCookiePath
+            };
+            if (expiration > 0)
+            {
+                cookie.Expires = DateTime.Now.AddMinutes(expiration);
+            }
 
             //Response.Cookies.Remove(cookie.Name);
-            //Response.Cookies.Add(cookie);
+            Response.Cookies.Add(cookie);
         }
         #endregion
 

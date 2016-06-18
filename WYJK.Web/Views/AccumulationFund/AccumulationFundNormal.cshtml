@@ -74,8 +74,10 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(accumulationFund.UserType))
                         </td>
-                        <td>@(accumulationFund.UserType == "0" ? accumulationFund.MemberName : (accumulationFund.UserType == "1" ? accumulationFund.EnterpriseName : accumulationFund.BusinessName))</td>
-                        <td>@accumulationFund.SocialSecurityPeopleName</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@accumulationFund.MemberID&type=1">@(accumulationFund.UserType == "0" ? accumulationFund.MemberName : (accumulationFund.UserType == "1" ? accumulationFund.EnterpriseName : accumulationFund.BusinessName))</a></td>
+
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@accumulationFund.SocialSecurityPeopleID&MemberID=@accumulationFund.MemberID&Type=0">@accumulationFund.SocialSecurityPeopleName</a></td>
+
                         <td>@accumulationFund.IdentityCard</td>
                         <td>@accumulationFund.PayTime.ToString("yyyy/MM")</td>
                         <td>@accumulationFund.PayTime.AddMonths(accumulationFund.PayMonthCount).ToString("yyyy/MM")</td>

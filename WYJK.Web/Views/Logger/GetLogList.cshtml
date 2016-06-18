@@ -35,7 +35,6 @@
             <thead>
                 <tr class="text-c">
                     <th width="80">操作人</th>
-                    <th width="80">客户姓名</th>
                     <th width="80">内容</th>
                     <th width="80">操作时间</th>
                 </tr>
@@ -45,8 +44,7 @@
                 {
                     <tr class="text-c">
                         <td>@item.UserName</td>
-                        <td></td>
-                        <td>@item.Contents</td>
+                        <td>@string.Format(item.Contents, item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName), item.SocialSecurityPeopleID)</td>
                         <td>@item.Dt</td>
                     </tr>
                 }
