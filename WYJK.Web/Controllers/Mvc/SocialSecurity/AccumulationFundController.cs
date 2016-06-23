@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.IServices;
 using WYJK.Data.ServiceImpl;
@@ -149,6 +150,17 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpPost]
         public JsonResult BatchComplete(int[] SocialSecurityPeopleIDs)
         {
+            //判断客户公积金号是否已经填写
+            List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID in ({string.Join(",", SocialSecurityPeopleIDs)})");
+            foreach (var accumulationFund in accumulationFundList)
+            {
+                if (string.IsNullOrEmpty(accumulationFund.AccumulationFundNo))
+                {
+                    return Json(new { status = false, Message = "无法办结，客户公积金号没有填写完整" });
+                }
+            }
+
+
             //修改参保人公积金状态
             bool flag = _accumulationFundService.ModifyAccumulationFundStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.Normal);
             

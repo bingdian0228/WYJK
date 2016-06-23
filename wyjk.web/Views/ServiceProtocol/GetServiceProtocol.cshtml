@@ -1,0 +1,41 @@
+﻿@model ServiceProtocol
+@{
+    ViewBag.Title = "服务协议";
+}
+@section Header
+{
+    <link rel="stylesheet" type="text/css" href="/Content/lib/webuploader/0.1.5/webuploader.css" />
+}
+@section Footer{
+    <script type="text/javascript" src="/Content/lib/webuploader/0.1.5/webuploader.min.js"></script>
+
+    <script src="~/Content/lib/ueditor/1.4.3/ueditor.config.js"></script>
+    <script src="~/Content/lib/ueditor/1.4.3/ueditor.all.min.js"></script>
+    <script src="~/Content/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript">
+        var ue = UE.getEditor('editor', { initialFrameHeight: 300 });
+
+    </script>
+}
+<div class="pd-20">
+    @using (Html.BeginForm("PostServiceProtocol", "ServiceProtocol", FormMethod.Post, new { id = "form-article-add", @class = "form form-horizontal" }))
+    {
+        if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage + "") == false)
+        {
+            <div class="Huialert Huialert-info">@(ViewBag.ErrorMessage)</div>
+        }
+
+        <div class="row cl">
+            <label class="form-label col-2">服务协议：</label>
+            <div class="formControls col-8">
+                @Html.TextAreaFor(m => m.ServiceProtocolContent, new { id = "editor" })
+            </div>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.ServiceProtocolContent)</div>
+        </div>
+        <div class="row cl">
+            <div class="col-10 col-offset-2">
+                <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+            </div>
+        </div>
+    }
+</div>

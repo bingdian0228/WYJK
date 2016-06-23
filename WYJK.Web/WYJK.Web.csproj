@@ -222,7 +222,6 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
     <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
@@ -293,6 +292,7 @@
     <Compile Include="Controllers\Mvc\SocialSecurity\OptionViewController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\OrderController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\ParameterSettingController.cs" />
+    <Compile Include="Controllers\Mvc\SocialSecurity\ServiceProtocolController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\SocialSecurityController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\HomeController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\UserController.cs" />
@@ -1889,6 +1889,7 @@
     <Content Include="Views\CertificationAudit\GetCertificationAuditList.cshtml" />
     <Content Include="Views\CertificationAudit\GetCertificationAuditDetail.cshtml" />
     <Content Include="Views\SocialSecurity\SocialSecurityMailStop.cshtml" />
+    <Content Include="Views\ServiceProtocol\GetServiceProtocol.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

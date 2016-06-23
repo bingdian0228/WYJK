@@ -766,6 +766,11 @@
             社会信用代码
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.CertificationAudit.EnterprisePositionName">
+            <summary>
+            企业岗位名称
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.CertificationAudit.EnterpriseBusinessLicense">
             <summary>
             营业执照
@@ -795,6 +800,11 @@
             <summary>
             经营者营业执照
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.CertificationAudit.BusinessPositionName">
+            <summary>
+            个体岗位名称
+            </summary>
         </member>
         <member name="T:WYJK.Entity.CertificationAuditParameter">
             <summary>
@@ -2131,6 +2141,16 @@
             审核状态
             </summary>
         </member>
+        <member name="T:WYJK.Entity.ServiceProtocol">
+            <summary>
+            服务协议实体
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ServiceProtocol.ServiceProtocolContent">
+            <summary>
+            服务协议内容
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.Users">
             <summary>
             员工
@@ -2249,6 +2269,11 @@
         <member name="T:WYJK.Entity.UsersParameter">
             <summary>
             用户参数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.OnlineUser">
+            <summary>
+            在线用户
             </summary>
         </member>
         <member name="T:WYJK.Entity.SocialSecurity">
@@ -3372,6 +3397,11 @@
             补差（冻结金额）
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.Members.IsAgreeProtocol">
+            <summary>
+            是否同意服务协议
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.MemberSimpleModel">
             <summary>
             用户简单信息
@@ -3547,6 +3577,11 @@
             营业执照
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.EnterpriseCertification.EnterprisePositionName">
+            <summary>
+            企业岗位名称
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.IndividualCertification">
             <summary>
             个体认证(Mobile)
@@ -3581,6 +3616,11 @@
             <summary>
             营业执照照片 
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.IndividualCertification.BusinessPositionName">
+            <summary>
+            个体岗位名称
+            </summary>
         </member>
         <member name="T:WYJK.Entity.AccountInfo">
             <summary>

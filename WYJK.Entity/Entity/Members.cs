@@ -185,6 +185,10 @@ namespace WYJK.Entity
         /// </summary>		
         public decimal Bucha { get; set; }
 
+        /// <summary>
+        /// 是否同意服务协议
+        /// </summary>
+        public bool IsAgreeProtocol { get; set; }
     }
 
     /// <summary>
@@ -399,6 +403,11 @@ namespace WYJK.Entity
         /// 营业执照
         /// </summary>		
         public string EnterpriseBusinessLicense { get; set; }
+
+        /// <summary>
+        /// 企业岗位名称
+        /// </summary>
+        public string EnterprisePositionName { get; set; }
     }
 
     /// <summary>
@@ -431,6 +440,11 @@ namespace WYJK.Entity
         /// 营业执照照片 
         /// </summary>		
         public string BusinessLicensePhoto { get; set; }
+
+        /// <summary>
+        /// 个体岗位名称
+        /// </summary>
+        public string BusinessPositionName { get; set; }
     }
 
     /// <summary>

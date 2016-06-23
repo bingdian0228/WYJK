@@ -408,7 +408,7 @@ namespace WYJK.Web.Controllers.Mvc
             sbHtml.Append("</table>");
 
             //第一种:使用FileContentResult
-            
+
             byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
             return File(fileContents, "application/ms-excel", "fileContents.xls");
 

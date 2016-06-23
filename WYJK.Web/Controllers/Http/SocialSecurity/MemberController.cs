@@ -114,7 +114,7 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
-        /// 获取用户信息 IsAuthentication:是否认证 0/未认证 1/已认证，IsComplete：是否信息补全 0/未补全 1/已补全,UserType 用户类型  0：普通用户、1：企业用户、2：个体用户
+        /// 获取用户信息 IsAuthentication:是否认证 0/未认证 1/已认证 2/认证中，IsComplete：是否信息补全 0/未补全 1/已补全,UserType 用户类型  0：普通用户、1：企业用户、2：个体用户
         /// </summary>
         /// <param name="MemberID">MemberID</param>
         /// <returns></returns>
@@ -122,6 +122,8 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> GetMemberInfo(int MemberID)
         {
             Members member = await _memberService.GetMemberInfo(MemberID);
+            //member.UserType = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={MemberID}").UserType;
+
             return new JsonResult<dynamic>
             {
                 status = true,
@@ -251,9 +253,12 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<dynamic>> CommitEnterpriseCertification(EnterpriseCertification parameter)
         {
+            //删除个体认证
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID = {parameter.MemberID}",null);
+
             await _memberService.CommitEnterpriseCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.QiYe} where MemberID={parameter.MemberID}", null);
 
             ////验证身份证
             //if (!Regex.IsMatch(parameter.EnterpriseLegalIdentityCardNo, @"(^\d{18}$)|(^\d{15}$)"))
@@ -271,14 +276,60 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 获取企业认证详情
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> GetEnterpriseCertificationDetails(int memberID)
+        {
+            CertificationAudit model = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={memberID}");
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取企业认证成功",
+                Data = model
+
+            };
+        }
+
+        /// <summary>
+        /// 更新企业资质认证
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<JsonResult<dynamic>> UpdateEnterpriseCertification(EnterpriseCertification parameter)
+        {
+            //删除认证审核
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID={parameter.MemberID}", null);
+
+            await _memberService.CommitEnterpriseCertification(parameter);
+
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.QiYe} where MemberID={parameter.MemberID}", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "企业认证中"
+
+            };
+        }
+
+
+
+
+        /// <summary>
         /// 个体认证
         /// </summary>
         /// <returns></returns>
         public async Task<JsonResult<dynamic>> CommitPersonCertification(IndividualCertification parameter)
         {
+            //删除企业认证
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID = {parameter.MemberID}", null);
+
             await _memberService.CommitPersonCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID={parameter.MemberID}", null);
 
             return new JsonResult<dynamic>
             {
@@ -286,6 +337,47 @@ namespace WYJK.Web.Controllers.Http
                 Message = "个体认证中"
             };
         }
+
+        /// <summary>
+        /// 获取个人认证详情
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> GetPersonCertificationDetails(int memberID)
+        {
+            CertificationAudit model = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={memberID}");
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取个体认证成功",
+                Data = model
+
+            };
+        }
+
+        /// <summary>
+        /// 更新个体资质认证
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<JsonResult<dynamic>> UpdatePersonCertification(IndividualCertification parameter)
+        {
+            //删除认证审核
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID={parameter.MemberID}", null);
+
+            await _memberService.CommitPersonCertification(parameter);
+
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID={parameter.MemberID}", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "个体认证中"
+            };
+        }
+
+
         /// <summary>
         /// 补充信息
         /// </summary>
@@ -1070,7 +1162,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                                                 where MemberID = { parameter.MemberID }", null);
                         }
 
-                       
+
                     }
                     transaction.Complete();
                 }
@@ -1154,9 +1246,9 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// </summary>
         /// <param name="memberID"></param>
         /// <returns></returns>
-        public JsonResult<dynamic> GetSocialSecurityPeopleList(int memberID)
+        public JsonResult<dynamic> GetSocialSecurityPeopleList(int memberID, string socialSecurityPeopleName)
         {
-            string sqlstr = $"select * from SocialSecurityPeople where MemberID={memberID}";
+            string sqlstr = $"select * from SocialSecurityPeople where MemberID={memberID} and SocialSecurityPeopleName like '%{socialSecurityPeopleName}%'";
             List<SocialSecurityPeople> list = DbHelper.Query<SocialSecurityPeople>(sqlstr);
 
             return new JsonResult<dynamic>

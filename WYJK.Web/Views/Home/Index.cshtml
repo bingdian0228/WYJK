@@ -6,6 +6,32 @@
 }
 @section Footer{
     <script type="text/javascript" src="/Content/lib/layer/2.1/layer.js"></script>
+    <script type="text/javascript">
+
+        function SendOnlineUser() {
+            $.ajax({
+                url: "@Url.Action("UpdateCurrentOnlineUser","Home")",
+                data: { "UserName": "@HttpContext.Current.User.Identity.Name" },
+                dateType: "json",
+                type: "post",
+                success: function () {
+                    if (response.status) {
+                        layer.msg(response.message);
+                    } else {
+                        layer.msg(response.message);
+                    }
+                },
+                error: function () {
+                    layer.msg("服务器错误");
+                }
+            });
+        }
+
+        SendOnlineUser();
+        //定时发送在线用户
+        //setInterval("SendOnlineUser()", 10000);
+
+    </script>
 }
 <header class="Hui-header cl">
     <a class="Hui-logo l" title="无忧借款 v1.0" href="/">无忧借款</a> <a class="Hui-logo-m l" href="/" title="H-ui.admin">H-ui</a> <span class="Hui-subtitle l">V1.0</span>
@@ -99,7 +125,7 @@
                     <li><a _href='@Url.Action("GetSubjectList","LoanSetting")' data-title="身价计算设置" href="javascript:void(0)">身价计算设置</a></li>
                     <li><a _href='@Url.Action("GetLoanMemberList","LoanMember")' data-title="用户列表" href="javascript:void(0)">用户列表</a></li>
                     <li><a _href='@Url.Action("GetLoanAuditList","LoanAudit")' data-title="借款审核" href="javascript:void(0)">借款审核</a></li>
-              </ul>
+                </ul>
             </dd>
         </dl>
         <dl id="menu-picture">
@@ -110,7 +136,7 @@
                     <li><a _href="@Url.Action("GetAllRoles","User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
                     <li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>
                     @*<li><a _href="@Url.Action("GetInformationList","Information")" data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
-                    <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
+                        <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
                     <li><a _href="@Url.Action("GetInsuredIntroduceList","InsuredIntroduce")" data-title="参保介绍管理" href="javascript:void(0)">参保介绍管理</a></li>
                     <li><a _href="@Url.Action("GetUserList","User")" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
                     <li><a _href="@Url.Action("GetEnterpriseCityList","Enterprise")" data-title="城市社平管理" href="javascript:void(0)">城市社平管理</a></li>
@@ -118,6 +144,7 @@
                     <li><a _href="@Url.Action("GetPaymentDetailsList","Enterprise")" data-title="企业社保明细" href="javascript:void(0)">企业社保明细</a></li>
                     <li><a _href='@Url.Action("GetCostParameter","ParameterSetting")?Status=@((int)PayTypeEnum.SocialSecurity)' data-title="社保收费标准" href="javascript:void(0)">社保收费标准</a></li>
                     <li><a _href="@Url.Action("GetCostParameter","ParameterSetting")?Status=@((int)PayTypeEnum.AccumulationFund)" data-title="公积金收费标准" href="javascript:void(0)">公积金收费标准</a></li>
+                    <li><a _href='@Url.Action("GetServiceProtocol","ServiceProtocol")' data-title="服务协议" href="javascript:void(0)">服务协议</a></li>
                     <li><a _href='@Url.Action("GetLogList","Logger")' data-title="日志管理" href="javascript:void(0)">日志管理</a></li>
                 </ul>
             </dd>

@@ -51,7 +51,7 @@ namespace WYJK.Web.Controllers.Http
                     List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr);
                     foreach (var socialSecurity in socialSecurityList)
                     {
-                        if (socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
@@ -65,7 +65,7 @@ namespace WYJK.Web.Controllers.Http
                     List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
                     foreach (var accumulationFund in accumulationFundList)
                     {
-                        if (accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
@@ -467,7 +467,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         {
             string OrderCodeStrs = string.Join("','", parameter.OrderCode);
 
-            if (DbHelper.QuerySingle<int>($"select count(0) from Order where OrderCode in('{OrderCodeStrs}') and IsNotCancel=1") > 0)
+            if (DbHelper.QuerySingle<int>($"select count(0) from [Order] where OrderCode in('{OrderCodeStrs}') and IsNotCancel=1") > 0)
             {
                 return new JsonResult<dynamic>
                 {
@@ -529,13 +529,13 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr);
                     foreach (var socialSecurity in socialSecurityList)
                     {
-                        if (socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
                                 status = false,
                                 Message = "参保人日期已失效，请修改"
-                            };
+                            }; 
                         }
                     }
 
@@ -543,7 +543,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
                     foreach (var accumulationFund in accumulationFundList)
                     {
-                        if (accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                        if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
@@ -593,7 +593,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','支出','余额','{ZhiNote}',{ZhiAccount},{memberAccount + accountNum - Bucha - ZhiAccount},getdate()); ";
 
                     //更新未参保人的支付状态
-                    DbHelper.ExecuteSqlCommand(sqlSocialSecurityPeople, null);
+                    if (!string.IsNullOrEmpty(sqlSocialSecurityPeople))
+                        DbHelper.ExecuteSqlCommand(sqlSocialSecurityPeople, null);
 
                     //计算出要进入个人账户的总额
                     decimal Account = 0;

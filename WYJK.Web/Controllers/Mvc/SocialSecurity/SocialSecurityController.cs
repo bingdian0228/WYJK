@@ -154,6 +154,17 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpPost]
         public JsonResult BatchComplete(int[] SocialSecurityPeopleIDs)
         {
+            //判断客户社保号是否已经填写
+            List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID in ({string.Join(",", SocialSecurityPeopleIDs)})");
+            foreach (var socialSecurity in socialSecurityList)
+            {
+                if (string.IsNullOrEmpty(socialSecurity.SocialSecurityNo))
+                {
+                    return Json(new { status = false, Message = "无法办结，客户社保号没有填写完整" });
+                }
+            }
+
+
             //修改参保人社保状态
             bool flag = _socialSecurityService.ModifySocialStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.Normal);
 

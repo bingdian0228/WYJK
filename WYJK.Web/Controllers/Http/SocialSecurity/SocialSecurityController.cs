@@ -1571,9 +1571,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //查询剩余月数
             socialSecurityPeopleList.ForEach(n =>
             {
-        //n.SSRemainingMonthCount = monthCount;//待修改
-        //n.AFRemainingMonthCount = monthCount;//待修改
-        if (n.SSStatus != Status)
+                //n.SSRemainingMonthCount = monthCount;//待修改
+                //n.AFRemainingMonthCount = monthCount;//待修改
+                if (n.SSStatus != Status)
                 {
                     n.SSStatus = 0;
                     n.SSPayTime = null;
@@ -1623,10 +1623,10 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //查询剩余月数
             socialSecurityPeopleList.ForEach(n =>
             {
-        //n.SSRemainingMonthCount = monthCount;
-        //n.AFRemainingMonthCount = monthCount;
+                //n.SSRemainingMonthCount = monthCount;
+                //n.AFRemainingMonthCount = monthCount;
 
-        if (n.SSStatus != (int)SocialSecurityStatusEnum.WaitingStop)
+                if (n.SSStatus != (int)SocialSecurityStatusEnum.WaitingStop)
                 {
                     n.SSStatus = 0;
                 }
@@ -1824,9 +1824,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             //查询剩余月数
             socialSecurityPeopleList.ForEach(n =>
             {
-        //n.SSRemainingMonthCount = 0;//待修改
-        //n.AFRemainingMonthCount = 0;//待修改
-        if (n.SSStatus != (int)SocialSecurityStatusEnum.AlreadyStop)
+                //n.SSRemainingMonthCount = 0;//待修改
+                //n.AFRemainingMonthCount = 0;//待修改
+                if (n.SSStatus != (int)SocialSecurityStatusEnum.AlreadyStop)
                 {
                     n.SSStatus = 0;
                     n.SSPayTime = null;
@@ -1953,6 +1953,60 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                 Data = insuredIntroduceList
             };
         }
+        #endregion
+
+        #region 服务协议
+        ///// <summary>
+        ///// 检测用户是否已经同意服务协议
+        ///// </summary>
+        ///// <param name="memberID"></param>
+        ///// <returns></returns>
+        //[System.Web.Http.HttpGet]
+        //public JsonResult<dynamic> IsAgreeProtocol(int memberID)
+        //{
+        //    bool isAgreeProtocol = false;
+        //    Members members = DbHelper.QuerySingle<Members>($"select IsAgreeProtocol from Members where MemberID={memberID}");
+        //    if (members != null)
+        //        isAgreeProtocol = members.IsAgreeProtocol;
+
+        //    return new JsonResult<dynamic>
+        //    {
+        //        status = true,
+        //        Message = "获取成功",
+        //        Data = isAgreeProtocol
+        //    };
+        //}
+        /// <summary>
+        /// 获取服务协议内容
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult<dynamic> GetServiceProtocol()
+        {
+            ServiceProtocol serviceProtocol = DbHelper.QuerySingle<ServiceProtocol>("select ServiceProtocolContent from ServiceProtocol");
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = serviceProtocol.ServiceProtocolContent
+            };
+        }
+
+        ///// <summary>
+        ///// 同意服务协议
+        ///// </summary>
+        ///// <returns></returns>
+        //[System.Web.Http.HttpGet]
+        //public JsonResult<dynamic> AgreeServiceProtocol(int memberID)
+        //{
+        //    DbHelper.ExecuteSqlCommand($"update Members set IsAgreeProtocol=1 where MemberID={memberID}", null);
+        //    return new JsonResult<dynamic>
+        //    {
+        //        status = true,
+        //        Message = "获取成功"
+        //    };
+
+        //}
+
         #endregion
 
         ///// <summary>

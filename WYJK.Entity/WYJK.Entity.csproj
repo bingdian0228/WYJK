@@ -72,6 +72,7 @@
     <Compile Include="Entity\Region.cs" />
     <Compile Include="Entity\Roles.cs" />
     <Compile Include="Entity\DrawCash.cs" />
+    <Compile Include="Entity\ServiceProtocol.cs" />
     <Compile Include="Entity\Users.cs" />
     <Compile Include="Entity\SocialSecurity.cs" />
     <Compile Include="Entity\SocialSecurityPeople.cs" />

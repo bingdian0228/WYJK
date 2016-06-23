@@ -37,7 +37,19 @@ namespace WYJK.Web
                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
                };
 
-            #region 定时任务
+
+
+            #region 参保人与客服的匹配
+            Timer onlineUserTimer = new Timer();
+            onlineUserTimer.Elapsed += new ElapsedEventHandler(currentOnlineUser);
+            onlineUserTimer.Interval = 30000;
+            onlineUserTimer.AutoReset = true;
+            onlineUserTimer.Enabled = true;
+
+            #endregion
+
+
+            #region 定时任务 15号
             Timer myTimer = new Timer();
             myTimer.Elapsed += new ElapsedEventHandler(theout);
             myTimer.Interval = 1000;
@@ -66,6 +78,61 @@ namespace WYJK.Web
             Stream receiveStream = myHttpWebResponse.GetResponseStream();//得到回写的字节流  
 
         }
+
+        /// <summary>
+        /// 客服匹配
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        public void currentOnlineUser(object source, System.Timers.ElapsedEventArgs e)
+        {
+            List<OnlineUser> currentOnlineUserList = new List<OnlineUser>();
+            //List<OnlineUser> onlineUserList = HttpContext.Current.Cache["CurrentUser"] as List<OnlineUser>;
+            List<OnlineUser> onlineUserList = HttpRuntime.Cache["CurrentUser"] as List<OnlineUser>;
+            if (onlineUserList != null && onlineUserList.Count > 0)
+            {
+                foreach (var onlineUser in onlineUserList)
+                {
+                    //用户活跃时间在1分钟之内的保留
+                    if (DateTime.Now - onlineUser.ActiveTime <= new TimeSpan(0, 1, 0))
+                    {
+                        currentOnlineUserList.Add(onlineUser);
+                    }
+                }
+
+                //更新用户在线活跃度
+                //HttpContext.Current.Cache.Insert("CurrentUser", currentOnlineUserList);
+                HttpRuntime.Cache.Insert("CurrentUser", currentOnlineUserList);
+            }
+            else
+                return;
+
+            if (currentOnlineUserList.Count == 0)
+                return;
+
+            //查询没有分配客服的参保人
+            string sqlstr = string.Empty;
+            List<SocialSecurityPeople> socialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>("select * from SocialSecurityPeople where ISNULL(CustomerServiceUserName,'') =''");
+            if (socialSecurityPeopleList != null && socialSecurityPeopleList.Count > 0)
+            {
+                int j = 0;
+                for (int i = 0; i < socialSecurityPeopleList.Count; i++)
+                {
+
+                    for (; j < currentOnlineUserList.Count;)
+                    {
+                        sqlstr += $"update SocialSecurityPeople set CustomerServiceUserName='{currentOnlineUserList[j].UserName}' where SocialSecurityPeopleID={socialSecurityPeopleList[i].SocialSecurityPeopleID};";
+                        j++;
+                        if (j == currentOnlineUserList.Count)
+                            j = 0;
+                        break;
+                    }
+                }
+
+                DbHelper.ExecuteSqlCommand(sqlstr, null);
+            }
+        }
+
 
         /// <summary>
         /// 触发事件

@@ -59,7 +59,7 @@
                                 layer.msg("办结成功");
                                 refresh();
                             } else {
-                                layer.msg("办结失败");
+                                layer.msg(response.Message);
                             }
                         },
                         error: function () {

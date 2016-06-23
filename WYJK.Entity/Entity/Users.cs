@@ -109,8 +109,20 @@ namespace WYJK.Entity
     /// <summary>
     /// 用户参数
     /// </summary>
-    public class UsersParameter : PagedParameter {
+    public class UsersParameter : PagedParameter
+    {
 
     }
+
+    /// <summary>
+    /// 在线用户
+    /// </summary>
+    public  class OnlineUser
+    {
+        public  string UserName { get; set; }
+
+        public  DateTime ActiveTime { get; set; }
+    }
+
 }
 
