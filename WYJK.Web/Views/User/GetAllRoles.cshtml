@@ -27,7 +27,7 @@
         });
 
         $(function () {
-            /*角色-添加*/
+            @*/*角色-添加*/
             $(".action-add-role").click(function () {
                 var save = 0;
                 //alert("添加角色");
@@ -54,7 +54,7 @@
                         layer.iframeAuto(layero);
                     }
                 });
-            })
+            })*@
 
             //编辑角色
             $(".action-edit-role").click(function () {
@@ -167,5 +167,5 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" class="btn btn-danger radius action-delete-role"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;" class="btn btn-primary radius action-add-role"><i class="Hui-iconfont">&#xe600;</i> 添加角色</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" class="btn btn-danger radius action-delete-role"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="@Url.Action("RolesAdd", "User")" class="btn btn-primary radius action-add-role"><i class="Hui-iconfont">&#xe600;</i> 添加角色</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
 </div>

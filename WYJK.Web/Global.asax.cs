@@ -42,7 +42,7 @@ namespace WYJK.Web
             #region 参保人与客服的匹配
             Timer onlineUserTimer = new Timer();
             onlineUserTimer.Elapsed += new ElapsedEventHandler(currentOnlineUser);
-            onlineUserTimer.Interval = 30000;
+            onlineUserTimer.Interval = 60000;
             onlineUserTimer.AutoReset = true;
             onlineUserTimer.Enabled = true;
 

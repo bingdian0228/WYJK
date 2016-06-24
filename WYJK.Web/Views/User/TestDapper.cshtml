@@ -10,3 +10,145 @@
 </form>
 
 
+
+
+
+<div class="pd-20">
+    <form novalidate="novalidate" action="/User/RolesAdd" class="form form-horizontal" id="form-article-add" method="post">
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="zTreeDemoBackground left">
+                            <ul style="-moz-user-select: none;" id="treeDemo" class="ztree">
+                                <li id="treeDemo_1" class="level0" tabindex="0" hidefocus="true" treenode="">
+                                    <span id="treeDemo_1_switch" title="" class="button level0 switch roots_open" treenode_switch=""></span>
+                                    <span id="treeDemo_1_check" class="button chk checkbox_false_full" treenode_check=""></span>
+                                    <a id="treeDemo_1_a" class="level0" treenode_a="" onclick="" target="_blank" style="" title="客户管理菜单">
+                                        <span id="treeDemo_1_ico" title="" treenode_ico="" class="button ico_open" style=""></span>
+                                        <span id="treeDemo_1_span" class="node_name">客户管理菜单</span>
+                                    </a><ul id="treeDemo_1_ul" class="level0 line" style="">
+                                        <li id="treeDemo_2" class="level1" tabindex="0" hidefocus="true" treenode="">
+                                            <span id="treeDemo_2_switch" title="" class="button level1 switch bottom_docu" treenode_switch=""></span>
+                                            <span id="treeDemo_2_check" class="button chk checkbox_false_full" treenode_check=""></span>
+                                            <a id="treeDemo_2_a" class="level1" treenode_a="" onclick="" target="_blank" style="" title="客服管理">
+                                                <span id="treeDemo_2_ico" title="" treenode_ico="" class="button ico_docu" style=""></span>
+                                                <span id="treeDemo_2_span" class="node_name">客服管理</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li id="treeDemo_3" class="level0" tabindex="0" hidefocus="true" treenode=""><span id="treeDemo_3_switch" title="" class="button level0 switch bottom_close" treenode_switch=""></span><span id="treeDemo_3_check" class="button chk checkbox_false_full" treenode_check=""></span><a id="treeDemo_3_a" class="level0" treenode_a="" onclick="" target="_blank" style="" title="社保业务办理"><span id="treeDemo_3_ico" title="" treenode_ico="" class="button ico_close" style=""></span><span id="treeDemo_3_span" class="node_name">社保业务办理</span></a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td width="80%">
+                        <div class="row cl">
+                            <label class="form-label col-2">角色名称：</label>
+                            <div class="formControls col-6">
+                                <input class="input-text radius" data-val="true" data-val-required="角色不能为空" id="RoleName" name="RoleName" placeholder="角色名称" value="" type="text">
+                            </div>
+                            <div class="col-2"><span class="field-validation-valid" data-valmsg-for="RoleName" data-valmsg-replace="true"></span></div>
+                        </div>
+                        <div class="row cl">
+                            <label class="form-label col-2">描述：</label>
+                            <div class="formControls col-6">
+                                <textarea class="input-text radius" cols="20" id="Description" name="Description" placeholder="角色描述" rows="2" style="height: 100px; "></textarea>
+                            </div>
+                            <div class="col-2"></div>
+                        </div>
+                        <div class="row cl">
+                            <div class="col-10 col-offset-2">
+                                <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont"></i> 保存</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<script type="text/javascript" src="/Content/lib/Validform/5.3.2/Validform.min.js"></script>
+<script type="text/javascript" src="/Content/lib/bootstrap-modal/2.2.4/bootstrap-modalmanager.js"></script>
+<script type="text/javascript" src="/Content/lib/bootstrap-modal/2.2.4/bootstrap-modal.js"></script>
+<script type="text/javascript" src="/Content/js/H-ui.js"></script><a href="javascript:void(0)" class="Hui-iconfont toTop" title="返回顶部" alt="返回顶部" style="display:none">󰀣</a>
+<script type="text/javascript" src="/Content/js/H-ui.admin.js"></script>
+<script src="/Scripts/jquery.validate.min.js"></script>
+<script src="/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="/Scripts/jquery.form.js"></script>
+
+
+
+
+<link href="/Content/lib/zTree_v3-master/css/demo.css" rel="stylesheet">
+<link href="/Content/lib/zTree_v3-master/css/zTreeStyle/zTreeStyle.css" rel="stylesheet">
+<script src="/Content/lib/zTree_v3-master/js/jquery.ztree.core.js"></script>
+<script src="/Content/lib/zTree_v3-master/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript">
+		<!--
+		var setting = {
+			check: {
+				enable: true
+			},
+			data: {
+				simpleData: {
+					enable: true
+				}
+			}
+		};
+
+		var zNodes =[
+
+		];
+
+
+
+		var code;
+
+		function setCheck() {
+			var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+			py = $("#py").attr("checked")? "p":"",
+			sy = $("#sy").attr("checked")? "s":"",
+			pn = $("#pn").attr("checked")? "p":"",
+			sn = $("#sn").attr("checked")? "s":"",
+			type = { "Y":py + sy, "N":pn + sn};
+			zTree.setting.check.chkboxType = type;
+			showCode('setting.check.chkboxType = { "Y" : "' + type.Y + '", "N" : "' + type.N + '" };');
+		}
+		function showCode(str) {
+			if (!code) code = $("#code");
+			code.empty();
+			code.append("<li>"+str+"</li>");
+		}
+
+		$(document).ready(function () {
+
+		    $.ajax({
+		        url: "/User/GetAllPermissionList",
+		        dataType: "json",
+		        type: "get",
+		        success: function (response) {
+		            zNodes = response.list;
+		            $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		        },
+		        error: function (data) {
+		            layer.msg("服务器错误");
+		        }
+		    });
+
+			//setCheck();
+			//$("#py").bind("change", setCheck);
+			//$("#sy").bind("change", setCheck);
+			//$("#pn").bind("change", setCheck);
+			//$("#sn").bind("change", setCheck);
+		});
+		//-->
+</script>
+
+<script type="text/javascript" src="/Content/lib/layer/2.1/layer.js"></script>
+<script type="text/javascript" src="/Content/js/common.js"></script>
+
+
+

@@ -96,16 +96,13 @@ namespace WYJK.Web.Controllers.Mvc
                 Users users = await DbHelper.QuerySingleAsync<Users>(sql);
 
                 #region 权限缓存
-                //Entity.Roles roles = _userService.GetRoles(users.UserID);
-                //List<Permissions> permissionsList = null;
-                //if (roles != null)
-                //{
-                //    permissionsList = _userService.GetPermissions(roles.RoleID);
-                //}
-                //if (permissionsList != null)
-                //{
-                //    users.roles.PermissionList.AddRange(permissionsList);
-                //}
+                //获取权限列表
+                List<Permissions> permissionList = DbHelper.Query<Permissions>($@"select PERMISSIONS.* from Users
+left join UserRole on users.UserID=UserRole.UserID
+left join RolePermission on userrole.RoleID = RolePermission.RoleID
+left join Permissions on RolePermission.PermissionID = PERMISSIONS.PermissionID
+where users.UserName='{users.UserName}'");
+                users.roles.PermissionList = permissionList;
                 #endregion
 
                 if (users != null)
@@ -297,6 +294,13 @@ namespace WYJK.Web.Controllers.Mvc
         {
             List<Permissions> permissionList = await _userService.GetAllPermissions();
             return View(permissionList);
+        }
+
+        public async Task<ActionResult> GetAllPermissionList()
+        {
+            List<Permissions> permissionList = await _userService.GetAllPermissions();
+
+            return Json(new { list = permissionList.Select(n => new { id = n.PermissionID, pId = n.ParentID, name = n.Description }) }, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

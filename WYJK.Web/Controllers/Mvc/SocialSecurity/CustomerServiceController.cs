@@ -20,7 +20,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// 客户管理
     /// </summary>
     [Authorize]
-    public class CustomerServiceController : Controller
+    public class CustomerServiceController : BaseController
     {
         private readonly ICustomerService _customerService = new CustomerService();
         private readonly IOrderService _orderService = new OrderService();

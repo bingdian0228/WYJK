@@ -21,7 +21,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// 签约企业
     /// </summary>
     [Authorize]
-    public class EnterpriseController : Controller
+    public class EnterpriseController : BaseController
     {
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         private readonly IEnterpriseService _enterpriseService = new EnterpriseService();

@@ -14,7 +14,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// 参数设置
     /// </summary>
     [Authorize]
-    public class ParameterSettingController : Controller
+    public class ParameterSettingController : BaseController
     {
         IParameterSettingService _parameterSettingService = new ParameterSettingService();
         /// <summary>

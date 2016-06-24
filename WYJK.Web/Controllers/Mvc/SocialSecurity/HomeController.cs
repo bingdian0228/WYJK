@@ -10,7 +10,7 @@ namespace WYJK.Web.Controllers
 {
     [Authorize]
     [ErrorAttribute]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
 
         public ActionResult Index()

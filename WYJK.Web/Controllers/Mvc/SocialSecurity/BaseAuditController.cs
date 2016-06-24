@@ -14,7 +14,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// <summary>
     /// 基数审核
     /// </summary>
-    public class BaseAuditController : Controller
+    public class BaseAuditController : BaseController
     {
         IBaseAuditService _baseAuditService = new BaseAuditService();
         private readonly IMemberService _memberService = new MemberService();

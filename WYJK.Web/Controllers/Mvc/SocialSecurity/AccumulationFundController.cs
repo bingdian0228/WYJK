@@ -15,7 +15,7 @@ using WYJK.Web.Models;
 namespace WYJK.Web.Controllers.Mvc
 {
     [Authorize]
-    public class AccumulationFundController : Controller
+    public class AccumulationFundController : BaseController
     {
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         IAccumulationFundService _accumulationFundService = new AccumulationFundService();

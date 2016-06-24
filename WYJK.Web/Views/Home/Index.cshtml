@@ -14,12 +14,8 @@
                 data: { "UserName": "@HttpContext.Current.User.Identity.Name" },
                 dateType: "json",
                 type: "post",
-                success: function () {
-                    if (response.status) {
-                        layer.msg(response.message);
-                    } else {
-                        layer.msg(response.message);
-                    }
+                success: function (response) {
+                    
                 },
                 error: function () {
                     layer.msg("服务器错误");
@@ -27,9 +23,9 @@
             });
         }
 
-        SendOnlineUser();
+        //SendOnlineUser();
         //定时发送在线用户
-        //setInterval("SendOnlineUser()", 10000);
+        setInterval("SendOnlineUser()", 60000);
 
     </script>
 }
@@ -134,7 +130,7 @@
                 <ul>
                     <li><a _href="@Url.Action("GetCertificationAuditList", "CertificationAudit")" data-title="认证审核管理" href="javascript:void(0)">认证审核管理</a></li>
                     <li><a _href="@Url.Action("GetAllRoles","User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
-                    <li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>
+                    @*<li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>*@
                     @*<li><a _href="@Url.Action("GetInformationList","Information")" data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
                         <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
                     <li><a _href="@Url.Action("GetInsuredIntroduceList","InsuredIntroduce")" data-title="参保介绍管理" href="javascript:void(0)">参保介绍管理</a></li>

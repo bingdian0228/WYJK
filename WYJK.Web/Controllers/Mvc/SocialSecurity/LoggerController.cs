@@ -12,7 +12,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// <summary>
     /// 日志记录
     /// </summary>
-    public class LoggerController : Controller
+    public class LoggerController : BaseController
     {
         ILogService _logService = new LogService();
         

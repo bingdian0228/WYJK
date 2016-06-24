@@ -137,14 +137,14 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> PermissionAdd(Permissions permission)
         {
-            string sql = "insert into Permissions(Code,Description,Controller,Action,ParentCode) values(@Code,@Description,@Controller,@Action,@ParentCode)";
+            string sql = "insert into Permissions(Code,Description,Controller,Action,ParentID) values(@Code,@Description,@Controller,@Action,@ParentID)";
 
             DbParameter[] parameters = {
                 new SqlParameter("@Code", permission.Code),
                 new SqlParameter("@Description", permission.Description),
                 new SqlParameter("@Controller", permission.Controller),
                 new SqlParameter("@Action", permission.Action),
-                new SqlParameter("@ParentCode", permission.ParentCode ?? "0")
+                new SqlParameter("@ParentID", permission.ParentID ?? "0")
             };
 
             int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);

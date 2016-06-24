@@ -11,7 +11,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// <summary>
     /// 服务协议
     /// </summary>
-    public class ServiceProtocolController : Controller
+    public class ServiceProtocolController : BaseController
     {
         // GET: ServiceProtocol
         public ActionResult GetServiceProtocol()

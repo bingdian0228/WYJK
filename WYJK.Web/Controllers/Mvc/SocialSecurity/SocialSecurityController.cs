@@ -15,7 +15,7 @@ using WYJK.Data;
 namespace WYJK.Web.Controllers.Mvc
 {
     [Authorize]
-    public class SocialSecurityController : Controller
+    public class SocialSecurityController : BaseController
     {
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
 

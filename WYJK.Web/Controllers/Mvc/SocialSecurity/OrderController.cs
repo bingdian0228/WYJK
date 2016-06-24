@@ -14,7 +14,7 @@ using WYJK.Framework.EnumHelper;
 namespace WYJK.Web.Controllers.Mvc
 {
     [Authorize]
-    public class OrderController : Controller
+    public class OrderController : BaseController
     {
         private readonly IOrderService orderService = new OrderService();
         private readonly IMemberService _memberService = new MemberService();

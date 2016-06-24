@@ -14,7 +14,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// <summary>
     /// 认证审核
     /// </summary>
-    public class CertificationAuditController : Controller
+    public class CertificationAuditController : BaseController
     {
         private readonly ICertificationAuditService _certificationAuditService = new CertificationAuditService();
 

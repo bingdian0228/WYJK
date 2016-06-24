@@ -1956,7 +1956,7 @@
             Action
             </summary>
         </member>
-        <member name="P:WYJK.Entity.Permissions.ParentCode">
+        <member name="P:WYJK.Entity.Permissions.ParentID">
             <summary>
             父级编码
             </summary>

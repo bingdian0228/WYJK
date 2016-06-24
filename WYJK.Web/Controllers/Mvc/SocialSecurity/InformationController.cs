@@ -16,7 +16,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// 信息展示
     /// </summary>
     [Authorize]
-    public class InformationController : Controller
+    public class InformationController : BaseController
     {
         //IInformationService _informationService = new InformationService();
 
