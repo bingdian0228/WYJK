@@ -68,7 +68,7 @@ namespace WYJK.Data.ServiceImpl
         /// </summary>
         /// <param name="roles"></param>
         /// <returns></returns>
-        public async Task<bool> RoleAdd(Roles roles)
+        public async Task<int> RoleAdd(Roles roles)
         {
             string sql = "insert into Roles(RoleName,Description) values(@RoleName,@Description)";
 
@@ -77,9 +77,8 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("@Description",SqlDbType.NVarChar,50) { Value=roles.Description?? (Object)DBNull.Value}
             };
 
-            int result = await DbHelper.ExecuteSqlCommandScalarAsync(sql, parameters);
+            return  await DbHelper.ExecuteSqlCommandScalarAsync(sql, parameters);
 
-            return result > 0;
         }
 
         /// <summary>

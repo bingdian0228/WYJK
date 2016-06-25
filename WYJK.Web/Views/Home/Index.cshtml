@@ -15,10 +15,10 @@
                 dateType: "json",
                 type: "post",
                 success: function (response) {
-                    
+                    //layer.msg("请求成功");
                 },
-                error: function () {
-                    layer.msg("服务器错误");
+                error: function (error) {
+                    //layer.msg("服务器错误");
                 }
             });
         }
@@ -128,13 +128,15 @@
             <dt><i class="Hui-iconfont">&#xe613;</i> 系统管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul>
-                    <li><a _href="@Url.Action("GetCertificationAuditList", "CertificationAudit")" data-title="认证审核管理" href="javascript:void(0)">认证审核管理</a></li>
+                    <li><a _href="@Url.Action("GetUserList","User")" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
                     <li><a _href="@Url.Action("GetAllRoles","User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
+                    <li><a _href="@Url.Action("GetCertificationAuditList", "CertificationAudit")" data-title="认证审核管理" href="javascript:void(0)">认证审核管理</a></li>
+                    
                     @*<li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>*@
                     @*<li><a _href="@Url.Action("GetInformationList","Information")" data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
                         <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
                     <li><a _href="@Url.Action("GetInsuredIntroduceList","InsuredIntroduce")" data-title="参保介绍管理" href="javascript:void(0)">参保介绍管理</a></li>
-                    <li><a _href="@Url.Action("GetUserList","User")" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
+                    
                     <li><a _href="@Url.Action("GetEnterpriseCityList","Enterprise")" data-title="城市社平管理" href="javascript:void(0)">城市社平管理</a></li>
                     <li><a _href="@Url.Action("GetEnterpriseList","Enterprise")" data-title="签约企业管理" href="javascript:void(0)">签约企业管理</a></li>
                     <li><a _href="@Url.Action("GetPaymentDetailsList","Enterprise")" data-title="企业社保明细" href="javascript:void(0)">企业社保明细</a></li>

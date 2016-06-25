@@ -56,7 +56,7 @@
                 });
             })*@
 
-            //编辑角色
+            @*//编辑角色
             $(".action-edit-role").click(function () {
                 debugger;
                 var rid = $(this).attr("data-rid");
@@ -82,7 +82,7 @@
                         layer.iframeAuto(layero);
                     }
                 });
-            });
+            });*@
 
             $(".action-delete-role").click(function () {
 
@@ -110,10 +110,10 @@
                     success: function (response) {
                         layer.close(index);
                         if (response.status) {
-                            layer.msg("删除成功");
+                            layer.msg(response.message);
                             refresh();
                         } else {
-                            layer.msg("删除失败");
+                            layer.msg(response.message);
                         }
                     },
                     error: function () {
@@ -157,7 +157,7 @@
                         <td>@item.RoleName</td>
                         <td>@item.Description</td>
                         <td class="f-14 td-manage">
-                            <a style="text-decoration: none" class="ml-5 action-edit-role" data-rid="@item.RoleID" href="javascript:;" title="角色编辑">
+                            <a style="text-decoration: none" class="ml-5 action-edit-role" data-rid="@item.RoleID" href="@Url.Action("RolesEdit","User")?roldID=@item.RoleID" title="角色编辑">
                                 <i class="Hui-iconfont">&#xe6df;</i>
                             </a>
                         </td>

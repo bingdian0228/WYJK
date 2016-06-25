@@ -2016,9 +2016,14 @@
             描述
             </summary>
         </member>
-        <member name="P:WYJK.Entity.Roles.PermissionList">
+        <member name="P:WYJK.Entity.TempRoles.id">
             <summary>
-            权限
+            角色id
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.TempRoles.text">
+            <summary>
+            角色名称
             </summary>
         </member>
         <member name="T:WYJK.Entity.DrawCash">
@@ -2176,6 +2181,11 @@
             密码
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.Users.HashPassword">
+            <summary>
+            加密后的密码
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.Users.IdentityCard">
             <summary>
             身份证号
@@ -2261,9 +2271,14 @@
             邀请码
             </summary>
         </member>
-        <member name="P:WYJK.Entity.Users.roles">
+        <member name="P:WYJK.Entity.Users.roleList">
             <summary>
             角色
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Users.PermissionList">
+            <summary>
+            权限
             </summary>
         </member>
         <member name="T:WYJK.Entity.UsersParameter">

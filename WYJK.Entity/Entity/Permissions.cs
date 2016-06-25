@@ -51,4 +51,13 @@ namespace WYJK.Entity
 
 
     }
+
+
+    public class TempPermissions
+    {
+        public int id { get; set; }
+        public int pId { get; set; }
+        public string name { get; set; }
+        public bool @checked { get; set; }
+    }
 }

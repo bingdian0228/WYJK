@@ -38,9 +38,9 @@ namespace WYJK.Web.Filters
                     var ticket = (filterContext.RequestContext.HttpContext.User.Identity as FormsIdentity).Ticket;
                     Users users = JsonConvert.DeserializeObject<Users>(ticket.UserData);
 
-                    if (users.roles.PermissionList != null)
+                    if (users.PermissionList != null)
                     {
-                        isAuth = users.roles.PermissionList.Any(n => n.Controller.ToLower() == controller.ToLower() && n.Action.ToLower() == action.ToLower());
+                        isAuth = users.PermissionList.Any(n => n.Controller.ToLower() == controller.ToLower() && n.Action.ToLower() == action.ToLower());
                     }
                     //判断当前用户有没有访问此功能的权限
                 }

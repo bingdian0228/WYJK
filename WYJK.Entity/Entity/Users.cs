@@ -3,6 +3,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Data;
 using WYJK.Entity;
+using Newtonsoft.Json;
+using WYJK.Framework.Helpers;
 
 namespace WYJK.Entity
 {
@@ -27,7 +29,22 @@ namespace WYJK.Entity
         /// <summary>
         /// 密码
         /// </summary>		
-        public string Password { get; set; }
+        public string Password { get; set; } = "123456";
+        /// <summary>
+        /// 加密后的密码
+        /// </summary>
+        [JsonIgnore]
+        public string HashPassword
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Password))
+                {
+                    return SecurityHelper.HashPassword(Password, Password);
+                }
+                return string.Empty;
+            }
+        }
         /// <summary>
         /// 身份证号
         /// </summary>		
@@ -43,7 +60,7 @@ namespace WYJK.Entity
         /// <summary>
         /// 角色ID
         /// </summary>		
-        public int RoleID { get; set; }
+        public int[] RoleID { get; set; }
         /// <summary>
         /// 真实姓名
         /// </summary>		
@@ -101,7 +118,12 @@ namespace WYJK.Entity
         /// <summary>
         /// 角色
         /// </summary>
-        public Roles roles { get; set; } = new Roles();
+        public List<Roles> roleList { get; set; } = new List<Roles>();
+
+        /// <summary>
+        /// 权限
+        /// </summary>
+        public List<Permissions> PermissionList { get; set; } = new List<Permissions>();
 
 
     }
@@ -117,11 +139,11 @@ namespace WYJK.Entity
     /// <summary>
     /// 在线用户
     /// </summary>
-    public  class OnlineUser
+    public class OnlineUser
     {
-        public  string UserName { get; set; }
+        public string UserName { get; set; }
 
-        public  DateTime ActiveTime { get; set; }
+        public DateTime ActiveTime { get; set; }
     }
 
 }
