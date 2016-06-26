@@ -28,7 +28,7 @@ namespace WYJK.Web.Controllers.Http
     /// <summary>
     /// 用户接口
     /// </summary>
-    public class MemberController : ApiController
+    public class MemberController : BaseApiController
     {
         private readonly IMemberService _memberService = new MemberService();
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();

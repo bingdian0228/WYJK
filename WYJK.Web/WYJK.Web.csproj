@@ -271,6 +271,7 @@
     <Compile Include="Content\lib\ueditor\1.4.3\net\App_Code\NotSupportedHandler.cs" />
     <Compile Include="Content\lib\ueditor\1.4.3\net\App_Code\PathFormater.cs" />
     <Compile Include="Content\lib\ueditor\1.4.3\net\App_Code\UploadHandler.cs" />
+    <Compile Include="Controllers\Http\BaseApiController.cs" />
     <Compile Include="Controllers\Http\Loan\LoanController.cs" />
     <Compile Include="Controllers\Http\SocialSecurity\OrderController.cs" />
     <Compile Include="Controllers\Http\SocialSecurity\SocialSecurityController.cs" />
@@ -298,8 +299,9 @@
     <Compile Include="Controllers\Mvc\SocialSecurity\HomeController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\UserController.cs" />
     <Compile Include="Core\HttpHeadersExtentions.cs" />
+    <Compile Include="Filters\ApiActionFilterAttribute.cs" />
     <Compile Include="Filters\AuthorizedAttribute.cs" />
-    <Compile Include="Filters\CustomActionFilterAttribute.cs" />
+    <Compile Include="Filters\WebActionFilterAttribute.cs" />
     <Compile Include="Filters\ErrorAttribute.cs" />
     <Compile Include="Filters\ValidationModelAttribute.cs" />
     <Compile Include="Global.asax.cs">

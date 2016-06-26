@@ -327,6 +327,7 @@ namespace WYJK.Web.Controllers.Mvc
 
             SocialSecurityPeople socialSecurityPeople = new SocialSecurityPeople();
             socialSecurityPeople.IdentityCard = model.IdentityCard;
+            socialSecurityPeople.SocialSecurityPeopleName = model.SocialSecurityPeopleName;
 
             #region 户籍性质
             List<SelectListItem> list = EnumExt.GetSelectList(typeof(HouseholdPropertyEnum));
@@ -348,10 +349,20 @@ namespace WYJK.Web.Controllers.Mvc
                     string logStr = string.Empty;
 
                     #region 更新参保人
+                    //获取参保人旧数据
+                    SocialSecurityPeople oldSocialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID={model.SocialSecurityPeopleID}");
+                    ////比较新旧值是否一致
+                    //if (oldSocialSecurityPeople.SocialSecurityPeopleName != socialSecurityPeople.SocialSecurityPeopleName) {
+                    //    logStr += $"客服修改了{oldSocialSecurityPeople.SocialSecurityPeopleName}的姓名，从{oldSocialSecurityPeople.SocialSecurityPeopleName}到{socialSecurityPeople.SocialSecurityPeopleName}";
+                    //}
+                    //if (oldSocialSecurityPeople.IdentityCard != socialSecurityPeople.SocialSecurityPeopleName) {
+                    //    logStr+=
+                    //}
 
 
+                    //参保人新数据更新
                     socialSecurityPeople.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
-                    DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IdentityCard='{socialSecurityPeople.IdentityCard}',HouseholdProperty='{socialSecurityPeople.HouseholdProperty}',IdentityCardPhoto='{socialSecurityPeople.IdentityCardPhoto}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
+                    DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set SocialSecurityPeopleName='{socialSecurityPeople.SocialSecurityPeopleName}', IdentityCard='{socialSecurityPeople.IdentityCard}',HouseholdProperty='{socialSecurityPeople.HouseholdProperty}',IdentityCardPhoto='{socialSecurityPeople.IdentityCardPhoto}' where SocialSecurityPeopleID={model.SocialSecurityPeopleID}", null);
                     #endregion
 
                     #region 更新用户

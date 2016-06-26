@@ -18,7 +18,7 @@ namespace WYJK.Web.Controllers.Http
     /// <summary>
     /// 订单接口
     /// </summary>
-    public class OrderController : ApiController
+    public class OrderController : BaseApiController
     {
         private readonly IOrderService _orderService = new OrderService();
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();

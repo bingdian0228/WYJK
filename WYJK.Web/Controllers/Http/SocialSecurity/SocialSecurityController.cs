@@ -21,7 +21,7 @@ namespace WYJK.Web.Controllers.Http
     /// <summary>
     /// 社保接口 未参保-1，待办-2，正常-3，续费-4，待停-5，已停-6
     /// </summary>
-    public class SocialSecurityController : ApiController
+    public class SocialSecurityController : BaseApiController
     {
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         private readonly IAccumulationFundService _accumulationFundService = new AccumulationFundService();

@@ -15,7 +15,7 @@ namespace WYJK.Web.Controllers.Http
     /// <summary>
     /// 借款接口
     /// </summary>
-    public class LoanController : ApiController
+    public class LoanController : BaseApiController
     {
         private ILoanSubjectService _loanSubjectService = new LoanSubjectService();
         private ILoanMemberService _loanMemberService = new LoanMemberService();
