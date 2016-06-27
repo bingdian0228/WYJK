@@ -12,8 +12,8 @@
     </script>
 }
 <div class="pd-20">
-    @using (Html.BeginForm())
-    { 
+    @using (Html.BeginForm("SocialException", "SocialSecurity", FormMethod.Post))
+    {
         @Html.HiddenFor(m => m.PeopleIds);
         if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage + "") == false)
         {
@@ -21,17 +21,17 @@
         }
         <div class="row cl">
             <label class="form-label col-2">异常备注：</label>
-            <div class="formControls col-8">                
+            <div class="formControls col-8">
                 @Html.TextAreaFor(m => m.Exception, new { @class = "input-text textarea" })
             </div>
-            
+
         </div>
         <div class="row cl">
             <label class="form-label col-2"> </label>
             <div class="col-2">@Html.ValidationMessageFor(m => m.Exception)</div>
 
         </div>
-       
+
     }
-     
+
 </div>

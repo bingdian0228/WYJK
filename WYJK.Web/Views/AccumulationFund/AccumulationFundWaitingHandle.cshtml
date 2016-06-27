@@ -77,6 +77,12 @@
                     layer.msg("请选择异常的客户");
                     return;
                 }
+
+                if ($("input[type='checkbox']:checked").length >1) {
+                    layer.msg("只能选择一个异常的客户");
+                    return;
+                }
+
                 var SocialSecurityPeopleIDs = [];
                 $("input[type='checkbox']:checked").each(function (i) {
                     SocialSecurityPeopleIDs[i] = $(this).val();

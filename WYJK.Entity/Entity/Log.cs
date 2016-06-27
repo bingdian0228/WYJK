@@ -19,6 +19,8 @@ namespace WYJK.Entity
         public string EnterpriseName { get; set; }
         public string BusinessName { get; set; }
         public int? SocialSecurityPeopleID { get; set; }
+
+        public string SocialSecurityPeopleName { get; set; }
         public string Contents { get; set; }
         public DateTime Dt { get; set; }
     }

@@ -996,6 +996,21 @@
             客服审核状态
             </summary>
         </member>
+        <member name="T:WYJK.Entity.ExceptionTip">
+            <summary>
+            异常提示
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ExceptionTip.Type">
+            <summary>
+            类型 社保：0，公积金1
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ExceptionTip.ExceptionReason">
+            <summary>
+            异常提示
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.EnterpriseSocialSecurity">
             <summary>
             企业社保
@@ -2065,6 +2080,11 @@
             <summary>
             打款订单
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.DrawCash.LeftAccount">
+            <summary>
+            余额
+            </summary>
         </member>
         <member name="T:WYJK.Entity.DrawCashViewModel">
             <summary>

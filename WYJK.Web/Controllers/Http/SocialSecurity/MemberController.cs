@@ -254,7 +254,7 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> CommitEnterpriseCertification(EnterpriseCertification parameter)
         {
             //删除个体认证
-            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID = {parameter.MemberID}",null);
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID = {parameter.MemberID}", null);
 
             await _memberService.CommitEnterpriseCertification(parameter);
 
@@ -1188,6 +1188,84 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         /// <summary>
+        /// 获取提现信息
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> DrawCash(int memberID)
+        {
+            Members member = DbHelper.QuerySingle<Members>($"select * from Members where MemberID={memberID}");
+            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={memberID}");
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = new
+                {
+                    Account = member.Account,
+                    DongJie = DongJie
+                }
+            };
+        }
+
+        /// <summary>
+        /// 提现审核   提交信息：MemberID、Money、LeftAccount
+        /// </summary>
+        /// <param name="drawCash"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpPost]
+        public JsonResult<dynamic> DrawCash(DrawCash drawCash)
+        {
+            DbHelper.ExecuteSqlCommand($"insert into DrawCash(MemberId,Money,ApplyTime,ApplyStatus,LeftAccount) values({drawCash.MemberID},'{drawCash.Money}','{DateTime.Now}',0,'{drawCash.LeftAccount}')", null);
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "审核中"
+            };
+        }
+
+        /// <summary>
+        /// 是否已经绑定账户   看data数据  
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> IsBoundAccount(int memberID)
+        {
+            bool isBound;
+            //获取注册人银行账号 BankCardNo
+            string BankCardNo = DbHelper.QuerySingle<string>($"select * from Members where MemberId={memberID}");
+            if (BankCardNo.Trim() != string.Empty)
+                isBound = true;
+            else
+                isBound = false;
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = isBound
+            };
+        }
+
+        /// <summary>
+        /// 绑定账户
+        /// </summary>
+        /// <param name="boundAccount"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> BoundAccount(BoundAccount boundAccount)
+        {
+            DbHelper.ExecuteSqlCommand($"update Members set BankCardNo='{boundAccount.BankCardNo}' where MemberID={boundAccount.MemberID}", null);
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "绑定成功"
+            };
+        }
+
+
+        /// <summary>
         /// 获取冻结金额说明
         /// </summary>
         /// <returns></returns>
@@ -1317,6 +1395,23 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         #endregion
+
+
+        /// <summary>
+        /// 获取消息列表
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<List<Message>> GetMessageList(int memberID)
+        {
+            List<Message> messageList = DbHelper.Query<Message>($"select * from Message where MemberID={memberID} order by Dt desc");
+            return new JsonResult<List<Message>>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = messageList
+            };
+        }
 
         ///// <summary>
         ///// 获取多个错误

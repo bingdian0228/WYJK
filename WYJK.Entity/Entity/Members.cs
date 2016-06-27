@@ -712,5 +712,11 @@ namespace WYJK.Entity
         /// </summary>
         public string HeadPortrait { get; set; }
     }
+
+    public class BoundAccount
+    {
+        public int MemberID { get; set; }
+        public string BankCardNo { get; set; }
+    }
 }
 

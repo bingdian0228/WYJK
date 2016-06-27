@@ -126,4 +126,22 @@ namespace WYJK.Entity
         /// </summary>
         public string CustomerServiceStatus { get; set; }
     }
+
+    /// <summary>
+    /// 异常提示
+    /// </summary>
+    public class ExceptionTip
+    {
+        
+        public int SocialSecurityPeopleID { get; set; }
+        /// <summary>
+        /// 类型 社保：0，公积金1
+        /// </summary>
+        public int Type { get; set; }
+        /// <summary>
+        /// 异常提示
+        /// </summary>
+        public string ExceptionReason { get; set; }
+
+    }
 }

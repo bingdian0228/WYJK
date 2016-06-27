@@ -44,7 +44,7 @@
                 {
                     <tr class="text-c">
                         <td>@item.UserName</td>
-                        <td>@string.Format(item.Contents, item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName), item.SocialSecurityPeopleID)</td>
+                        <td>@string.Format(item.Contents, item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName), item.SocialSecurityPeopleName)</td>
                         <td>@item.Dt</td>
                     </tr>
                 }

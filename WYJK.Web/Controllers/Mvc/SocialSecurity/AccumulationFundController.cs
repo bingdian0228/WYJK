@@ -253,11 +253,26 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 try
                 {
-                    await Data.DbHelper.ExecuteSqlCommandAsync($"update SocialSecurityPeople set status=0 where SocialSecurityPeopleid in ({model.PeopleIds});update AccumulationFund set AccumulationFundException='{model.Exception}',status=1 where SocialSecurityPeopleid in ({model.PeopleIds})");
+                    await Data.DbHelper.ExecuteSqlCommandAsync($"update SocialSecurityPeople set status=0 where SocialSecurityPeopleid in ({model.PeopleIds});update AccumulationFund set AccumulationFundException='{model.Exception}',status=1,IsException=1 where SocialSecurityPeopleid in ({model.PeopleIds})");
                     string[] strArray = model.PeopleIds.Split(',');
                     int[] intArray;
                     intArray = Array.ConvertAll<string, int>(strArray, s => int.Parse(s));
                     string names = _socialSecurityService.GetSocialPeopleNames(intArray);
+
+                    #region 提示客服并提示客户
+                    //参保人名称
+                    SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID={model.PeopleIds[0]}");
+                    string socialSecurityPeopleName = socialSecurityPeople.SocialSecurityPeopleName;
+                    int memberID = socialSecurityPeople.MemberID;
+
+
+                    //向客户发送站内信
+                    string memberLogStr = string.Empty;
+                    memberLogStr = socialSecurityPeopleName + "公积金业务办理异常：" + model.Exception;
+                    DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({memberID},'{memberLogStr}')", null);
+                    #endregion
+
+
                     LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("办理公积金异常客户:{0},原因:{1}", names, model.Exception) });
                 }
                 catch (Exception ex)

@@ -2879,6 +2879,7 @@
     <Content Include="Views\CertificationAudit\GetCertificationAuditDetail.cshtml" />
     <Content Include="Views\SocialSecurity\SocialSecurityMailStop.cshtml" />
     <Content Include="Views\ServiceProtocol\GetServiceProtocol.cshtml" />
+    <Content Include="Views\CustomerService\ExceptionTip.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

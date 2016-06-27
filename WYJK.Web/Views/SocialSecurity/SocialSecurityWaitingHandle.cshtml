@@ -77,10 +77,18 @@
                     layer.msg("请选择异常的客户");
                     return;
                 }
+
+                if ($("input[type='checkbox']:checked").length > 1) {
+                    layer.msg("只能选择一个异常的客户");
+                    return;
+                }
+
                 var SocialSecurityPeopleIDs = [];
                 $("input[type='checkbox']:checked").each(function (i) {
                     SocialSecurityPeopleIDs[i] = $(this).val();
                 });
+
+                
 
                 var save = 0;
                 var layerObject = layer.open({
@@ -90,6 +98,10 @@
                     content: "@Url.Action("SocialException", "SocialSecurity")?SocialSecurityPeopleIDs=" + SocialSecurityPeopleIDs,
                     btn:["提交","取消"],
                     yes: function (index, layero) {
+                        if (save == 1) {
+                            layer.msg("不允许再次提交");
+                            return;
+                        }
 
                         var childIndex = layer.load(1, { shade: [0.1, '#000'] });
                         debugger;
@@ -97,8 +109,8 @@
                         form.submit();
 
                         save = 1;
-                        layer.closeAll();
-                        layer.close(childIndex);
+                        //layer.closeAll();
+                        //layer.close(childIndex);
                         return false;
                     },
                     end:function(index, layero) {
@@ -109,7 +121,7 @@
                     success: function (index, layero) {
 
                         if (save === 1) {
-                            layer.close;
+                            layer.closeAll();
                             refresh();
                         }
                         layer.iframeAuto(layero);

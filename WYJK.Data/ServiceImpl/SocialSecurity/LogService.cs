@@ -15,7 +15,7 @@ namespace WYJK.Data.ServiceImpl
     {
         public PagedResult<Log> GetLogList(PagedParameter parameter)
         {
-            string inner_sql_str = @"select Log.*,Members.UserType,Members.MemberName,Members.EnterpriseName,Members.BusinessName from Log left join Members on Members.MemberID=Log.MemberID";
+            string inner_sql_str = @"select Log.*,Members.UserType,Members.MemberName,Members.EnterpriseName,Members.BusinessName,SocialSecurityPeople.SocialSecurityPeopleName from Log left join Members on Members.MemberID=Log.MemberID left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID=Log.SocialSecurityPeopleID";
 
             string sqlstr = $@"select * from 
                             (select ROW_NUMBER() OVER(ORDER BY t.Dt desc )AS Row,t.* from ({inner_sql_str}) t) tt 
