@@ -782,13 +782,14 @@ namespace WYJK.Web.Controllers.Http
         /// <param name="parameter"></param>
         /// <returns></returns>
         public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter) {
-
-            DbHelper.ExecuteSqlCommand("insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) values()", null);
+            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+            DbHelper.ExecuteSqlCommand($@"insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) 
+                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}',{parameter.MonthCount})", null);
 
             return new JsonResult<dynamic>
             {
                 status = true,
-                Message = "续费成功"
+                Message = "生成续费订单成功"
             };
         }
 
@@ -1066,6 +1067,24 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 Message = "续费成功"
             };
         }
+
+        /// <summary>
+        /// 生成充值订单
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> SubmitRechargeAmountOrder(RechargeParameters parameter) {
+            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+            DbHelper.ExecuteSqlCommand($@"insert into RechargeOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money) 
+                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}')", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "生成充值订单成功"
+            };
+        }
+
 
         /// <summary>
         /// 提交充值

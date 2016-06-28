@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
@@ -38,9 +39,17 @@ namespace WYJK.Web.Filters
                     var ticket = (filterContext.RequestContext.HttpContext.User.Identity as FormsIdentity).Ticket;
                     Users users = JsonConvert.DeserializeObject<Users>(ticket.UserData);
 
-                    if (users.PermissionList != null)
+                   
+                    //获取权限列表
+                    List<Permissions> permissionList = DbHelper.Query<Permissions>($@"select PERMISSIONS.* from Users
+left join UserRole on users.UserID=UserRole.UserID
+left join RolePermission on userrole.RoleID = RolePermission.RoleID
+left join Permissions on RolePermission.PermissionID = PERMISSIONS.PermissionID
+where users.UserName='{users.UserName}'");
+                   
+                    if (permissionList != null)
                     {
-                        isAuth = users.PermissionList.Any(n => n.Controller.ToLower() == controller.ToLower() && n.Action.ToLower() == action.ToLower());
+                        isAuth = permissionList.Any(n => n.Controller.ToLower() == controller.ToLower() && n.Action.ToLower() == action.ToLower());
                     }
                     //判断当前用户有没有访问此功能的权限
                 }

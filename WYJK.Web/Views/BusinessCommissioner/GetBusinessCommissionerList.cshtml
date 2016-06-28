@@ -34,61 +34,6 @@
 
 
         $(function () {
-            //异常提示
-            function ExceptionTip() {
-                //先判断有没有业务异常，如果有，则提示
-                $.ajax({
-                    url: "@Url.Action("IsExistsExceptionTip", "CustomerService")",
-                    dataType: "json",
-                    type: "get",
-                    success: function (data) {
-
-                        if (data.status == true) {
-                            var save = 0;
-                            var layerObject = layer.open({
-                                type: 2,
-                                title: "业务异常提示",
-                                area: ['400px', '200px'],
-                                content: "@Url.Action("ExceptionTip", "CustomerService")",
-                                btn: ["知道了", "关闭"],
-                                yes: function (index, layero) {
-                                    var childIndex = layer.load(1, { shade: [0.1, '#000'] });
-                                    debugger;
-                                    var form = layer.getChildFrame('form', index);
-                                    form.submit();
-
-                                    save = 1;
-                                    return false;
-                                },
-                                end: function (index, layero) {
-                                    if (save === 1) {
-                                        refresh();
-                                    }
-                                    setTimeout(ExceptionTip, 60000);
-                                },
-                                success: function (index, layero) {
-
-                                    if (save === 1) {
-                                        layer.closeAll();
-                                        refresh();
-                                    }
-                                    layer.iframeAuto(layero);
-
-                                }
-                            });
-                        } else {
-                            setTimeout(ExceptionTip, 60000);
-                        }
-                    },
-                    error: function () {
-
-                    }
-                });
-            }
-
-            //setInterval(ExceptionTip, 5000);
-            ExceptionTip();
-
 
 
             $(".Huialert.Huialert-info").fadeOut(2000);
@@ -196,10 +141,10 @@
 
     </script>
 }
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 客户管理 <span class="c-gray en">&gt;</span> 客户管理<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 客户管理 <span class="c-gray en">&gt;</span> 业务专员<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="pd-20">
     <div class="text-c">
-        @using (Html.BeginForm("GetCustomerServiceList", "CustomerService", FormMethod.Get))
+        @using (Html.BeginForm("GetBusinessCommissionerList", "BusinessCommissioner", FormMethod.Get))
             {
             @Html.Raw("客户类型:")
             <span class="select-box inline">
@@ -258,6 +203,7 @@
                     <th width="80">公积金异常备注</th>
                     <th width="80">客服审核状态</th>
                     <th width="80">客服专员</th>
+                    <th width="80">业务专员</th>
                     <th width="120">操作</th>
                 </tr>
             </thead>
@@ -312,40 +258,16 @@
                         <td>@customerService.AccumulationFundException</td>
                         <td class="customer-status" data-customerstatus="@Convert.ToInt32(customerService.CustomerServiceStatus)">@EnumExt.GetEnumCustomDescription((CustomerServiceAuditEnum)(Convert.ToInt32(customerService.CustomerServiceStatus)))</td>
                         <td>@customerService.CustomerServiceUserName</td>
+                        <td>@(string.IsNullOrEmpty(customerService.UserName) ? "公司" : customerService.UserName)</td>
                         <td>
                             @if (customerService.SocialSecurityPeopleID != null)
                             {
-                                <a title="详情" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=0' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
-
-                                bool isPay = true;
-                                SocialSecurity socialSecurity = WYJK.Data.DbHelper.QuerySingle<SocialSecurity>("select * from SocialSecurity where SocialSecurityPeopleID=" + customerService.SocialSecurityPeopleID);
-                                AccumulationFund accumulationFund = WYJK.Data.DbHelper.QuerySingle<AccumulationFund>("select * from AccumulationFund where SocialSecurityPeopleID=" + customerService.SocialSecurityPeopleID);
-                                if (socialSecurity != null)
+                                if (customerService.UserName == HttpContext.Current.User.Identity.Name)
                                 {
-                                    if (socialSecurity.IsPay == false)
-                                    {
-                                        isPay = false;
-                                    }
+                                    <a title="详情" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=0' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
                                 }
 
-                                if (accumulationFund != null)
-                                {
-                                    if (accumulationFund.IsPay == false)
-                                    {
-                                        isPay = false;
-                                    }
-                                }
 
-                                int status = WYJK.Data.DbHelper.QuerySingle<int>("select Status from SocialSecurityPeople where SocialSecurityPeopleID=" + customerService.SocialSecurityPeopleID);
-
-
-                                //if (isPay && status == 0)
-                                //{
-                                if (customerService.CustomerServiceUserName == HttpContext.Current.User.Identity.Name)
-                                {
-                                    <a title="编辑" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=1' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
-                                }
-                                //}
                             }
                         </td>
                     </tr>
@@ -356,11 +278,6 @@
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
-            <a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a>
-            @if (Request.QueryString["CustomerServiceStatus"] == Convert.ToInt32(CustomerServiceAuditEnum.NoAudited).ToString())
-            {
-                <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a>
-            }
 
         </span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>

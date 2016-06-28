@@ -94,6 +94,21 @@ namespace WYJK.Entity
         /// </summary>
         public decimal ArrearAmount { get; set; }
 
+        /// <summary>
+        /// 客户服务专员
+        /// </summary>
+        public string CustomerServiceUserName { get; set; }
+
+        /// <summary>
+        /// 业务专员
+        /// </summary>
+        public string BusinessCommissioner { get; set; }
+
+        /// <summary>
+        /// 员工名
+        /// </summary>
+        public string UserName { get; set; }
+
     }
 
     /// <summary>
@@ -132,7 +147,7 @@ namespace WYJK.Entity
     /// </summary>
     public class ExceptionTip
     {
-        
+
         public int SocialSecurityPeopleID { get; set; }
         /// <summary>
         /// 类型 社保：0，公积金1

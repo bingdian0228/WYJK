@@ -966,6 +966,21 @@
             欠费金额
             </summary>
         </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.CustomerServiceUserName">
+            <summary>
+            客户服务专员
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.BusinessCommissioner">
+            <summary>
+            业务专员
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.CustomerServiceViewModel.UserName">
+            <summary>
+            员工名
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.CustomerServiceParameter">
             <summary>
             客户服务参数

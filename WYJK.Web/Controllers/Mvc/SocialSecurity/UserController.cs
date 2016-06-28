@@ -95,18 +95,11 @@ namespace WYJK.Web.Controllers.Mvc
 
                 Users users = await DbHelper.QuerySingleAsync<Users>(sql);
 
-                #region 权限缓存
-                //获取权限列表
-                List<Permissions> permissionList = DbHelper.Query<Permissions>($@"select PERMISSIONS.* from Users
-left join UserRole on users.UserID=UserRole.UserID
-left join RolePermission on userrole.RoleID = RolePermission.RoleID
-left join Permissions on RolePermission.PermissionID = PERMISSIONS.PermissionID
-where users.UserName='{users.UserName}'");
-                users.PermissionList = permissionList;
-                #endregion
+                
 
                 if (users != null)
                 {
+
                     string data = JsonConvert.SerializeObject(users);
                     SetAuthCookie(users.UserName, data);
                     return RedirectToAction("Index", "Home");

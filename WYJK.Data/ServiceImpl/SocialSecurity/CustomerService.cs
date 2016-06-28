@@ -52,11 +52,12 @@ namespace WYJK.Data.ServiceImpl
  where MemberID = Members.MemberID and SocialSecurity.Status = 4 ),0) +
  ISNULL((select  SUM(AccumulationFund.AccumulationFundBase*AccumulationFund.PayProportion/100)  from SocialSecurityPeople
  left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
- where MemberID = Members.MemberID and AccumulationFund.Status = 4),0) ArrearAmount 
+ where MemberID = Members.MemberID and AccumulationFund.Status = 4),0) ArrearAmount ,SocialSecurityPeople.CustomerServiceUserName,Users.UserName
                           from Members
                            left join SocialSecurityPeople on Members.MemberID = SocialSecurityPeople.MemberID
                            left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = socialsecurity.SocialSecurityPeopleID
-                           left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"
+                           left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+                           left join Users on Members.InviteCode = Users.InviteCode "
                //left join OrderDetails on socialsecuritypeople.SocialSecurityPeopleID = OrderDetails.SocialSecurityPeopleID"
                //left join [order] on[order].OrderCode = OrderDetails.OrderCode"
             + builder.ToString();

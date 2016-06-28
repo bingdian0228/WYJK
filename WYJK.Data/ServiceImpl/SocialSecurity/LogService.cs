@@ -13,9 +13,42 @@ namespace WYJK.Data.ServiceImpl
     /// </summary>
     public class LogService : ILogService
     {
-        public PagedResult<Log> GetLogList(PagedParameter parameter)
+        public PagedResult<Log> GetLogList(LogParameter parameter)
         {
-            string inner_sql_str = @"select Log.*,Members.UserType,Members.MemberName,Members.EnterpriseName,Members.BusinessName,SocialSecurityPeople.SocialSecurityPeopleName from Log left join Members on Members.MemberID=Log.MemberID left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID=Log.SocialSecurityPeopleID";
+            //Members.MemberName like '%{parameter.MemberName}%' or SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'
+            StringBuilder stringBuilder = new StringBuilder(" where 1=1");
+
+            //if (!string.IsNullOrEmpty(parameter.MemberName)&& !string.IsNullOrEmpty(parameter.SocialSecurityPeopleName)) {
+            //    stringBuilder.Append($" and (Members.MemberName like '%{parameter.MemberName}%'  or SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%')");
+            //}
+
+            //if (!string.IsNullOrEmpty(parameter.MemberName) && string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+            //{
+            //    stringBuilder.Append($" and Members.MemberName like '%{parameter.MemberName}%' ");
+            //}
+
+            //if (string.IsNullOrEmpty(parameter.MemberName) && !string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+            //{
+            //    stringBuilder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'");
+            //}
+
+            if (string.IsNullOrEmpty(parameter.MemberName))
+            {
+                stringBuilder.Append($" and Members.MemberName is null");
+            }
+            else {
+                stringBuilder.Append($" and Members.MemberName like '%{parameter.MemberName}%'");
+            }
+
+            if (string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+            {
+                stringBuilder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName is null");
+            }
+            else {
+                stringBuilder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'");
+            }
+
+            string inner_sql_str = $@"select Log.*,Members.UserType,Members.MemberName,Members.EnterpriseName,Members.BusinessName,SocialSecurityPeople.SocialSecurityPeopleName from Log left join Members on Members.MemberID=Log.MemberID left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID=Log.SocialSecurityPeopleID {stringBuilder.ToString()} ";
 
             string sqlstr = $@"select * from 
                             (select ROW_NUMBER() OVER(ORDER BY t.Dt desc )AS Row,t.* from ({inner_sql_str}) t) tt 

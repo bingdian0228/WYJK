@@ -283,6 +283,7 @@
     <Compile Include="Controllers\Mvc\Loan\LoanSettingController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\AccumulationFundController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\BaseAuditController.cs" />
+    <Compile Include="Controllers\Mvc\SocialSecurity\BusinessCommissionerController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\CertificationAuditController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\CustomerServiceController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\DrawCashController.cs" />
@@ -2884,6 +2885,7 @@
     <Content Include="Views\CustomerService\ExceptionTip.cshtml" />
     <Content Include="Views\RechargeOrders\GetRechargeOrderList.cshtml" />
     <Content Include="Views\RenewOrders\GetRenewOrderList.cshtml" />
+    <Content Include="Views\BusinessCommissioner\GetBusinessCommissionerList.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

@@ -24,4 +24,10 @@ namespace WYJK.Entity
         public string Contents { get; set; }
         public DateTime Dt { get; set; }
     }
+
+    public class LogParameter : PagedParameter
+    {
+        public string MemberName { get; set; }
+        public string SocialSecurityPeopleName { get; set; }
+    }
 }

@@ -21,7 +21,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public ActionResult GetLogList(PagedParameter parameter)
+        public ActionResult GetLogList(LogParameter parameter)
         {
             PagedResult<Log> logList = _logService.GetLogList(parameter);
             return View(logList);

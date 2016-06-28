@@ -28,7 +28,14 @@
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 日志管理 <span class="c-gray en">&gt;</span> 日志列表 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="pd-20">
     <div class="text-c">
+       @using (Html.BeginForm("GetLogList", "Logger", FormMethod.Get))
+       {
+        @:用户名： @Html.TextBox("MemberName", null, new { style = "width:250px", @class = "input-text", placeholder = "用户名" })
+        @:参保人姓名： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "参保人姓名" })
 
+            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+
+       }
     </div>
     <div class="mt-20">
         <table class="table table-border table-bordered table-bg table-hover table-sort">
@@ -51,5 +58,8 @@
             </tbody>
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+        </div>
     </div>
 </div>
