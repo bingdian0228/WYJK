@@ -777,6 +777,22 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 提交续费订单
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter) {
+
+            DbHelper.ExecuteSqlCommand("insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) values()", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "续费成功"
+            };
+        }
+
+        /// <summary>
         /// 续费
         /// </summary>
         /// <returns></returns>

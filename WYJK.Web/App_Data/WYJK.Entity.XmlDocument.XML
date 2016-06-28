@@ -1986,6 +1986,66 @@
             是否修改
             </summary>
         </member>
+        <member name="T:WYJK.Entity.RechargeOrders">
+            <summary>
+            充值订单
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.OrderCode">
+            <summary>
+            订单编号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.GenerateDate">
+            <summary>
+            生成时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.Status">
+            <summary>
+            订单状态 0:待付款,1:审核中，2：已完成
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.PayTime">
+            <summary>
+            支付时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.AuditTime">
+            <summary>
+            审核时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrders.Money">
+            <summary>
+            金额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RechargeOrdersParameter">
+            <summary>
+            充值分页查询类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrdersParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RechargeOrdersParameter.Status">
+            <summary>
+            审核状态
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.Region">
             <summary>
             省市区信息表
@@ -2009,6 +2069,66 @@
         <member name="P:WYJK.Entity.Region.ParentCode">
             <summary>
             父编号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RenewOrders">
+            <summary>
+            续费订单
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.OrderCode">
+            <summary>
+            订单编号
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.GenerateDate">
+            <summary>
+            生成时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.Status">
+            <summary>
+            订单状态 0:待付款,1:审核中，2：已完成
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.PayTime">
+            <summary>
+            支付时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.AuditTime">
+            <summary>
+            审核时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewOrders.Money">
+            <summary>
+            金额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RenewOrdersParameter">
+            <summary>
+            续费分页查询类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewOrdersParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewOrdersParameter.Status">
+            <summary>
+            审核状态
             </summary>
         </member>
         <member name="T:WYJK.Entity.Roles">

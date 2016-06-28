@@ -42,6 +42,7 @@
                     dataType: "json",
                     type: "get",
                     success: function (data) {
+
                         if (data.status == true) {
                             var save = 0;
                             var layerObject = layer.open({
@@ -63,6 +64,7 @@
                                     if (save === 1) {
                                         refresh();
                                     }
+                                    setTimeout(ExceptionTip, 60000);
                                 },
                                 success: function (index, layero) {
 
@@ -71,8 +73,11 @@
                                         refresh();
                                     }
                                     layer.iframeAuto(layero);
+
                                 }
                             });
+                        } else {
+                            setTimeout(ExceptionTip,60000);
                         }
                     },
                     error: function () {
@@ -81,8 +86,9 @@
                 });
             }
 
-            setInterval(ExceptionTip, 5000);
-            //ExceptionTip();
+            //setInterval(ExceptionTip, 5000);
+            ExceptionTip();
+
 
 
             $(".Huialert.Huialert-info").fadeOut(2000);

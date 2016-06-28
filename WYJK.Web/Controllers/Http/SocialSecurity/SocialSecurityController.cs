@@ -29,6 +29,44 @@ namespace WYJK.Web.Controllers.Http
         private readonly IMemberService _memberService = new MemberService();
         private readonly IEnterpriseService _enterpriseService = new EnterpriseService();
         private readonly IInsuredIntroduceService _insuredIntroduceService = new InsuredIntroduceService();
+
+
+        /// <summary>
+        /// 获取省列表
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult<List<string>> GetProvinceList()
+        {
+            List<string> list = DbHelper.Query<string>("select SUBSTRING(EnterpriseArea,1,CHARINDEX('|',EnterpriseArea)-1) Province from EnterpriseSocialSecurity").Distinct().ToList();
+
+            return new JsonResult<List<string>>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = list
+            };
+        }
+
+        /// <summary>
+        /// 根据省份获取城市
+        /// </summary>
+        /// <param name="provinceName"></param>
+        /// <returns></returns>
+        public JsonResult<List<string>> GetCityListByProvince(string provinceName)
+        {
+            List<string> list = DbHelper.Query<string>($@"select distinct SUBSTRING(reverse(SUBSTRING(reverse(EnterpriseArea),charindex('|',reverse(EnterpriseArea))+1,LEN(EnterpriseArea))),CHARINDEX('|',EnterpriseArea)+1,LEN(EnterpriseArea)) city
+                                                          from EnterpriseSocialSecurity
+                                                          where EnterpriseArea like '%{provinceName}%'").ToList();
+
+            return new JsonResult<List<string>>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = list
+            };
+
+        }
+
         /// <summary>
         /// 获取户口性质
         /// </summary>
