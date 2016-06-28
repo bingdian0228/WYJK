@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -22,6 +26,8 @@ namespace WYJK.Web.Controllers.Mvc
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         private readonly IEnterpriseService _enterpriseService = new EnterpriseService();
         private readonly IAccumulationFundService _accumulationFundService = new AccumulationFundService();
+        private readonly IPaymentDetailService paymentDetailService = new PaymentDetailService();
+        private readonly IMemberService _memberService = new MemberService();
         /// <summary>
         /// 获取参保企业列表
         /// </summary>
@@ -33,6 +39,111 @@ namespace WYJK.Web.Controllers.Mvc
             return View(EnterpriseSocialSecurityList);
         }
 
+        /// <summary>
+        /// 导入缴费明细
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ImportPaymentDetails()
+        {
+
+            HttpPostedFileBase file = Request.Files["files"];
+            string FileName;
+            string savePath;
+            string NoFileName;
+            if (file == null || file.ContentLength <= 0)
+            {
+                TempData["Message"] = "文件不能为空";
+                return RedirectToAction("GetEnterpriseList");
+            }
+            else
+            {
+                string filename = Path.GetFileName(file.FileName);
+                int filesize = file.ContentLength;//获取上传文件的大小单位为字节byte
+                string fileEx = System.IO.Path.GetExtension(filename);//获取上传文件的扩展名
+                NoFileName = System.IO.Path.GetFileNameWithoutExtension(filename);//获取无扩展名的文件名
+                int Maxsize = 4000 * 1024;//定义上传文件的最大空间大小为4M
+                string FileType = ".xls,.xlsx";//定义上传文件的类型字符串
+
+                FileName = NoFileName + DateTime.Now.ToString("yyyyMMddhhmmss") + fileEx;
+                if (!FileType.Contains(fileEx))
+                {
+                    TempData["Message"] = "文件类型不对，只能导入xls和xlsx格式的文件";
+                    return RedirectToAction("GetEnterpriseList");
+                }
+                if (filesize >= Maxsize)
+                {
+                    TempData["Message"] = "上传文件超过4M，不能上传";
+                    return RedirectToAction("GetEnterpriseList");
+                }
+
+                string path = AppDomain.CurrentDomain.BaseDirectory + "uploads/excel/";
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                savePath = Path.Combine(path, FileName);
+                file.SaveAs(savePath);
+            }
+
+            //string result = string.Empty;
+            string strConn;
+            strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + savePath + ";" + "Extended Properties=Excel 8.0";
+            OleDbConnection conn = new OleDbConnection(strConn);
+            conn.Open();
+            OleDbDataAdapter myCommand = new OleDbDataAdapter("select * from [Sheet0$]", strConn);
+            DataSet myDataSet = new DataSet();
+            try
+            {
+                myCommand.Fill(myDataSet, "ExcelInfo");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+                return RedirectToAction("GetEnterpriseList");
+            }
+            DataTable table = myDataSet.Tables["ExcelInfo"].DefaultView.ToTable();
+
+            //引用事务机制，出错时，事物回滚
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    List<PaymentDetail> list = new List<PaymentDetail>();
+                    for (int i = 1; i < table.Rows.Count; i++)
+                    {
+                        PaymentDetail paymentDetail = new PaymentDetail();
+                        paymentDetail.PersonnelNumber = table.Rows[i][0].ToString();//个人编号
+                        paymentDetail.IdentityCard = table.Rows[i][1].ToString();//身份证
+                        paymentDetail.TrueName = table.Rows[i][2].ToString();//姓名
+                        paymentDetail.PayTime = table.Rows[i][3].ToString();//缴费年月
+                        paymentDetail.BusinessTime = table.Rows[i][4].ToString();//业务年月
+                        paymentDetail.PaymentType = table.Rows[i][5].ToString();//缴费类型
+                        paymentDetail.SocialInsuranceBase = Convert.ToInt32(table.Rows[i][6]);//缴费基数
+                        paymentDetail.PersonalExpenses = Convert.ToDecimal(table.Rows[i][7]);//个人缴费
+                        paymentDetail.CompanyExpenses = Convert.ToDecimal(table.Rows[i][8]);//单位缴费
+                        paymentDetail.PaymentMark = table.Rows[i][9].ToString();//缴费标志
+                        paymentDetail.CompanyNumber = table.Rows[i][10].ToString();//单位编号
+                        paymentDetail.CompanyName = table.Rows[i][11].ToString();//单位名称
+                        paymentDetail.SettlementMethod = table.Rows[i][12].ToString();//结算方式
+                        paymentDetail.SocialSecurityType = NoFileName.Substring(0, 4);//社保类型
+                        list.Add(paymentDetail);
+                    }
+
+                    paymentDetailService.AddPaymentDetail(list);
+
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+                    TempData["Message"] = ex.Message;
+                    return RedirectToAction("GetEnterpriseList");
+                }
+            }
+            TempData["Message"] = "上传成功";
+            return RedirectToAction("GetEnterpriseList");
+        }
 
         /// <summary>
         /// 城市社平管理列表
@@ -54,11 +165,93 @@ namespace WYJK.Web.Controllers.Mvc
         {
             int result = DbHelper.ExecuteSqlCommand($"update EnterpriseSocialSecurity set SocialAvgSalary='{SocialAvgSalary}' where EnterpriseArea like '{City}%'", null);
 
+            //根据城市名称获取城市下的所有签约企业
+            //DbHelper.Query<EnterpriseSocialSecurity>()
 
             if (result > 0)
                 return Json(new { status = true, message = "调整成功" });
             else
                 return Json(new { status = false, message = "调整失败" });
+        }
+
+        /// <summary>
+        /// 差额调整
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult DifferenceAdjustment()
+        {
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    //更新调差时间
+                    DbHelper.ExecuteSqlCommand("update EnterpriseSocialSecurity set AdjustDt=getdate()", null);
+
+                    //根据新调的城市社平工资，将基数低于最低基数的调成当前最低基数
+                    List<EnterpriseSocialSecurity> enterpriseList = DbHelper.Query<EnterpriseSocialSecurity>("select * from EnterpriseSocialSecurity");
+                    StringBuilder builder = new StringBuilder();
+
+                    foreach (var enterprise in enterpriseList)
+                    {
+                        builder.Append($"UPDATE SocialSecurity set SocialSecurityBase = { Math.Round(enterprise.SocialAvgSalary * enterprise.MinSocial / 100, 0)} where RelationEnterprise={enterprise.EnterpriseID} and SocialSecurityBase < { Math.Round(enterprise.SocialAvgSalary * enterprise.MinSocial / 100, 0)};");
+                    }
+                    //更新基数
+                    if (builder.ToString().Trim() != string.Empty)
+                        DbHelper.ExecuteSqlCommand(builder.ToString(), null);
+
+                    //获取所有用户
+                    List<Members> memberList = _memberService.GetMembersList();
+                    StringBuilder builderReduceBucha = new StringBuilder();//用户扣除冻结金额
+                    StringBuilder builderBuchaRecord = new StringBuilder();//补差记录
+                    //遍历所有用户
+                    foreach (var member in memberList)
+                    {
+                        decimal BuchaAmount = 0;
+                        //获取用户下的所有参保人
+                        List<SocialSecurityPeople> socialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>($"select * from SocialSecurityPeople where MemberID = {member.MemberID}");
+                        foreach (var socialSecurityPeople in socialSecurityPeopleList)
+                        {
+                            List<PaymentDetail> PaymentDetailList = DbHelper.Query<PaymentDetail>($"select * from PaymentDetail where IdentityCard='{socialSecurityPeople.IdentityCard}' and PaymentType='社平调整补差' and PaymentMark='已实缴'");
+                            foreach (var paymentDetail in PaymentDetailList)
+                            {
+                                BuchaAmount += paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses;
+                                string Note = string.Format("{0}:{1}{2},个人缴费:{3},单位缴费:{4}", paymentDetail.SocialSecurityType, socialSecurityPeople.SocialSecurityPeopleName, paymentDetail.PayTime, paymentDetail.PersonalExpenses, paymentDetail.CompanyExpenses);//缴费类型：哪个参保人什么时间个人缴费多少，单位缴费多少
+                                builderBuchaRecord.Append($"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime) values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},{socialSecurityPeople.SocialSecurityPeopleID},{socialSecurityPeople.SocialSecurityPeopleName},'支出','冻结费',{Note},{paymentDetail.PersonalExpenses + paymentDetail.CompanyExpenses},{member.Account},getdate());");
+                            }
+                        }
+                        builderReduceBucha.Append($"update Members set Bucha-={BuchaAmount} where MemberID={member.MemberID};");
+                    }
+                    //扣补差
+                    if (builderReduceBucha.ToString().Trim() != string.Empty)
+                        DbHelper.ExecuteSqlCommand(builderReduceBucha.ToString(), null);
+
+                    //将补差转到余额
+                    DbHelper.ExecuteSqlCommand("update Members set Account=+Bucha,Bucha=0", null);
+                    //遍历所有用户
+                    foreach (var member in memberList)
+                    {
+                        builderBuchaRecord.Append($@"insert into AccountRecord(SerialNum, MemberID, SocialSecurityPeopleID, SocialSecurityPeopleName, ShouZhiType, LaiYuan, OperationType, Cost, Balance, CreateTime)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},'','','收入','冻结费','冻结费：{member.Bucha}',{member.Bucha},{member.Account + member.Bucha},getdate());");
+                    }
+
+                    //记录
+                    if (builderBuchaRecord.ToString().Trim() != string.Empty)
+                        DbHelper.ExecuteSqlCommand(builderBuchaRecord.ToString(), null);
+
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { status = false, message = "调整失败" });
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+
+            return Json(new { status = true, message = "调整成功" });
         }
 
         /// <summary>

@@ -132,6 +132,7 @@
         @using (Html.BeginForm("GetInformationList", "Information", FormMethod.Get))
         {
             @Html.Label("标题名称:") @Html.TextBox("Name", null, new { style = "width:250px", @class = "input-text", placeholder = "标题名称" })
+            @Html.Label("类型:") @Html.TextBox("Type", null, new { style = "width:250px", @class = "input-text", placeholder = "类型" })
 
             <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
 
@@ -145,6 +146,7 @@
                     <th width="25"><input type="checkbox" name="" value=""></th>
                     <th width="80">ID</th>
                     <th width="80">标题名称</th>
+                    <th width="80">类型</th>
                     @*<th width="80">角色描述</th>*@
                     <th width="120">操作</th>
                 </tr>
@@ -156,6 +158,8 @@
                         <td><input type="checkbox" value="@item.ID" name=""></td>
                         <td>@item.ID</td>
                         <td>@item.Name</td>
+                        <td>@item.Type</td>
+                        <td>@item.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                         @*<td>@item.Description</td>*@
                         <td class="f-14 td-manage">
                             <a style="text-decoration: none" class="ml-5 action-edit-info" data-rid="@item.ID" href="javascript:;" title="信息编辑">

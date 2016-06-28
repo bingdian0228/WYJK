@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
@@ -105,12 +106,52 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 是否可以借款
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<AppayLoan> IsCanLoan(int MemberID)
+        {
+            //判断用户下的社保否在平台缴纳三个月
+            if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
+    left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+    where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
+            {
+                return new JsonResult<AppayLoan>
+                {
+                    status = false,
+                    Message = "用户至少在平台缴纳三个月社保才可以借款"
+                };
+            }
+            else {
+                return new JsonResult<AppayLoan>
+                {
+                    status = true,
+                    Message = "进入借款"
+                };
+            }
+        }
+
+        /// <summary>
         /// 申请借款
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
         public JsonResult<AppayLoan> GetApplyloan(int MemberID)
         {
+            //判断用户下的社保否在平台缴纳三个月
+            if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
+    left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+    where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
+            {
+                return new JsonResult<AppayLoan>
+                {
+                    status = false,
+                    Message = "用户至少在平台缴纳三个月社保才可以借款"
+                };
+            }
+
             AppayLoan appayLoan = _loanMemberService.GetMemberLoanDetail(MemberID);
             return new JsonResult<AppayLoan>
             {

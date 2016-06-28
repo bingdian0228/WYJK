@@ -33,6 +33,7 @@ namespace WYJK.Web.Controllers.Http
         private readonly IMemberService _memberService = new MemberService();
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
+        private readonly IEnterpriseService _enterpriseService = new EnterpriseService();
 
         /// <summary>
         /// 用户注册
@@ -380,6 +381,7 @@ namespace WYJK.Web.Controllers.Http
         {
             AccountInfo accountInfo = _memberService.GetAccountInfo(MemberID);
             accountInfo.HeadPortrait = ConfigurationManager.AppSettings["ServerUrl"] + accountInfo.HeadPortrait;
+
             return new JsonResult<AccountInfo>
             {
                 status = true,
@@ -469,12 +471,10 @@ namespace WYJK.Web.Controllers.Http
         {
             //只有账户状态为待续费状态下才能进行续费服务，付费提供1-12个月的服务，1号前无需缴纳服务费，其它需按设置缴纳，不管续几个月，只缴纳一个月服务费
 
-
             //计算第一个月
             decimal TotalServiceCost = 0;
             decimal SSServiceCost = 0;
             decimal AFServiceCost = 0;
-
 
             int day = DateTime.Now.Day;
             //社保服务费
@@ -492,7 +492,6 @@ namespace WYJK.Web.Controllers.Http
                         SSServiceCost = _socialSecurityService.GetSocialSecurityRenewListByMemberID(MemberID).Count * Convert.ToDecimal(str1[2]);
                         break;
                     }
-
                 }
             }
             //公积金服务费
@@ -510,21 +509,78 @@ namespace WYJK.Web.Controllers.Http
                         AFServiceCost = _socialSecurityService.GetAccumulationFundRenewListByMemberID(MemberID).Count * Convert.ToDecimal(str1[2]);
                         break;
                     }
-
                 }
             }
 
-            //不管充几个月服务，都要加上这个服务费，然后减去账户金额
+            //不管充几个月服务，都要加上这个服务费，然后减去账户金额和待办状态金额
             decimal RenewMonthTotal = _socialSecurityService.GetRenewAmountByMemberID(MemberID);
+            //待续费社保列表
+            List<SocialSecurity> RenewList = DbHelper.Query<SocialSecurity>($@"select SocialSecurity.* from SocialSecurity 
+  left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
+  where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status = 4");
+            //账户信息
             AccountInfo accountInfo = _memberService.GetAccountInfo(MemberID);
             TotalServiceCost = SSServiceCost + AFServiceCost;
             //获取该用户下所有参保人的所有待办金额之和
             decimal WaitingHandleTotal = _socialSecurityService.GetWaitingHandleTotalByMemberID(MemberID);
 
+            #region 补差费
+            //每人每月补差费用
+            decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+            //更新订单补差费用
+            string BuchaSqlStr = string.Empty;
+            List<decimal> Buchalist = new List<decimal>();//12个月的补差费用
+
+            for (int i = 1; i <= 12; i++)
+            {
+                decimal BuchaAmountTotal = 0;
+                //遍历订单下的所有子订单
+                foreach (var SocialSecurityPeopleID in RenewList.Select(m => m.SocialSecurityPeopleID))
+                {
+                    //参保月份、参保月数、签约单位ID
+                    SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={SocialSecurityPeopleID}");
+                    decimal BuchaAmount = 0;
+                    if (socialSecurity != null)
+                    {
+                        //int payMonth = socialSecurity.PayTime.Month;
+                        int monthCount = socialSecurity.PayMonthCount;
+                        //相对应的签约单位城市是否已调差（社平工资）
+                        EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                        //已调,当年以后直到年末都不需交，直到一月份开始交
+                        if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                        {
+                            int freeBuchaMonthCount = 0;//免补差月数
+                            if (DateTime.Now.Day > 15)
+                                freeBuchaMonthCount = 12 - DateTime.Now.Month;
+                            else
+                                freeBuchaMonthCount = 12 + 1 - DateTime.Now.Month;
+
+                            //续费月数>参保人剩余月数
+                            if (i > freeBuchaMonthCount && monthCount > freeBuchaMonthCount && i > monthCount)
+                            {
+                                BuchaAmount = (i - monthCount) * FreezingAmount;
+                            }
+                        }
+                        //未调，往后每个月都需要交
+                        if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                        {
+                            if (i > monthCount)
+                            {
+                                BuchaAmount = FreezingAmount * (i - monthCount);
+                            }
+                        }
+                    }
+                    BuchaAmountTotal += BuchaAmount;
+                }
+
+                Buchalist.Add(BuchaAmountTotal);
+            }
+            #endregion
+
             Dictionary<int, decimal> dic = new Dictionary<int, decimal>();
             for (int i = 0; i < 12; i++)
             {
-                dic.Add(i + 1, RenewMonthTotal * (i + 1) + TotalServiceCost - accountInfo.Account - WaitingHandleTotal);
+                dic.Add(i + 1, RenewMonthTotal * (i + 1) + TotalServiceCost - (accountInfo.Account - WaitingHandleTotal) + Buchalist[i]);
             }
 
             return new JsonResult<List<KeyValuePair<int, decimal>>>
@@ -624,20 +680,6 @@ namespace WYJK.Web.Controllers.Http
             #endregion
         }
 
-        ///// <summary>
-        ///// 创建续费服务
-        ///// </summary>
-        ///// <param name="MemberID"></param>
-        ///// <returns></returns>
-        //private JsonResult<dynamic> CreateRenewalService(int MemberID)
-        //{
-        //    return new JsonResult<dynamic>
-        //    {
-        //        status = true,
-        //        Message = "获取状态成功"
-        //    };
-        //}
-
         /// <summary>
         /// 续费
         /// </summary>
@@ -724,19 +766,76 @@ namespace WYJK.Web.Controllers.Http
                             }
                         }
                     }
+
+
+                    #region 补差费
+                    //待续费社保列表
+                    List<SocialSecurity> RenewList = DbHelper.Query<SocialSecurity>($@"select SocialSecurity.*,SocialSecurityPeople.SocialSecurityPeopleName from SocialSecurity 
+  left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
+  where SocialSecurityPeople.MemberID = {parameter.MemberID} and SocialSecurity.Status = 4");
+                    //每人每月补差费用
+                    decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+                    //更新订单补差费用
+                    string BuchaSqlStr = string.Empty;
+
+
+                    decimal BuchaAmountTotal = 0;
+                    //遍历订单下的所有子订单
+                    foreach (var socialSecurity1 in RenewList)
+                    {
+                        //参保月份、参保月数、签约单位ID
+                        SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={socialSecurity1.SocialSecurityPeopleID}");
+                        decimal BuchaAmount = 0;
+                        if (socialSecurity != null)
+                        {
+                            //int payMonth = socialSecurity.PayTime.Month;
+                            int monthCount = socialSecurity.PayMonthCount;
+                            //相对应的签约单位城市是否已调差（社平工资）
+                            EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                                                                                                                                                                  //已调,当年以后直到年末都不需交，直到一月份开始交
+                            if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                            {
+                                int freeBuchaMonthCount = 0;//免补差月数
+                                if (DateTime.Now.Day > 15)
+                                    freeBuchaMonthCount = 12 - DateTime.Now.Month;
+                                else
+                                    freeBuchaMonthCount = 12 + 1 - DateTime.Now.Month;
+
+                                //续费月数>参保人剩余月数
+                                if (parameter.MonthCount > freeBuchaMonthCount && monthCount > freeBuchaMonthCount && parameter.MonthCount > monthCount)
+                                {
+                                    BuchaAmount = (parameter.MonthCount - monthCount) * FreezingAmount;
+                                    ShouNote += string.Format("{0}:补差费:{1};", socialSecurity1.SocialSecurityPeopleName, BuchaAmount);
+                                    ZhiNote += string.Format("{0}:补差费:{1};", socialSecurity1.SocialSecurityPeopleName, BuchaAmount);
+                                }
+                            }
+                            //未调，往后每个月都需要交
+                            if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                            {
+                                if (parameter.MonthCount > monthCount)
+                                {
+                                    BuchaAmount = FreezingAmount * (parameter.MonthCount - monthCount);
+                                    ShouNote += string.Format("{0}:补差费:{1};", socialSecurity1.SocialSecurityPeopleName, BuchaAmount);
+                                    ZhiNote += string.Format("{0}:补差费:{1};", socialSecurity1.SocialSecurityPeopleName, BuchaAmount);
+                                }
+                            }
+                        }
+                        BuchaAmountTotal += BuchaAmount;
+                    }
+
+                    #endregion
+
                     //服务费总数
                     TotalServiceCost = SSServiceCost + AFServiceCost;
-
 
                     sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
 values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','{ShouNote}',{parameter.Amount},{accountInfo.Account + parameter.Amount},getdate());
                                        insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','{ZhiNote}',{TotalServiceCost},{accountInfo.Account + parameter.Amount - TotalServiceCost},getdate()); ";
-
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','{ZhiNote}',{TotalServiceCost},{accountInfo.Account + parameter.Amount - TotalServiceCost - BuchaAmountTotal},getdate()); ";
 
                     //修改账户余额
                     decimal account = parameter.Amount - TotalServiceCost;
-                    string sqlMember = $"update Members set Account=ISNULL(Account,0)+{account} where MemberID={parameter.MemberID}";
+                    string sqlMember = $"update Members set Account=ISNULL(Account,0)+{account},Bucha+={BuchaAmountTotal} where MemberID={parameter.MemberID}";
                     int updateResult = DbHelper.ExecuteSqlCommand(sqlMember, null);
 
                     //更新记录

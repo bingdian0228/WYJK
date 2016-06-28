@@ -59,6 +59,7 @@
     <Compile Include="IService\SocialSecurity\IDrawCashService.cs" />
     <Compile Include="IService\SocialSecurity\IMessageService.cs" />
     <Compile Include="IService\SocialSecurity\IOrderService.cs" />
+    <Compile Include="IService\SocialSecurity\IPaymentDetailService.cs" />
     <Compile Include="IService\SocialSecurity\ISocialSecurityService.cs" />
     <Compile Include="IService\SocialSecurity\IMemberService.cs" />
     <Compile Include="Data\ColumnAttributeTypeMapper.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="ServiceImpl\SocialSecurity\MessageService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\OrderService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\ParameterSettingService.cs" />
+    <Compile Include="ServiceImpl\SocialSecurity\PaymentDetailService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\SocialSecurityService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\MemberService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\UserService.cs" />

@@ -18,16 +18,16 @@ namespace WYJK.Data.ServiceImpl
 
         public async Task<PagedResult<Information>> GetNewNoticeList(InformationParameter parameter)
         {
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row,i.* from Information i where Name like @Name) ii where ii.Row between @StartIndex AND @EndIndex";
-
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type) ii where ii.Row between @StartIndex AND @EndIndex";
 
             List<Information> informationList = await DbHelper.QueryAsync<Information>(sql, new
             {
                 Name = "%" + parameter.Name + "%",
+                Type = parameter.Type,
                 StartIndex = parameter.SkipCount,
                 EndIndex = parameter.TakeCount
             });
-            int totalCount = await DbHelper.QuerySingleAsync<int>("select count(0) from Information where Name like @Name ", new { Name = "%" + parameter.Name + "%" });
+            int totalCount = await DbHelper.QuerySingleAsync<int>("select count(0) from Information where Name like @Name and Type = @Type", new { Name = "%" + parameter.Name + "%", Type = parameter.Type });
 
             return new PagedResult<Information>
             {
@@ -46,7 +46,7 @@ namespace WYJK.Data.ServiceImpl
         public async Task<bool> InformationAdd(Information model)
         {
             string ImgUrls = string.Join(";", model.ImgUrls);
-            string sql = $"insert into Information(Name,ImgUrl,StrContent) values('{model.Name}','{ImgUrls}','{model.StrContent}')";
+            string sql = $"insert into Information(Name, Type ImgUrl, StrContent) values('{model.Name}','{model.Type}','{ImgUrls}','{model.StrContent}')";
             int result = await DbHelper.ExecuteSqlCommandAsync(sql);
             return result > 0;
         }
@@ -70,9 +70,11 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> ModifyInformation(Information model)
         {
-            string sql = $"update Information set Name=@Name,ImgUrl=@ImgUrl where ID=@ID";
+            string sql = $"update Information set Name = @Name, Type = @Type, ImgUrl = @ImgUrl where ID = @ID";
+
             DbParameter[] parameters = new DbParameter[] {
-                new SqlParameter("@Name",model.Name),
+                new SqlParameter("@Name", model.Name),
+                new SqlParameter("@Type", model.Type),
                 new SqlParameter("@ImgUrl", model.ImgUrl ?? (object)DBNull.Value),
                 new SqlParameter("@ID", model.ID)
             };
@@ -80,6 +82,7 @@ namespace WYJK.Data.ServiceImpl
             int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);
             return result > 0;
         }
+
         /// <summary>
         /// 批量删除信息
         /// </summary>

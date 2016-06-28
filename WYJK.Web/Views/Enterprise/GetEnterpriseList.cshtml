@@ -151,7 +151,17 @@
             <a href="@Url.Action("AddEnterprise","Enterprise")" class="btn btn-primary radius action-complete"><i class="Hui-iconfont">&#xe600;</i> 新增企业</a>
             <a href="javascript:;" class="btn btn-danger radius action-delete"><i class="Hui-iconfont">&#xe6e2;</i> 删除企业</a>
             <a href="javascript:;" class="btn btn-default radius action-select"><i class="Hui-iconfont">&#xe665;</i> 查看参保人列表</a>
+
         </span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        @using (Html.BeginForm("ImportPaymentDetails", "Enterprise", FormMethod.Post, new { name = "shiye", enctype = "multipart/form-data" }))
+        {
+            <p>
+                失业缴费明细：<input id="FileUpload" type="file" name="files" />
+                <input id="shiye" type="submit" value="导入" style="width:60px;" />
+            </p>
+        }
     </div>
 </div>

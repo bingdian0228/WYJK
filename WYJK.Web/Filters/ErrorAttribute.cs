@@ -21,7 +21,7 @@ namespace WYJK.Web.Filters
         {
             LogManager logManager = new LogManager(HttpContext.Current.Server.MapPath("~/HttpException.txt"));
 
-            logManager.SaveLog(context.Exception.Message, DateTime.Now);
+            logManager.SaveLog(context.Exception.StackTrace, DateTime.Now);
 
             return Task.Run(() =>
             {

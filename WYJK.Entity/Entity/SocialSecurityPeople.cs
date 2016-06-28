@@ -183,6 +183,11 @@ namespace WYJK.Entity
         /// </summary>
         public decimal AccumulationFundFirstBacklogCost { get; set; }
 
+        /// <summary>
+        /// 冻结费
+        /// </summary>
+        public decimal Bucha { get; set; }
+
 
     }
 
@@ -226,6 +231,10 @@ namespace WYJK.Entity
         /// 总额
         /// </summary>
         public decimal Amount { get; set; }
+        /// <summary>
+        /// 是否可修改
+        /// </summary>
+        public bool IsCanModify { get; set; }
     }
 
     /// <summary>

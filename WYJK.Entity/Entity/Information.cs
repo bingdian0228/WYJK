@@ -28,6 +28,17 @@ namespace WYJK.Entity
         /// 图片名称
         /// </summary>		
         public string ImgUrl { get; set; }
+
+        /// <summary>
+        /// 信息类型
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime CreateTime { get; set; }
+
         /// <summary>
         /// StrContent
         /// </summary>		
@@ -43,6 +54,8 @@ namespace WYJK.Entity
         /// 标题
         /// </summary>		
         public string Name { get; set; }
+
+        public string Type { get; set; }
     }
 
 

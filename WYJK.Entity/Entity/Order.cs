@@ -184,6 +184,10 @@ namespace WYJK.Entity
         /// </summary>
         public decimal FirstBacklogCost { get; set; }
         /// <summary>
+        /// 社保补差
+        /// </summary>
+        public decimal SocialSecurityBuCha { get; set; }
+        /// <summary>
         /// 支付方式
         /// </summary>
         public string PaymentMethod { get; set; }

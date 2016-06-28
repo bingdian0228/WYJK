@@ -83,7 +83,7 @@ namespace WYJK.Web.Controllers.Mvc
             if (model.ImgUrls != null)
             {
                 model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
-
+                model.CreateTime = DateTime.Now;
             }
 
             bool flag = await _informationService.ModifyInformation(model);
