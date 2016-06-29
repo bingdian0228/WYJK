@@ -37,7 +37,7 @@ namespace WYJK.Data.IService
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        Task<Boolean> RoleAdd(Roles parameter);
+        Task<int> RoleAdd(Roles parameter);
 
         /// <summary>
         /// 根据角色名称判断角色是否已存在

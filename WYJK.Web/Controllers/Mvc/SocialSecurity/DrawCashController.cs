@@ -15,7 +15,7 @@ using WYJK.Web.Models;
 namespace WYJK.Web.Controllers.Mvc
 {
     [Authorize]
-    public class DrawCashController : Controller
+    public class DrawCashController : BaseController
     {
         private readonly IDrawCashService _drawCashService = new DrawCashService();
 

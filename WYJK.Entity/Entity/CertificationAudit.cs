@@ -75,6 +75,11 @@ namespace WYJK.Entity
         /// 社会信用代码
         /// </summary>		
         public string SocialSecurityCreditCode { get; set; }
+
+        /// <summary>
+        /// 企业岗位名称
+        /// </summary>
+        public string EnterprisePositionName { get; set; }
         /// <summary>
         /// 营业执照
         /// </summary>		
@@ -99,6 +104,10 @@ namespace WYJK.Entity
         /// 经营者营业执照
         /// </summary>		
         public string BusinessLicensePhoto { get; set; }
+        /// <summary>
+        /// 个体岗位名称
+        /// </summary>
+        public string BusinessPositionName { get; set; }
 
     }
 

@@ -1,0 +1,88 @@
+﻿@model Users
+@{
+    ViewBag.Title = "员工编辑";
+}
+@section Header
+{
+
+}
+@section Footer{
+    <script src="~/Content/lib/select2-master/docs/vendor/js/bootstrap.min.js"></script>
+    <link href="~/Content/lib/select2-master/docs/css/bootstrap.css" rel="stylesheet" />
+
+    <script src="~/Content/lib/select2-master/dist/js/select2.js"></script>
+    <link href="~/Content/lib/select2-master/dist/css/select2.css" rel="stylesheet" />
+
+
+    <SCRIPT type="text/javascript">
+        //var data = [];
+        $.ajax({
+            url: '@Url.Action("GetCheckedRolesList", "User")?userid=@Request.QueryString["userID"]',
+            async: false,
+            type: "get",
+            dataType: "json",
+            success: function (response) {
+                $.each(response.list, function (i, obj) {
+
+                    var str = obj.check == true ? 'selected' : '';
+
+                    $("[name='RoleID']").append("<option value='" + obj.id + "' " + str + ">" + obj.text + "</option>");
+                });
+
+
+            },
+            error: function () {
+
+            }
+        });
+
+        //多选
+        $("[name='RoleID']").select2({
+            tags: false
+        })
+
+    </SCRIPT>
+}
+<div class="pd-20">
+    @using (Html.BeginForm("UserEdit", "User", FormMethod.Post, new { id = "form-article-add", @class = "form form-horizontal" }))
+    {
+        if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage + "") == false)
+        {
+            <div class="Huialert Huialert-info">@(ViewBag.ErrorMessage)</div>
+        }
+        @Html.HiddenFor(n => n.UserID)
+        <div class="row cl">
+            <label class="form-label col-2">用户名：</label>
+            <div class="formControls col-6">
+                @Html.TextBoxFor(m => m.UserName, new { @class = "input-text radius", placeholder = "用户名" })
+            </div>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.UserName)</div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">真实姓名：</label>
+            <div class="formControls col-6">
+                @Html.TextBoxFor(m => m.TrueName, new
+           {
+               @class = "input-text radius",
+               placeholder = "真实姓名"
+           })
+            </div>
+            <div class="col-2"></div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">角色：</label>
+            <div class="formControls col-6">
+                <select name="RoleID" multiple="multiple" class="form-control"></select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-10 col-offset-2">
+                <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+            </div>
+        </div>
+
+
+    }
+</div>

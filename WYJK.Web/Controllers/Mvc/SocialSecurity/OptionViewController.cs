@@ -17,7 +17,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// 基础信息控制器
     /// </summary>
     [Authorize]
-    public class OptionViewController : Controller
+    public class OptionViewController : BaseController
     {
         #region 省市区联动
         /// <summary>

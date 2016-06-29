@@ -200,7 +200,7 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(member.UserType))
                         </td>
-                        <td>@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=1">@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))</a></td>
                         @*<td>@member.MemberName</td>*@
                         <td>@member.MemberPhone</td>
                         <td>@member.SocialSecurityPeopleCount</td>

@@ -19,7 +19,7 @@ namespace WYJK.Entity
         /// <summary>
         /// 权限编码
         /// </summary>
-        [Required(ErrorMessage ="权限编码必填")]
+        [Required(ErrorMessage = "权限编码必填")]
         public string Code { get; set; }
         /// <summary>
         /// 描述
@@ -39,7 +39,7 @@ namespace WYJK.Entity
         /// <summary>
         /// 父级编码
         /// </summary>
-        public string ParentCode { get; set; }
+        public string ParentID { get; set; }
         /// <summary>
         /// 排序
         /// </summary>
@@ -50,5 +50,14 @@ namespace WYJK.Entity
         public bool IsModified { get; set; }
 
 
+    }
+
+
+    public class TempPermissions
+    {
+        public int id { get; set; }
+        public int pId { get; set; }
+        public string name { get; set; }
+        public bool @checked { get; set; }
     }
 }

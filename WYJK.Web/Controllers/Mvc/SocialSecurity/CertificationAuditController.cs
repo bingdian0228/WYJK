@@ -14,7 +14,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// <summary>
     /// 认证审核
     /// </summary>
-    public class CertificationAuditController : Controller
+    public class CertificationAuditController : BaseController
     {
         private readonly ICertificationAuditService _certificationAuditService = new CertificationAuditService();
 
@@ -57,20 +57,25 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public ActionResult CertificationAudit(int id, int status)
         {
+            CertificationAudit certificationAudit = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where ID={id}");
+
             if (status == (int)CertificationAuditEnum.NoPass)
             {
                 DbHelper.ExecuteSqlCommand($"update CertificationAudit set Status={(int)CertificationAuditEnum.NoPass},AuditDate=getdate() where ID={id}", null);
+
+
+                DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=0,UserType={(int)UserTypeEnum.GeRen} where MemberID={certificationAudit.MemberID}",null);
             }
             else {
-                CertificationAudit certificationAudit = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where ID={id}");
+                
                 if (certificationAudit.UserType == Convert.ToString((int)UserTypeEnum.QiYe))
                 {
                     DbHelper.ExecuteSqlCommand($@"update CertificationAudit set Status={(int)CertificationAuditEnum.Pass},AuditDate=getdate() where ID={id};
-                                      update Members set IsAuthentication=1,UserType={(int)UserTypeEnum.QiYe},EnterpriseName='{certificationAudit.EnterpriseName}',EnterpriseType='{certificationAudit.EnterpriseType}',EnterpriseTax='{certificationAudit.EnterpriseTax}',EnterpriseArea='{certificationAudit.EnterpriseArea}',EnterpriseLegal='{certificationAudit.EnterpriseLegal}',EnterpriseLegalIdentityCardNo='{certificationAudit.EnterpriseLegalIdentityCardNo}',EnterprisePeopleNum='{certificationAudit.EnterprisePeopleNum}',SocialSecurityCreditCode='{certificationAudit.SocialSecurityCreditCode}',EnterpriseBusinessLicense='{certificationAudit.EnterpriseBusinessLicense}' where MemberID={certificationAudit.MemberID};", null);
+                                      update Members set IsAuthentication=1,UserType={(int)UserTypeEnum.QiYe},EnterpriseName='{certificationAudit.EnterpriseName}',EnterpriseType='{certificationAudit.EnterpriseType}',EnterpriseTax='{certificationAudit.EnterpriseTax}',EnterpriseArea='{certificationAudit.EnterpriseArea}',EnterpriseLegal='{certificationAudit.EnterpriseLegal}',EnterpriseLegalIdentityCardNo='{certificationAudit.EnterpriseLegalIdentityCardNo}',EnterprisePeopleNum='{certificationAudit.EnterprisePeopleNum}',SocialSecurityCreditCode='{certificationAudit.SocialSecurityCreditCode}',EnterpriseBusinessLicense='{certificationAudit.EnterpriseBusinessLicense}',EnterprisePositionName='{certificationAudit.EnterprisePositionName}' where MemberID={certificationAudit.MemberID};", null);
                 }
                 else {
                     DbHelper.ExecuteSqlCommand($@"update CertificationAudit set Status={(int)CertificationAuditEnum.Pass},AuditDate=getdate() where ID={id};
-                                      update Members set IsAuthentication=1,UserType={(int)UserTypeEnum.GeTiJingYing},BusinessName='{certificationAudit.BusinessName}',BusinessUser='{certificationAudit.BusinessUser}',BusinessIdentityCardNo='{certificationAudit.BusinessIdentityCardNo}',BusinessIdentityPhoto='{certificationAudit.BusinessIdentityPhoto}',BusinessLicensePhoto='{certificationAudit.BusinessLicensePhoto}'  where MemberID={certificationAudit.MemberID};", null);
+                                      update Members set IsAuthentication=1,UserType={(int)UserTypeEnum.GeTiJingYing},BusinessName='{certificationAudit.BusinessName}',BusinessUser='{certificationAudit.BusinessUser}',BusinessIdentityCardNo='{certificationAudit.BusinessIdentityCardNo}',BusinessIdentityPhoto='{certificationAudit.BusinessIdentityPhoto}',BusinessLicensePhoto='{certificationAudit.BusinessLicensePhoto}',BusinessPositionName='{certificationAudit.BusinessPositionName}'  where MemberID={certificationAudit.MemberID};", null);
                 }
             }
 

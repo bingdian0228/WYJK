@@ -41,18 +41,28 @@ namespace WYJK.Entity
         /// </summary>		
         public string HouseholdProperty { get; set; }
         /// <summary>
-        /// 是否缴纳社保
+        /// 是否展示社保信息
         /// </summary>		
         public bool IsPaySocialSecurity { get; set; }
         /// <summary>
-        /// 是否缴纳公积金
+        /// 是否展示公积金信息
         /// </summary>		
         public bool IsPayAccumulationFund { get; set; }
 
         /// <summary>
+        /// 是否可修改社保信息
+        /// </summary>
+        public bool IsModifySocialSecurity { get; set; }
+
+        /// <summary>
+        /// 是否可修改公积金信息
+        /// </summary>
+        public bool IsModifyAccumulationFund { get; set; }
+        /// <summary>
         /// 社保信息
         /// </summary>
         public SocialSecurity socialSecurity { get; set; }
+
 
         /// <summary>
         /// 公积金信息
@@ -67,6 +77,11 @@ namespace WYJK.Entity
         /// 是否有订单已经支付过
         /// </summary>
         public bool IsPay { get; set; }
+
+        /// <summary>
+        /// 是否重新办理
+        /// </summary>
+        public bool IsReApply { get; set; }
 
     }
 
@@ -211,10 +226,18 @@ namespace WYJK.Entity
         /// 总额
         /// </summary>
         public decimal Amount { get; set; }
+
         /// <summary>
-        /// 是否可修改
+        /// 是否显示修改
+        /// </summary>
+        public bool IsDisplayModify { get; set; }
+
+        /// <summary>
+        /// 是否可修改参保人
         /// </summary>
         public bool IsCanModify { get; set; }
+
+
     }
 
     /// <summary>
@@ -237,6 +260,10 @@ namespace WYJK.Entity
 
         #region 社保信息
         /// <summary>
+        /// 社保是否支付过
+        /// </summary>
+        public bool ssIsPay { get; set; }
+        /// <summary>
         /// 起缴时间
         /// </summary>		
         public DateTime? SSPayTime { get; set; }
@@ -257,6 +284,10 @@ namespace WYJK.Entity
         #endregion
 
         #region 公积金信息
+        /// <summary>
+        /// 公积金是否支付过
+        /// </summary>
+        public bool afIsPay { get; set; }
         /// <summary>
         /// 起缴时间
         /// </summary>		

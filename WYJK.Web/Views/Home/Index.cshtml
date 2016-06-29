@@ -6,6 +6,28 @@
 }
 @section Footer{
     <script type="text/javascript" src="/Content/lib/layer/2.1/layer.js"></script>
+    <script type="text/javascript">
+
+        function SendOnlineUser() {
+            $.ajax({
+                url: "@Url.Action("UpdateCurrentOnlineUser","Home")",
+                data: { "UserName": "@HttpContext.Current.User.Identity.Name" },
+                dateType: "json",
+                type: "post",
+                success: function (response) {
+                    //layer.msg("请求成功");
+                },
+                error: function (error) {
+                    //layer.msg("服务器错误");
+                }
+            });
+        }
+
+        //SendOnlineUser();
+        //定时发送在线用户
+        setInterval("SendOnlineUser()", 60000);
+
+    </script>
 }
 <header class="Hui-header cl">
     <a class="Hui-logo l" title="无忧借款 v1.0" href="/">无忧借款</a> <a class="Hui-logo-m l" href="/" title="H-ui.admin">H-ui</a> <span class="Hui-subtitle l">V1.0</span>
@@ -38,90 +60,235 @@
 <aside class="Hui-aside">
     <input runat="server" id="divScrollValue" type="hidden" value="" />
     <div class="menu_dropdown bk_2">
-        <dl id="menu-article">
-            <dt><i class="Hui-iconfont">&#xe616;</i> 客户管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href='@Url.Action("GetCustomerServiceList","CustomerService")' data-title="客户管理" href="javascript:void(0)">客户管理</a></li>
-                    <li><a _href='@Url.Action("GetMemberList","Member")' data-title="注册用户" href="javascript:void(0)">注册用户</a></li>
-                </ul>
-            </dd>
-        </dl>
-        <dl id="menu-article">
-            <dt><i class="Hui-iconfont">&#xe616;</i> 财务管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href='@Url.Action("GetOrderList","Order")' data-title="订单审核" href="javascript:void(0)">订单审核</a></li>
-                    <li><a _href='@Url.Action("CustomerPaymentManagement","CustomerService")' data-title="缴费管理" href="javascript:void(0)">缴费管理</a></li>
-                    <li><a _href='@Url.Action("DrawCashList","DrawCash")?Status=-1' data-title="提现审核" href="javascript:void(0)">提现审核</a></li>
-                </ul>
-            </dd>
-        </dl>
-        <dl id="menu-article">
-            <dt><i class="Hui-iconfont">&#xe616;</i> 社保业务办理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href='@Url.Action("SocialSecurityOverview","SocialSecurity")' data-title="社保业务总览" href="javascript:void(0)">社保业务总览</a></li>
-                    <li><a _href='@Url.Action("SocialSecurityWaitingHandle","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.WaitingHandle)' data-title="社保待办业务" href="javascript:void(0)">社保待办业务</a></li>
-                    <li><a _href='@Url.Action("SocialSecurityNormal","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.Normal)' data-title="社保归档业务" href="javascript:void(0)">社保归档业务</a></li>
-                    <li><a _href='@Url.Action("SocialSecurityRenew","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.Renew)' data-title="社保待续费业务" href="javascript:void(0)">社保待续费业务</a></li>
-                    <li><a _href='@Url.Action("SocialSecurityWaitingStop","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.WaitingStop)' data-title="社保待办停业务" href="javascript:void(0)">社保待办停业务</a></li>
-                    <li><a _href='@Url.Action("SocialSecurityAlreadyStop","SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.AlreadyStop)' data-title="社保已办停业务" href="javascript:void(0)">社保已办停业务</a></li>
-                </ul>
-            </dd>
-        </dl>
-        <dl id="menu-article">
-            <dt><i class="Hui-iconfont">&#xe616;</i> 公积金业务办理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href='@Url.Action("AccumulationFundOverview","AccumulationFund")' data-title="公积金业务总览" href="javascript:void(0)">公积金业务总览</a></li>
-                    <li><a _href='@Url.Action("AccumulationFundWaitingHandle","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.WaitingHandle)' data-title="公积金待办业务" href="javascript:void(0)">公积金待办业务</a></li>
-                    <li><a _href='@Url.Action("AccumulationFundNormal","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.Normal)' data-title="公积金归档业务" href="javascript:void(0)">公积金归档业务</a></li>
-                    <li><a _href='@Url.Action("AccumulationFundRenew","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.Renew)' data-title="公积金待续费业务" href="javascript:void(0)">公积金待续费业务</a></li>
-                    <li><a _href='@Url.Action("AccumulationFundWaitingStop","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.WaitingStop)' data-title="公积金待办停业务" href="javascript:void(0)">公积金待办停业务</a></li>
-                    <li><a _href='@Url.Action("AccumulationFundAlreadyStop","AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.AlreadyStop)' data-title="公积金已办停业务" href="javascript:void(0)">公积金已办停业务</a></li>
-                </ul>
-            </dd>
-        </dl>
-        <dl id="menu-article">
-            <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href='@Url.Action("GetBaseAuditList","BaseAudit")?Type=0' data-title="社保基数审核" href="javascript:void(0)">社保基数审核</a></li>
-                    <li><a _href='@Url.Action("GetBaseAuditList","BaseAudit")?Type=1' data-title="公积金基数审核" href="javascript:void(0)">公积金基数审核</a></li>
-                </ul>
-            </dd>
-        </dl>
-        <dl id="menu-article">
-            <dt><i class="Hui-iconfont">&#xe616;</i> 个人借款<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href='@Url.Action("GetSubjectList","LoanSetting")' data-title="身价计算设置" href="javascript:void(0)">身价计算设置</a></li>
-                    <li><a _href='@Url.Action("GetLoanMemberList","LoanMember")' data-title="用户列表" href="javascript:void(0)">用户列表</a></li>
-                    <li><a _href='@Url.Action("GetLoanAuditList","LoanAudit")' data-title="借款审核" href="javascript:void(0)">借款审核</a></li>
-              </ul>
-            </dd>
-        </dl>
-        <dl id="menu-picture">
-            <dt><i class="Hui-iconfont">&#xe613;</i> 系统管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-            <dd>
-                <ul>
-                    <li><a _href="@Url.Action("GetCertificationAuditList", "CertificationAudit")" data-title="认证审核管理" href="javascript:void(0)">认证审核管理</a></li>
-                    <li><a _href="@Url.Action("GetAllRoles","User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
-                    <li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>
-                    @*<li><a _href="@Url.Action("GetInformationList","Information")" data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
-                    <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
-                    <li><a _href="@Url.Action("GetInsuredIntroduceList","InsuredIntroduce")" data-title="参保介绍管理" href="javascript:void(0)">参保介绍管理</a></li>
-                    <li><a _href="@Url.Action("GetUserList","User")" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
-                    <li><a _href="@Url.Action("GetEnterpriseCityList","Enterprise")" data-title="城市社平管理" href="javascript:void(0)">城市社平管理</a></li>
-                    <li><a _href="@Url.Action("GetEnterpriseList","Enterprise")" data-title="签约企业管理" href="javascript:void(0)">签约企业管理</a></li>
-                    <li><a _href="@Url.Action("GetPaymentDetailsList","Enterprise")" data-title="企业社保明细" href="javascript:void(0)">企业社保明细</a></li>
-                    <li><a _href='@Url.Action("GetCostParameter","ParameterSetting")?Status=@((int)PayTypeEnum.SocialSecurity)' data-title="社保收费标准" href="javascript:void(0)">社保收费标准</a></li>
-                    <li><a _href="@Url.Action("GetCostParameter","ParameterSetting")?Status=@((int)PayTypeEnum.AccumulationFund)" data-title="公积金收费标准" href="javascript:void(0)">公积金收费标准</a></li>
-                    <li><a _href='@Url.Action("GetLogList","Logger")' data-title="日志管理" href="javascript:void(0)">日志管理</a></li>
-                </ul>
-            </dd>
-        </dl>
+        @*检测当前用户所拥有的权限是否包含该菜单*@
+        @{
+            //获取权限列表
+            List<string> permissionList = WYJK.Data.DbHelper.Query<Permissions>(@"select PERMISSIONS.* from Users
+left join UserRole on users.UserID=UserRole.UserID
+left join RolePermission on userrole.RoleID = RolePermission.RoleID
+left join Permissions on RolePermission.PermissionID = PERMISSIONS.PermissionID
+where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n => n.Description).ToList();
+
+        }
+        @if (permissionList.Contains("客户管理"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 客户管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("客服专员"))
+                        {
+                            <li><a _href='@Url.Action("GetCustomerServiceList", "CustomerService")' data-title="客服专员" href="javascript:void(0)">客服专员</a></li>
+                        }
+                        @if (permissionList.Contains("业务专员"))
+                        {
+                            <li><a _href='@Url.Action("GetBusinessCommissionerList", "BusinessCommissioner")' data-title="业务专员" href="javascript:void(0)">业务专员</a></li>
+                        }
+                        @if (permissionList.Contains("注册用户"))
+                        {
+                            <li><a _href='@Url.Action("GetMemberList", "Member")' data-title="注册用户" href="javascript:void(0)">注册用户</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
+        @if (permissionList.Contains("财务管理"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 财务管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("订单审核"))
+                        {
+                            <li><a _href='@Url.Action("GetOrderList", "Order")' data-title="订单审核" href="javascript:void(0)">订单审核</a></li>
+                        }
+                        @if (permissionList.Contains("缴费管理"))
+                        {
+                            <li><a _href='@Url.Action("CustomerPaymentManagement", "CustomerService")' data-title="缴费管理" href="javascript:void(0)">缴费管理</a></li>
+                        }
+                        @if (permissionList.Contains("提现审核"))
+                        {
+                            <li><a _href='@Url.Action("DrawCashList", "DrawCash")?Status=-1' data-title="提现审核" href="javascript:void(0)">提现审核</a></li>
+                        }
+                        @if (permissionList.Contains("充值审核"))
+                        {
+                            <li><a _href='@Url.Action("GetRechargeOrderList", "RechargeOrders")?Status=-1' data-title="充值审核" href="javascript:void(0)">充值审核</a></li>
+                        }
+                        @if (permissionList.Contains("续费审核"))
+                        {
+                            <li><a _href='@Url.Action("GetRenewOrderList", "RenewOrders")?Status=-1' data-title="续费审核" href="javascript:void(0)">续费审核</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
+        @if (permissionList.Contains("社保业务办理"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 社保业务办理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("社保业务总览"))
+                        {
+                            <li><a _href='@Url.Action("SocialSecurityOverview", "SocialSecurity")' data-title="社保业务总览" href="javascript:void(0)">社保业务总览</a></li>
+                        }
+                        @if (permissionList.Contains("社保待办业务"))
+                        {
+                            <li><a _href='@Url.Action("SocialSecurityWaitingHandle", "SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.WaitingHandle)' data-title="社保待办业务" href="javascript:void(0)">社保待办业务</a></li>
+                        }
+                        @if (permissionList.Contains("社保归档业务"))
+                        {
+                            <li><a _href='@Url.Action("SocialSecurityNormal", "SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.Normal)' data-title="社保归档业务" href="javascript:void(0)">社保归档业务</a></li>
+                        }
+                        @if (permissionList.Contains("社保待续费业务"))
+                        {
+                            <li><a _href='@Url.Action("SocialSecurityRenew", "SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.Renew)' data-title="社保待续费业务" href="javascript:void(0)">社保待续费业务</a></li>
+                        }
+                        @if (permissionList.Contains("社保待办停业务"))
+                        {
+                            <li><a _href='@Url.Action("SocialSecurityWaitingStop", "SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.WaitingStop)' data-title="社保待办停业务" href="javascript:void(0)">社保待办停业务</a></li>
+                        }
+                        @if (permissionList.Contains("社保已办停业务"))
+                        {
+                            <li><a _href='@Url.Action("SocialSecurityAlreadyStop", "SocialSecurity")?Status=@((int)SocialSecurityStatusEnum.AlreadyStop)' data-title="社保已办停业务" href="javascript:void(0)">社保已办停业务</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
+        @if (permissionList.Contains("公积金业务办理"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 公积金业务办理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("公积金业务总览"))
+                        {
+                            <li><a _href='@Url.Action("AccumulationFundOverview", "AccumulationFund")' data-title="公积金业务总览" href="javascript:void(0)">公积金业务总览</a></li>
+                        }
+                        @if (permissionList.Contains("公积金待办业务"))
+                        {
+                            <li><a _href='@Url.Action("AccumulationFundWaitingHandle", "AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.WaitingHandle)' data-title="公积金待办业务" href="javascript:void(0)">公积金待办业务</a></li>
+                        }
+                        @if (permissionList.Contains("公积金归档业务"))
+                        {
+                            <li><a _href='@Url.Action("AccumulationFundNormal", "AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.Normal)' data-title="公积金归档业务" href="javascript:void(0)">公积金归档业务</a></li>
+                        }
+                        @if (permissionList.Contains("公积金待续费业务"))
+                        {
+                            <li><a _href='@Url.Action("AccumulationFundRenew", "AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.Renew)' data-title="公积金待续费业务" href="javascript:void(0)">公积金待续费业务</a></li>
+                        }
+                        @if (permissionList.Contains("公积金待办停业务"))
+                        {
+                            <li><a _href='@Url.Action("AccumulationFundWaitingStop", "AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.WaitingStop)' data-title="公积金待办停业务" href="javascript:void(0)">公积金待办停业务</a></li>
+                        }
+                        @if (permissionList.Contains("公积金已办停业务"))
+                        {
+                            <li><a _href='@Url.Action("AccumulationFundAlreadyStop", "AccumulationFund")?Status=@((int)SocialSecurityStatusEnum.AlreadyStop)' data-title="公积金已办停业务" href="javascript:void(0)">公积金已办停业务</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
+        @if (permissionList.Contains("基数审核"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("社保基数审核"))
+                        {
+                            <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=0' data-title="社保基数审核" href="javascript:void(0)">社保基数审核</a></li>
+                        }
+                        @if (permissionList.Contains("公积金基数审核"))
+                        {
+                            <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=1' data-title="公积金基数审核" href="javascript:void(0)">公积金基数审核</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
+        @if (permissionList.Contains("个人借款"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 个人借款<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("身价计算设置"))
+                        {
+                            <li><a _href='@Url.Action("GetSubjectList", "LoanSetting")' data-title="身价计算设置" href="javascript:void(0)">身价计算设置</a></li>
+                        }
+                        @if (permissionList.Contains("用户列表"))
+                        {
+                            <li><a _href='@Url.Action("GetLoanMemberList", "LoanMember")' data-title="用户列表" href="javascript:void(0)">用户列表</a></li>
+                        }
+                        @if (permissionList.Contains("借款审核"))
+                        {
+                            <li><a _href='@Url.Action("GetLoanAuditList", "LoanAudit")' data-title="借款审核" href="javascript:void(0)">借款审核</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
+        @if (permissionList.Contains("系统管理"))
+        {
+            <dl id="menu-picture">
+                <dt><i class="Hui-iconfont">&#xe613;</i> 系统管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("员工管理"))
+                        {
+                            <li><a _href="@Url.Action("GetUserList", "User")" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
+                        }
+                        @if (permissionList.Contains("角色管理"))
+                        {
+                            <li><a _href="@Url.Action("GetAllRoles", "User")" data-title="角色管理" href="javascript:void(0)">角色管理</a></li>
+                        }
+                        @if (permissionList.Contains("认证审核管理"))
+                        {
+                            <li><a _href="@Url.Action("GetCertificationAuditList", "CertificationAudit")" data-title="认证审核管理" href="javascript:void(0)">认证审核管理</a></li>
+                        }
+
+
+                        @*<li><a _href="@Url.Action("GetAllPermissions","User")" data-title="权限管理" href="javascript:void(0)">权限管理</a></li>*@
+                        @*<li><a _href="@Url.Action("GetInformationList","Information")" data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
+                            <li><a _href="@Url.Action("GetInformationList","Information")" data-title="咨询管理" href="javascript:void(0)">咨询管理</a></li>*@
+                        @if (permissionList.Contains("参保介绍管理"))
+                        {
+                            <li><a _href="@Url.Action("GetInsuredIntroduceList", "InsuredIntroduce")" data-title="参保介绍管理" href="javascript:void(0)">参保介绍管理</a></li>
+                        }
+                        @if (permissionList.Contains("城市社平管理"))
+                        {
+                            <li><a _href="@Url.Action("GetEnterpriseCityList", "Enterprise")" data-title="城市社平管理" href="javascript:void(0)">城市社平管理</a></li>
+                        }
+                        @if (permissionList.Contains("签约企业管理"))
+                        {
+                            <li><a _href="@Url.Action("GetEnterpriseList", "Enterprise")" data-title="签约企业管理" href="javascript:void(0)">签约企业管理</a></li>
+                        }
+                        @if (permissionList.Contains("企业社保明细"))
+                        {
+                            <li><a _href="@Url.Action("GetPaymentDetailsList", "Enterprise")" data-title="企业社保明细" href="javascript:void(0)">企业社保明细</a></li>
+                        }
+                        @if (permissionList.Contains("社保收费标准"))
+                        {
+                            <li><a _href='@Url.Action("GetCostParameter", "ParameterSetting")?Status=@((int)PayTypeEnum.SocialSecurity)' data-title="社保收费标准" href="javascript:void(0)">社保收费标准</a></li>
+                        }
+                        @if (permissionList.Contains("公积金收费标准"))
+                        {
+                            <li><a _href="@Url.Action("GetCostParameter", "ParameterSetting")?Status=@((int)PayTypeEnum.AccumulationFund)" data-title="公积金收费标准" href="javascript:void(0)">公积金收费标准</a></li>
+                        }
+                        @if (permissionList.Contains("服务协议"))
+                        {
+                            <li><a _href='@Url.Action("GetServiceProtocol", "ServiceProtocol")' data-title="服务协议" href="javascript:void(0)">服务协议</a></li>
+                        }
+                        @if (permissionList.Contains("日志管理"))
+                        {
+                            <li><a _href='@Url.Action("GetLogList", "Logger")' data-title="日志管理" href="javascript:void(0)">日志管理</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
     </div>
 </aside>
 <div class="dislpayArrow"><a class="pngfix" href="javascript:void(0);" onclick="displaynavbar(this)"></a></div>

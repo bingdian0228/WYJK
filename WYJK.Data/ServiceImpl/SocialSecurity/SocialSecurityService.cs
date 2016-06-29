@@ -85,15 +85,35 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<List<UnInsuredPeople>> GetUnInsuredPeopleList(int memberID, int status, int peopleid = 0)
         {
-            string sql = $@"select SocialSecurityPeople.SocialSecurityPeopleID,SocialSecurityPeople.SocialSecurityPeopleName,IsPaySocialSecurity, IsPayAccumulationFund, 
-SocialSecurity.PayTime SSPayTime, SocialSecurity.PayMonthCount SSPayMonthCount, SocialSecurity.SocialSecurityBase,SocialSecurity.PayProportion SSPayProportion,SocialSecurity.Status SSStatus, 
-AccumulationFund.PayTime AFPayTime, AccumulationFund.PayMonthCount AFPayMonthCount ,AccumulationFund.AccumulationFundBase,AccumulationFund.PayProportion AFPayProportion,AccumulationFund.Status AFStatus 
-from SocialSecurityPeople 
-left join SocialSecurity 
-on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID 
-left join dbo.AccumulationFund 
-on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID 
-where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @status or AccumulationFund.status=@status) and SocialSecurityPeople.IsPay=0";
+            //            string sql = $@"select SocialSecurityPeople.SocialSecurityPeopleID,SocialSecurityPeople.SocialSecurityPeopleName,IsPaySocialSecurity, IsPayAccumulationFund, 
+            //SocialSecurity.PayTime SSPayTime, SocialSecurity.PayMonthCount SSPayMonthCount, SocialSecurity.SocialSecurityBase,SocialSecurity.PayProportion SSPayProportion,SocialSecurity.Status SSStatus, 
+            //AccumulationFund.PayTime AFPayTime, AccumulationFund.PayMonthCount AFPayMonthCount ,AccumulationFund.AccumulationFundBase,AccumulationFund.PayProportion AFPayProportion,AccumulationFund.Status AFStatus 
+            //from SocialSecurityPeople 
+            //left join SocialSecurity 
+            //on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID 
+            //left join dbo.AccumulationFund 
+            //on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID 
+            //where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @status or AccumulationFund.status=@status) and SocialSecurityPeople.IsPay=0";
+
+            string sql = $@"select * from (
+select SocialSecurityPeopleID,SocialSecurityPeopleName,
+case when exists (select * from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) then 1 else 0 end IsPaySocialSecurity,
+(select PayTime from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSPayTime,
+(select PayMonthCount from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSPayMonthCount,
+(select SocialSecurityBase from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SocialSecurityBase,
+(select PayProportion from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSPayProportion,
+(select Status from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSStatus,
+
+case when exists (select * from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) then 1 else 0 end IsPayAccumulationFund,
+(select PayTime from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFPayTime,
+(select PayMonthCount from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFPayMonthCount,
+(select AccumulationFundBase from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AccumulationFundBase,
+(select PayProportion from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFPayProportion,
+(select Status from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFStatus
+
+from dbo.SocialSecurityPeople t
+where MemberID={memberID} ) tt
+where tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1";
             if (peopleid != 0)
             {
                 sql += $" and SocialSecurityPeople.SocialSecurityPeopleID = {peopleid}";
@@ -462,8 +482,8 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public SocialSecurityDetail GetSocialSecurityAndAccumulationFundDetail(int SocialSecurityPeopleID)
         {
-            string sql = $"select SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurity.SocialSecurityBase,SocialSecurity.InsuranceArea,SocialSecurity.PayTime SSPayTime, ISNULL(SocialSecurity.AlreadyPayMonthCount, 0) SSAlreadyPayMonthCount,SocialSecurity.PayMonthCount SSRemainingMonths,"
-                            + " AccumulationFund.AccumulationFundBase,AccumulationFund.AccumulationFundArea,AccumulationFund.PayTime AFPayTime, ISNULL(AccumulationFund.AlreadyPayMonthCount, 0) AFAlreadyPayMonthCount,AccumulationFund.PayMonthCount AFRemainingMonths"
+            string sql = $"select SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurity.Status SSStatus, SocialSecurity.SocialSecurityBase,SocialSecurity.InsuranceArea,SocialSecurity.PayTime SSPayTime, ISNULL(SocialSecurity.AlreadyPayMonthCount, 0) SSAlreadyPayMonthCount,SocialSecurity.PayMonthCount SSRemainingMonths,"
+                            + " AccumulationFund.Status AFStatus,AccumulationFund.AccumulationFundBase,AccumulationFund.AccumulationFundArea,AccumulationFund.PayTime AFPayTime, ISNULL(AccumulationFund.AlreadyPayMonthCount, 0) AFAlreadyPayMonthCount,AccumulationFund.PayMonthCount AFRemainingMonths"
                             + " from SocialSecurityPeople"
                             + " left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
                             + " left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"

@@ -28,7 +28,7 @@ namespace WYJK.Web.Controllers.Http
     /// <summary>
     /// 用户接口
     /// </summary>
-    public class MemberController : ApiController
+    public class MemberController : BaseApiController
     {
         private readonly IMemberService _memberService = new MemberService();
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
@@ -114,7 +114,7 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
-        /// 获取用户信息 IsAuthentication:是否认证 0/未认证 1/已认证，IsComplete：是否信息补全 0/未补全 1/已补全,UserType 用户类型  0：普通用户、1：企业用户、2：个体用户
+        /// 获取用户信息 IsAuthentication:是否认证 0/未认证 1/已认证 2/认证中，IsComplete：是否信息补全 0/未补全 1/已补全,UserType 用户类型  0：普通用户、1：企业用户、2：个体用户
         /// </summary>
         /// <param name="MemberID">MemberID</param>
         /// <returns></returns>
@@ -122,6 +122,8 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> GetMemberInfo(int MemberID)
         {
             Members member = await _memberService.GetMemberInfo(MemberID);
+            //member.UserType = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={MemberID}").UserType;
+
             return new JsonResult<dynamic>
             {
                 status = true,
@@ -251,9 +253,12 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<dynamic>> CommitEnterpriseCertification(EnterpriseCertification parameter)
         {
+            //删除个体认证
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID = {parameter.MemberID}", null);
+
             await _memberService.CommitEnterpriseCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.QiYe} where MemberID={parameter.MemberID}", null);
 
             ////验证身份证
             //if (!Regex.IsMatch(parameter.EnterpriseLegalIdentityCardNo, @"(^\d{18}$)|(^\d{15}$)"))
@@ -271,14 +276,60 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 获取企业认证详情
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> GetEnterpriseCertificationDetails(int memberID)
+        {
+            CertificationAudit model = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={memberID}");
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取企业认证成功",
+                Data = model
+
+            };
+        }
+
+        /// <summary>
+        /// 更新企业资质认证
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<JsonResult<dynamic>> UpdateEnterpriseCertification(EnterpriseCertification parameter)
+        {
+            //删除认证审核
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID={parameter.MemberID}", null);
+
+            await _memberService.CommitEnterpriseCertification(parameter);
+
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.QiYe} where MemberID={parameter.MemberID}", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "企业认证中"
+
+            };
+        }
+
+
+
+
+        /// <summary>
         /// 个体认证
         /// </summary>
         /// <returns></returns>
         public async Task<JsonResult<dynamic>> CommitPersonCertification(IndividualCertification parameter)
         {
+            //删除企业认证
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID = {parameter.MemberID}", null);
+
             await _memberService.CommitPersonCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID={parameter.MemberID}", null);
 
             return new JsonResult<dynamic>
             {
@@ -286,6 +337,47 @@ namespace WYJK.Web.Controllers.Http
                 Message = "个体认证中"
             };
         }
+
+        /// <summary>
+        /// 获取个人认证详情
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> GetPersonCertificationDetails(int memberID)
+        {
+            CertificationAudit model = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={memberID}");
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取个体认证成功",
+                Data = model
+
+            };
+        }
+
+        /// <summary>
+        /// 更新个体资质认证
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<JsonResult<dynamic>> UpdatePersonCertification(IndividualCertification parameter)
+        {
+            //删除认证审核
+            DbHelper.ExecuteSqlCommand($"delete from CertificationAudit where MemberID={parameter.MemberID}", null);
+
+            await _memberService.CommitPersonCertification(parameter);
+
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID={parameter.MemberID}", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "个体认证中"
+            };
+        }
+
+
         /// <summary>
         /// 补充信息
         /// </summary>
@@ -685,6 +777,23 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 提交续费订单
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter) {
+            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+            DbHelper.ExecuteSqlCommand($@"insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) 
+                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}',{parameter.MonthCount})", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "生成续费订单成功"
+            };
+        }
+
+        /// <summary>
         /// 续费
         /// </summary>
         /// <returns></returns>
@@ -960,6 +1069,24 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         /// <summary>
+        /// 生成充值订单
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> SubmitRechargeAmountOrder(RechargeParameters parameter) {
+            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+            DbHelper.ExecuteSqlCommand($@"insert into RechargeOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money) 
+                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}')", null);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "生成充值订单成功"
+            };
+        }
+
+
+        /// <summary>
         /// 提交充值
         /// </summary>
         /// <param name="parameter"></param>
@@ -1070,8 +1197,9 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                                                 where MemberID = { parameter.MemberID }", null);
                         }
 
-                        transaction.Complete();
+
                     }
+                    transaction.Complete();
                 }
                 catch (Exception ex)
                 {
@@ -1093,6 +1221,84 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 Message = "充值成功"
             };
         }
+
+        /// <summary>
+        /// 获取提现信息
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> DrawCash(int memberID)
+        {
+            Members member = DbHelper.QuerySingle<Members>($"select * from Members where MemberID={memberID}");
+            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={memberID}");
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = new
+                {
+                    Account = member.Account,
+                    DongJie = DongJie
+                }
+            };
+        }
+
+        /// <summary>
+        /// 提现审核   提交信息：MemberID、Money、LeftAccount
+        /// </summary>
+        /// <param name="drawCash"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpPost]
+        public JsonResult<dynamic> DrawCash(DrawCash drawCash)
+        {
+            DbHelper.ExecuteSqlCommand($"insert into DrawCash(MemberId,Money,ApplyTime,ApplyStatus,LeftAccount) values({drawCash.MemberID},'{drawCash.Money}','{DateTime.Now}',0,'{drawCash.LeftAccount}')", null);
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "审核中"
+            };
+        }
+
+        /// <summary>
+        /// 是否已经绑定账户   看data数据  
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> IsBoundAccount(int memberID)
+        {
+            bool isBound;
+            //获取注册人银行账号 BankCardNo
+            string BankCardNo = DbHelper.QuerySingle<string>($"select * from Members where MemberId={memberID}");
+            if (BankCardNo.Trim() != string.Empty)
+                isBound = true;
+            else
+                isBound = false;
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = isBound
+            };
+        }
+
+        /// <summary>
+        /// 绑定账户
+        /// </summary>
+        /// <param name="boundAccount"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> BoundAccount(BoundAccount boundAccount)
+        {
+            DbHelper.ExecuteSqlCommand($"update Members set BankCardNo='{boundAccount.BankCardNo}' where MemberID={boundAccount.MemberID}", null);
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "绑定成功"
+            };
+        }
+
 
         /// <summary>
         /// 获取冻结金额说明
@@ -1153,9 +1359,9 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// </summary>
         /// <param name="memberID"></param>
         /// <returns></returns>
-        public JsonResult<dynamic> GetSocialSecurityPeopleList(int memberID)
+        public JsonResult<dynamic> GetSocialSecurityPeopleList(int memberID, string socialSecurityPeopleName)
         {
-            string sqlstr = $"select * from SocialSecurityPeople where MemberID={memberID}";
+            string sqlstr = $"select * from SocialSecurityPeople where MemberID={memberID} and SocialSecurityPeopleName like '%{socialSecurityPeopleName}%'";
             List<SocialSecurityPeople> list = DbHelper.Query<SocialSecurityPeople>(sqlstr);
 
             return new JsonResult<dynamic>
@@ -1224,6 +1430,23 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         #endregion
+
+
+        /// <summary>
+        /// 获取消息列表
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<List<Message>> GetMessageList(int memberID)
+        {
+            List<Message> messageList = DbHelper.Query<Message>($"select * from Message where MemberID={memberID} order by Dt desc");
+            return new JsonResult<List<Message>>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = messageList
+            };
+        }
 
         ///// <summary>
         ///// 获取多个错误

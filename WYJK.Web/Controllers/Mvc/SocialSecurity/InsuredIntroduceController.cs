@@ -13,7 +13,7 @@ namespace WYJK.Web.Controllers
     /// <summary>
     /// 参保介绍
     /// </summary>
-    public class InsuredIntroduceController : Controller
+    public class InsuredIntroduceController : BaseController
     {
         private readonly IInsuredIntroduceService _insuredIntroduceService = new InsuredIntroduceService();
 

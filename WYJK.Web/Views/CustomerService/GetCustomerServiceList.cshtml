@@ -23,13 +23,74 @@
                     + "&UserType=" + '@Request.QueryString["UserType"]'
                     + "&MemberID=" + '@Request.QueryString["MemberID"]'
                     + "&SocialSecurityPeopleName=" + '@Request.QueryString["SocialSecurityPeopleName"]'
-                    + "&IdentityCard=" + '@Request.QueryString["IdentityCard"]';
+                    + "&IdentityCard=" + '@Request.QueryString["IdentityCard"]'
+                    + "&CustomerServiceStatus=" + '@Request.QueryString["CustomerServiceStatus"]';
 
                 }
             }
         });
 
+
+
+
         $(function () {
+            //异常提示
+            function ExceptionTip() {
+                //先判断有没有业务异常，如果有，则提示
+                $.ajax({
+                    url: "@Url.Action("IsExistsExceptionTip", "CustomerService")",
+                    dataType: "json",
+                    type: "get",
+                    success: function (data) {
+
+                        if (data.status == true) {
+                            var save = 0;
+                            var layerObject = layer.open({
+                                type: 2,
+                                title: "业务异常提示",
+                                area: ['400px', '200px'],
+                                content: "@Url.Action("ExceptionTip", "CustomerService")",
+                                btn: ["知道了", "关闭"],
+                                yes: function (index, layero) {
+                                    var childIndex = layer.load(1, { shade: [0.1, '#000'] });
+                                    debugger;
+                                    var form = layer.getChildFrame('form', index);
+                                    form.submit();
+
+                                    save = 1;
+                                    return false;
+                                },
+                                end: function (index, layero) {
+                                    if (save === 1) {
+                                        refresh();
+                                    }
+                                    setTimeout(ExceptionTip, 60000);
+                                },
+                                success: function (index, layero) {
+
+                                    if (save === 1) {
+                                        layer.closeAll();
+                                        refresh();
+                                    }
+                                    layer.iframeAuto(layero);
+
+                                }
+                            });
+                        } else {
+                            setTimeout(ExceptionTip, 60000);
+                        }
+                    },
+                    error: function () {
+
+                    }
+                });
+            }
+
+            //setInterval(ExceptionTip, 5000);
+            ExceptionTip();
+
+
+
             $(".Huialert.Huialert-info").fadeOut(2000);
 
             $("#UserType").change(function () {
@@ -73,7 +134,12 @@
                     layer.msg("请选择申请业务的客户");
                     return;
                 }
-                var flag = false;
+                if ($("input[type='checkbox'][name='customer']:checked").length > 1) {
+                    layer.msg("只能选择一个申请业务的客户");
+                    return;
+                }
+
+                @*var flag = false;
                 $("input[type='checkbox'][name='customer']:checked").each(function (i) {
                     //判断是否已审核过
                     var value = $(this).closest("tr").find("td.customer-status").data("customerstatus");
@@ -85,17 +151,9 @@
                         flag = true;
                         return;
                     }
-                    @*//判断是否是已付款或订单已完成用户
-                    var value1 = $(this).closest("tr").find("td.order-status").data("orderstatus");
-
-                    if (value1 != '@Convert.ToInt32(OrderEnum.Auditing)' && value1 != '@Convert.ToInt32(OrderEnum.completed)') {
-                        layer.msg("请选择已付款或已完成的客户");
-                        flag = true;
-                        return;
-                    }*@
                 });
                 if (flag)
-                    return;
+                    return;*@
 
 
                 layer.confirm('确定要进行业务申请吗？',
@@ -163,6 +221,12 @@
             </span>
             @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
                     @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
+                    @Html.Raw("审核状态:")
+                    <span class="select-box inline">
+
+                        @Html.DropDownList("CustomerServiceStatus", ViewData["Status"] as List<SelectListItem>, new { @class = "select" })
+                    </span>
+
                     <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
 
                     }
@@ -181,10 +245,10 @@
                     <th width="80">代理机构</th>
                     <th width="80">电话</th>
                     <th width="80">个人账户</th>
-                    <th width="80">订单号</th>
-                    <th width="80">订单状态</th>
-                    <th width="80">关联订单号</th>
-                    <th width="80">关联订单状态</th>
+                    @*<th width="80">订单号</th>
+                        <th width="80">订单状态</th>
+                        <th width="80">关联订单号</th>
+                        <th width="80">关联订单状态</th>*@
                     <th width="80">客户名称</th>
                     <th width="80">身份证</th>
                     <th width="80">欠费金额</th>
@@ -193,6 +257,7 @@
                     <th width="80">公积金状态</th>
                     <th width="80">公积金异常备注</th>
                     <th width="80">客服审核状态</th>
+                    <th width="80">客服专员</th>
                     <th width="120">操作</th>
                 </tr>
             </thead>
@@ -204,18 +269,18 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)(Convert.ToInt32(customerService.UserType)))
                         </td>
-                        <td>@(customerService.UserType == "0" ? customerService.MemberName : (customerService.UserType == "1" ? customerService.EnterpriseName : customerService.BusinessName))</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@customerService.MemberID&type=1">@(customerService.UserType == "0" ? customerService.MemberName : (customerService.UserType == "1" ? customerService.EnterpriseName : customerService.BusinessName))</a></td>
                         @*<td>@customerService.MemberName</td>*@
                         <td>@customerService.MemberPhone</td>
                         <td>@customerService.Account</td>
                         @*<td class="td-status">
                                 <span class="label label-success radius order-view" style="cursor:pointer;" data-id="@customerService.SocialSecurityPeopleID">查看</span>
                             </td>*@
-                        <td>@customerService.OrderCode</td>
-                        <td>@EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus)) </td>
-                        <td></td>
-                        <td></td>
-                        <td>@customerService.SocialSecurityPeopleName</td>
+                        @*<td>@customerService.OrderCode</td>
+                            <td>@(string.IsNullOrEmpty(customerService.OrderStatus) ? "--" : EnumExt.GetEnumCustomDescription((OrderEnum)Convert.ToInt32(customerService.OrderStatus))) </td>
+                            <td></td>
+                            <td></td>*@
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=0">@customerService.SocialSecurityPeopleName</a></td>
                         <td>@customerService.IdentityCard</td>
                         <td>
                             @(customerService.Account < 0 ? Math.Abs(customerService.Account) : 0)
@@ -229,7 +294,7 @@
                             }
                             else
                             {
-                                @:无
+                                @:--
                             }
                         </td>
                         <td>@customerService.SocialSecurityException</td>
@@ -241,14 +306,47 @@
                             }
                             else
                             {
-                                @:无
+                                @:--
                             }
                         </td>
                         <td>@customerService.AccumulationFundException</td>
                         <td class="customer-status" data-customerstatus="@Convert.ToInt32(customerService.CustomerServiceStatus)">@EnumExt.GetEnumCustomDescription((CustomerServiceAuditEnum)(Convert.ToInt32(customerService.CustomerServiceStatus)))</td>
+                        <td>@customerService.CustomerServiceUserName</td>
                         <td>
-                            <a title="详情" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=0' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
-                            <a title="编辑" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=1' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                            @if (customerService.SocialSecurityPeopleID != null)
+                            {
+                                <a title="详情" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=0' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
+
+                                bool isPay = true;
+                                SocialSecurity socialSecurity = WYJK.Data.DbHelper.QuerySingle<SocialSecurity>("select * from SocialSecurity where SocialSecurityPeopleID=" + customerService.SocialSecurityPeopleID);
+                                AccumulationFund accumulationFund = WYJK.Data.DbHelper.QuerySingle<AccumulationFund>("select * from AccumulationFund where SocialSecurityPeopleID=" + customerService.SocialSecurityPeopleID);
+                                if (socialSecurity != null)
+                                {
+                                    if (socialSecurity.IsPay == false)
+                                    {
+                                        isPay = false;
+                                    }
+                                }
+
+                                if (accumulationFund != null)
+                                {
+                                    if (accumulationFund.IsPay == false)
+                                    {
+                                        isPay = false;
+                                    }
+                                }
+
+                                int status = WYJK.Data.DbHelper.QuerySingle<int>("select Status from SocialSecurityPeople where SocialSecurityPeopleID=" + customerService.SocialSecurityPeopleID);
+
+
+                                //if (isPay && status == 0)
+                                //{
+                                if (customerService.CustomerServiceUserName == HttpContext.Current.User.Identity.Name)
+                                {
+                                    <a title="编辑" href='@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@customerService.SocialSecurityPeopleID&MemberID=@customerService.MemberID&Type=1' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                                }
+                                //}
+                            }
                         </td>
                     </tr>
                 }
@@ -256,5 +354,15 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a> <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="#" onmousedown="if ($('#MemberID').val()) {$(this).attr('href', '@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?MemberID=' + $('#MemberID').val() + '&Type=1&isadd=1') } else { alert('请选择机构');}" class="btn btn-danger radius ">添加参保人</a>
+            @if (Request.QueryString["CustomerServiceStatus"] == Convert.ToInt32(CustomerServiceAuditEnum.NoAudited).ToString())
+            {
+                <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 申请业务</a>
+            }
+
+        </span>
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
 </div>

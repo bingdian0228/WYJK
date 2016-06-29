@@ -75,9 +75,9 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(socialSecurity.UserType))
                         </td>
-                        <td>@(socialSecurity.UserType == "0" ? socialSecurity.MemberName : (socialSecurity.UserType == "1" ? socialSecurity.EnterpriseName : socialSecurity.BusinessName))</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@socialSecurity.MemberID&type=1">@(socialSecurity.UserType == "0" ? socialSecurity.MemberName : (socialSecurity.UserType == "1" ? socialSecurity.EnterpriseName : socialSecurity.BusinessName))</a></td>
                         @*<td>@socialSecurity.MemberName</td>*@
-                        <td>@socialSecurity.SocialSecurityPeopleName</td>
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@socialSecurity.SocialSecurityPeopleID&MemberID=@socialSecurity.MemberID&Type=0">@socialSecurity.SocialSecurityPeopleName</a></td>
                         <td>@socialSecurity.IdentityCard</td>
                         <td>@socialSecurity.PayTime.ToString("yyyy/MM")</td>
                         <td>@socialSecurity.PayTime.AddMonths(socialSecurity.PayMonthCount).ToString("yyyy/MM")</td>

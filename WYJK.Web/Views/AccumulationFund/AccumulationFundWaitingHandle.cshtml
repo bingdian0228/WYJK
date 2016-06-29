@@ -59,7 +59,7 @@
                                 layer.msg("办结成功");
                                 refresh();
                             } else {
-                                layer.msg("办结失败");
+                                layer.msg(response.Message);
                             }
                         },
                         error: function () {
@@ -77,6 +77,12 @@
                     layer.msg("请选择异常的客户");
                     return;
                 }
+
+                if ($("input[type='checkbox']:checked").length >1) {
+                    layer.msg("只能选择一个异常的客户");
+                    return;
+                }
+
                 var SocialSecurityPeopleIDs = [];
                 $("input[type='checkbox']:checked").each(function (i) {
                     SocialSecurityPeopleIDs[i] = $(this).val();
@@ -164,8 +170,10 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(accumulationFund.UserType))
                         </td>
-                        <td>@(accumulationFund.UserType == "0" ? accumulationFund.MemberName : (accumulationFund.UserType == "1" ? accumulationFund.EnterpriseName : accumulationFund.BusinessName))</td>
-                        <td>@accumulationFund.SocialSecurityPeopleName</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@accumulationFund.MemberID&type=1">@(accumulationFund.UserType == "0" ? accumulationFund.MemberName : (accumulationFund.UserType == "1" ? accumulationFund.EnterpriseName : accumulationFund.BusinessName))</a></td>
+
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@accumulationFund.SocialSecurityPeopleID&MemberID=@accumulationFund.MemberID&Type=0">@accumulationFund.SocialSecurityPeopleName</a></td>
+
                         <td>@accumulationFund.IdentityCard</td>
                         <td>@accumulationFund.PayTime.ToString("yyyy/MM")</td>
                         <td>@accumulationFund.PayTime.AddMonths(accumulationFund.PayMonthCount).ToString("yyyy/MM")</td>

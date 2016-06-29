@@ -24,10 +24,20 @@ namespace WYJK.Entity
         /// 描述
         /// </summary>
         public string Description { get; set; }
+    }
+
+    public class TempRoles
+    {
         /// <summary>
-        /// 权限
+        /// 角色id
         /// </summary>
-        public List<Permissions> PermissionList { get; set; } = new List<Permissions>();
+        public int id { get; set; }
+        /// <summary>
+        /// 角色名称
+        /// </summary>
+        public string text { get; set; }
+
+        public bool check { get; set; }
     }
 
     public class RolesParameter : PagedParameter

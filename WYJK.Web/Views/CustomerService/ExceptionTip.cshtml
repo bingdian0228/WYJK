@@ -1,0 +1,25 @@
+﻿@model ExceptionTip
+@section Footer{
+    <style>
+        span.lineheight {
+            line-height: 31px;
+        }
+    </style>
+    <script>
+        $(function () {
+            $(".Huialert.Huialert-info").fadeOut(2000);
+        })
+    </script>
+}
+<div class="pd-20">
+    @using (Html.BeginForm("ExceptionTip", "CustomerService", FormMethod.Post))
+    {
+        @Html.HiddenFor(m => m.SocialSecurityPeopleID);
+        @Html.HiddenFor(m => m.Type);
+        <div class="row cl">
+            <div class="formControls col-12">
+                @Model.ExceptionReason
+            </div>
+        </div>
+    }
+</div>

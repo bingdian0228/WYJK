@@ -126,8 +126,8 @@
                     <tr class="text-c">
                         <td><input type="checkbox" value="@item.ID" name="BaseAudit"></td>
                         <td>@(EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(item.UserType)))</td>
-                        <td>@(item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName))</td>
-                        <td>@item.SocialSecurityPeopleName</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@item.MemberID&type=1">@(item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName))</a></td>
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@item.SocialSecurityPeopleID&MemberID=@item.MemberID&Type=0">@item.SocialSecurityPeopleName</a></td>
                         <td>@item.CurrentBase</td>
                         <td>@item.BaseAdjusted</td>
                         <td>@item.ApplyDate</td>

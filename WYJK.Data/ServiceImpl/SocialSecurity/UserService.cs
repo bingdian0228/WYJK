@@ -68,7 +68,7 @@ namespace WYJK.Data.ServiceImpl
         /// </summary>
         /// <param name="roles"></param>
         /// <returns></returns>
-        public async Task<bool> RoleAdd(Roles roles)
+        public async Task<int> RoleAdd(Roles roles)
         {
             string sql = "insert into Roles(RoleName,Description) values(@RoleName,@Description)";
 
@@ -77,9 +77,8 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("@Description",SqlDbType.NVarChar,50) { Value=roles.Description?? (Object)DBNull.Value}
             };
 
-            int result = await DbHelper.ExecuteSqlCommandScalarAsync(sql, parameters);
+            return  await DbHelper.ExecuteSqlCommandScalarAsync(sql, parameters);
 
-            return result > 0;
         }
 
         /// <summary>
@@ -137,14 +136,14 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> PermissionAdd(Permissions permission)
         {
-            string sql = "insert into Permissions(Code,Description,Controller,Action,ParentCode) values(@Code,@Description,@Controller,@Action,@ParentCode)";
+            string sql = "insert into Permissions(Code,Description,Controller,Action,ParentID) values(@Code,@Description,@Controller,@Action,@ParentID)";
 
             DbParameter[] parameters = {
                 new SqlParameter("@Code", permission.Code),
                 new SqlParameter("@Description", permission.Description),
                 new SqlParameter("@Controller", permission.Controller),
                 new SqlParameter("@Action", permission.Action),
-                new SqlParameter("@ParentCode", permission.ParentCode ?? "0")
+                new SqlParameter("@ParentID", permission.ParentID ?? "0")
             };
 
             int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);

@@ -16,7 +16,7 @@ namespace WYJK.Data.IService
         /// 获取日志记录列表
         /// </summary>
         /// <returns></returns>
-        PagedResult<Log> GetLogList(PagedParameter parameter);
+        PagedResult<Log> GetLogList(LogParameter parameter);
 
         ///// <summary>
         ///// 写入日志

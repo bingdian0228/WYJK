@@ -38,7 +38,12 @@ namespace WYJK.Entity
         /// <summary>
         /// 打款订单
         /// </summary>		
-        public string PaySN { get; set; }       
+        public string PaySN { get; set; }
+
+        /// <summary>
+        /// 余额
+        /// </summary>
+        public decimal LeftAccount { get; set; }
 
     }
 
@@ -120,6 +125,9 @@ namespace WYJK.Entity
         public int Status { get; set; }
 
     }
-    
+
+
+
+
 }
 
