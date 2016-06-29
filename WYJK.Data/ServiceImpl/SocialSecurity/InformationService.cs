@@ -39,6 +39,28 @@ namespace WYJK.Data.ServiceImpl
             };
         }
 
+        public async Task<PagedResult<Information>> GetNewNoticeList(InformationParameter parameter)
+        {
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type) ii where ii.Row between @StartIndex AND @EndIndex";
+
+            List<Information> informationList = await DbHelper.QueryAsync<Information>(sql, new
+            {
+                Name = "%" + parameter.Name + "%",
+                Type = parameter.Type,
+                StartIndex = parameter.SkipCount,
+                EndIndex = parameter.TakeCount
+            });
+            int totalCount = await DbHelper.QuerySingleAsync<int>("select count(0) from Information where Name like @Name and Type = @Type", new { Name = "%" + parameter.Name + "%", Type = parameter.Type });
+
+            return new PagedResult<Information>
+            {
+                PageIndex = parameter.PageIndex,
+                PageSize = parameter.PageSize,
+                TotalItemCount = totalCount,
+                Items = informationList
+            };
+        }
+
         /// <summary>
         /// 信息添加
         /// </summary>
