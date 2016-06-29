@@ -230,6 +230,24 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                 </dd>
             </dl>
         }
+        @if (permissionList.Contains("信息管理"))
+        {
+            <dl id="menu-article">
+                <dt><i class="Hui-iconfont">&#xe616;</i> 信息管理<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                <dd>
+                    <ul>
+                        @if (permissionList.Contains("新闻管理"))
+                        {
+                            <li><a _href='@Url.Action("GetInformationList", "Information", new { Type="新闻" })' data-title="新闻管理" href="javascript:void(0)">新闻管理</a></li>
+                        }
+                        @if (permissionList.Contains("资讯管理"))
+                        {
+                            <li><a _href='@Url.Action("GetInformationList", "Information", new { Type="资讯" })' data-title="资讯管理" href="javascript:void(0)">资讯管理</a></li>
+                        }
+                    </ul>
+                </dd>
+            </dl>
+        }
         @if (permissionList.Contains("系统管理"))
         {
             <dl id="menu-picture">
