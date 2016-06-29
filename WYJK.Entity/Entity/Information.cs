@@ -43,6 +43,8 @@ namespace WYJK.Entity
         /// StrContent
         /// </summary>		
         public string StrContent { get; set; }
+
+        public string Type { get; set; }
     }
 
     /// <summary>

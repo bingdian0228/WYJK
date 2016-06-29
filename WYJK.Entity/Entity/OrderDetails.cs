@@ -63,5 +63,13 @@ namespace WYJK.Entity
         /// 公积金第一次代办费
         /// </summary>		
         public decimal AccumulationFundFirstBacklogCost { get; set; }
+        /// <summary>
+        /// 是否缴纳社保
+        /// </summary>
+        public bool IsPaySocialSecurity { get; set; }
+        /// <summary>
+        /// 是否缴纳公积金
+        /// </summary>
+        public bool IsPayAccumulationFund { get; set; }
     }
 }

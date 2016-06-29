@@ -28,7 +28,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, dbo.AccumulationFund.AccumulationFundID, 
                       dbo.AccumulationFund.AccumulationFundArea, dbo.AccumulationFund.AccumulationFundBase, dbo.AccumulationFund.PayProportion, dbo.AccumulationFund.PayTime, 
                       dbo.AccumulationFund.PayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName, 
-                      dbo.Members.MemberID, dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,
+                      dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,
 case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
@@ -39,8 +39,8 @@ case when exists(
                       FROM  dbo.AccumulationFund 
                       INNER JOIN dbo.SocialSecurityPeople ON dbo.AccumulationFund.SocialSecurityPeopleID = dbo.SocialSecurityPeople.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";
-
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.AccumulationFundID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and Status = {parameter.Status} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
+            string sqlstr = string.IsNullOrEmpty(parameter.Status) ? "1=1" : $" Status = {parameter.Status}";
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.AccumulationFundID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
 
             List<AccumulationFundShowModel> modelList = await DbHelper.QueryAsync<AccumulationFundShowModel>(sql, new
             {
@@ -48,7 +48,7 @@ case when exists(
                 EndIndex = parameter.TakeCount
             });
 
-            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) s where  " + userTypeSql + $" and Status = {parameter.Status} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
+            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) s where  " + userTypeSql + $" and {sqlstr} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
 
             return new PagedResult<AccumulationFundShowModel>
             {
@@ -67,7 +67,17 @@ case when exists(
         /// <returns></returns>
         public bool ModifyAccumulationFundStatus(int[] SocialSecurityPeopleIDs, int status)
         {
-            string sql = $"update AccumulationFund set Status={status} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
+            string sqlstr = "";
+            if (status == (int)SocialSecurityStatusEnum.Normal)
+            {
+                sqlstr = ",HandleDate=getdate()";
+            }
+            else if (status == (int)SocialSecurityStatusEnum.AlreadyStop)
+            {
+                sqlstr = ",StopDate=getdate()";
+            }
+
+            string sql = $"update AccumulationFund set Status={status}{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 

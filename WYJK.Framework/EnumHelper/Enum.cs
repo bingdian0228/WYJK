@@ -185,6 +185,60 @@ namespace WYJK.Framework.EnumHelper
         NoPass = 3
     }
 
+    /// <summary>
+    /// 认证审核
+    /// </summary>
+    public enum CertificationAuditEnum
+    {
+        [EnumDisplayName("审核中")]
+        NoAudited = 1,
+        [EnumDisplayName("已通过")]
+        Pass = 2,
+        [EnumDisplayName("未通过")]
+        NoPass = 3
+    }
+
+    /// <summary>
+    /// 公积金办理类型
+    /// </summary>
+    public enum AccumulationFundTypeEnum
+    {
+        [EnumDisplayName("新开户")]
+        NewAccount = 1,
+        [EnumDisplayName("转移")]
+        Transfer = 2
+    }
+
+    /// <summary>
+    /// 公积金办停类型
+    /// </summary>
+    public enum AccumulationFundTopTypeEnum
+    {
+        [EnumDisplayName("封存")]
+        Sealed = 1,
+        [EnumDisplayName("转移")]
+        Transfer = 2
+    }
+
+    /// <summary>
+    /// 社保材料收取类型
+    /// </summary>
+    public enum SocialSecurityCollectTypeEnum
+    {
+        [EnumDisplayName("自取")]
+        PickUp = 1,
+        [EnumDisplayName("邮寄")]
+        Mail = 2
+    }
+
+    /// <summary>
+    /// 信息类型
+    /// </summary>
+    public enum InfoTypeEnum
+    {
+        [EnumDisplayName("参保介绍")]
+        InsuredIntroduce = 1
+    }
 
     public class SelectListClass
     {

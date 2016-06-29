@@ -1,0 +1,210 @@
+﻿@model CertificationAudit
+@section Header
+{
+    <script type="text/javascript" src="/Content/lib/laypage/1.3/laypage.js"></script>
+
+}
+@section Footer{
+    <style>
+        .form-horizontal .formControls {
+            line-height: 31px;
+        }
+
+        /*.select-box {
+            width: 100%;
+        }*/
+
+        .text-align-center {
+            text-align: center !important;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            //审核通过
+            $("[class*='action-audit']").click(function () {
+                var $this = $(this);
+                layer.confirm('确定审核此项？',
+                         { btn: ['确定', '取消'] },
+                         function () {
+                             var index = layer.load(1, {
+                                 shade: [0.1, '#000']
+                             });
+
+                             
+                             var Status = '@((int)CertificationAuditEnum.NoPass)';
+                             if ($this.filter(".action-audit-pass").length > 0)
+                                 Status = '@((int)CertificationAuditEnum.Pass)';
+
+                             //提交
+                             $.ajax({
+                                 url: "@Url.Action("CertificationAudit", "CertificationAudit")",
+                                 data: { "id": '@Request.QueryString["id"]', "status": Status },
+                                 dataType: "json",
+                                 type: "post",
+                                 success: function (response) {
+                                     layer.close(index);
+                                     if (response.status) {
+                                         layer.msg(response.message);
+                                         location.href = '@Url.Action("GetCertificationAuditList", "CertificationAudit")';
+                                     } else {
+                                         layer.msg(response.message);
+                                     }
+                                 },
+                                 error: function (data) {
+                                     layer.close(index);
+                                     layer.msg("服务器错误");
+                                 }
+                             });
+                         })
+            });
+        })
+    </script>
+}
+<div class="pd-20">
+    <form action='' method="post" class="form form-horizontal" id="form-article-add">
+
+        <div class="row cl" style="text-align:center;">
+            <label style="font-size:24px;font-weight:bold;">用户基本信息</label>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">用户名：</label>
+            <div class="formControls col-2">
+                @Model.MemberName
+            </div>
+            <label class="form-label col-2">手机号：</label>
+            <div class="formControls col-2">
+                @Model.MemberPhone
+            </div>
+            <label class="form-label col-2">用户类型：</label>
+            <div class="formControls col-2">
+                @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(Model.UserType))
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">审核状态：</label>
+            <div class="formControls col-2">
+                @EnumExt.GetEnumCustomDescription((CertificationAuditEnum)Convert.ToInt32(Model.Status))
+            </div>
+            <label class="form-label col-2">申请时间：</label>
+            <div class="formControls col-2">
+                @Model.ApplyDate
+            </div>
+            <label class="form-label col-2">审核时间：</label>
+            <div class="formControls col-2">
+                @(Model.AuditDate == null ? "--" : Convert.ToString(Model.AuditDate))
+            </div>
+        </div>
+        @if (Model.UserType == Convert.ToString((int)UserTypeEnum.QiYe))
+        {
+            <div class="row cl" style="text-align:center;">
+                <label style="font-size:24px;font-weight:bold;">企业资质审核信息</label>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">企业名：</label>
+                <div class="formControls col-2">
+                    @Model.EnterpriseName
+                </div>
+                <label class="form-label col-2">行业类型：</label>
+                <div class="formControls col-2">
+                    @Model.EnterpriseType
+                </div>
+                <label class="form-label col-2">企业税号：</label>
+                <div class="formControls col-2">
+                    @Model.EnterpriseTax
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">所在城市：</label>
+                <div class="formControls col-2">
+                    @Model.EnterpriseArea
+                </div>
+                <label class="form-label col-2">法人：</label>
+                <div class="formControls col-2">
+                    @Model.EnterpriseLegal
+                </div>
+                <label class="form-label col-2">法人身份证：</label>
+                <div class="formControls col-2">
+                    @Model.EnterpriseLegalIdentityCardNo
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">企业人数：</label>
+                <div class="formControls col-2">
+                    @Model.EnterprisePeopleNum
+                </div>
+                <label class="form-label col-2">社会信用代码：</label>
+                <div class="formControls col-2">
+                    @Model.SocialSecurityCreditCode
+                </div>
+                <label class="form-label col-2">岗位名称：</label>
+                <div class="formControls col-2">
+                    @Model.EnterprisePositionName
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">营业执照：</label>
+                <div class="formControls col-2">
+                    <a href="/@Model.EnterpriseBusinessLicense" target="_blank" name="img"><img src="/@Model.EnterpriseBusinessLicense" height="100" width="100" /></a>
+                </div>
+            </div>
+        }
+        else if (Model.UserType == Convert.ToString((int)UserTypeEnum.GeTiJingYing))
+        {
+            <div class="row cl" style="text-align:center;">
+                <label style="font-size:24px;font-weight:bold;">个体资质审核信息</label>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">营业执照名称：</label>
+                <div class="formControls col-2">
+                    @Model.BusinessName
+                </div>
+                <label class="form-label col-2">经营者名称：</label>
+                <div class="formControls col-2">
+                    @Model.BusinessUser
+                </div>
+                <label class="form-label col-2">身份证号：</label>
+                <div class="formControls col-2">
+                    @Model.BusinessIdentityCardNo
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-2">身份证照：</label>
+                <div class="formControls col-6">
+                    @{
+                        var ImgUrls = string.IsNullOrEmpty(Model.BusinessIdentityPhoto) ? null : Model.BusinessIdentityPhoto.Split(';');
+
+                    }
+                    @if (ImgUrls != null && ImgUrls.Length > 0)
+                    {
+                        foreach (var imgUrl in ImgUrls)
+                        {
+                            <a href="/@imgUrl" target="_blank" name="img"><img src="/@imgUrl" height="100" width="100" /></a>
+                        }
+
+                    }
+                    
+                </div>
+                <label class="form-label col-2">营业执照：</label>
+                <div class="formControls col-2">
+                    <a href="/@Model.BusinessLicensePhoto" target="_blank" name="img"><img src="/@Model.BusinessLicensePhoto" height="100" width="100" /></a>
+                </div>
+
+                <div class="row cl">
+                    <label class="form-label col-2">岗位名称：</label>
+                    <div class="formControls col-2">
+                        @Model.BusinessPositionName
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.Status == Convert.ToString((int)CertificationAuditEnum.NoAudited))
+        {
+            <div class="row cl">
+                <div class="col-10 col-offset-2">
+                    <a href="javascript:;" class="btn btn-primary radius action-audit-pass"><i class="Hui-iconfont">&#xe6e1;</i> 通过</a>
+                    <a href="javascript:;" class="btn btn-danger radius action-audit-nopass"><i class="Hui-iconfont">&#xe6dd;</i> 不通过</a>
+                </div>
+            </div>
+        }
+    </form>
+</div>

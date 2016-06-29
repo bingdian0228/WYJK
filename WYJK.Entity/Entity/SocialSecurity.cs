@@ -2,6 +2,8 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Data;
+using System.ComponentModel.DataAnnotations;
+
 namespace WYJK.Entity
 {
     /// <summary>
@@ -9,7 +11,6 @@ namespace WYJK.Entity
     /// </summary>
     public class SocialSecurity
     {
-
         /// <summary>
         /// 社保ID
         /// </summary>		
@@ -20,11 +21,7 @@ namespace WYJK.Entity
         public int SocialSecurityPeopleID { get; set; }
 
         /// <summary>
-        /// 户口性质
-        /// </summary>
-        public string HouseholdProperty { get; set; }
-        /// <summary>
-        /// 参保人姓名
+        /// 参保人名称
         /// </summary>
         public string SocialSecurityPeopleName { get; set; }
         /// <summary>
@@ -42,26 +39,22 @@ namespace WYJK.Entity
         /// <summary>
         /// 起缴时间
         /// </summary>		
-        public DateTime PayTime { get; set; }
+        public DateTime? PayTime { get; set; }
         /// <summary>
         /// 缴费月数
         /// </summary>		
         public int PayMonthCount { get; set; }
         /// <summary>
         /// 已投月数
-        /// </summary>
+        /// </summary>		
         public int AlreadyPayMonthCount { get; set; }
-
-        /// <summary>
-        /// 剩余月数
-        /// </summary>
-        public int RemainingMonths { get; set; }
         /// <summary>
         /// 补交月数
         /// </summary>		
         public int PayBeforeMonthCount { get; set; }
         /// <summary>
         /// 银行缴费月数
+
         /// </summary>		
         public int BankPayMonth { get; set; }
         /// <summary>
@@ -76,28 +69,91 @@ namespace WYJK.Entity
         /// 状态
         /// </summary>		
         public string Status { get; set; }
-
+        /// <summary>
+        /// 关联企业
+        /// </summary>		
+        public int RelationEnterprise { get; set; }
+        /// <summary>
+        /// 已投月数
+        /// </summary>		
+        public int PayedMonthCount { get; set; }
+        /// <summary>
+        /// 待停方式
+        /// </summary>		
+        public string StopMethod { get; set; }
+        /// <summary>
+        /// 待停原因
+        /// </summary>		
+        public string StopReason { get; set; }
+        /// <summary>
+        /// 申请停止时间
+        /// </summary>		
+        public DateTime? ApplyStopDate { get; set; }
+        /// <summary>
+        /// 停止时间
+        /// </summary>		
+        public DateTime? StopDate { get; set; }
         /// <summary>
         /// 社保号
-        /// </summary>
+        /// </summary>		
         public string SocialSecurityNo { get; set; }
-
         /// <summary>
-        /// 关联签约企业
-        /// </summary>
-        public int RelationEnterprise { get; set; }
-
-
+        /// SocialSecurityException
+        /// </summary>		
+        public string SocialSecurityException { get; set; }
         /// <summary>
-        /// 业务办停时间
-        /// </summary>
-        public DateTime? StopDate { get; set; }
-
-
-        /// <summary>
-        /// 业务办理时间
-        /// </summary>
+        /// HandleDate
+        /// </summary>		
         public DateTime? HandleDate { get; set; }
+        /// <summary>
+        /// 邮寄地址
+        /// </summary>		
+        public string MailAddress { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>		
+        public string ContactsPhone { get; set; }
+        /// <summary>
+        /// 联系人
+        /// </summary>		
+        public string ContactsUser { get; set; }
+        /// <summary>
+        /// 材料收取方式
+        /// </summary>		
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄单号
+        /// </summary>		
+        public string MailOrder { get; set; }
+        /// <summary>
+        /// ExpressCompany
+        /// </summary>		
+        public string ExpressCompany { get; set; }
+        /// <summary>
+        /// IsPay
+        /// </summary>		
+        public bool IsPay { get; set; }
+        /// <summary>
+        /// 0：未审核，1：已通过
+        /// </summary>		
+        public string CustomerServiceAuditStatus { get; set; }
+        /// <summary>
+        /// 是否重新办理
+        /// </summary>		
+        public bool IsReApply { get; set; }
+        /// <summary>
+        /// 重新办理次数
+        /// </summary>		
+        public int ReApplyNum { get; set; }
+
+        /// <summary>
+        /// 户籍性质
+        /// </summary>
+        public string HouseholdProperty { get; set; }
+        /// <summary>
+        /// 是否生成订单
+        /// </summary>
+        public bool IsGenerateOrder { get; set; }
 
     }
 
@@ -111,10 +167,21 @@ namespace WYJK.Entity
         /// </summary>
         public string UserType { get; set; }
 
+
+        public string MemberID { get; set; }
         /// <summary>
         /// 
         /// </summary>
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+
+        /// <summary>
+        /// 账户余额
+        /// </summary>
+        public string Account { get; set; }
         /// <summary>
         /// 参保人ID
         /// </summary>
@@ -178,7 +245,7 @@ namespace WYJK.Entity
         /// </summary>
         public DateTime? ApplyStopDate { get; set; }
         /// <summary>
-        /// 停保原因
+        /// 停保时间
         /// </summary>
         public DateTime? StopDate { get; set; }
 
@@ -191,6 +258,31 @@ namespace WYJK.Entity
         /// 状态
         /// </summary>		
         public string Status { get; set; }
+
+        /// <summary>
+        /// 收取方式
+        /// </summary>
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄地址
+        /// </summary>
+        public string MailAddress { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>
+        public string ContactsPhone { get; set; }
+        /// <summary>
+        /// 联系人
+        /// </summary>
+        public string ContactsUser { get; set; }
+        /// <summary>
+        /// 邮编
+        /// </summary>
+        public string MailOrder { get; set; }
+        /// <summary>
+        /// 快递公司
+        /// </summary>
+        public string ExpressCompany { get; set; }
     }
 
     /// <summary>
@@ -228,10 +320,20 @@ namespace WYJK.Entity
         /// 是否交社保
         /// </summary>
         public bool IsSocialSecurity { get; set; }
+
+        /// <summary>
+        /// 社保状态
+        /// </summary>
+        public int? SSStatus { get; set; }
         /// <summary>
         /// 是否交公积金
         /// </summary>
         public bool IsAccumulationFund { get; set; }
+
+        /// <summary>
+        /// 公积金状态
+        /// </summary>
+        public int? AFStatus { get; set; }
         /// <summary>
         /// 参保人姓名
         /// </summary>
@@ -277,6 +379,15 @@ namespace WYJK.Entity
         /// 公积金剩余月数
         /// </summary>
         public int AFRemainingMonths { get; set; }
+    }
+
+    public class SocialSecurityMailStop
+    {
+        public int SocialSecurityPeopleIDs { get; set; }
+        [Required(ErrorMessage = "必填")]
+        public string MailOrder { get; set; }
+        [Required(ErrorMessage = "必填")]
+        public string ExpressCompany { get; set; }
     }
 }
 

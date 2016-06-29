@@ -157,6 +157,13 @@ namespace WYJK.Web.Models
         public string RoleName { get; set; }
         [Display(Name = "描述")]
         public string Description { get; set; }
+
+        /// <summary>
+        /// 权限
+        /// </summary>
+        public string PermissionID { get; set; }
+
+
     }
 
     public static class RolesExtension

@@ -23,18 +23,19 @@ using WYJK.Data.ServiceImpl;
 using System.Data.SqlClient;
 using System.Text;
 
-namespace WYJK.Web.Controllers
+namespace WYJK.Web.Controllers.Mvc
 {
     /// <summary>
     /// 员工
     /// </summary>
-
+    //[Authorize]
     public class UserController : Controller
     {
         IUserService _userService = new UserService();
 
-        //
-        // GET: /Account/Login
+
+        ////
+        //// GET: /Account/Login
         [AllowAnonymous]
         [HttpGet]
         public ActionResult Login()
@@ -94,21 +95,11 @@ namespace WYJK.Web.Controllers
 
                 Users users = await DbHelper.QuerySingleAsync<Users>(sql);
 
-                #region 权限缓存
-                //Entity.Roles roles = _userService.GetRoles(users.UserID);
-                //List<Permissions> permissionsList = null;
-                //if (roles != null)
-                //{
-                //    permissionsList = _userService.GetPermissions(roles.RoleID);
-                //}
-                //if (permissionsList != null)
-                //{
-                //    users.roles.PermissionList.AddRange(permissionsList);
-                //}
-                #endregion
+                
 
                 if (users != null)
                 {
+
                     string data = JsonConvert.SerializeObject(users);
                     SetAuthCookie(users.UserName, data);
                     return RedirectToAction("Index", "Home");
@@ -128,29 +119,29 @@ namespace WYJK.Web.Controllers
         /// <param name="data"></param>
         private void SetAuthCookie(string account, string data)
         {
-            FormsAuthenticationTicket Ticket = new FormsAuthenticationTicket(1, account, DateTime.Now, DateTime.Now.AddHours(12), true, data);
-            HttpCookie Cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(Ticket));//加密身份信息，保存至Cookie
-            Response.Cookies.Add(Cookie);
+            //FormsAuthenticationTicket Ticket = new FormsAuthenticationTicket(1, account, DateTime.Now, DateTime.Now.AddDays(1), false, data);
+            //HttpCookie Cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(Ticket));//加密身份信息，保存至Cookie
+            //Response.Cookies.Add(Cookie);
 
 
 
-            //int expiration = 1440;
-            //FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(2, account, DateTime.Now, DateTime.Now.AddDays(1), true, data);
-            //string cookieValue = FormsAuthentication.Encrypt(ticket);
-            //HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, cookieValue)
-            //{
-            //    HttpOnly = true,
-            //    Secure = FormsAuthentication.RequireSSL,
-            //    Domain = FormsAuthentication.CookieDomain,
-            //    Path = FormsAuthentication.FormsCookiePath
-            //};
-            //if (expiration > 0)
-            //{
-            //    cookie.Expires = DateTime.Now.AddMinutes(expiration);
-            //}
+            int expiration = 1440;
+            FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(2, account, DateTime.Now, DateTime.Now.AddDays(1), true, data);
+            string cookieValue = FormsAuthentication.Encrypt(ticket);
+            HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, cookieValue)
+            {
+                HttpOnly = true,
+                Secure = FormsAuthentication.RequireSSL,
+                Domain = FormsAuthentication.CookieDomain,
+                Path = FormsAuthentication.FormsCookiePath
+            };
+            if (expiration > 0)
+            {
+                cookie.Expires = DateTime.Now.AddMinutes(expiration);
+            }
 
             //Response.Cookies.Remove(cookie.Name);
-            //Response.Cookies.Add(cookie);
+            Response.Cookies.Add(cookie);
         }
         #endregion
 
@@ -189,6 +180,36 @@ namespace WYJK.Web.Controllers
         }
 
         /// <summary>
+        /// 获取所有角色
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetRolesList()
+        {
+            var roleList = DbHelper.Query<Entity.Roles>("select * from Roles").Select(n => new { id = n.RoleID, text = n.RoleName }).ToList();
+            return Json(new { list = roleList }, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetCheckedRolesList(int userid)
+        {
+            var roleList = DbHelper.Query<Entity.Roles>("select * from Roles").Select(n => new TempRoles { id = n.RoleID, text = n.RoleName }).ToList();
+            var checkedRoleList = DbHelper.Query<Entity.Roles>($"select * from UserRole where UserID={userid} ").Select(n => new { id = n.RoleID }).ToList();
+
+            foreach (var role in roleList)
+            {
+                foreach (var checkedRole in checkedRoleList)
+                {
+                    if (role.id == checkedRole.id)
+                    {
+                        role.check = true;
+                        break;
+                    }
+
+                }
+            }
+            return Json(new { list = roleList }, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
         /// 新建添加
         /// </summary>
         /// <returns></returns>
@@ -214,11 +235,28 @@ namespace WYJK.Web.Controllers
                 ViewBag.ErrorMessage = "角色名称已存在";
                 return View();
             }
+            try
+            {
+                int roleID = await _userService.RoleAdd(model.ExtensionToModel());
+                if (model.PermissionID != "")
+                {
+                    string sqlstr = string.Empty;
+                    foreach (var id in model.PermissionID.Split(','))
+                    {
+                        sqlstr += $"insert into RolePermission values({roleID},{id});";
+                    }
+                    DbHelper.ExecuteSqlCommand(sqlstr, null);
+                }
+            }
+            catch (Exception)
+            {
+                ViewBag.ErrorMessage = "保存失败";
+            }
 
-            bool flag = await _userService.RoleAdd(model.ExtensionToModel());
-            ViewBag.ErrorMessage = flag ? "保存成功" : "保存失败";
 
-            return View();
+            ViewBag.ErrorMessage = "保存成功";
+
+            return RedirectToAction("GetAllRoles");
         }
 
         /// <summary>
@@ -256,9 +294,21 @@ namespace WYJK.Web.Controllers
             }
             //更新
             bool flag = await _userService.UpdateRoles(role);
-            ViewBag.ErrorMessage = flag ? "更新成功" : "更新失败";
 
-            return View(viewModel);
+            DbHelper.ExecuteSqlCommand($"delete from RolePermission where RoleID={role.RoleID}", null);
+            if (viewModel.PermissionID != "")
+            {
+                string sqlstr = string.Empty;
+                foreach (var id in viewModel.PermissionID.Split(','))
+                {
+                    sqlstr += $"insert into RolePermission values({role.RoleID},{id});";
+                }
+                DbHelper.ExecuteSqlCommand(sqlstr, null);
+            }
+
+            //ViewBag.ErrorMessage = flag ? "更新成功" : "更新失败";
+
+            return RedirectToAction("GetAllRoles");
         }
 
         /// <summary>
@@ -269,10 +319,15 @@ namespace WYJK.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> BatchDeleteRoles(int[] roleids)
         {
+            //判断是否已经被引用
+            int count = DbHelper.QuerySingle<int>($"select count(0) from UserRole where RoleID in({string.Join(",", roleids)})");
+            if (count > 0)
+                return Json(new { status = false, message = "该角色被引用，不能删除" });
+
             string roleid = string.Join(",", roleids);
-            string sql = $"delete Roles where RoleID in ({roleid})";
+            string sql = $"delete Roles where RoleID in ({roleid});" + $"delete from RolePermission where RoleID in({roleid})";
             int result = await DbHelper.ExecuteSqlCommandAsync(sql);
-            return Json(new { status = result > 0 });
+            return Json(new { status = true, message = "删除成功" });
         }
 
         /// <summary>
@@ -297,6 +352,35 @@ namespace WYJK.Web.Controllers
             List<Permissions> permissionList = await _userService.GetAllPermissions();
             return View(permissionList);
         }
+
+        public async Task<ActionResult> GetAllPermissionList()
+        {
+            List<Permissions> permissionList = await _userService.GetAllPermissions();
+
+            return Json(new { list = permissionList.Select(n => new TempPermissions { id = n.PermissionID, pId = Convert.ToInt32(n.ParentID), name = n.Description, @checked = false }) }, JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<ActionResult> GetAllCheckedPermissionList(int roleID)
+        {
+            List<Permissions> permissionList1 = await _userService.GetAllPermissions();
+            List<TempPermissions> permissionList = permissionList1.Select(n => new TempPermissions { id = n.PermissionID, pId = Convert.ToInt32(n.ParentID), name = n.Description }).ToList();
+            List<Permissions> checkedPermissionList1 = DbHelper.Query<Permissions>($"select * from RolePermission where RoleID={roleID}").ToList();
+            List<TempPermissions> checkedPermissionList = checkedPermissionList1.Select(n => new TempPermissions { id = n.PermissionID, pId = Convert.ToInt32(n.ParentID), name = n.Description }).ToList();
+            foreach (var permission in permissionList)
+            {
+                foreach (var checkedPermission in checkedPermissionList)
+                {
+                    if (permission.id == checkedPermission.id)
+                    {
+                        permission.@checked = true;
+                        break;
+                    }
+                }
+            }
+
+            return Json(new { list = permissionList }, JsonRequestBehavior.AllowGet);
+        }
+
 
         /// <summary>
         /// 权限新建编辑
@@ -358,6 +442,102 @@ namespace WYJK.Web.Controllers
             return View(userList);
         }
 
+        /// <summary>
+        /// 添加员工
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult UserAdd()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 添加员工
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult UserAdd(Users user)
+        {
+            //判断是否有重复的用户名
+            if (DbHelper.QuerySingle<int>($"select count(0) from Users where UserName='{user.UserName}'") > 0)
+            {
+                ViewBag.ErrorMessage = "用户名重复";
+                return View(user);
+            }
+
+            int userid = DbHelper.ExecuteSqlCommandScalar($"insert into Users(UserName,RegType,Password,TrueName) values('{user.UserName}',0,'{user.HashPassword}','{user.TrueName}')", new System.Data.Common.DbParameter[] { });
+            //UserRole
+            if (user.RoleID != null)
+            {
+                foreach (var roleid in user.RoleID)
+                {
+                    DbHelper.ExecuteSqlCommand($"insert into UserRole values({userid},{roleid})", null);
+                }
+            }
+
+
+            return RedirectToAction("GetUserList");
+        }
+
+        /// <summary>
+        /// 员工编辑
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult UserEdit(int userID)
+        {
+            Users user = DbHelper.QuerySingle<Users>($"select * from Users where UserID={userID}");
+
+            return View(user);
+        }
+
+        /// <summary>
+        /// 保存员工编辑
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ActionResult UserEdit(Users user)
+        {
+            //判断用户名是否已存在
+            if (DbHelper.QuerySingle<int>($"select count(0) from Users where UserName='{user.UserName}' and UserID!={user.UserID}") > 0)
+            {
+                ViewBag.ErrorMessage = "用户名已存在";
+                return View(user);
+            }
+
+            //保存用户
+            DbHelper.ExecuteSqlCommand($"update Users set UserName='{user.UserName}',TrueName='{user.TrueName}' where UserID={user.UserID} ", null);
+
+            //删除之前的角色
+            DbHelper.ExecuteSqlCommand($"delete from UserRole where UserID={user.UserID}", null);
+
+            if (user.RoleID != null)
+            {
+                //保存角色
+                foreach (var roleid in user.RoleID)
+                {
+                    DbHelper.ExecuteSqlCommand($"insert into UserRole values({user.UserID},{roleid})", null);
+                }
+            }
+
+
+            return RedirectToAction("GetUserList");
+        }
+
+
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="userids"></param>
+        /// <returns></returns>
+        public ActionResult BatchDeleteUsers(int[] userids)
+        {
+
+            DbHelper.ExecuteSqlCommand($"delete from Users where UserID in({string.Join(",", userids)});", null);
+            return Json(new { status = true, message = "删除成功" });
+        }
+
         [HttpGet]
         public ActionResult TestDapper()
         {
@@ -365,23 +545,23 @@ namespace WYJK.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public ActionResult TestDapper(SocialSecurityPeople model)
-        {
-            string sql = "select Users.UserID, Users.UserName , Roles.RoleID, Roles.RoleName from Users left join UserRole on Users.UserID = UserRole.UserID left join Roles on UserRole.RoleID = Roles.RoleID";
-            List<Users> list = DbHelper.CustomQuery<Users, Entity.Roles, Users>(sql,
-                (user, role) =>
-            {
-                user.roles = role;
-                return user;
-            },
-            "RoleID").ToList();
-            //string sql = "update Test set name=1 where name='1';update Test set name=2 where name='王五'";
-            //int result = DbHelper.ExecuteSqlCommand(sql, null);
+        //[HttpPost]
+        //public ActionResult TestDapper(SocialSecurityPeople model)
+        //{
+        //    string sql = "select Users.UserID, Users.UserName , Roles.RoleID, Roles.RoleName from Users left join UserRole on Users.UserID = UserRole.UserID left join Roles on UserRole.RoleID = Roles.RoleID";
+        //    List<Users> list = DbHelper.CustomQuery<Users, Entity.Roles, Users>(sql,
+        //        (user, role) =>
+        //    {
+        //        user.roles = role;
+        //        return user;
+        //    },
+        //    "RoleID").ToList();
+        //    //string sql = "update Test set name=1 where name='1';update Test set name=2 where name='王五'";
+        //    //int result = DbHelper.ExecuteSqlCommand(sql, null);
 
 
-            return View();
-        }
+        //    return View();
+        //}
 
         public FileResult ExportExcel()
         {
@@ -395,10 +575,10 @@ namespace WYJK.Web.Controllers
             }
             sbHtml.Append("</tr>");
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 10; i++)
             {
                 sbHtml.Append("<tr>");
-                sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>{0}</td>", i);
+                sbHtml.AppendFormat("<td>{0}</td>", i);
                 sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>屌丝{0}号</td>", i);
                 sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>{0}</td>", new Random().Next(20, 30) + i);
                 sbHtml.AppendFormat("<td style='font-size: 12px;height:20px;'>{0}</td>", DateTime.Now);
@@ -407,7 +587,8 @@ namespace WYJK.Web.Controllers
             sbHtml.Append("</table>");
 
             //第一种:使用FileContentResult
-            byte[] fileContents = Encoding.Default.GetBytes(sbHtml.ToString());
+
+            byte[] fileContents = Encoding.UTF8.GetBytes(sbHtml.ToString());
             return File(fileContents, "application/ms-excel", "fileContents.xls");
 
             ////第二种:使用FileStreamResult

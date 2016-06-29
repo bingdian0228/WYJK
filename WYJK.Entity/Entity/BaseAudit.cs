@@ -54,10 +54,16 @@ namespace WYJK.Entity
         /// 用户类型
         /// </summary>
         public string UserType { get; set; }
+        public string MemberID { get; set; }
         /// <summary>
         /// 代理机构
         /// </summary>
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+
         /// <summary>
         /// 参保人名称
         /// </summary>

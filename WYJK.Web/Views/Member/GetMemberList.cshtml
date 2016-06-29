@@ -31,6 +31,82 @@
 
             $(".Huialert.Huialert-info").fadeOut(2000);
 
+            //调整社平工资
+            $(".action-Adjust").click(function () {
+                var $this = $(this);
+
+                layer.confirm('确定调整吗？',
+                   { btn: ['确定', '取消'] },
+                   function () {
+
+                       var index = layer.load(1, {
+                           shade: [0.1, '#000']
+                       });
+
+                       var memberID = $this.closest("td").attr("data-memberid");
+                       var bucha = $this.prev().val();
+
+                       //提交
+                       $.ajax({
+                           url: "@Url.Action("AdjustBucha", "Member")",
+                           data: { "memberID": memberID, "bucha": bucha },
+                           dataType: "json",
+                           type: "post",
+                           success: function (response) {
+                               layer.close(index);
+                               if (response.status) {
+                                   layer.msg(response.message);
+                                   refresh();
+                               } else {
+                                   layer.msg(response.message);
+                               }
+                           },
+                           error: function (data) {
+                               layer.close(index);
+                               layer.msg("服务器错误");
+                           }
+                       });
+                   })
+            });
+
+            //冻结转余额
+            $(".action-transfer").click(function () {
+                var $this = $(this);
+
+                layer.confirm('确定调整吗？',
+                   { btn: ['确定', '取消'] },
+                   function () {
+
+                       var index = layer.load(1, {
+                           shade: [0.1, '#000']
+                       });
+
+                       //var memberID = $this.closest("td").attr("data-memberid");
+                       //var bucha = $this.prev().val();
+
+                       //提交
+                       $.ajax({
+                           url: "@Url.Action("BuchaToAccount", "Member")",
+                           //data: { "memberID": memberID, "bucha": bucha },
+                           dataType: "json",
+                           type: "post",
+                           success: function (response) {
+                               layer.close(index);
+                               if (response.status) {
+                                   layer.msg(response.message);
+                                   refresh();
+                               } else {
+                                   layer.msg(response.message);
+                               }
+                           },
+                           error: function (data) {
+                               layer.close(index);
+                               layer.msg("服务器错误");
+                           }
+                       });
+                   })
+            });
+
             $("#UserType").change(function () {
                 $this = $(this);
 
@@ -81,6 +157,21 @@
             </span>
             @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
 
                     }
@@ -96,6 +187,7 @@
                     <th width="80">注册电话</th>
                     <th width="80">人数</th>
                     <th width="80">账户余额</th>
+                    <th width="200">冻结费</th>
                     <th width="80">账户状态</th>
                     <th width="80">是否欠费</th>
                     <th width="120">操作</th>
@@ -108,12 +200,19 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(member.UserType))
                         </td>
-                        <td>@member.MemberName</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=1">@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))</a></td>
+                        @*<td>@member.MemberName</td>*@
                         <td>@member.MemberPhone</td>
                         <td>@member.SocialSecurityPeopleCount</td>
                         <td>@member.Account</td>
+                        <td data-memberid="@member.MemberID">
+                            <input type="text" value="@member.Bucha" class="input-text" style="width:auto" />
+                            <a href="javascript:;" class="btn btn-default radius action-Adjust">调整</a>
+                        </td>
                         <td>@member.AccountStatus</td>
-                        <td>@(member.AccountStatus == "正常" ? "否" : "是")</td>
+                        <td>
+                            @(Convert.ToDecimal(member.Account) < 0 ? "是" : "否")
+                        </td>
                         <td>
                             <a title="查看" href='@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=1' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
                             <a title="编辑" href='@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=0' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
@@ -125,5 +224,11 @@
         </table>
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
-    <div class="cl pd-5 bg-1 bk-gray mt-20"><span class="l"><a href="@Url.Action("EditMemberExtensionInformation","Member")?type=0" class="btn btn-danger radius action-complete">添加注册用户</a></span> <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span> </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="javascript:;" class="btn btn-danger-outline radius action-transfer">冻结转余额</a>
+            <a href="@Url.Action("EditMemberExtensionInformation","Member")?type=0" class="btn btn-danger radius action-complete">添加注册用户</a>
+        </span>
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
 </div>

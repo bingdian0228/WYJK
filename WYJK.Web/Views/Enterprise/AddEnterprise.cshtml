@@ -126,11 +126,23 @@
                 @Html.TextBoxFor(m => m.OfficeTel, new { @class = "input-text" })
             </div>
             <div class="col-2">@Html.ValidationMessageFor(m => m.OfficeTel)</div>
+            <label class="form-label col-2">公积金编号：</label>
+            <div class="formControls col-2">
+                @Html.TextBoxFor(m => m.AccumulationFundCode, new { @class = "input-text" })
+            </div>
+            <div class="col-2"></div>
             @*<label class="form-label col-2">户口类型：</label>
             <div class="formControls col-2">
                 @Html.DropDownListFor(m => m.HouseholdProperty, ViewData["HouseholdProperty"] as List<SelectListItem>, new { @class = "input-text" })
             </div>
             <div class="col-2">@Html.ValidationMessageFor(m => m.HouseholdProperty)</div>*@
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">企业税号：</label>
+            <div class="formControls col-2">
+                @Html.TextBoxFor(m => m.EnterpriseTax, new { @class = "input-text" })
+            </div>
+            <div class="col-2"></div>
         </div>
         <div class="row cl">
             <label class="form-label col-2">机构地址：</label>

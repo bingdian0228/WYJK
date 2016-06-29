@@ -12,7 +12,7 @@ namespace WYJK.Web.Controllers.Mvc
     /// <summary>
     /// 日志记录
     /// </summary>
-    public class LoggerController : Controller
+    public class LoggerController : BaseController
     {
         ILogService _logService = new LogService();
         
@@ -21,7 +21,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public ActionResult GetLogList(PagedParameter parameter)
+        public ActionResult GetLogList(LogParameter parameter)
         {
             PagedResult<Log> logList = _logService.GetLogList(parameter);
             return View(logList);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.IServices;
 using WYJK.Data.ServiceImpl;
@@ -14,10 +15,35 @@ using WYJK.Web.Models;
 namespace WYJK.Web.Controllers.Mvc
 {
     [Authorize]
-    public class AccumulationFundController : Controller
+    public class AccumulationFundController : BaseController
     {
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
         IAccumulationFundService _accumulationFundService = new AccumulationFundService();
+
+        /// <summary>
+        /// 公积金业务总览
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> AccumulationFundOverview(AccumulationFundParameter parameter)
+        {
+            ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
+            ViewData["IdentityCard"] = parameter.IdentityCard;
+
+            PagedResult<AccumulationFundShowModel> list = await _accumulationFundService.GetAccumulationFundList(parameter);
+
+            List<SelectListItem> UserTypeList = EnumExt.GetSelectList(typeof(UserTypeEnum));
+            UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
+
+            ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
+
+            List<SelectListItem> StatusList = EnumExt.GetSelectList(typeof(SocialSecurityStatusEnum));
+            StatusList.Insert(0, new SelectListItem { Text = "全部", Value = "", Selected = true });
+
+            ViewData["Status"] = new SelectList(StatusList, "Value", "Text", parameter.Status);
+
+            return View(list);
+        }
 
         /// <summary>
         /// 公积金待办业务
@@ -124,6 +150,17 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpPost]
         public JsonResult BatchComplete(int[] SocialSecurityPeopleIDs)
         {
+            //判断客户公积金号是否已经填写
+            List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID in ({string.Join(",", SocialSecurityPeopleIDs)})");
+            foreach (var accumulationFund in accumulationFundList)
+            {
+                if (string.IsNullOrEmpty(accumulationFund.AccumulationFundNo))
+                {
+                    return Json(new { status = false, Message = "无法办结，客户公积金号没有填写完整" });
+                }
+            }
+
+
             //修改参保人公积金状态
             bool flag = _accumulationFundService.ModifyAccumulationFundStatus(SocialSecurityPeopleIDs, (int)SocialSecurityStatusEnum.Normal);
             
@@ -216,11 +253,26 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 try
                 {
-                    await Data.DbHelper.ExecuteSqlCommandAsync($"update SocialSecurityPeople set status=0 where SocialSecurityPeopleid in ({model.PeopleIds});update AccumulationFund set AccumulationFundException='{model.Exception}',status=1 where SocialSecurityPeopleid in ({model.PeopleIds})");
+                    await Data.DbHelper.ExecuteSqlCommandAsync($"update SocialSecurityPeople set status=0 where SocialSecurityPeopleid in ({model.PeopleIds});update AccumulationFund set AccumulationFundException='{model.Exception}',status=1,IsException=1 where SocialSecurityPeopleid in ({model.PeopleIds})");
                     string[] strArray = model.PeopleIds.Split(',');
                     int[] intArray;
                     intArray = Array.ConvertAll<string, int>(strArray, s => int.Parse(s));
                     string names = _socialSecurityService.GetSocialPeopleNames(intArray);
+
+                    #region 提示客服并提示客户
+                    //参保人名称
+                    SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID={model.PeopleIds[0]}");
+                    string socialSecurityPeopleName = socialSecurityPeople.SocialSecurityPeopleName;
+                    int memberID = socialSecurityPeople.MemberID;
+
+
+                    //向客户发送站内信
+                    string memberLogStr = string.Empty;
+                    memberLogStr = socialSecurityPeopleName + "公积金业务办理异常：" + model.Exception;
+                    DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({memberID},'{memberLogStr}')", null);
+                    #endregion
+
+
                     LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("办理公积金异常客户:{0},原因:{1}", names, model.Exception) });
                 }
                 catch (Exception ex)

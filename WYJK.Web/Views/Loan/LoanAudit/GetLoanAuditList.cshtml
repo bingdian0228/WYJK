@@ -111,7 +111,7 @@
                 {
                     <tr class="text-c">
                         <td><input type="checkbox" value="@item.ID" name="LoanAudit"></td>
-                        <td>@item.MemberName</td>
+                        <td>@(item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName))</td>
                         <td>@item.MemberPhone</td>
                         <td>@item.TotalAmount</td>
                         <td>@item.AlreadyUsedAmount</td>

@@ -132,7 +132,7 @@ namespace WYJK.Entity
         /// </summary>		
         public string EnterpriseFixedTelePhone { get; set; }
         /// <summary>
-        /// 是否已认证 0:未认证、1：已认证
+        /// 是否已认证 0:未认证、1：已认证、2：认证中
         /// </summary>		
         public string IsAuthentication { get; set; }
         /// <summary>
@@ -185,6 +185,10 @@ namespace WYJK.Entity
         /// </summary>		
         public decimal Bucha { get; set; }
 
+        /// <summary>
+        /// 是否同意服务协议
+        /// </summary>
+        public bool IsAgreeProtocol { get; set; }
     }
 
     /// <summary>
@@ -358,15 +362,19 @@ namespace WYJK.Entity
     /// </summary>
     public class EnterpriseCertification
     {
-
         /// <summary>
         /// 用户ID
         /// </summary>
         public int MemberID { get; set; }
+
         /// <summary>
         /// 企业名称
         /// </summary>		
         public string EnterpriseName { get; set; }
+        /// <summary>
+        /// 企业税号
+        /// </summary>
+        public string EnterpriseTax { get; set; }
         /// <summary>
         /// 行业类型
         /// </summary>		
@@ -395,6 +403,11 @@ namespace WYJK.Entity
         /// 营业执照
         /// </summary>		
         public string EnterpriseBusinessLicense { get; set; }
+
+        /// <summary>
+        /// 企业岗位名称
+        /// </summary>
+        public string EnterprisePositionName { get; set; }
     }
 
     /// <summary>
@@ -427,6 +440,11 @@ namespace WYJK.Entity
         /// 营业执照照片 
         /// </summary>		
         public string BusinessLicensePhoto { get; set; }
+
+        /// <summary>
+        /// 个体岗位名称
+        /// </summary>
+        public string BusinessPositionName { get; set; }
     }
 
     /// <summary>
@@ -585,6 +603,10 @@ namespace WYJK.Entity
         public int MemberID { get; set; }
         public string UserType { get; set; }
         public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
         public string MemberPhone { get; set; }
         /// <summary>
         /// 人数
@@ -594,6 +616,11 @@ namespace WYJK.Entity
         /// 账户金额
         /// </summary>
         public string Account { get; set; }
+
+        /// <summary>
+        /// 冻结费
+        /// </summary>
+        public string Bucha { get; set; }
         /// <summary>
         /// 账户状态
         /// </summary>
@@ -684,6 +711,12 @@ namespace WYJK.Entity
         /// 头像
         /// </summary>
         public string HeadPortrait { get; set; }
+    }
+
+    public class BoundAccount
+    {
+        public int MemberID { get; set; }
+        public string BankCardNo { get; set; }
     }
 }
 

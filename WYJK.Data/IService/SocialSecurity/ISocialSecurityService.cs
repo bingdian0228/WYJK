@@ -288,5 +288,6 @@ namespace WYJK.Data.IServices
         /// <param name="MemberID"></param>
         /// <returns></returns>
         decimal GetWaitingHandleTotalByMemberID(int MemberID);
+
     }
 }

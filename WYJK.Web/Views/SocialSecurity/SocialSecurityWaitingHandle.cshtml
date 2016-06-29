@@ -22,7 +22,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard' + "&Status=" + '@Request.Params["Status"]';
 
                 }
             }
@@ -59,7 +59,7 @@
                                 layer.msg("办结成功");
                                 refresh();
                             } else {
-                                layer.msg("办结失败");
+                                layer.msg(response.Message);
                             }
                         },
                         error: function () {
@@ -77,11 +77,19 @@
                     layer.msg("请选择异常的客户");
                     return;
                 }
+
+                if ($("input[type='checkbox']:checked").length > 1) {
+                    layer.msg("只能选择一个异常的客户");
+                    return;
+                }
+
                 var SocialSecurityPeopleIDs = [];
                 $("input[type='checkbox']:checked").each(function (i) {
                     SocialSecurityPeopleIDs[i] = $(this).val();
                 });
+
                 
+
                 var save = 0;
                 var layerObject = layer.open({
                     type:2,
@@ -90,15 +98,19 @@
                     content: "@Url.Action("SocialException", "SocialSecurity")?SocialSecurityPeopleIDs=" + SocialSecurityPeopleIDs,
                     btn:["提交","取消"],
                     yes: function (index, layero) {
-                        
+                        if (save == 1) {
+                            layer.msg("不允许再次提交");
+                            return;
+                        }
+
                         var childIndex = layer.load(1, { shade: [0.1, '#000'] });
                         debugger;
                         var form = layer.getChildFrame('form', index);
                         form.submit();
-                      
+
                         save = 1;
-                        
-                        layer.close(childIndex);  
+                        //layer.closeAll();
+                        //layer.close(childIndex);
                         return false;
                     },
                     end:function(index, layero) {
@@ -107,9 +119,9 @@
                         }
                     },
                     success: function (index, layero) {
-                        
+
                         if (save === 1) {
-                            layer.close;
+                            layer.closeAll();
                             refresh();
                         }
                         layer.iframeAuto(layero);
@@ -164,8 +176,9 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(socialSecurity.UserType))
                         </td>
-                        <td>@socialSecurity.MemberName</td>
-                        <td>@socialSecurity.SocialSecurityPeopleName</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@socialSecurity.MemberID&type=1">@(socialSecurity.UserType == "0" ? socialSecurity.MemberName : (socialSecurity.UserType == "1" ? socialSecurity.EnterpriseName : socialSecurity.BusinessName))</a></td>
+                        @*<td>@socialSecurity.MemberName</td>*@
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@socialSecurity.SocialSecurityPeopleID&MemberID=@socialSecurity.MemberID&Type=0">@socialSecurity.SocialSecurityPeopleName</a></td>
                         <td>@socialSecurity.IdentityCard</td>
                         <td>@socialSecurity.PayTime.ToString("yyyy/MM")</td>
                         <td>@socialSecurity.PayTime.AddMonths(socialSecurity.PayMonthCount).ToString("yyyy/MM")</td>

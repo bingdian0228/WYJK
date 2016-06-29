@@ -22,7 +22,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard' + "&Status=" + '@Request.Params["Status"]';
 
                 }
             }
@@ -75,8 +75,10 @@
                         <td>
                             @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(accumulationFund.UserType))
                         </td>
-                        <td>@accumulationFund.MemberName</td>
-                        <td>@accumulationFund.SocialSecurityPeopleName</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@accumulationFund.MemberID&type=1">@(accumulationFund.UserType == "0" ? accumulationFund.MemberName : (accumulationFund.UserType == "1" ? accumulationFund.EnterpriseName : accumulationFund.BusinessName))</a></td>
+
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@accumulationFund.SocialSecurityPeopleID&MemberID=@accumulationFund.MemberID&Type=0">@accumulationFund.SocialSecurityPeopleName</a></td>
+
                         <td>@accumulationFund.IdentityCard</td>
                         <td>@accumulationFund.PayTime.ToString("yyyy/MM")</td>
                         <td>@accumulationFund.PayTime.AddMonths(accumulationFund.PayMonthCount).ToString("yyyy/MM")</td>

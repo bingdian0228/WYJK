@@ -135,10 +135,28 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> CommitEnterpriseCertification(EnterpriseCertification parameter)
         {
-            string sql = "update Members set EnterpriseName=@EnterpriseName ,EnterpriseType=@EnterpriseType ,EnterpriseArea=@EnterpriseArea,EnterpriseLegal=@EnterpriseLegal,EnterpriseLegalIdentityCardNo=@EnterpriseLegalIdentityCardNo,"
-                + $"EnterprisePeopleNum=@EnterprisePeopleNum,SocialSecurityCreditCode=@SocialSecurityCreditCode,EnterpriseBusinessLicense=@EnterpriseBusinessLicense,IsAuthentication=1,UserType={(int)UserTypeEnum.QiYe} where MemberID=@MemberID";
+            //string sql = "update Members set EnterpriseName=@EnterpriseName ,EnterpriseTax=@EnterpriseTax,EnterpriseType=@EnterpriseType ,EnterpriseArea=@EnterpriseArea,EnterpriseLegal=@EnterpriseLegal,EnterpriseLegalIdentityCardNo=@EnterpriseLegalIdentityCardNo,"
+            //    + $"EnterprisePeopleNum=@EnterprisePeopleNum,SocialSecurityCreditCode=@SocialSecurityCreditCode,EnterpriseBusinessLicense=@EnterpriseBusinessLicense,IsAuthentication=1,UserType={(int)UserTypeEnum.QiYe} where MemberID=@MemberID";
+            //SqlParameter[] parameters = new SqlParameter[] {
+            //    new SqlParameter("@EnterpriseName",parameter.EnterpriseName),
+            //    new SqlParameter("@EnterpriseTax",parameter.EnterpriseTax),
+            //    new SqlParameter("@EnterpriseType",parameter.EnterpriseType),
+            //    new SqlParameter("@EnterpriseArea",parameter.EnterpriseArea),
+            //    new SqlParameter("@EnterpriseLegal",parameter.EnterpriseLegal),
+            //    new SqlParameter("@EnterpriseLegalIdentityCardNo",parameter.EnterpriseLegalIdentityCardNo),
+            //    new SqlParameter("@EnterprisePeopleNum",parameter.EnterprisePeopleNum),
+            //    new SqlParameter("@SocialSecurityCreditCode",parameter.SocialSecurityCreditCode ?? (object)DBNull.Value),
+            //    new SqlParameter("@EnterpriseBusinessLicense",parameter.EnterpriseBusinessLicense),
+            //    new SqlParameter("@MemberID",parameter.MemberID)
+            //};
+            //int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);
+            //return result > 0;
+
+            string sql = $@"insert into CertificationAudit(MemberID,EnterpriseName,EnterpriseType,EnterpriseTax,EnterpriseArea,EnterpriseLegal,EnterpriseLegalIdentityCardNo,EnterprisePeopleNum,SocialSecurityCreditCode,EnterpriseBusinessLicense,UserType,EnterprisePositionName) 
+                                                    values(@MemberID,@EnterpriseName ,@EnterpriseType ,@EnterpriseTax,@EnterpriseArea,@EnterpriseLegal,@EnterpriseLegalIdentityCardNo,@EnterprisePeopleNum,@SocialSecurityCreditCode,@EnterpriseBusinessLicense,{(int)UserTypeEnum.QiYe},@EnterprisePositionName)";
             SqlParameter[] parameters = new SqlParameter[] {
                 new SqlParameter("@EnterpriseName",parameter.EnterpriseName),
+                new SqlParameter("@EnterpriseTax",parameter.EnterpriseTax),
                 new SqlParameter("@EnterpriseType",parameter.EnterpriseType),
                 new SqlParameter("@EnterpriseArea",parameter.EnterpriseArea),
                 new SqlParameter("@EnterpriseLegal",parameter.EnterpriseLegal),
@@ -146,6 +164,7 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("@EnterprisePeopleNum",parameter.EnterprisePeopleNum),
                 new SqlParameter("@SocialSecurityCreditCode",parameter.SocialSecurityCreditCode ?? (object)DBNull.Value),
                 new SqlParameter("@EnterpriseBusinessLicense",parameter.EnterpriseBusinessLicense),
+                new SqlParameter("@EnterprisePositionName",parameter.EnterprisePositionName),
                 new SqlParameter("@MemberID",parameter.MemberID)
             };
             int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);
@@ -159,14 +178,17 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> CommitPersonCertification(IndividualCertification parameter)
         {
-            string sql = $"update Members set BusinessIdentityCardNo=@BusinessIdentityCardNo,BusinessName=@BusinessName,BusinessUser=@BusinessUser,BusinessIdentityPhoto=@BusinessIdentityPhoto,BusinessLicensePhoto=@BusinessLicensePhoto,IsAuthentication=1,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID=@MemberID";
+            string sql = $@"insert into CertificationAudit(MemberID,BusinessName,BusinessUser,BusinessIdentityCardNo,BusinessIdentityPhoto,BusinessLicensePhoto,UserType,BusinessPositionName) 
+                  values(@MemberID,@BusinessName,@BusinessUser,@BusinessIdentityCardNo,@BusinessIdentityPhoto,@BusinessLicensePhoto,{(int)UserTypeEnum.GeTiJingYing},@BusinessPositionName)";
             SqlParameter[] parameters = new SqlParameter[] {
+                new SqlParameter("@MemberID",parameter.MemberID),
                 new SqlParameter("@BusinessIdentityCardNo",parameter.BusinessIdentityCardNo),
                 new SqlParameter("@BusinessName",parameter.BusinessName),
                 new SqlParameter("@BusinessUser",parameter.BusinessUser),
                 new SqlParameter("@BusinessIdentityPhoto",parameter.BusinessIdentityPhoto),
                 new SqlParameter("@BusinessLicensePhoto",parameter.BusinessLicensePhoto),
-                new SqlParameter("@MemberID",parameter.MemberID)
+                new SqlParameter("@BusinessPositionName",parameter.BusinessPositionName)
+                
             };
             int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);
             return result > 0;
@@ -380,7 +402,7 @@ namespace WYJK.Data.ServiceImpl
 
             strb.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'  or SocialSecurityPeople.SocialSecurityPeopleName is null)");
 
-            string innersql = "select Members.MemberID,Max(Members.UserType) UserType, MAX(members.MemberName) MemberName,MAX(members.MemberPhone) MemberPhone, COUNT(SocialSecurityPeople.SocialSecurityPeopleID) SocialSecurityPeopleCount,MAX(ISNULL(members.Account,0)) Account,"
+            string innersql = "select Members.MemberID,Max(Members.UserType) UserType, MAX(members.MemberName) MemberName,MAX(members.EnterpriseName) EnterpriseName,MAX(members.BusinessName) BusinessName,  MAX(members.MemberPhone) MemberPhone, COUNT(SocialSecurityPeople.SocialSecurityPeopleID) SocialSecurityPeopleCount,MAX(ISNULL(members.Account,0)) Account,Max(ISNULL(members.Bucha,0)) Bucha,"
                             + " case when exists("
                             + " select * from SocialSecurityPeople"
                             + " left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"

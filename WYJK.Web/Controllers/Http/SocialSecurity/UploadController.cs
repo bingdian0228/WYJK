@@ -19,7 +19,7 @@ namespace WYJK.Web.Controllers
     /// <summary>
     /// 文件上传接口
     /// </summary>
-    public class UploadController : ApiController
+    public class UploadController : BaseApiController
     {
         private static readonly string BasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadFiles");
         private static readonly string[] ImageExt = { ".jpg", ".jpeg", ".png", ".gif" };

@@ -64,5 +64,10 @@ namespace WYJK.Entity
         /// </summary>
         public string SerialNum { get; set; }
 
+        /// <summary>
+        /// 社保公积金类型
+        /// </summary>
+        public string Type { get; set; }
+
     }
 }

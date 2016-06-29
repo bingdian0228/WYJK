@@ -68,7 +68,7 @@ namespace WYJK.Entity
         /// 每页记录数量
         /// </summary>
         [JsonProperty(PropertyName = "pageSize")]
-        public virtual int PageSize { set; get; } = 5;
+        public virtual int PageSize { set; get; } = 10;
         /// <summary>
         /// 搜索关键字[可选]
         /// </summary>

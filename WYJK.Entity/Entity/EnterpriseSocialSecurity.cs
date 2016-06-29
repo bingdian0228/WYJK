@@ -201,6 +201,16 @@ namespace WYJK.Entity
         /// </summary>
         public DateTime? AdjustDt { get; set; }
 
+        /// <summary>
+        /// 公积金编号
+        /// </summary>
+        public string AccumulationFundCode { get; set; }
+
+        /// <summary>
+        /// 企业税号
+        /// </summary>
+        public string EnterpriseTax { get; set; }
+
     }
 
     /// <summary>
@@ -213,6 +223,7 @@ namespace WYJK.Entity
         /// </summary>
         public string EnterpriseName { get; set; }
     }
+
 
     /// <summary>
     /// 城市社平

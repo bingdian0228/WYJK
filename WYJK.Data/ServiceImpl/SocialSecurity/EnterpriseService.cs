@@ -68,13 +68,13 @@ namespace WYJK.Data.ServiceImpl
                                                                   + ",MaxSocial,CompYangLao,CompYiLiao,CompShiYe,CompGongShang,CompShengYu"
                                                                   + ",PersonalYangLao,PersonalYiLiao,PersonalShiYeTown,PersonalShiYeRural,PersonalGongShang"
                                                                   + ",PersonalShengYu,MinAccumulationFund,MaxAccumulationFund,CompProportion"
-                                                                  + ",PersonalProportion,IsDefault)"
+                                                                  + ",PersonalProportion,IsDefault,AccumulationFundCode,EnterpriseTax)"
                                                                   + " values(@EnterpriseName,@EnterpriseArea,@ContactUser,@ContactTel,@Fax,@Email"
                                                                   + ",@OfficeTel,@OrgAddress,@SocialAvgSalary,@MinSocial"
                                                                   + ",@MaxSocial,@CompYangLao,@CompYiLiao,@CompShiYe,@CompGongShang,@CompShengYu"
                                                                   + ",@PersonalYangLao,@PersonalYiLiao,@PersonalShiYeTown,@PersonalShiYeRural,@PersonalGongShang"
                                                                   + ",@PersonalShengYu,@MinAccumulationFund,@MaxAccumulationFund,@CompProportion"
-                                                                  + ",@PersonalProportion,@IsDefault)";
+                                                                  + ",@PersonalProportion,@IsDefault,@AccumulationFundCode,@EnterpriseTax)";
             SqlParameter[] sqlparameters = new SqlParameter[] {
                 new SqlParameter("EnterpriseName",model.EnterpriseName),
                 new SqlParameter("EnterpriseArea",model.EnterpriseArea),
@@ -105,7 +105,9 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("MaxAccumulationFund",model.MaxAccumulationFund),
                 new SqlParameter("CompProportion",model.CompProportion),
                 new SqlParameter("PersonalProportion",model.PersonalProportion),
-                new SqlParameter("IsDefault",model.IsDefault)
+                new SqlParameter("IsDefault",model.IsDefault),
+                new SqlParameter("AccumulationFundCode",model.AccumulationFundCode),
+                new SqlParameter("EnterpriseTax",model.EnterpriseTax)
             };
 
             int result = DbHelper.ExecuteSqlCommandScalar(sqlStr, sqlparameters);
@@ -150,7 +152,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool UpdateEnterprise(EnterpriseSocialSecurity model)
         {
-            string sqlstr = "update EnterpriseSocialSecurity set EnterpriseName=@EnterpriseName,EnterpriseArea=@EnterpriseArea,ContactUser=@ContactUser,ContactTel=@ContactTel,Fax=@Fax,Email=@Email,OfficeTel=@OfficeTel,OrgAddress=@OrgAddress,SocialAvgSalary=@SocialAvgSalary,MinSocial=@MinSocial,MaxSocial=@MaxSocial,CompYangLao=@CompYangLao,CompYiLiao=@CompYiLiao,CompShiYe=@CompShiYe,CompGongShang=@CompGongShang,CompShengYu=@CompShengYu,PersonalYangLao=@PersonalYangLao,PersonalYiLiao=@PersonalYiLiao,PersonalShiYeTown=@PersonalShiYeTown,PersonalShiYeRural=@PersonalShiYeRural,PersonalGongShang=@PersonalGongShang,PersonalShengYu=@PersonalShengYu,MinAccumulationFund=@MinAccumulationFund,MaxAccumulationFund=@MaxAccumulationFund,CompProportion=@CompProportion,PersonalProportion=@PersonalProportion,IsDefault=@IsDefault where EnterpriseID=@EnterpriseID";
+            string sqlstr = "update EnterpriseSocialSecurity set EnterpriseName=@EnterpriseName,EnterpriseArea=@EnterpriseArea,ContactUser=@ContactUser,ContactTel=@ContactTel,Fax=@Fax,Email=@Email,OfficeTel=@OfficeTel,OrgAddress=@OrgAddress,SocialAvgSalary=@SocialAvgSalary,MinSocial=@MinSocial,MaxSocial=@MaxSocial,CompYangLao=@CompYangLao,CompYiLiao=@CompYiLiao,CompShiYe=@CompShiYe,CompGongShang=@CompGongShang,CompShengYu=@CompShengYu,PersonalYangLao=@PersonalYangLao,PersonalYiLiao=@PersonalYiLiao,PersonalShiYeTown=@PersonalShiYeTown,PersonalShiYeRural=@PersonalShiYeRural,PersonalGongShang=@PersonalGongShang,PersonalShengYu=@PersonalShengYu,MinAccumulationFund=@MinAccumulationFund,MaxAccumulationFund=@MaxAccumulationFund,CompProportion=@CompProportion,PersonalProportion=@PersonalProportion,IsDefault=@IsDefault,AccumulationFundCode=@AccumulationFundCode,EnterpriseTax=@EnterpriseTax where EnterpriseID=@EnterpriseID";
 
 
             int result = DbHelper.ExecuteSqlCommand(sqlstr, new
@@ -185,7 +187,9 @@ namespace WYJK.Data.ServiceImpl
                 CompProportion = model.CompProportion,
                 PersonalProportion = model.PersonalProportion,
                 IsDefault = model.IsDefault,
-                EnterpriseID = model.EnterpriseID
+                EnterpriseID = model.EnterpriseID,
+                AccumulationFundCode=model.AccumulationFundCode,
+                EnterpriseTax=model.EnterpriseTax
             });
 
             return result > 0;
@@ -261,6 +265,51 @@ namespace WYJK.Data.ServiceImpl
                 TotalItemCount = totalCount,
                 Items = modelList
             };
+        }
+
+
+        /// <summary>
+        /// 获取企业缴费明细列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public PagedResult<PaymentDetail> GetPaymentDetailsList(PaymentDetailsParameter parameter)
+        {
+            string wheresqlstr = $" where IdentityCard like '%{parameter.IdentityCard}%' and CompanyName like '%{parameter.CompanyName}%' and Year like '%{parameter.Year}%'";
+
+            string innersqlstr = $@"SELECT max(PersonnelNumber) PersonnelNumber,
+       IdentityCard,
+       max(TrueName) TrueName,
+       max(PayTime) PayTime,
+       max(BusinessTime) BusinessTime,
+       max(SocialInsuranceBase) SocialInsuranceBase,
+       max(CompanyName) CompanyName,
+       (select '['+SocialSecurityType+']'+'[个人]'+ CAST(PersonalExpenses as varchar(50))+'[单位]'+CAST(CompanyExpenses as varchar(50))+CHAR(10) from [PaymentDetail] where IdentityCard=a.IdentityCard and PayTime=a.PayTime and CompanyName=a.CompanyName and Year=a.Year for xml path('')) PaymentDetails,
+       sum(PersonalExpenses+ CompanyExpenses) TotalCount
+      ,Year
+  FROM [WYJK].[dbo].[PaymentDetail] a
+  {wheresqlstr}
+  group by IdentityCard,PayTime,CompanyName,Year";
+
+            string sqlstr = $"select * from (select ROW_NUMBER() OVER(ORDER BY t.PersonnelNumber )AS Row,t.* from ({innersqlstr}) t ) tt  WHERE tt.Row BETWEEN @StartIndex AND @EndIndex";
+
+            List<PaymentDetail> modelList = DbHelper.Query<PaymentDetail>(sqlstr, new
+            {
+                StartIndex = parameter.SkipCount,
+                EndIndex = parameter.TakeCount
+            });
+
+            int totalCount = DbHelper.QuerySingle<int>($"select count(0) from ({innersqlstr}) t");
+
+            return new PagedResult<PaymentDetail>
+            {
+                PageIndex = parameter.PageIndex,
+                PageSize = parameter.PageSize,
+                TotalItemCount = totalCount,
+                Items = modelList
+            };
+
+
         }
     }
 }

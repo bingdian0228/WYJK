@@ -57,9 +57,15 @@
             <div class="formControls col-2">
                 @Model.OfficeTel
             </div>
-            <label class="form-label col-2">户口类型：</label>
+            <label class="form-label col-2">公积金编号：</label>
             <div class="formControls col-2">
-               @EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)(Convert.ToInt32(Model.HouseholdProperty)))
+                @Model.AccumulationFundCode
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">企业税号：</label>
+            <div class="formControls col-2">
+                @Model.EnterpriseTax
             </div>
         </div>
         <div class="row cl">
@@ -166,9 +172,8 @@
             </div>
             <label class="form-label col-2">默认企业：</label>
             <div class="formControls col-2">
-                @(Model.IsDefault ? "是":"否")
+                @(Model.IsDefault ? "是" : "否")
             </div>
         </div>
     </form>
 </div>
-

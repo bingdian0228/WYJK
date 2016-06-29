@@ -43,6 +43,13 @@ namespace WYJK.Entity
         /// 用户名
         /// </summary>
         public string MemberName { get; set; }
+
+        public string UserType { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+
         /// <summary>
         /// 用户电话
         /// </summary>

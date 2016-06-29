@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.IServices;
 using WYJK.Data.ServiceImpl;
@@ -13,7 +14,7 @@ using WYJK.Framework.EnumHelper;
 namespace WYJK.Web.Controllers.Mvc
 {
     [Authorize]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
         private readonly IMemberService _memberService = new MemberService();
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
@@ -28,9 +29,36 @@ namespace WYJK.Web.Controllers.Mvc
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text");
 
-            ViewBag.memberList = _memberService.GetMembersList();
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
 
             return View(membersStatisticsList);
+        }
+
+        [HttpPost]
+        public JsonResult BuchaToAccount()
+        {
+            string sqlstr = "update Members set Account=ISNULL(Account,0)+Bucha,Bucha=0";
+            DbHelper.ExecuteSqlCommand(sqlstr, null);
+            return Json(new { status = true, message = "调整成功" });
+        }
+
+        /// <summary>
+        /// 调整补差费用
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <param name="bucha"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult AdjustBucha(int memberID, decimal bucha)
+        {
+            string sqlstr = $"update Members set Bucha={bucha} where MemberID={memberID}";
+            int result = DbHelper.ExecuteSqlCommand(sqlstr, null);
+            return Json(new { status = result > 0, message = result > 0 ? "调整成功" : "调整失败" });
         }
 
         /// <summary>
@@ -41,7 +69,7 @@ namespace WYJK.Web.Controllers.Mvc
         {
             List<Members> memberList = _memberService.GetMembersList();
             var list = memberList.Where(n => UserType == string.Empty ? true : n.UserType == UserType)
-                .Select(item => new { MemberID = item.MemberID, MemberName = item.MemberName });
+                .Select(item => new { MemberID = item.MemberID, MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName) });
             return Json(list, JsonRequestBehavior.AllowGet);
         }
 
@@ -137,7 +165,7 @@ namespace WYJK.Web.Controllers.Mvc
 
             if (model.MemberID == 0)
             {
-                var  flag1 = await _memberService.RegisterMember(new MemberRegisterModel() { MemberName = model.MemberName, MemberPhone = model.MemberPhone, Password = model.Password, InviteCode = model.InviteCode });
+                var flag1 = await _memberService.RegisterMember(new MemberRegisterModel() { MemberName = model.MemberName, MemberPhone = model.MemberPhone, Password = model.Password, InviteCode = model.InviteCode });
                 model.MemberID = await _memberService.GetMemberId(model.MemberName);
 
                 if (model.MemberID == 0)
@@ -200,5 +228,7 @@ namespace WYJK.Web.Controllers.Mvc
             };
             return list;
         }
+
+
     }
 }

@@ -41,18 +41,28 @@ namespace WYJK.Entity
         /// </summary>		
         public string HouseholdProperty { get; set; }
         /// <summary>
-        /// 是否缴纳社保
+        /// 是否展示社保信息
         /// </summary>		
         public bool IsPaySocialSecurity { get; set; }
         /// <summary>
-        /// 是否缴纳公积金
+        /// 是否展示公积金信息
         /// </summary>		
         public bool IsPayAccumulationFund { get; set; }
 
         /// <summary>
+        /// 是否可修改社保信息
+        /// </summary>
+        public bool IsModifySocialSecurity { get; set; }
+
+        /// <summary>
+        /// 是否可修改公积金信息
+        /// </summary>
+        public bool IsModifyAccumulationFund { get; set; }
+        /// <summary>
         /// 社保信息
         /// </summary>
         public SocialSecurity socialSecurity { get; set; }
+
 
         /// <summary>
         /// 公积金信息
@@ -72,6 +82,11 @@ namespace WYJK.Entity
         /// </summary>
         [JsonIgnore]
         public decimal SocialSecurityBase { get; set; }
+
+        /// <summary>
+        /// 是否重新办理
+        /// </summary>
+        public bool IsReApply { get; set; }
 
         /// <summary>
         /// 公积金基数
@@ -231,10 +246,18 @@ namespace WYJK.Entity
         /// 总额
         /// </summary>
         public decimal Amount { get; set; }
+
         /// <summary>
-        /// 是否可修改
+        /// 是否显示修改
+        /// </summary>
+        public bool IsDisplayModify { get; set; }
+
+        /// <summary>
+        /// 是否可修改参保人
         /// </summary>
         public bool IsCanModify { get; set; }
+
+
     }
 
     /// <summary>
@@ -257,6 +280,10 @@ namespace WYJK.Entity
 
         #region 社保信息
         /// <summary>
+        /// 社保是否支付过
+        /// </summary>
+        public bool ssIsPay { get; set; }
+        /// <summary>
         /// 起缴时间
         /// </summary>		
         public DateTime? SSPayTime { get; set; }
@@ -277,6 +304,10 @@ namespace WYJK.Entity
         #endregion
 
         #region 公积金信息
+        /// <summary>
+        /// 公积金是否支付过
+        /// </summary>
+        public bool afIsPay { get; set; }
         /// <summary>
         /// 起缴时间
         /// </summary>		
@@ -354,6 +385,18 @@ namespace WYJK.Entity
         /// 停保时间
         /// </summary>
         public DateTime? SSStopDate { get; set; }
+        /// <summary>
+        /// 收取方式
+        /// </summary>
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄单号
+        /// </summary>
+        public string MailOrder { get; set; }
+        /// <summary>
+        /// 快递公司
+        /// </summary>
+        public string ExpressCompany { get; set; }
 
         /// <summary>
         /// 公积金停方式
@@ -383,6 +426,22 @@ namespace WYJK.Entity
         /// </summary>
         public int SocialSecurityPeopleID { get; set; }
         /// <summary>
+        /// 收取方式
+        /// </summary>
+        public string CollectType { get; set; }
+        /// <summary>
+        /// 邮寄地址
+        /// </summary>
+        public string MailAddress { get; set; }
+        /// <summary>
+        /// 联系电话
+        /// </summary>
+        public string ContactsPhone { get; set; }
+        /// <summary>
+        /// 联系人
+        /// </summary>
+        public string ContactsUser { get; set; }
+        /// <summary>
         /// 停保原因
         /// </summary>
         public string StopReason { get; set; }
@@ -396,6 +455,18 @@ namespace WYJK.Entity
         /// 公积金ID
         /// </summary>
         public int SocialSecurityPeopleID { get; set; }
+        /// <summary>
+        /// 公积金办停类型
+        /// </summary>
+        public string AccumulationFundTopType { get; set; }
+        /// <summary>
+        /// 新单位全称
+        /// </summary>
+        public string CompanyName { get; set; }
+        /// <summary>
+        /// 新单位公积金编号
+        /// </summary>
+        public string CompanyAccumulationFundCode { get; set; }
 
     }
 

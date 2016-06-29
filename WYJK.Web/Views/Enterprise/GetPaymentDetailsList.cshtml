@@ -1,0 +1,178 @@
+﻿@model PagedResult<PaymentDetail>
+@{
+    ViewBag.Title = "企业缴费明细";
+}
+@section Header
+{
+    <script type="text/javascript" src="/Content/lib/laypage/1.3/laypage.js"></script>
+
+}
+@section Footer
+{
+    <script type="text/javascript">
+        laypage({
+            cont: $('#pager'),
+            skin: '#AF0000', //皮肤
+            pages: '@Model.TotalPageCount', //可以叫服务端把总页数放在某一个隐藏域，再获取。假设我们获取到的是18
+            curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/PageIndex=(\d+)/);
+                return page ? page[1] : 1;
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr + '&IdentityCard=' + '@Request.Params["IdentityCard"]' + '&CompanyName=' + '@Request.Params["CompanyName"]' + '&Year' + '@Request.Params["Year"]';
+                }
+            }
+        });
+
+        $(function () {
+
+            $(".Huialert.Huialert-info").fadeOut(2000);
+        })
+    </script>
+    <link href="~/Content/lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" />
+    <script src="~/Content/lib/webuploader/0.1.5/webuploader.js"></script>
+    <script>
+        var uploader = WebUploader.create({
+            auto: true,
+            // swf文件路径
+            swf: "~/Content/lib/webuploader/0.1.5/Uploader.swf",
+
+            // 文件接收服务端。
+            server: '/Enterprise/ImportPaymentDetails',
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#picker',
+
+            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+            resize: false
+        });
+
+        // 当有文件被添加进队列的时候
+        uploader.on('fileQueued', function (file) {
+            var $list = $("#thelist");
+            $list.append('<div id="' + file.id + '" class="item">' +
+                '<h4 class="info">' + file.name + '</h4>' +
+                '<p class="state">等待上传...</p>' +
+            '</div>');
+        });
+
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on('uploadProgress', function (file, percentage) {
+
+            var $li = $('#' + file.id),
+                $percent = $li.find('.progress .progress-bar');
+
+            // 避免重复创建
+            if (!$percent.length) {
+                $percent = $('<div class="progress progress-striped active">' +
+                  '<div class="progress-bar" role="progressbar" style="width: 0%">' +
+                  '</div>' +
+                '</div>').appendTo($li).find('.progress-bar');
+            }
+
+            $li.find('p.state').text("上传中");
+
+            $percent.css('width', percentage * 100 + '%');
+        });
+
+        uploader.on('uploadSuccess', function (file, data) {
+
+            $(".Huialert.Huialert-info").text(data.Message);
+   
+            $(".Huialert.Huialert-info").show();
+            setTimeout('$(".Huialert.Huialert-info").fadeOut(2000)', 2000);
+            var message = data.Status ? "上传成功" : "上传失败";
+
+            $('#' + file.id).find('p.state').text(message);
+        });
+
+        uploader.on('uploadError', function (file) {
+            $('#' + file.id).find('p.state').text('上传出错');
+        });
+
+        uploader.on('uploadComplete', function (file) {
+            $('#' + file.id).find('.progress').fadeOut();
+        });
+
+
+    </script>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 企业缴费明细 <span class="c-gray en">&gt;</span> 企业缴费明细 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="text-c">
+        @using (Html.BeginForm("GetPaymentDetailsList", "Enterprise", FormMethod.Get))
+            {
+
+                @:身份证： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证" })
+            @:单位名称： @Html.TextBox("CompanyName", null, new { style = "width:250px", @class = "input-text", placeholder = "单位名称" })
+            @:年份： @Html.TextBox("Year", null, new { style = "width:250px", @class = "input-text", placeholder = "格式:2016" })
+                <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+            }
+    </div>
+    <div class="mt-20">
+        @*@if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
+        {
+            <div class="Huialert Huialert-info">@(TempData["Message"])</div>
+        }*@
+        <div class="Huialert Huialert-info" style="display:none;">@(TempData["Message"])</div>
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    <th width="80">个人编号</th>
+                    <th width="80">身份证</th>
+                    <th width="80">姓名</th>
+                    <th width="80">缴费年月</th>
+                    <th width="80">业务年月</th>
+                    <th width="80">缴费基数</th>
+                    <th width="80">单位名称</th>
+                    <th width="160">缴费明细</th>
+                    <th width="80">年份</th>
+                    <th width="80">合计</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="text-c">
+                        <td>@item.PersonnelNumber</td>
+                        <td>@item.IdentityCard</td>
+                        <td>@item.TrueName</td>
+                        <td>@item.PayTime</td>
+                        <td>@item.BusinessTime</td>
+                        <td>@item.SocialInsuranceBase</td>
+                        <td>@item.CompanyName</td>
+                        <td>@item.PaymentDetails</td>
+                        <td>@item.Year</td>
+                        <td>@item.TotalCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="pager" style="margin-top: 20px;"></div>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            缴费合计：@ViewData["totalCount"]
+        </span>
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        @*@using (Html.BeginForm("ImportPaymentDetails", "Enterprise", FormMethod.Post, new { name = "shiye", enctype = "multipart/form-data" }))
+            {
+                <p>
+                    失业缴费明细：<input id="FileUpload" type="file" name="files" multiple />
+                    <input id="shiye" type="submit" value="导入" style="width:60px;" />
+                </p>
+            }*@
+        <div id="uploader" class="wu-example">
+            <!--用来存放文件信息-->
+            <div id="thelist" class="uploader-list"></div>
+            <div class="btns">
+                <div id="picker">导入缴费明细</div>
+                @*<button id="ctlBtn" class="btn btn-default">开始上传</button>*@
+            </div>
+        </div>
+    </div>
+</div>

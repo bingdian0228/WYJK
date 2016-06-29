@@ -1,0 +1,151 @@
+﻿@model PagedResult<BaseAuditList>
+@{
+    var memberList = ViewBag.memberList as List<Members>;
+}
+@section Header
+{
+    <script type="text/javascript" src="/Content/lib/laypage/1.3/laypage.js"></script>
+
+}
+@section Footer
+{
+    <script type="text/javascript">
+        laypage({
+            cont: $('#pager'),
+            skin: '#AF0000', //皮肤
+            pages: '@Model.TotalPageCount', //可以叫服务端把总页数放在某一个隐藏域，再获取。假设我们获取到的是18
+            curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/PageIndex=(\d+)/);
+                return page ? page[1] : 1;
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr + "&Type=" + '@Request.Params["Type"]' + "&MemberID=" + '@Request.Params["MemberID"]' + "&SocialSecurityPeopleName=" + '@Request.Params["SocialSecurityPeopleName"]' + "&Status=" + '@Request.Params["Status"]';
+                }
+            }
+        });
+
+        $(function () {
+            //审核通过
+            $("[class*='action-audit']").click(function () {
+                if ($("input[type='checkbox'][name='BaseAudit']:checked").length <= 0) {
+                    layer.msg("请选择审核项");
+                    return;
+                }
+                var $this = $(this);
+                layer.confirm('确定审核选中的项？',
+                   { btn: ['确定', '取消'] },
+                   function () {
+                       var IDs = [];
+                       $("input[type='checkbox'][name='BaseAudit']:checked").each(function (i) {
+                           IDs[i] = $(this).val();
+                       });
+
+                       var index = layer.load(1, {
+                           shade: [0.1, '#000']
+                       });
+
+                       var Status = '@((int)BaseAuditEnum.NoPass)';
+                       if ($this.filter(".action-audit-pass").length > 0)
+                           Status = '@((int)BaseAuditEnum.Pass)';
+
+
+
+                       //提交
+                       $.ajax({
+                           url: "@Url.Action("BatchAudit", "BaseAudit")",
+                           data: { "IDs": IDs, "Status": Status, "Type": '@Request.Params["Type"]' },
+                           dataType: "json",
+                           type: "post",
+                           success: function (response) {
+                               layer.close(index);
+                               if (response.status) {
+                                   layer.msg(response.message);
+                                   refresh();
+                               } else {
+                                   layer.msg(response.message);
+                               }
+                           },
+                           error: function (data) {
+                               layer.close(index);
+                               layer.msg("服务器错误");
+                           }
+                       });
+                   })
+            });
+        })
+    </script>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 基数审核 <span class="c-gray en">&gt;</span> 社保基数审核 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="text-c">
+        @using (Html.BeginForm("GetBaseAuditList", "BaseAudit", FormMethod.Get))
+        {
+            @Html.Hidden("Type")
+            @Html.Raw("代理机构:")
+            <span class="select-box inline">
+                @{
+                    var list = new List<SelectListItem> { new SelectListItem { Text = "全部", Value = "" } };
+
+                    list.AddRange(memberList.Select(item => new SelectListItem
+                    {
+                        Text = item.MemberName,
+                        Value = item.MemberID.ToString()
+                    }));
+                }
+                @Html.DropDownList("MemberID", list, new { @class = "select" })
+            </span>
+            @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+                    @:审核状态:
+                    <span class="select-box inline">
+                        @Html.DropDownList("Status", ViewData["StatusType"] as List<SelectListItem>, new { @class = "select" })
+                    </span>
+
+                    <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+
+                    }
+    </div>
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    <th width="25"><input type="checkbox" name="" value=""></th>
+                    <th width="80">用户类型</th>
+                    <th width="80">代理机构</th>
+                    <th width="80">参保人</th>
+                    <th width="80">当前基数</th>
+                    <th width="80">调整后基数</th>
+                    <th width="80">申请时间</th>
+                    <th width="80">审核时间</th>
+                    <th width="80">审核状态</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="text-c">
+                        <td><input type="checkbox" value="@item.ID" name="BaseAudit"></td>
+                        <td>@(EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(item.UserType)))</td>
+                        <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@item.MemberID&type=1">@(item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName))</a></td>
+                        <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@item.SocialSecurityPeopleID&MemberID=@item.MemberID&Type=0">@item.SocialSecurityPeopleName</a></td>
+                        <td>@item.CurrentBase</td>
+                        <td>@item.BaseAdjusted</td>
+                        <td>@item.ApplyDate</td>
+                        <td>@(item.AuditDate == null ? "--" : Convert.ToString(item.AuditDate))</td>
+                        <td>@EnumExt.GetEnumCustomDescription((BaseAuditEnum)Convert.ToInt32(item.Status)) </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="pager" style="margin-top: 20px;"></div>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        @if (Request.Params["Status"] == Convert.ToInt32(BaseAuditEnum.NoAudited).ToString())
+        {
+            <span class="l">
+                <a href="javascript:;" class="btn btn-primary radius action-audit-pass"><i class="Hui-iconfont">&#xe6e1;</i> 通过</a>
+                <a href="javascript:;" class="btn btn-danger radius action-audit-nopass"><i class="Hui-iconfont">&#xe6dd;</i> 不通过</a>
+            </span>}
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
+</div>

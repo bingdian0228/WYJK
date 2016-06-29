@@ -99,14 +99,37 @@ namespace WYJK.Data.ServiceImpl
                 builder.AppendFormat(" and Members.MemberID = {0}", parameter.MemberID);
             }
 
+            if (!string.IsNullOrEmpty(parameter.PaymentMethod)) {
+                builder.AppendFormat($" and orders.PaymentMethod='{parameter.PaymentMethod}'");
+            }
+
             builder.Append($" and OrderCode like '%{parameter.OrderCode}%'");
 
             if (!string.IsNullOrEmpty(parameter.Status))
             {
                 builder.Append($" and orders.Status = {parameter.Status}");
             }
+            else {
+                builder.Append($" and orders.Status in(1,2)");
+            }
 
-            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberName,"
+            if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                builder.Append("and 1 = 1 ");
+            }
+            else if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && !string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                builder.Append($"and PayTime < '{ parameter.EndTime.Value.AddDays(1)}' ");
+            }
+            else if (!string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                builder.Append($"and PayTime > '{parameter.StartTime}'");
+            }
+            else {
+                builder.Append($"and PayTime between '{parameter.StartTime}' and '{parameter.EndTime.Value.AddDays(1)}'");
+            }
+
+            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberID,members.MemberName,members.EnterpriseName,members.BusinessName,"
                             + " (select COUNT(*) from OrderDetails where OrderDetails.OrderCode = Orders.OrderCode) payUserCount,"
                             + " orders.PaymentMethod,"
                             + " (select  SUM(OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth + OrderDetails.SocialSecurityServiceCost + OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.SocialSecurityBuCha + OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth + OrderDetails.AccumulationFundServiceCost + OrderDetails.AccumulationFundFirstBacklogCost)  from OrderDetails where OrderDetails.OrderCode = orders.OrderCode) Amounts,"
@@ -169,16 +192,16 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public List<FinanceSubOrder> GetSubOrderList(string OrderCode)
         {
-            string sql = $"select OrderDetails.OrderCode, OrderDetails.SocialSecurityPeopleName ,SocialSecurityPeople.HouseholdProperty,"
-                        + " CONVERT(varchar(7), SocialSecurity.PayTime, 120) ssStartTime,"
-                        + " CONVERT(varchar(7), DATEADD(MONTH, socialsecurity.PayMonthCount, SocialSecurity.PayTime), 120)  ssEndTime,"
-                        + " SocialSecurity.SocialSecurityBase,"
+            string sql = $"select OrderDetails.OrderCode,[Order].Status, OrderDetails.SocialSecurityPeopleName ,SocialSecurityPeople.HouseholdProperty,"
+                        + " CONVERT(varchar(7), OrderDetails.SSPayTime, 120) ssStartTime,"
+                        + " CONVERT(varchar(7), DATEADD(MONTH, OrderDetails.SocialSecurityAmount, OrderDetails.SSPayTime), 120)  ssEndTime,"
+                        //+ " SocialSecurity.SocialSecurityBase,"
                         + " OrderDetails.SocialSecurityAmount* orderdetails.SocialSecuritypayMonth ssAmount,"
                         + " OrderDetails.SocialSecurityServiceCost,"
                         + " OrderDetails.SocialSecurityFirstBacklogCost,"
                         + " orderdetails.SocialSecurityBuCha,"
-                        + " CONVERT(varchar(7), AccumulationFund.PayTime, 120) afStartTime,"
-                        + " CONVERT(varchar(7), DATEADD(MONTH, AccumulationFund.PayMonthCount, AccumulationFund.PayTime), 120)  afEndTime,"
+                        + " CONVERT(varchar(7), OrderDetails.AFPayTime, 120) afStartTime,"
+                        + " CONVERT(varchar(7), DATEADD(MONTH, OrderDetails.AccumulationFundAmount, OrderDetails.AFPayTime), 120)  afEndTime,"
                         + " orderdetails.AccumulationFundAmount* OrderDetails.AccumulationFundpayMonth afAmount,"
                         + " OrderDetails.AccumulationFundServiceCost,"
                         + " OrderDetails.AccumulationFundFirstBacklogCost,"
@@ -190,6 +213,7 @@ namespace WYJK.Data.ServiceImpl
                         + " OrderDetails.AccumulationFundServiceCost +"
                         + " OrderDetails.AccumulationFundFirstBacklogCost totalAmount"
                         + " from OrderDetails"
+                        + " left join [Order] on [Order].OrderCode = OrderDetails.OrderCode "
                         + " left join SocialSecurityPeople on OrderDetails.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID"
                         + " left join SocialSecurity on OrderDetails.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
                         + " left join AccumulationFund on OrderDetails.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"
@@ -206,6 +230,11 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool CancelOrder(string OrderCode)
         {
+            DbHelper.ExecuteSqlCommand($@"update SocialSecurity set IsGenerateOrder=0 
+  where SocialSecurityPeopleID in(select SocialSecurityPeopleID from OrderDetails where OrderCode in('{OrderCode}') and IsPaySocialSecurity = 1);
+ update AccumulationFund set IsGenerateOrder=0 
+  where SocialSecurityPeopleID in(select SocialSecurityPeopleID from OrderDetails where OrderCode in('{OrderCode}') and IsPayAccumulationFund = 1)", null);
+
             string sql = $"delete from [Order] where OrderCode in('{OrderCode}')";
             int result = DbHelper.ExecuteSqlCommand(sql, null);
             return result > 0;

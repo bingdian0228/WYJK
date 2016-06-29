@@ -16,7 +16,7 @@ namespace WYJK.Data.IService
         /// 新闻通知(Admin)
         /// </summary>
         /// <returns></returns>
-        Task<PagedResult<Information>> GetNewNoticeList(InformationParameter parameter);
+        Task<PagedResult<Information>> GetInsuredIntroduceList(InformationParameter parameter);
 
         /// <summary>
         /// 信息添加(Admin)

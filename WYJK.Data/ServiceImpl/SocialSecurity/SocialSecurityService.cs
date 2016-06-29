@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
                       dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, 
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, 
-                      dbo.Members.MemberName, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate, dbo.Members.MemberID,
+                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,
                         case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
@@ -59,7 +59,8 @@ namespace WYJK.Data.ServiceImpl
                       INNER JOIN dbo.SocialSecurity ON dbo.SocialSecurityPeople.SocialSecurityPeopleID = dbo.SocialSecurity.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";
 
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.SocialSecurityID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and Status = {parameter.Status} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
+            string sqlstr = string.IsNullOrEmpty(parameter.Status) ? "1=1" : $" Status = {parameter.Status}";
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.SocialSecurityID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
 
             List<SocialSecurityShowModel> modelList = await DbHelper.QueryAsync<SocialSecurityShowModel>(sql, new
             {
@@ -67,7 +68,7 @@ namespace WYJK.Data.ServiceImpl
                 EndIndex = parameter.TakeCount
             });
 
-            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) t  where  " + userTypeSql + $" and Status = {parameter.Status} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
+            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) t  where  " + userTypeSql + $" and {sqlstr} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
 
             return new PagedResult<SocialSecurityShowModel>
             {
@@ -84,15 +85,35 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<List<UnInsuredPeople>> GetUnInsuredPeopleList(int memberID, int status, int peopleid = 0)
         {
-            string sql = $@"select SocialSecurityPeople.SocialSecurityPeopleID,SocialSecurityPeople.SocialSecurityPeopleName,IsPaySocialSecurity, IsPayAccumulationFund, 
-SocialSecurity.PayTime SSPayTime, SocialSecurity.PayMonthCount SSPayMonthCount, SocialSecurity.SocialSecurityBase,SocialSecurity.PayProportion SSPayProportion,SocialSecurity.Status SSStatus, 
-AccumulationFund.PayTime AFPayTime, AccumulationFund.PayMonthCount AFPayMonthCount ,AccumulationFund.AccumulationFundBase,AccumulationFund.PayProportion AFPayProportion,AccumulationFund.Status AFStatus 
-from SocialSecurityPeople 
-left join SocialSecurity 
-on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID 
-left join dbo.AccumulationFund 
-on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID 
-where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @status or AccumulationFund.status=@status) and SocialSecurityPeople.IsPay=0";
+            //            string sql = $@"select SocialSecurityPeople.SocialSecurityPeopleID,SocialSecurityPeople.SocialSecurityPeopleName,IsPaySocialSecurity, IsPayAccumulationFund, 
+            //SocialSecurity.PayTime SSPayTime, SocialSecurity.PayMonthCount SSPayMonthCount, SocialSecurity.SocialSecurityBase,SocialSecurity.PayProportion SSPayProportion,SocialSecurity.Status SSStatus, 
+            //AccumulationFund.PayTime AFPayTime, AccumulationFund.PayMonthCount AFPayMonthCount ,AccumulationFund.AccumulationFundBase,AccumulationFund.PayProportion AFPayProportion,AccumulationFund.Status AFStatus 
+            //from SocialSecurityPeople 
+            //left join SocialSecurity 
+            //on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID 
+            //left join dbo.AccumulationFund 
+            //on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID 
+            //where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @status or AccumulationFund.status=@status) and SocialSecurityPeople.IsPay=0";
+
+            string sql = $@"select * from (
+select SocialSecurityPeopleID,SocialSecurityPeopleName,
+case when exists (select * from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) then 1 else 0 end IsPaySocialSecurity,
+(select PayTime from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSPayTime,
+(select PayMonthCount from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSPayMonthCount,
+(select SocialSecurityBase from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SocialSecurityBase,
+(select PayProportion from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSPayProportion,
+(select Status from dbo.SocialSecurity where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) SSStatus,
+
+case when exists (select * from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) then 1 else 0 end IsPayAccumulationFund,
+(select PayTime from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFPayTime,
+(select PayMonthCount from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFPayMonthCount,
+(select AccumulationFundBase from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AccumulationFundBase,
+(select PayProportion from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFPayProportion,
+(select Status from dbo.AccumulationFund where SocialSecurityPeopleID=t.SocialSecurityPeopleID and Status= 1 and IsPay=0) AFStatus
+
+from dbo.SocialSecurityPeople t
+where MemberID={memberID} ) tt
+where tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1";
             if (peopleid != 0)
             {
                 sql += $" and SocialSecurityPeople.SocialSecurityPeopleID = {peopleid}";
@@ -293,8 +314,8 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         {
             EnterpriseSocialSecurity model = GetDefaultEnterpriseSocialSecurityByArea(accumulationFund.AccumulationFundArea, accumulationFund.HouseholdProperty);
             decimal PayProportion = model.CompProportion + model.PersonalProportion;
-            string sql = "insert into AccumulationFund(SocialSecurityPeopleID,AccumulationFundArea,AccumulationFundBase,PayProportion,PayTime,PayMonthCount,PayBeforeMonthCount,Note,Status,RelationEnterprise)"
-                + $" values(@SocialSecurityPeopleID,@AccumulationFundArea,@AccumulationFundBase,@PayProportion,@PayTime,@PayMonthCount,@PayBeforeMonthCount,@Note,{(int)SocialSecurityStatusEnum.UnInsured},@RelationEnterprise)";
+            string sql = "insert into AccumulationFund(SocialSecurityPeopleID,AccumulationFundArea,AccumulationFundBase,PayProportion,PayTime,PayMonthCount,PayBeforeMonthCount,Note,Status,RelationEnterprise,AccumulationFundType)"
+                + $" values(@SocialSecurityPeopleID,@AccumulationFundArea,@AccumulationFundBase,@PayProportion,@PayTime,@PayMonthCount,@PayBeforeMonthCount,@Note,{(int)SocialSecurityStatusEnum.UnInsured},@RelationEnterprise,@AccumulationFundType)";
             DbParameter[] parameters = new DbParameter[] {
                 new SqlParameter("@SocialSecurityPeopleID",accumulationFund.SocialSecurityPeopleID),
                 new SqlParameter("@AccumulationFundArea",accumulationFund.AccumulationFundArea),
@@ -304,7 +325,8 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
                 new SqlParameter("@PayMonthCount",accumulationFund.PayMonthCount),
                 new SqlParameter("@PayBeforeMonthCount",accumulationFund.PayBeforeMonthCount),
                 new SqlParameter("@Note",accumulationFund.Note ?? ""),
-                new SqlParameter("@RelationEnterprise",model.EnterpriseID)
+                new SqlParameter("@RelationEnterprise",model.EnterpriseID),
+                new SqlParameter("@AccumulationFundType",accumulationFund.AccumulationFundType)
             };
 
             int result = DbHelper.ExecuteSqlCommandScalar(sql, parameters);
@@ -379,7 +401,17 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public bool ModifySocialStatus(int[] SocialSecurityPeopleIDs, int status)
         {
-            string sql = $"update SocialSecurity set Status={status} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
+            string sqlstr = "";
+            if (status == (int)SocialSecurityStatusEnum.Normal)
+            {
+                sqlstr = ",HandleDate=getdate()";
+            }
+            else if (status == (int)SocialSecurityStatusEnum.AlreadyStop)
+            {
+                sqlstr = ",StopDate=getdate()";
+            }
+
+            string sql = $"update SocialSecurity set Status={status}{sqlstr} where SocialSecurityPeopleID in({string.Join(",", SocialSecurityPeopleIDs)})";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 
@@ -409,7 +441,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public bool ApplyTopSocialSecurity(StopSocialSecurityParameter parameter)
         {
-            string sql = $"update SocialSecurity set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate(),StopReason='{parameter.StopReason}' where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
+            string sql = $"update SocialSecurity set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate(),StopReason='{parameter.StopReason}',CollectType='{parameter.CollectType}',MailAddress='{parameter.MailAddress}',ContactsPhone='{parameter.ContactsPhone}',ContactsUser='{parameter.ContactsUser}' where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 
@@ -422,7 +454,7 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public bool ApplyTopAccumulationFund(StopAccumulationFundParameter parameter)
         {
-            string sql = $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate() where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
+            string sql = $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.WaitingStop}, StopMethod = {(int)waitingTopEnum.Apply},ApplyStopDate=getdate(),AccumulationFundTopType={parameter.AccumulationFundTopType},CompanyName='{parameter.CompanyName}',CompanyAccumulationFundCode='{parameter.CompanyAccumulationFundCode}' where SocialSecurityPeopleID ={parameter.SocialSecurityPeopleID}";
 
             int result = DbHelper.ExecuteSqlCommand(sql, null);
 
@@ -450,8 +482,8 @@ where SocialSecurityPeople.MemberID = @MemberID and (SocialSecurity.status = @st
         /// <returns></returns>
         public SocialSecurityDetail GetSocialSecurityAndAccumulationFundDetail(int SocialSecurityPeopleID)
         {
-            string sql = $"select SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurity.SocialSecurityBase,SocialSecurity.InsuranceArea,SocialSecurity.PayTime SSPayTime, ISNULL(SocialSecurity.AlreadyPayMonthCount, 0) SSAlreadyPayMonthCount,SocialSecurity.PayMonthCount SSRemainingMonths,"
-                            + " AccumulationFund.AccumulationFundBase,AccumulationFund.AccumulationFundArea,AccumulationFund.PayTime AFPayTime, ISNULL(AccumulationFund.AlreadyPayMonthCount, 0) AFAlreadyPayMonthCount,AccumulationFund.PayMonthCount AFRemainingMonths"
+            string sql = $"select SocialSecurityPeople.SocialSecurityPeopleName,SocialSecurity.Status SSStatus, SocialSecurity.SocialSecurityBase,SocialSecurity.InsuranceArea,SocialSecurity.PayTime SSPayTime, ISNULL(SocialSecurity.AlreadyPayMonthCount, 0) SSAlreadyPayMonthCount,SocialSecurity.PayMonthCount SSRemainingMonths,"
+                            + " AccumulationFund.Status AFStatus,AccumulationFund.AccumulationFundBase,AccumulationFund.AccumulationFundArea,AccumulationFund.PayTime AFPayTime, ISNULL(AccumulationFund.AlreadyPayMonthCount, 0) AFAlreadyPayMonthCount,AccumulationFund.PayMonthCount AFRemainingMonths"
                             + " from SocialSecurityPeople"
                             + " left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
                             + " left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"

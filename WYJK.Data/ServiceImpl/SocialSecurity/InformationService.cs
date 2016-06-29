@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WYJK.Data.IService;
 using WYJK.Entity;
+using WYJK.Framework.EnumHelper;
 
 namespace WYJK.Data.ServiceImpl
 {
@@ -16,9 +17,9 @@ namespace WYJK.Data.ServiceImpl
     public class InformationService : IInformationService
     {
 
-        public async Task<PagedResult<Information>> GetNewNoticeList(InformationParameter parameter)
+        public async Task<PagedResult<Information>> GetInsuredIntroduceList(InformationParameter parameter)
         {
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type) ii where ii.Row between @StartIndex AND @EndIndex";
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row,i.* from Information i where Name like @Name) ii where ii.Row between @StartIndex AND @EndIndex";
 
             List<Information> informationList = await DbHelper.QueryAsync<Information>(sql, new
             {
@@ -27,7 +28,7 @@ namespace WYJK.Data.ServiceImpl
                 StartIndex = parameter.SkipCount,
                 EndIndex = parameter.TakeCount
             });
-            int totalCount = await DbHelper.QuerySingleAsync<int>("select count(0) from Information where Name like @Name and Type = @Type", new { Name = "%" + parameter.Name + "%", Type = parameter.Type });
+            int totalCount = await DbHelper.QuerySingleAsync<int>("select count(0) from Information where Name like @Name ", new { Name = "%" + parameter.Name + "%" });
 
             return new PagedResult<Information>
             {
@@ -46,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
         public async Task<bool> InformationAdd(Information model)
         {
             string ImgUrls = string.Join(";", model.ImgUrls);
-            string sql = $"insert into Information(Name, Type ImgUrl, StrContent) values('{model.Name}','{model.Type}','{ImgUrls}','{model.StrContent}')";
+            string sql = $"insert into Information(Name,ImgUrl,StrContent) values('{model.Name}','{ImgUrls}','{model.StrContent}')";
             int result = await DbHelper.ExecuteSqlCommandAsync(sql);
             return result > 0;
         }

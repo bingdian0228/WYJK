@@ -64,6 +64,14 @@ namespace WYJK.Entity
         /// 代理机构名称
         /// </summary>
         public string MemberName { get; set; }
+
+        public string MemberID { get; set; }
+        /// <summary>
+        /// 代理机构ID
+        /// </summary>
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
         /// <summary>
         /// 用户支付数
         /// </summary>
@@ -88,6 +96,7 @@ namespace WYJK.Entity
     public class FinanceSubOrder
     {
         public string OrderCode { get; set; }
+        public string Status { get; set; }
         public string SocialSecurityPeopleName { get; set; }
         public string HouseholdProperty { get; set; }
         public DateTime? ssStartTime { get; set; }
@@ -113,9 +122,16 @@ namespace WYJK.Entity
 
         public string MemberID { get; set; }
 
-        public string OrderCode { get; set; }
+        public string PaymentMethod { get; set; }
 
+        public string OrderCode { get; set; }
         public string Status { get; set; }
+
+        public DateTime? StartTime { get; set; }
+
+        public DateTime? EndTime { get; set; }
+
+
 
     }
 

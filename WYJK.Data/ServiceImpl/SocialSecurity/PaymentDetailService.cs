@@ -13,9 +13,29 @@ namespace WYJK.Data.ServiceImpl
         public void AddPaymentDetail(List<PaymentDetail> list)
         {
             StringBuilder builder = new StringBuilder();
+
             foreach (var paymentDetail in list)
             {
-                builder.Append($@"insert into PaymentDetail(
+                builder.Append($@"
+                    if exists(select 1 from PaymentDetail where IdentityCard='{paymentDetail.IdentityCard}' and PayTime='{paymentDetail.PayTime}' and CompanyName='{paymentDetail.CompanyName}' and SocialSecurityType='{paymentDetail.SocialSecurityType}' and Year={DateTime.Now.Year})
+                    begin
+                        update PaymentDetail set  
+                                PersonnelNumber='{paymentDetail.PersonnelNumber}',
+                                TrueName='{paymentDetail.TrueName}',
+                                PayTime='{paymentDetail.PayTime}',
+                                BusinessTime='{paymentDetail.BusinessTime}',
+                                PaymentType='{paymentDetail.PaymentType}',
+                                SocialInsuranceBase='{paymentDetail.SocialInsuranceBase}',
+                                PersonalExpenses='{paymentDetail.PersonalExpenses}', 
+                                CompanyExpenses='{paymentDetail.CompanyExpenses}',
+                                PaymentMark='{paymentDetail.PaymentMark}',
+                                CompanyNumber='{paymentDetail.CompanyNumber}',
+                                SettlementMethod='{paymentDetail.SettlementMethod}'
+                            where IdentityCard='{paymentDetail.IdentityCard}' and PayTime='{paymentDetail.PayTime}' and CompanyName='{paymentDetail.CompanyName}' and SocialSecurityType='{paymentDetail.SocialSecurityType}' and Year={DateTime.Now.Year}
+                    end
+                    else
+                    begin
+                    insert into PaymentDetail(
                             PersonnelNumber
                             , IdentityCard
                             , TrueName
@@ -29,7 +49,7 @@ namespace WYJK.Data.ServiceImpl
                             , CompanyNumber
                             , CompanyName
                             , SettlementMethod
-                            , SocialSecurityType)
+                            , SocialSecurityType,Year)
                     values(
                             '{paymentDetail.PersonnelNumber}'
                             ,'{paymentDetail.IdentityCard}'
@@ -44,7 +64,8 @@ namespace WYJK.Data.ServiceImpl
                             ,'{paymentDetail.CompanyNumber}'
                             ,'{paymentDetail.CompanyName}'
                             ,'{paymentDetail.SettlementMethod}'
-                            ,'{paymentDetail.SocialSecurityType}');");
+                            ,'{paymentDetail.SocialSecurityType}',{DateTime.Now.Year});
+                    end");
             }
 
             DbHelper.ExecuteSqlCommand(builder.ToString(), null);
