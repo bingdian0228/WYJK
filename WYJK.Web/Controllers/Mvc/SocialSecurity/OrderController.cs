@@ -62,7 +62,7 @@ namespace WYJK.Web.Controllers.Mvc
                     //修改订单对应的参保人的社保和公积金状态  SocialSecurityStatusEnum.WaitingHandle
                     //首先需要判断参保人是否已经通过客服审核
 
-                    string sqlstr = $"select SocialSecurityPeopleID from OrderDetails where OrderCode ='{orderCode}'";
+                    string sqlstr = $"select * from OrderDetails where OrderCode ='{orderCode}'";
                     List<OrderDetails> orderDetailList = DbHelper.Query<OrderDetails>(sqlstr);
                     foreach (var orderDetail in orderDetailList)
                     {

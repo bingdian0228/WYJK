@@ -105,8 +105,8 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> DeleteUninsuredPeople(int SocialSecurityPeopleID)
         {
             //如果存在订单，则不能删除
-            int count = DbHelper.QuerySingle<int>($@"select count(0) from SocialSecurityPeople 
-left join OrderDetails on SocialSecurityPeople.SocialSecurityPeopleID = OrderDetails.SocialSecurityPeopleID
+            int count = DbHelper.QuerySingle<int>($@"select count(0) from OrderDetails  
+left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = OrderDetails.SocialSecurityPeopleID
 where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
             if (count > 0)
                 return new JsonResult<dynamic>

@@ -1246,6 +1246,16 @@
             图片名称
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.Information.Type">
+            <summary>
+            信息类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Information.CreateTime">
+            <summary>
+            创建时间
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.Information.StrContent">
             <summary>
             StrContent
@@ -1260,11 +1270,6 @@
             <summary>
             标题
             </summary>		
-        </member>
-        <member name="P:WYJK.Entity.InformationParameter.Type">
-            <summary>
-            类型
-            </summary>
         </member>
         <member name="T:WYJK.Entity.InsuredIntroduce">
             <summary>
@@ -2947,9 +2952,29 @@
             是否有订单已经支付过
             </summary>
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.SocialSecurityBase">
+            <summary>
+            社保基数
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityPeople.IsReApply">
             <summary>
             是否重新办理
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.AccumulationFundBase">
+            <summary>
+            公积金基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.SSPayProportion">
+            <summary>
+            社保缴费比例
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeople.AFPayProportion">
+            <summary>
+            公积金缴费比例
             </summary>
         </member>
         <member name="T:WYJK.Entity.UnInsuredPeople">
