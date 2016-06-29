@@ -61,7 +61,6 @@
     <Compile Include="IService\SocialSecurity\IDrawCashService.cs" />
     <Compile Include="IService\SocialSecurity\IMessageService.cs" />
     <Compile Include="IService\SocialSecurity\IOrderService.cs" />
-    <Compile Include="IService\SocialSecurity\IPaymentDetailService.cs" />
     <Compile Include="IService\SocialSecurity\IRenewOrdersService.cs" />
     <Compile Include="IService\SocialSecurity\ISocialSecurityService.cs" />
     <Compile Include="IService\SocialSecurity\IMemberService.cs" />
@@ -83,6 +82,7 @@
     <Compile Include="ServiceImpl\SocialSecurity\EnterpriseService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\InformationService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\InsuredIntroduceService.cs" />
+    <Compile Include="IService\SocialSecurity\IPaymentDetailService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\LogService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\DrawCashService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\MessageService.cs" />
