@@ -45,7 +45,7 @@ namespace WYJK.Data.ServiceImpl
 
             string innersqlstr = $@"SELECT dbo.SocialSecurityPeople.SocialSecurityPeopleName, dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, 
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
-                      dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, 
+                      dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, SocialSecurity.AlreadyPayMonthCount,
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, 
                       dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,
                         case when exists(
@@ -786,8 +786,8 @@ left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = Soci
         /// <returns></returns>
         public AdjustingBase GetCurrentBase(int SocialSecurityPeopleID)
         {
-            string sqlstr = $@"select SocialSecurityPeople.SocialSecurityPeopleID,case when SocialSecurityPeople.IsPaySocialSecurity=1 and SocialSecurity.Status={(int)SocialSecurityStatusEnum.Normal} then 1 else 0 end IsPaySocialSecurity,
-case when SocialSecurityPeople.IsPayAccumulationFund=1 and AccumulationFund.Status={(int)SocialSecurityStatusEnum.Normal} then 1 else 0 end IsPayAccumulationFund,SocialSecurity.SocialSecurityBase,AccumulationFund.AccumulationFundBase,
+            string sqlstr = $@"select SocialSecurityPeople.SocialSecurityPeopleID,case when SocialSecurity.Status={(int)SocialSecurityStatusEnum.Normal} then 1 else 0 end IsPaySocialSecurity,
+case when  AccumulationFund.Status={(int)SocialSecurityStatusEnum.Normal} then 1 else 0 end IsPayAccumulationFund,SocialSecurity.SocialSecurityBase,AccumulationFund.AccumulationFundBase,
 SocialSecurityPeople.HouseholdProperty,SocialSecurity.InsuranceArea,AccumulationFund.AccumulationFundArea,
 ess1.SocialAvgSalary*ess1.MinSocial/100 SocialSecurityMinBase,ess1.SocialAvgSalary*ess1.MaxSocial/100 SocialSecurityMaxBase,
 ess2.MinAccumulationFund AccumulationFundMinBase,ess2.MaxAccumulationFund AccumulationFundMaxBase

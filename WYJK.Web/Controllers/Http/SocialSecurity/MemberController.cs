@@ -1172,6 +1172,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         //获取该用户下所有参保人的所有待办金额之和
                         decimal WaitingHandleTotal = _socialSecurityService.GetWaitingHandleTotalByMemberID(parameter.MemberID);
 
+
+
                         if (parameter.Amount >= RenewMonthTotal - (info.Account - WaitingHandleTotal) + TotalServiceCost)
                         {
                             //交服务费

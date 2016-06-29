@@ -22,7 +22,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard'+"&Status="+'@Request.Params["Status"]';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard' + "&Status=" + '@Request.Params["Status"]';
 
                 }
             }
@@ -84,7 +84,7 @@
                         <td><a class="maincolor" href="@Url.Action("GetSocialSecurityPeopleDetail","CustomerService")?SocialSecurityPeopleID=@socialSecurity.SocialSecurityPeopleID&MemberID=@socialSecurity.MemberID&Type=0">@socialSecurity.SocialSecurityPeopleName</a></td>
                         <td>@socialSecurity.IdentityCard</td>
                         <td>@socialSecurity.PayTime.ToString("yyyy/MM")</td>
-                        <td>@socialSecurity.PayTime.AddMonths(socialSecurity.PayMonthCount).ToString("yyyy/MM")</td>
+                        <td>@socialSecurity.PayTime.AddMonths(socialSecurity.AlreadyPayMonthCount + socialSecurity.PayMonthCount - 1).ToString("yyyy/MM")</td>
                         <td>@socialSecurity.SocialSecurityBase.ToString("N2")</td>
                         <td>@socialSecurity.PayProportion.ToString("N2")</td>
                         <td>@Convert.ToDecimal(socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100).ToString("N2")</td>

@@ -456,6 +456,11 @@
             缴费月数
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.AlreadyPayMonthCount">
+            <summary>
+            已交月数
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.AccumulationFundShowModel.PayBeforeMonthCount">
             <summary>
             补交月数
@@ -2696,6 +2701,11 @@
             <summary>
             缴费月数
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.AlreadyPayMonthCount">
+            <summary>
+            已交月数
+            </summary>
         </member>
         <member name="P:WYJK.Entity.SocialSecurityShowModel.PayBeforeMonthCount">
             <summary>

@@ -196,7 +196,7 @@
                                 <td>@socialSecurity.SocialSecurityPeopleName</td>
                                 <td>@socialSecurity.IdentityCard</td>
                                 <td>@socialSecurity.PayTime.ToString("yyyy/MM")</td>
-                                <td>@socialSecurity.PayTime.AddMonths(socialSecurity.PayMonthCount).ToString("yyyy/MM")</td>
+                                <td>@socialSecurity.PayTime.AddMonths(socialSecurity.PayMonthCount-1).ToString("yyyy/MM")</td>
                                 <td>@socialSecurity.SocialSecurityBase.ToString("N2")</td>
                                 <td>@socialSecurity.PayProportion.ToString("N2")</td>
                                 <td>@Convert.ToDecimal(socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100).ToString("N2")</td>
@@ -236,7 +236,7 @@
                                 <td>@accumulationFund.SocialSecurityPeopleName</td>
                                 <td>@accumulationFund.IdentityCard</td>
                                 <td>@accumulationFund.PayTime.ToString("yyyy/MM")</td>
-                                <td>@accumulationFund.PayTime.AddMonths(accumulationFund.PayMonthCount).ToString("yyyy/MM")</td>
+                                <td>@accumulationFund.PayTime.AddMonths(accumulationFund.PayMonthCount-1).ToString("yyyy/MM")</td>
                                 <td>@accumulationFund.AccumulationFundBase.ToString("N2")</td>
                                 <td>@accumulationFund.PayProportion.ToString("N2")</td>
                                 <td>@Convert.ToDecimal(accumulationFund.AccumulationFundBase * accumulationFund.PayProportion / 100).ToString("N2")</td>

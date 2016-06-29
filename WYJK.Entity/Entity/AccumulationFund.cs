@@ -201,6 +201,11 @@ namespace WYJK.Entity
         /// 缴费月数
         /// </summary>		
         public int PayMonthCount { get; set; }
+
+        /// <summary>
+        /// 已交月数
+        /// </summary>
+        public int AlreadyPayMonthCount { get; set; }
         /// <summary>
         /// 补交月数
         /// </summary>		

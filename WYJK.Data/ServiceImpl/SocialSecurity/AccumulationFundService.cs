@@ -27,7 +27,7 @@ namespace WYJK.Data.ServiceImpl
             string innersqlstr = $@"SELECT     dbo.Members.UserType, dbo.SocialSecurityPeople.SocialSecurityPeopleID, dbo.SocialSecurityPeople.SocialSecurityPeopleName, 
                       dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, dbo.AccumulationFund.AccumulationFundID, 
                       dbo.AccumulationFund.AccumulationFundArea, dbo.AccumulationFund.AccumulationFundBase, dbo.AccumulationFund.PayProportion, dbo.AccumulationFund.PayTime, 
-                      dbo.AccumulationFund.PayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName, 
+                      dbo.AccumulationFund.PayMonthCount,AccumulationFund.AlreadyPayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName, 
                       dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,
 case when exists(
                              select * from SocialSecurityPeople

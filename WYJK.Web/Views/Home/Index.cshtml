@@ -102,6 +102,10 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                         {
                             <li><a _href='@Url.Action("GetOrderList", "Order")' data-title="订单审核" href="javascript:void(0)">订单审核</a></li>
                         }
+                        @if (permissionList.Contains("缴费记录"))
+                        {
+                            <li><a _href='@Url.Action("GetPayList", "Order")' data-title="缴费记录" href="javascript:void(0)">缴费记录</a></li>
+                        }
                         @if (permissionList.Contains("缴费管理"))
                         {
                             <li><a _href='@Url.Action("CustomerPaymentManagement", "CustomerService")' data-title="缴费管理" href="javascript:void(0)">缴费管理</a></li>
