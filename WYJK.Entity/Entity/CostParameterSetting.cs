@@ -18,6 +18,11 @@ namespace WYJK.Entity
         public int ID { get; set; }
 
         /// <summary>
+        /// 基数服务费
+        /// </summary>
+        public decimal BaseServiceCharge { get; set; }
+
+        /// <summary>
         /// 代办费
         /// </summary>
 

@@ -35,7 +35,7 @@ namespace WYJK.Web.Controllers.Mvc
                 item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
             });
             //费用来源
-            
+
             ViewData["PaymentMethod"] = new SelectList(DbHelper.Query<Order>("select * from [Order]").Select(n => new { PaymentMethod = n.PaymentMethod }).Distinct().ToList(), "PaymentMethod", "PaymentMethod");
 
 
@@ -44,13 +44,62 @@ namespace WYJK.Web.Controllers.Mvc
             return View(orderList);
         }
 
+
+        public ActionResult GetPayList(MembersParameters parameter)
+        {
+            PagedResult<MembersStatistics> membersStatisticsList = _memberService.GetMembersStatisticsList(parameter);
+
+            List<SelectListItem> UserTypeList = EnumExt.GetSelectList(typeof(UserTypeEnum));
+            UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
+
+            ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text");
+
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
+
+            return View(membersStatisticsList);
+        }
+
+        /// <summary>
+        /// 根据用户ID获取账户列表
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+        public ActionResult GetAccountRecordList(int memberID)
+        {
+            //获取会员信息
+            ViewData["member"] = _memberService.GetMemberInfoForAdmin(memberID);
+
+            List<AccountRecord> accountRecordList = _memberService.GetAccountRecordList(memberID).OrderByDescending(n => n.CreateTime).ToList();
+            return View(accountRecordList);
+        }
+
+
+
+
+        /// <summary>
+        /// 获取用户列表
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult GetMemberList1(string UserType)
+        {
+            List<Members> memberList = _memberService.GetMembersList();
+            var list = memberList.Where(n => UserType == string.Empty ? true : n.UserType == UserType)
+                .Select(item => new { MemberID = item.MemberID, MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName) });
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+
         /// <summary>
         /// 订单批量审核 若审核通过，订单变成已完成，并且参保人状态变成待办
         /// </summary>
         /// <param name="OrderCodes"></param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult BatchAuditing(string OrderCodeStr,string Amount, int Type)
+        public ActionResult BatchAuditing(string OrderCodeStr, string Amount, int Type)
         {
             using (TransactionScope transaction = new TransactionScope())
             {
@@ -79,7 +128,7 @@ namespace WYJK.Web.Controllers.Mvc
                         }
                     }
 
-                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = "财务审核通过了订单：" + orderCode + "，金额：" + Amount + "，客户：{0}" ,MemberID=DbHelper.QuerySingle<int>($"select MemberID from [Order] where OrderCode='{orderCode}';") }) ;
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = "财务审核通过了订单：" + orderCode + "，金额：" + Amount + "，客户：{0}", MemberID = DbHelper.QuerySingle<int>($"select MemberID from [Order] where OrderCode='{orderCode}';") });
 
 
                     transaction.Complete();

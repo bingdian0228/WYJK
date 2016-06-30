@@ -222,4 +222,22 @@ namespace WYJK.Entity
     }
 
 
+
+    /// <summary>
+    /// 缴费列表参数
+    /// </summary>
+    public class PayParameters : PagedParameter
+    {
+        /// <summary>
+        /// 用户类型
+        /// </summary>
+        public string UserType { get; set; }
+        /// <summary>
+        /// 注册用户ID（代理机构）
+        /// </summary>
+        public string MemberID { get; set; }
+
+    }
+
+
 }

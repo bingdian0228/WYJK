@@ -29,7 +29,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool AddCostParameter(CostParameterSetting costParameterSetting)
         {
-            string sqlstr = $"insert into CostParameterSetting(BacklogCost,FreezingAmount,PayBeforeServiceCost,RenewServiceCost,Status) values({costParameterSetting.BacklogCost},{costParameterSetting.FreezingAmount},{costParameterSetting.PayBeforeServiceCost},'{costParameterSetting.RenewServiceCost}',{costParameterSetting.Status})";
+            string sqlstr = $"insert into CostParameterSetting(BaseServiceCharge,BacklogCost,FreezingAmount,PayBeforeServiceCost,RenewServiceCost,Status) values('{costParameterSetting.BaseServiceCharge}',{costParameterSetting.BacklogCost},{costParameterSetting.FreezingAmount},{costParameterSetting.PayBeforeServiceCost},'{costParameterSetting.RenewServiceCost}',{costParameterSetting.Status})";
             int result = DbHelper.ExecuteSqlCommand(sqlstr, null);
             return result > 0;
         }
@@ -41,7 +41,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public bool UpdateCostParameter(CostParameterSetting costParameterSetting)
         {
-            string sqlstr = $"update CostParameterSetting set BacklogCost ={costParameterSetting.BacklogCost},FreezingAmount={costParameterSetting.FreezingAmount},PayBeforeServiceCost={costParameterSetting.PayBeforeServiceCost},RenewServiceCost='{costParameterSetting.RenewServiceCost}' where Status={costParameterSetting.Status} ";
+            string sqlstr = $"update CostParameterSetting set BaseServiceCharge='{costParameterSetting.BaseServiceCharge}', BacklogCost ={costParameterSetting.BacklogCost},FreezingAmount={costParameterSetting.FreezingAmount},PayBeforeServiceCost={costParameterSetting.PayBeforeServiceCost},RenewServiceCost='{costParameterSetting.RenewServiceCost}' where Status={costParameterSetting.Status} ";
             int result = DbHelper.ExecuteSqlCommand(sqlstr, null);
             return result > 0;
         }

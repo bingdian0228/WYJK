@@ -27,7 +27,7 @@ namespace WYJK.Data.ServiceImpl
             string innersqlstr = $@"SELECT     dbo.Members.UserType, dbo.SocialSecurityPeople.SocialSecurityPeopleID, dbo.SocialSecurityPeople.SocialSecurityPeopleName, 
                       dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, dbo.AccumulationFund.AccumulationFundID, 
                       dbo.AccumulationFund.AccumulationFundArea, dbo.AccumulationFund.AccumulationFundBase, dbo.AccumulationFund.PayProportion, dbo.AccumulationFund.PayTime, 
-                      dbo.AccumulationFund.PayMonthCount,AccumulationFund.AlreadyPayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName, 
+                      dbo.AccumulationFund.PayMonthCount,AccumulationFund.AlreadyPayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName,  AccumulationFund.UpdateDt,
                       dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,
 case when exists(
                              select * from SocialSecurityPeople
@@ -40,7 +40,7 @@ case when exists(
                       INNER JOIN dbo.SocialSecurityPeople ON dbo.AccumulationFund.SocialSecurityPeopleID = dbo.SocialSecurityPeople.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";
             string sqlstr = string.IsNullOrEmpty(parameter.Status) ? "1=1" : $" Status = {parameter.Status}";
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.AccumulationFundID )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.UpdateDt desc  )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
 
             List<AccumulationFundShowModel> modelList = await DbHelper.QueryAsync<AccumulationFundShowModel>(sql, new
             {

@@ -2887,6 +2887,8 @@
     <Content Include="Views\RechargeOrders\GetRechargeOrderList.cshtml" />
     <Content Include="Views\RenewOrders\GetRenewOrderList.cshtml" />
     <Content Include="Views\BusinessCommissioner\GetBusinessCommissionerList.cshtml" />
+    <Content Include="Views\Order\GetPayList.cshtml" />
+    <Content Include="Views\Order\GetAccountRecordList.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

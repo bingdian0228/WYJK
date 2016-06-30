@@ -400,7 +400,7 @@ namespace WYJK.Data.ServiceImpl
                 strb.Append($" and Members.MemberID = {parameter.MemberID} ");
             }
 
-            strb.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'  or SocialSecurityPeople.SocialSecurityPeopleName is null)");
+            //strb.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'  or SocialSecurityPeople.SocialSecurityPeopleName is null)");
 
             string innersql = "select Members.MemberID,Max(Members.UserType) UserType, MAX(members.MemberName) MemberName,MAX(members.EnterpriseName) EnterpriseName,MAX(members.BusinessName) BusinessName,  MAX(members.MemberPhone) MemberPhone, COUNT(SocialSecurityPeople.SocialSecurityPeopleID) SocialSecurityPeopleCount,MAX(ISNULL(members.Account,0)) Account,Max(ISNULL(members.Bucha,0)) Bucha,"
                             + " case when exists("

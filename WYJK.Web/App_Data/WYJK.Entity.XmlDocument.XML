@@ -826,6 +826,11 @@
             ID
             </summary>
         </member>
+        <member name="P:WYJK.Entity.CostParameterSetting.BaseServiceCharge">
+            <summary>
+            基数服务费
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.CostParameterSetting.BacklogCost">
             <summary>
             代办费
@@ -1784,6 +1789,21 @@
         <member name="P:WYJK.Entity.OrderCodeArrayParameter.OrderCode">
             <summary>
             订单编号数组
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.PayParameters">
+            <summary>
+            缴费列表参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PayParameters.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.PayParameters.MemberID">
+            <summary>
+            注册用户ID（代理机构）
             </summary>
         </member>
         <member name="T:WYJK.Entity.OrderDetails">
