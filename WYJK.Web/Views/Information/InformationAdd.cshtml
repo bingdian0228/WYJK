@@ -206,9 +206,7 @@
             </div>
             <div class="col-2">@Html.ValidationMessageFor(m => m.ImgUrl)</div>
         </div>
-        if (Model.Type != "焦点图")
-        {
-            <div class="row cl">
+            <div class="row cl" style="@(Model.Type == "焦点图" ? "display:none" : "")">
                 <label class="form-label col-2">详情：</label>
                 <div class="formControls col-8">
                     @*<script id="editor" type="text/plain" style="width:100%;height:400px;">
@@ -217,7 +215,6 @@
                 </div>
                 @*<div class="col-2">@Html.ValidationMessageFor(m => m.StrContent)</div>*@
             </div>
-        }
         <div class="row cl">
             <div class="col-10 col-offset-2">
                 <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
