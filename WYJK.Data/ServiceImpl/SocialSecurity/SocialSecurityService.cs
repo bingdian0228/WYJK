@@ -807,21 +807,33 @@ where SocialSecurityPeople.SocialSecurityPeopleID={SocialSecurityPeopleID}";
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public bool AddAdjustingBase(AdjustingBaseParameter parameter)
+        public int AddAdjustingBase(AdjustingBaseParameter parameter)
         {
             string sqlstr = string.Empty;
+            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+            decimal SSBaseServiceCharge = 0, SSCurrentBase = 0, AFBaseServiceCharge = 0, AFCurrentBase = 0;
+
             if (parameter.IsPaySocialSecurity)
             {
-                sqlstr += $"insert into BaseAudit(SocialSecurityPeopleID,CurrentBase,BaseAdjusted,Type) values({parameter.SocialSecurityPeopleID},(select SocialSecurityBase from SocialSecurity where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}),'{parameter.SocialSecurityBaseAdjusted}',0); ";
+                SSBaseServiceCharge = DbHelper.QuerySingle<decimal>("select BaseServiceCharge from CostParameterSetting where Status=0");
+                SSCurrentBase = DbHelper.QuerySingle<decimal>($"select SocialSecurityBase from SocialSecurity where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+
             }
             if (parameter.IsPayAccumulationFund)
             {
-                sqlstr += $"insert into BaseAudit(SocialSecurityPeopleID,CurrentBase,BaseAdjusted,Type) values({parameter.SocialSecurityPeopleID},(select AccumulationFundBase from AccumulationFund where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}),'{parameter.AccumulationFundBaseAdjusted}',1) ;";
+                AFBaseServiceCharge = DbHelper.QuerySingle<decimal>("select BaseServiceCharge from CostParameterSetting where Status=1");
+                AFCurrentBase = DbHelper.QuerySingle<decimal>($"select AccumulationFundBase from AccumulationFund where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+
             }
+
+            int memberID = DbHelper.QuerySingle<int>($"select MemberID from SocialSecurityPeople where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+
+            sqlstr = $@"insert into BaseOrders(OrderCode,MemberID,SocialSecurityPeopleID,IsPaySocialSecurity,SSCurrentBase,SSBaseAdjusted,SSBaseServiceCharge,IsPayAccumulationFund,AFCurrentBase,AFBaseAdjusted,AFBaseServiceCharge)
+values('{orderCode}',{memberID},{parameter.SocialSecurityPeopleID},{Convert.ToInt32(parameter.IsPaySocialSecurity) },{SSCurrentBase},{parameter.SocialSecurityBaseAdjusted},{SSBaseServiceCharge},{Convert.ToInt32(parameter.IsPayAccumulationFund)},{AFCurrentBase},{parameter.AccumulationFundBaseAdjusted},{AFBaseServiceCharge})";
 
             int result = DbHelper.ExecuteSqlCommandScalar(sqlstr, new DbParameter[] { });
 
-            return result > 0;
+            return result;
 
         }
 

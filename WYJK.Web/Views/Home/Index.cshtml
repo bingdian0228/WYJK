@@ -15,12 +15,14 @@
                 dateType: "json",
                 type: "post",
                 success: function (response) {
+
                     //layer.msg("请求成功");
                 },
                 error: function (error) {
                     //layer.msg("服务器错误");
                 }
             });
+
         }
 
         //SendOnlineUser();
@@ -57,6 +59,7 @@
     </ul>
     <a href="javascript:;" class="Hui-nav-toggle Hui-iconfont" aria-hidden="false">&#xe667;</a>
 </header>
+<div id="bank"></div>
 <aside class="Hui-aside">
     <input runat="server" id="divScrollValue" type="hidden" value="" />
     <div class="menu_dropdown bk_2">
@@ -122,6 +125,7 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                         {
                             <li><a _href='@Url.Action("GetRenewOrderList", "RenewOrders")?Status=-1' data-title="续费审核" href="javascript:void(0)">续费审核</a></li>
                         }
+                        <li><a _href='@Url.Action("GetBaseOrderList", "BaseOrders")?Status=-1' data-title="调基审核" href="javascript:void(0)">调基审核</a></li>
                     </ul>
                 </dd>
             </dl>

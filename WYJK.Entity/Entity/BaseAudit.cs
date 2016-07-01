@@ -175,5 +175,10 @@ namespace WYJK.Entity
         /// 调整后的公积金基数
         /// </summary>
         public decimal AccumulationFundBaseAdjusted { get; set; }
+
+        /// <summary>
+        /// 平台类型
+        /// </summary>
+        public string PlatType { get; set; } = "1";
     }
 }

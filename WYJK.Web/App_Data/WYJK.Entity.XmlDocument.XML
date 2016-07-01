@@ -686,6 +686,101 @@
             调整后的公积金基数
             </summary>
         </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.PlatType">
+            <summary>
+            平台类型
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.BaseOrders">
+            <summary>
+            基数订单
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.OrderID">
+            <summary>
+            OrderID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.OrderCode">
+            <summary>
+            OrderCode
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.GenerateDate">
+            <summary>
+            生成时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.Status">
+            <summary>
+            订单状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.PayTime">
+            <summary>
+            支付时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AuditTime">
+            <summary>
+            审核时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.IsPaySocialSecurity">
+            <summary>
+            IsPaySocialSecurity
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SSCurrentBase">
+            <summary>
+            当前基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SSBaseAdjusted">
+            <summary>
+            调整后基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SSBaseServiceCharge">
+            <summary>
+            SSBaseServiceCharge
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.IsPayAccumulationFund">
+            <summary>
+            IsPayAccumulationFund
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AFCurrentBase">
+            <summary>
+            当前基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AFBaseAdjusted">
+            <summary>
+            调整后基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AFBaseServiceCharge">
+            <summary>
+            AFBaseServiceCharge
+            </summary>		
+        </member>
         <member name="T:WYJK.Entity.CertificationAudit">
             <summary>
             认证审核
