@@ -3762,6 +3762,11 @@
             注册邀请码
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.MemberRegisterModel.VerificationCode">
+            <summary>
+            验证码
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.MemberForgetPasswordModel">
             <summary>
             忘记密码

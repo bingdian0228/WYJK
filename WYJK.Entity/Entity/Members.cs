@@ -239,6 +239,11 @@ namespace WYJK.Entity
         /// 注册邀请码
         /// </summary>		
         public string InviteCode { get; set; }
+
+        /// <summary>
+        /// 验证码
+        /// </summary>
+        public string VerificationCode { get; set; }
     }
 
     /// <summary>

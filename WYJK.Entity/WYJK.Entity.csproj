@@ -79,6 +79,7 @@
     <Compile Include="Entity\Users.cs" />
     <Compile Include="Entity\SocialSecurity.cs" />
     <Compile Include="Entity\SocialSecurityPeople.cs" />
+    <Compile Include="Entity\VerificationCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entity\Members.cs" />
   </ItemGroup>

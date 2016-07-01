@@ -36,6 +36,22 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 获取新闻通知
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult<dynamic>> GetInfomationDetail(int? id)
+        {
+            Information information = await _informationService.GetInfomationDetail(id.Value);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "成功",
+                Data = information
+            };
+        }
+
+        /// <summary>
         /// 添加保存
         /// </summary>
         /// <returns></returns>

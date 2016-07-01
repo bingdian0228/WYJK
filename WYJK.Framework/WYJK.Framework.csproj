@@ -84,6 +84,7 @@
     <Compile Include="Helpers\DistanceHelper.cs" />
     <Compile Include="Helpers\DriveConverter.cs" />
     <Compile Include="Helpers\SecurityHelper.cs" />
+    <Compile Include="Helpers\Sms.cs" />
     <Compile Include="IDependency.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Log4netLogger.cs" />

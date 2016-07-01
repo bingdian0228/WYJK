@@ -22,6 +22,7 @@ using System.Configuration;
 using System.Threading;
 using System.IO;
 using System.Text;
+using WYJK.Framework.Helpers;
 
 namespace WYJK.Web.Controllers.Http
 {
@@ -42,6 +43,16 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<MemberRegisterModel>> RegisterMember(MemberRegisterModel entity)
         {
+            //短信验证
+            VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{entity.MemberPhone}' and Code='{entity.VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+            if (verificationCode == null)
+                return new JsonResult<MemberRegisterModel>
+                {
+                    status = false,
+                    Message = "验证码不正确或已失效！"
+                };
+
+
             Dictionary<bool, string> dic = await _memberService.RegisterMember(entity);
 
             if (dic.First().Key)
@@ -62,6 +73,53 @@ namespace WYJK.Web.Controllers.Http
                 Message = dic.First().Value,
                 Data = entity
             };
+        }
+
+        /// <summary>
+        /// 获取验证码
+        /// </summary>
+        /// <param name="MemberName"></param>
+        /// <param name="MemberPhone"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> GetVerificationCode(string MemberName, string MemberPhone)
+        {
+            VerificationCode verificationCode = DbHelper.Query<VerificationCode>($"select * from VerificationCode where Phone='{MemberPhone}'").FirstOrDefault();
+            //生成随机数
+            Random rdm = new Random();
+            string code = rdm.Next(0, 9999).ToString().PadLeft(4, '0');
+            if (verificationCode == null)
+            {
+                DbHelper.ExecuteSqlCommand($"insert into VerificationCode(Phone,Code,CurrentTime) values('{MemberPhone}','{code}',getdate())", null);
+            }
+            else {
+                DbHelper.ExecuteSqlCommand($"update VerificationCode set Code='{code}',CurrentTime=getdate() where phone='{MemberPhone}'", null);
+            }
+
+            //发送短信
+            SendSms(MemberPhone, MemberName, code);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "发送成功"
+            };
+
+        }
+
+        private static string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
+        private static string apikey = ConfigurationManager.AppSettings["apikey"].ToString();
+        private static string contentFormat = ConfigurationManager.AppSettings["SMSVerifContentFormat"].ToString();
+        /// <summary>
+        /// 发送短信
+        /// </summary>
+        /// <param name="mobile"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public string SendSms(string mobile, string userName, string code)
+        {
+            string content = string.Format(contentFormat, userName, code, timespan);
+            return Sms.sendSms(apikey, content, mobile);
         }
 
         /// <summary>
@@ -781,7 +839,8 @@ namespace WYJK.Web.Controllers.Http
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter) {
+        public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter)
+        {
             string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
             DbHelper.ExecuteSqlCommand($@"insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) 
                 values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}',{parameter.MonthCount})", null);
@@ -1073,7 +1132,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public JsonResult<dynamic> SubmitRechargeAmountOrder(RechargeParameters parameter) {
+        public JsonResult<dynamic> SubmitRechargeAmountOrder(RechargeParameters parameter)
+        {
             string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
             DbHelper.ExecuteSqlCommand($@"insert into RechargeOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money) 
                 values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}')", null);
