@@ -29,14 +29,10 @@ namespace WYJK.Web.Controllers.Mvc
             return View(informationList);
         }
 
-        /// <summary>
-        /// 新建添加
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public ActionResult InformationAdd()
+
+        public ActionResult InformationAdd(string type)
         {
-            return View(new Information());
+            return View(new Information { Type = type });
         }
 
         /// <summary>
@@ -47,12 +43,18 @@ namespace WYJK.Web.Controllers.Mvc
         [ValidateInput(false)]
         public async Task<ActionResult> InformationAdd(Information model)
         {
-            if (!ModelState.IsValid) return View();
+            if (model.ImgUrls != null)
+            {
+                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+                model.CreateTime = DateTime.Now;
+            }
 
             bool flag = await _informationService.InformationAdd(model);
             ViewBag.ErrorMessage = flag ? "保存成功" : "保存失败";
-            return InformationAdd();
+            return InformationAdd(model.Type);
         }
+
+        
 
         /// <summary>
         /// 新建信息编辑
@@ -60,6 +62,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="ID"></param>
         /// <returns></returns>
         [HttpGet]
+        [ValidateInput(false)]
         public async Task<ActionResult> InformationEdit(int ID)
         {
             Information model = await _informationService.GetInfomationDetail(ID);
@@ -78,12 +81,12 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateInput(false)]
         public async Task<ActionResult> InformationEdit(Information model)
         {
             if (model.ImgUrls != null)
             {
                 model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
-                model.CreateTime = DateTime.Now;
             }
 
             bool flag = await _informationService.ModifyInformation(model);
