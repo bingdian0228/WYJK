@@ -248,6 +248,10 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                         {
                             <li><a _href='@Url.Action("GetInformationList", "Information", new { Type="资讯" })' data-title="资讯管理" href="javascript:void(0)">资讯管理</a></li>
                         }
+                        @if (permissionList.Contains("焦点图"))
+                        {
+                            <li><a _href='@Url.Action("GetInformationList", "Information", new { Type="焦点图" })' data-title="焦点图" href="javascript:void(0)">焦点图</a></li>
+                        }
                     </ul>
                 </dd>
             </dl>

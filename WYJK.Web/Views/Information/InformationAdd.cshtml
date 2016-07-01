@@ -148,7 +148,7 @@
 <div class="pd-20">
     @using (Html.BeginForm("InformationAdd", "Information", FormMethod.Post, new { id = "form-article-add", @class = "form form-horizontal" }))
     {
-        <input type="hidden" name="Type" value="@Request.Params["Type"]" />
+        <input type="hidden" name="Type" value="@Model.Type" />
         if (string.IsNullOrWhiteSpace(ViewBag.ErrorMessage + "") == false)
         {
             <div class="Huialert Huialert-info">@(ViewBag.ErrorMessage)</div>
@@ -160,28 +160,64 @@
             </div>
             <div class="col-2">@Html.ValidationMessageFor(m => m.Name)</div>
         </div>
+        if (Model.Type != "焦点图")
+        {
+            <div class="row cl">
+                <label class="form-label col-2">类型：</label>
+                <div class="formControls col-8">
+                    <span class="select-box" style="width: 200px;">
+                        <select name="Type" class="select">
+                            <option value="新闻" @(Model.Type == "新闻" ? "selected" : "")>新闻</option>
+                            <option value="资讯" @(Model.Type == "资讯" ? "selected" : "")>资讯</option>
+                        </select>
+                    </span>
+                </div>
+                <div class="col-2">@Html.ValidationMessageFor(m => m.Type)</div>
+            </div>
+        }
+        else
+        {
+            <input type="hidden" name="Type" value="焦点图" />
+        }
         <div class="row cl">
             <label class="form-label col-2">图片上传：</label>
             <div class="formControls col-8">
                 <div class="uploader-thum-container">
                     <div id="fileList" class="uploader-list">
 
-                        </div>
-                        <div id="filePicker">选择图片</div>
+                        @if (Model != null && Model.ImgUrl != null && Model.ImgUrls.Length > 0)
+                        {
+                            for (int i = 0, len = Model.ImgUrls.Length; i < len; i++)
+                            {
+                                <div class="item upload-state-done">
+                                    <div class="pic-box">
+                                        <img src="@Model.ImgUrls[i]" style="width: 100px; height: 100px" />
+
+                                    </div>
+                                    <span class="iconfont icon-iconfontwiconguanbi uploader-remove" title="删除" onclick="removeFile(this)">
+                                        <input type="hidden" name="ImgUrls[@i]" class="wyjk-images" value="@Model.ImgUrls[i]" />
+                                    </span>
+                                </div>
+                            }
+                        }
                     </div>
+                    <div id="filePicker">选择图片</div>
                 </div>
-                <div class="col-2">@Html.ValidationMessageFor(m => m.ImgUrl)</div>
+            </div>
+            <div class="col-2">@Html.ValidationMessageFor(m => m.ImgUrl)</div>
+        </div>
+        if (Model.Type != "焦点图")
+        {
+            <div class="row cl">
+                <label class="form-label col-2">详情：</label>
+                <div class="formControls col-8">
+                    @*<script id="editor" type="text/plain" style="width:100%;height:400px;">
+                        </script>*@
+                    @Html.TextAreaFor(m => m.StrContent, new { id = "editor" })
+                </div>
+                @*<div class="col-2">@Html.ValidationMessageFor(m => m.StrContent)</div>*@
             </div>
         }
-        <div class="row cl">
-            <label class="form-label col-2">详情：</label>
-            <div class="formControls col-8">
-                @*<script id="editor" type="text/plain" style="width:100%;height:400px;">
-                    </script>*@
-                @Html.TextAreaFor(m => m.StrContent, new { id = "editor" })
-            </div>
-            @*<div class="col-2">@Html.ValidationMessageFor(m => m.StrContent)</div>*@
-        </div>
         <div class="row cl">
             <div class="col-10 col-offset-2">
                 <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>

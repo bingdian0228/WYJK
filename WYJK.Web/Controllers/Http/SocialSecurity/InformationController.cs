@@ -23,15 +23,31 @@ namespace WYJK.Web.Controllers.Http
         /// 获取新闻通知
         /// </summary>
         /// <returns></returns>
-        public async Task<JsonResult<dynamic>> GetInformationList(InformationParameter parameter)
+        public async Task<JsonResult<dynamic>> GetInformationList(string Type, int PageIndex, int PageSize)
         {
-            PagedResult<Information> informationList = await _informationService.GetNewNoticeList(parameter);
+            PagedResult<Information> informationList = await _informationService.GetNewNoticeList(new InformationParameter { PageIndex=PageIndex, PageSize=PageSize, Type = Type, IsDescending = true });
 
             return new JsonResult<dynamic>
             {
-                status = false,
+                status = true,
                 Message = "成功",
                 Data = informationList
+            };
+        }
+
+        /// <summary>
+        /// 获取新闻通知
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult<dynamic>> GetInfomationDetail(int? id)
+        {
+            Information information = await _informationService.GetInfomationDetail(id.Value);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "成功",
+                Data = information
             };
         }
 
@@ -44,14 +60,18 @@ namespace WYJK.Web.Controllers.Http
         {
             bool flag = await _informationService.InformationAdd(model);
 
+            if (model.ImgUrls != null)
+            {
+                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+            }
+
             return new JsonResult<dynamic>
             {
-                status = false,
+                status = flag,
                 Message = flag ? "保存成功" : "保存失败",
             };
         }
-
-
+        
         /// <summary>
         /// 保存编辑
         /// </summary>
@@ -69,7 +89,7 @@ namespace WYJK.Web.Controllers.Http
             bool flag = await _informationService.ModifyInformation(model);
             return new JsonResult<dynamic>
             {
-                status = false,
+                status = flag,
                 Message = flag ? "编辑成功" : "编辑失败",
             };
         }
@@ -86,10 +106,9 @@ namespace WYJK.Web.Controllers.Http
             bool flag = _informationService.BatchDeleteInfos(infoidsStr);
             return new JsonResult<dynamic>
             {
-                status = false,
+                status = flag,
                 Message = flag ? "删除成功" : "删除失败",
             };
         }
-
     }
 }
