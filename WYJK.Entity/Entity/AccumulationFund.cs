@@ -189,6 +189,11 @@ namespace WYJK.Entity
         /// 社保基数
         /// </summary>		
         public decimal AccumulationFundBase { get; set; }
+
+        public bool IsAdjustingBase { get; set; }
+
+        public string AdjustingBaseNote { get; set; }
+
         /// <summary>
         /// 缴费比例
         /// </summary>		

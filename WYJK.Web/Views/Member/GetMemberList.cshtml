@@ -22,7 +22,7 @@
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
 
-                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&MemberID=" + '@MemberID' + "&SocialSecurityPeopleName=" + '@Request.Params["SocialSecurityPeopleName"]';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&MemberID=" + '@MemberID' + "&SocialSecurityPeopleName=" + '@Request.Params["SocialSecurityPeopleName"]'+"&IdentityCard="+'@Request.Params["IdentityCard"]';
 
                 }
             }
@@ -155,8 +155,8 @@
                 }
                 @Html.DropDownList("MemberID", list, new { @class = "select" })
             </span>
-            @*@:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })*@
-
+            @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+                    @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
 
 
 

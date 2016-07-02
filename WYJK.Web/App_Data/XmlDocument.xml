@@ -658,6 +658,25 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.OrderController.OrderPayment1(WYJK.Entity.OrderPayParameter)">
+            <summary>
+            调取支付页面
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.OrderController.OrderPayment1_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            支付回调
+            </summary>
+            <param name="Succeed"></param>
+            <param name="BillNo"></param>
+            <param name="Amount"></param>
+            <param name="Date"></param>
+            <param name="Msg"></param>
+            <param name="Signature"></param>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Http.OrderController.OrderPayment(WYJK.Entity.Order)">
             <summary>
             订单支付 需要传订单编号、支付方式
@@ -885,9 +904,20 @@
         </member>
         <member name="M:WYJK.Web.Controllers.Http.SocialSecurityController.PostAdjustingBase(WYJK.Entity.AdjustingBaseParameter)">
             <summary>
-            调整基数提交
+            调整基数提交    PlatType:  Web/0;Mobile/1
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.SocialSecurityController.AdjustingBase_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            调基回调
+            </summary>
+            <param name="Succeed"></param>
+            <param name="BillNo"></param>
+            <param name="Amount"></param>
+            <param name="Date"></param>
+            <param name="Msg"></param>
+            <param name="Signature"></param>
         </member>
         <member name="M:WYJK.Web.Controllers.Http.SocialSecurityController.GetInsuredIntroduceList">
             <summary>
@@ -912,6 +942,22 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.GetVerificationCode(System.String,System.String)">
+            <summary>
+            获取验证码
+            </summary>
+            <param name="MemberName"></param>
+            <param name="MemberPhone"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SendSms(System.String,System.String,System.String)">
+            <summary>
+            发送短信
+            </summary>
+            <param name="mobile"></param>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Http.MemberController.LoginMember(WYJK.Entity.MemberLoginModel)">
             <summary>
             用户登录
@@ -931,7 +977,7 @@
             <param name="MemberID">MemberID</param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitMemberInfo(System.Int32,System.String,System.String,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitMemberInfo(System.Int32,System.String,System.String,System.String,System.String)">
             <summary>
             信息编辑提交
             </summary>
@@ -1344,6 +1390,24 @@
             <param name="IDs"></param>
             <param name="Status"></param>
             <param name="Type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.BaseOrdersController.GetBaseOrderList(WYJK.Entity.BaseOrdersParameter)">
+            <summary>
+            获取调基订单列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.BaseOrdersController.Agree(System.Int32[])">
+            <summary>
+            通过
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.BaseOrdersController.NoAgree(System.Int32[])">
+            <summary>
+            不通过
+            </summary>
             <returns></returns>
         </member>
         <member name="T:WYJK.Web.Controllers.Mvc.BusinessCommissionerController">
@@ -1826,7 +1890,7 @@
         </member>
         <member name="M:WYJK.Web.Controllers.Mvc.RechargeOrdersController.NoAgree(System.Int32[])">
             <summary>
-            通过
+            不通过
             </summary>
             <returns></returns>
         </member>

@@ -23,9 +23,9 @@ namespace WYJK.Web.Controllers.Mvc
             PagedResult<RenewOrders> list = await _renewOrdersService.GetRenewOrderList(parameter);
             List<SelectListItem> ApplyStatus = new List<SelectListItem>();
             ApplyStatus.Insert(0, new SelectListItem { Text = "全部", Value = "-1" });
-            ApplyStatus.Insert(1, new SelectListItem { Text = "未审核", Value = "0" });
-            ApplyStatus.Insert(2, new SelectListItem { Text = "已审核", Value = "1" });
-            ApplyStatus.Insert(2, new SelectListItem { Text = "审核未通过", Value = "2" });
+            ApplyStatus.Insert(1, new SelectListItem { Text = "审核中", Value = "1" });
+            ApplyStatus.Insert(2, new SelectListItem { Text = "已通过", Value = "2" });
+            ApplyStatus.Insert(3, new SelectListItem { Text = "未通过", Value = "3" });
             ViewData["Status"] = ApplyStatus;
 
             return View(list);
@@ -37,7 +37,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public ActionResult Agree(int[] OrderIds)
         {
-            DbHelper.ExecuteSqlCommand($"update RenewOrders set Status=1,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
+            DbHelper.ExecuteSqlCommand($"update RenewOrders set Status=2,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
 
             string memberName = DbHelper.QuerySingle<string>($"select MemberName from Members where MemberID =(select MemberID from RenewOrders where OrderID={OrderIds[0]})");
 
@@ -54,7 +54,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public ActionResult NoAgree(int[] OrderIds)
         {
-            DbHelper.ExecuteSqlCommand($"update RenewOrders set Status=2,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
+            DbHelper.ExecuteSqlCommand($"update RenewOrders set Status=3,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
 
             string memberName = DbHelper.QuerySingle<string>($"select MemberName from Members where MemberID =(select MemberID from RenewOrders where OrderID={OrderIds[0]})");
 

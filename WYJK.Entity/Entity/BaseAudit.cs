@@ -172,10 +172,18 @@ namespace WYJK.Entity
         /// </summary>
         public decimal SocialSecurityBaseAdjusted { get; set; }
         /// <summary>
+        /// 社保调基备注
+        /// </summary>
+        public string SSAdjustingBaseNote { get; set; } = "";
+
+        /// <summary>
         /// 调整后的公积金基数
         /// </summary>
         public decimal AccumulationFundBaseAdjusted { get; set; }
-
+        /// <summary>
+        /// 公积金调基备注
+        /// </summary>
+        public string AFAdjustingBaseNote { get; set; } = "";
         /// <summary>
         /// 平台类型
         /// </summary>

@@ -35,7 +35,7 @@
     <a class="Hui-logo l" title="无忧借款 v1.0" href="/">无忧借款</a> <a class="Hui-logo-m l" href="/" title="H-ui.admin">H-ui</a> <span class="Hui-subtitle l">V1.0</span>
 
     <ul class="Hui-userbar">
-        <li>超级管理员</li>
+        <li></li>
         <li class="dropDown dropDown_hover">
             <a href="#" class="dropDown_A">@HttpContext.Current.User.Identity.Name <i class="Hui-iconfont">&#xe6d5;</i></a>
             <ul class="dropDown-menu radius box-shadow">
@@ -198,7 +198,7 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                 </dd>
             </dl>
         }
-        @if (permissionList.Contains("基数审核"))
+        @*@if (permissionList.Contains("基数审核"))
         {
             <dl id="menu-article">
                 <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
@@ -215,7 +215,7 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                     </ul>
                 </dd>
             </dl>
-        }
+        }*@
         @if (permissionList.Contains("个人借款"))
         {
             <dl id="menu-article">

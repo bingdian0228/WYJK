@@ -161,6 +161,15 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<MemberForgetPasswordModel>> ForgetPassword(MemberForgetPasswordModel entity)
         {
+            //短信验证
+            VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{entity.MemberPhone}' and Code='{entity.VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+            if (verificationCode == null)
+                return new JsonResult<MemberForgetPasswordModel>
+                {
+                    status = false,
+                    Message = "验证码不正确或已失效！"
+                };
+
             Dictionary<bool, string> dic = await _memberService.ForgetPassword(entity);
 
             return new JsonResult<MemberForgetPasswordModel>
@@ -207,8 +216,22 @@ namespace WYJK.Web.Controllers.Http
         /// <param name="MemberPhone"></param>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-        public JsonResult<dynamic> SubmitMemberInfo(int MemberID, string TrueName, string MemberName, string MemberPhone)
+        public JsonResult<dynamic> SubmitMemberInfo(int MemberID, string TrueName, string MemberName, string MemberPhone,string VerificationCode)
         {
+            //如果新手机号与原手机号不同，则需要验证码
+            string oldMemberPhone = DbHelper.QuerySingle<string>($"select MemberPhone from Members where MemberID={MemberID}");
+            if (MemberPhone != oldMemberPhone) {
+                //短信验证
+                VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{oldMemberPhone}' and Code='{VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+                if (verificationCode == null)
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "验证码不正确或已失效！"
+                    };
+            }
+
+
             //如果用户名重复
             if (DbHelper.QuerySingle<int>($"select count(1) from Members where MemberName='{MemberName}' and MemberID<>{MemberID}") > 0)
                 return new JsonResult<dynamic>

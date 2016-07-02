@@ -168,17 +168,17 @@
                         <td>@item.PayTime</td>
                         <td>
                             <input type="hidden" value="@item.Status" class="Status" />
-                            @if (item.Status == "0")
+                            @if (item.Status == "1")
                             {
-                                @:未审核
+                                @:审核中
                         }
-                            else if (item.Status == "1")
+                            else if (item.Status == "2")
                             {
-                                @:审核通过
+                                @:已通过
                         }
                             else
                             {
-                                @:审核未通过
+                                @:未通过
                         }
                         </td>
                         <td>@item.AuditTime</td>

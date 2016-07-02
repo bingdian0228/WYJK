@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
                       dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, SocialSecurity.AlreadyPayMonthCount,
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, SocialSecurity.UpdateDt,
-                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,
+                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,SocialSecurity.IsAdjustingBase,SocialSecurity.AdjustingBaseNote,
                         case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
@@ -828,8 +828,8 @@ where SocialSecurityPeople.SocialSecurityPeopleID={SocialSecurityPeopleID}";
 
             int memberID = DbHelper.QuerySingle<int>($"select MemberID from SocialSecurityPeople where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
 
-            sqlstr = $@"insert into BaseOrders(OrderCode,MemberID,SocialSecurityPeopleID,IsPaySocialSecurity,SSCurrentBase,SSBaseAdjusted,SSBaseServiceCharge,IsPayAccumulationFund,AFCurrentBase,AFBaseAdjusted,AFBaseServiceCharge)
-values('{orderCode}',{memberID},{parameter.SocialSecurityPeopleID},{Convert.ToInt32(parameter.IsPaySocialSecurity) },{SSCurrentBase},{parameter.SocialSecurityBaseAdjusted},{SSBaseServiceCharge},{Convert.ToInt32(parameter.IsPayAccumulationFund)},{AFCurrentBase},{parameter.AccumulationFundBaseAdjusted},{AFBaseServiceCharge})";
+            sqlstr = $@"insert into BaseOrders(OrderCode,MemberID,SocialSecurityPeopleID,IsPaySocialSecurity,SSCurrentBase,SSBaseAdjusted,SSAdjustingBaseNote,SSBaseServiceCharge,IsPayAccumulationFund,AFCurrentBase,AFBaseAdjusted,AFAdjustingBaseNote,AFBaseServiceCharge)
+values('{orderCode}',{memberID},{parameter.SocialSecurityPeopleID},{Convert.ToInt32(parameter.IsPaySocialSecurity) },{SSCurrentBase},{parameter.SocialSecurityBaseAdjusted},'{parameter.SSAdjustingBaseNote}',{SSBaseServiceCharge},{Convert.ToInt32(parameter.IsPayAccumulationFund)},{AFCurrentBase},{parameter.AccumulationFundBaseAdjusted},'{parameter.AFAdjustingBaseNote}',{AFBaseServiceCharge})";
 
             int result = DbHelper.ExecuteSqlCommandScalar(sqlstr, new DbParameter[] { });
 

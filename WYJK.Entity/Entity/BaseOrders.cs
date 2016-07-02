@@ -19,6 +19,11 @@ namespace WYJK.Entity
         /// 用户ID
         /// </summary>		
         public int MemberID { get; set; }
+
+        /// <summary>
+        /// 用户名
+        /// </summary>
+        public string MemberName { get; set; }
         /// <summary>
         /// 支付方式
         /// </summary>		
@@ -55,6 +60,9 @@ namespace WYJK.Entity
         /// 调整后基数
         /// </summary>		
         public decimal SSBaseAdjusted { get; set; }
+
+        public string SSAdjustingBaseNote { get; set; }
+
         /// <summary>
         /// SSBaseServiceCharge
         /// </summary>		
@@ -71,9 +79,30 @@ namespace WYJK.Entity
         /// 调整后基数
         /// </summary>		
         public decimal AFBaseAdjusted { get; set; }
+
+        public string AFAdjustingBaseNote { get; set; }
         /// <summary>
         /// AFBaseServiceCharge
         /// </summary>		
         public decimal AFBaseServiceCharge { get; set; }
+    }
+
+
+    /// <summary>
+    /// 调基分页查询类
+    /// </summary>
+    public class BaseOrdersParameter : PagedParameter
+    {
+        /// <summary>
+        /// 客户姓名
+        /// </summary>
+        public string SocialSecurityPeopleName { get; set; }
+
+
+        /// <summary>
+        /// 审核状态
+        /// </summary>
+        public int Status { get; set; }
+
     }
 }

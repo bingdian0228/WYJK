@@ -239,5 +239,14 @@ namespace WYJK.Entity
 
     }
 
+    public class OrderPayParameter
+    {
+        public int OrderID { get; set; }
+        /// <summary>
+        /// 平台类型
+        /// </summary>
+        public string PlatType { get; set; } = "1";
+    }
+
 
 }

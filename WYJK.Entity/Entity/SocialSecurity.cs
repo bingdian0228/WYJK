@@ -265,6 +265,16 @@ namespace WYJK.Entity
         public string Status { get; set; }
 
         /// <summary>
+        /// 是否调基
+        /// </summary>
+        public bool IsAdjustingBase { get; set; }
+
+        /// <summary>
+        /// 调基备注
+        /// </summary>
+        public string AdjustingBaseNote { get; set; }
+
+        /// <summary>
         /// 收取方式
         /// </summary>
         public string CollectType { get; set; }

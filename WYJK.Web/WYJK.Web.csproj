@@ -2898,6 +2898,7 @@
     <Content Include="Views\Order\GetPayList.cshtml" />
     <Content Include="Views\Order\GetAccountRecordList.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\BaseOrders\GetBaseOrderList.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -2950,7 +2951,6 @@
     <Folder Include="Content\template\picture\" />
     <Folder Include="Content\template\product\" />
     <Folder Include="Content\template\shop\" />
-    <Folder Include="Views\BaseOrders\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
   <ItemGroup>

@@ -2115,6 +2115,12 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                     //更新订单
                     DbHelper.ExecuteSqlCommand($"update BaseOrders set Status=1 where OrderID='{orderID}'", null);
 
+                    ////基数更改
+                    //if (baseOrders.IsPaySocialSecurity)
+                    //    DbHelper.ExecuteSqlCommand($"update SocialSecurity set SocialSecurityBase='{baseOrders.SSCurrentBase}' where SocialSecurityPeopleID={baseOrders.SocialSecurityPeopleID}", null);
+                    //if (baseOrders.IsPayAccumulationFund)
+                    //    DbHelper.ExecuteSqlCommand($"update AccumulationFund set AccumulationFundBase='{baseOrders.AFCurrentBase}' where SocialSecurityPeopleID={baseOrders.SocialSecurityPeopleID}", null);
+
                     decimal account = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID={baseOrders.MemberID}");
 
                     //生成日志

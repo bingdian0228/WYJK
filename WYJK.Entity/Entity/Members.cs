@@ -251,7 +251,10 @@ namespace WYJK.Entity
     /// </summary>
     public class MemberForgetPasswordModel : MemberSimpleModel
     {
-
+        /// <summary>
+        /// 验证码
+        /// </summary>
+        public string VerificationCode { get; set; }
     }
 
     /// <summary>
@@ -656,6 +659,10 @@ namespace WYJK.Entity
         /// 客户名称
         /// </summary>
         public string SocialSecurityPeopleName { get; set; }
+
+        public string IdentityCard { get; set; }
+
+
     }
 
 

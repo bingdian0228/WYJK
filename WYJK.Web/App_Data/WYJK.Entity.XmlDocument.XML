@@ -681,9 +681,19 @@
             调整后的社保基数
             </summary>
         </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.SSAdjustingBaseNote">
+            <summary>
+            社保调基备注
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.AdjustingBaseParameter.AccumulationFundBaseAdjusted">
             <summary>
             调整后的公积金基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.AFAdjustingBaseNote">
+            <summary>
+            公积金调基备注
             </summary>
         </member>
         <member name="P:WYJK.Entity.AdjustingBaseParameter.PlatType">
@@ -710,6 +720,11 @@
             <summary>
             用户ID
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.MemberName">
+            <summary>
+            用户名
+            </summary>
         </member>
         <member name="P:WYJK.Entity.BaseOrders.PaymentMethod">
             <summary>
@@ -780,6 +795,21 @@
             <summary>
             AFBaseServiceCharge
             </summary>		
+        </member>
+        <member name="T:WYJK.Entity.BaseOrdersParameter">
+            <summary>
+            调基分页查询类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrdersParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrdersParameter.Status">
+            <summary>
+            审核状态
+            </summary>
         </member>
         <member name="T:WYJK.Entity.CertificationAudit">
             <summary>
@@ -1901,6 +1931,11 @@
             注册用户ID（代理机构）
             </summary>
         </member>
+        <member name="P:WYJK.Entity.OrderPayParameter.PlatType">
+            <summary>
+            平台类型
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.OrderDetails">
             <summary>
             从订单
@@ -2862,6 +2897,16 @@
             状态
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.IsAdjustingBase">
+            <summary>
+            是否调基
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.AdjustingBaseNote">
+            <summary>
+            调基备注
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityShowModel.CollectType">
             <summary>
             收取方式
@@ -3770,6 +3815,11 @@
         <member name="T:WYJK.Entity.MemberForgetPasswordModel">
             <summary>
             忘记密码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberForgetPasswordModel.VerificationCode">
+            <summary>
+            验证码
             </summary>
         </member>
         <member name="T:WYJK.Entity.MemberMidifyPassword">
