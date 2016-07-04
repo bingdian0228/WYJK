@@ -34,7 +34,7 @@ namespace WYJK.Web.Controllers.Mvc
         private readonly IParameterSettingService _parameterSettingService = new ParameterSettingService();
 
         private HttpClient client = new HttpClient();
-        private string url = "http://localhost:47565/api";
+        private string url = ConfigurationManager.AppSettings["ServerUrl"] + "/api";
         private JsonMediaTypeFormatter formatter = System.Web.Http.GlobalConfiguration.Configuration.Formatters.Where(f =>
         {
             return f.SupportedMediaTypes.Any(v => v.MediaType.Equals("application/json", StringComparison.CurrentCultureIgnoreCase));
@@ -168,13 +168,14 @@ namespace WYJK.Web.Controllers.Mvc
             if (SocialSecurityPeopleID == null)
             {
                 socialSecurityPeople = new SocialSecurityPeople() { socialSecurity = new SocialSecurity(), accumulationFund = new AccumulationFund() };
+                SocialSecurityPeopleID = 0;
             }
             else
             {
                 socialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(SocialSecurityPeopleID.Value);
             }
 
-            if (_socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID.Value) != null)
+            if (SocialSecurityPeopleID != null && _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID.Value) != null)
             {
                 socialSecurityPeople.socialSecurity = _socialSecurityService.GetSocialSecurityDetail(SocialSecurityPeopleID.Value);
                 //企业签约单位列表
@@ -184,7 +185,7 @@ namespace WYJK.Web.Controllers.Mvc
                 ViewData["SSMaxBase"] = Math.Round(SS.SocialAvgSalary * SS.MaxSocial / 100);
                 ViewData["SSMinBase"] = Math.Round(SS.SocialAvgSalary * SS.MinSocial / 100);
             }
-            if (_accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID.Value) != null)
+            if (SocialSecurityPeopleID != null && _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID.Value) != null)
             {
                 socialSecurityPeople.accumulationFund = _accumulationFundService.GetAccumulationFundDetail(SocialSecurityPeopleID.Value);
                 //企业签约单位列表
@@ -652,6 +653,8 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
 
                         model.accumulationFund.AccumulationFundBase = model.AccumulationFundBase;
                         model.accumulationFund.PayProportion = model.SSPayProportion;
+                        model.accumulationFund.AccumulationFundType = "1";
+
                         //返回公积金ID
                         AccumulationFundID = _socialSecurityService.AddAccumulationFund(model.accumulationFund);
                         //查询公积金金额
@@ -727,6 +730,12 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
 
             UnInsuredPeople item = (await _socialSecurityService.GetUnInsuredPeopleList(id.Value, status, peopleid.Value)).FirstOrDefault();
 
+            if (item == null)
+            {
+                TempData["Message"] = "已参保。";
+                return RedirectToAction("CustomerPaymentManagement");
+            }
+
             if (item.IsPaySocialSecurity)
             {
                 item.SocialSecurityAmount = item.SocialSecurityBase * item.SSPayProportion / 100 * item.SSPayMonthCount;
@@ -784,10 +793,18 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
         /// <returns></returns>
         public async Task<ActionResult> BuyService(int? id)
         {
-            var req = await client.GetAsync(url + $"/Member/GetRenewalServiceList?MemberID={id}");
-            ViewBag.RenewalServiceList = (await req.Content.ReadAsAsync<JsonResult<List<KeyValuePair<int, decimal>>>>()).Data;
-
-            return View(_memberService.GetAccountInfo(id.Value));
+            var req1 = await client.GetAsync(url + $"/Member/GetAccountStatus?MemberID={id}");
+            if ((await req1.Content.ReadAsAsync<JsonResult<string>>()).Data == "待续费")
+            {
+                var req = await client.GetAsync(url + $"/Member/GetRenewalServiceList?MemberID={id}");
+                ViewBag.RenewalServiceList = (await req.Content.ReadAsAsync<JsonResult<List<KeyValuePair<int, decimal>>>>()).Data;
+                return View(_memberService.GetAccountInfo(id.Value));
+            }
+            else
+            {
+                TempData["Message"] = "该账户未到续费时间。";
+                return RedirectToAction("CustomerPaymentManagement");
+            }
         }
 
         [HttpPost]

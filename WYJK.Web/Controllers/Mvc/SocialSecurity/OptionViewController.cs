@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -19,6 +22,13 @@ namespace WYJK.Web.Controllers.Mvc
     [Authorize]
     public class OptionViewController : BaseController
     {
+        private HttpClient client = new HttpClient();
+        private string url = ConfigurationManager.AppSettings["ServerUrl"] + "/api";
+        private JsonMediaTypeFormatter formatter = System.Web.Http.GlobalConfiguration.Configuration.Formatters.Where(f =>
+        {
+            return f.SupportedMediaTypes.Any(v => v.MediaType.Equals("application/json", StringComparison.CurrentCultureIgnoreCase));
+        }).FirstOrDefault() as JsonMediaTypeFormatter;
+
         #region 省市区联动
         /// <summary>
         /// 省市区联动
@@ -27,7 +37,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="cname"></param>
         /// <param name="coname"></param>
         /// <returns></returns>
-        public PartialViewResult RegionView(string pname, string cname, string coname, bool? IsHideCounty,string id, string callback)
+        public PartialViewResult RegionView(string pname, string cname, string coname, bool? IsHideCounty, string id, string callback)
         {
             ViewBag.IsHideCounty = IsHideCounty ?? false;
             ViewBag.Id = id;
@@ -38,6 +48,36 @@ namespace WYJK.Web.Controllers.Mvc
             string ccode = string.Empty;
             string cocode = string.Empty;
 
+
+            RegionViewModel viewModel = new RegionViewModel();
+
+            if (id == "AF" || id == "SO")
+            {
+                var req = client.GetAsync(url + $"/SocialSecurity/GetProvinceList");
+                var data = (req.Result.Content.ReadAsAsync<JsonResult<List<string>>>()).Result.Data;
+
+                viewModel.ProvinceList.AddRange(data.Select(item => new SelectListItem
+                {
+                    Text = item,
+                    Value = item,
+                    Selected = pname == item
+                }));
+
+                if (!string.IsNullOrEmpty(pname))
+                {
+                    var req1 = client.GetAsync(url + $"/SocialSecurity/GetCityListByProvince?provinceName={pname}");
+                    var data1 = (req1.Result.Content.ReadAsAsync<JsonResult<List<string>>>()).Result.Data;
+
+                    viewModel.CityList.AddRange(data1.Select(item => new SelectListItem
+                    {
+                        Text = item,
+                        Value = item,
+                        Selected = cname == item
+                    }));
+                }
+                return PartialView(viewModel);
+            }
+
             Region region = DbHelper.QuerySingle<Region>($"select * from Region where RegionName='{pname}' ");
             if (region != null) pcode = region.RegionCode;
 
@@ -47,9 +87,7 @@ namespace WYJK.Web.Controllers.Mvc
             Region region2 = DbHelper.QuerySingle<Region>($"select * from Region where RegionName='{coname}' ");
             if (region2 != null) cocode = region2.RegionCode;
 
-            RegionViewModel viewModel = new RegionViewModel();
             const string sql = "SELECT * FROM dbo.Region WHERE ParentCode = @ParentCode";
-
             List<Region> province = DbHelper.Query<Region>(sql, new { ParentCode = "000000" });
             if (province != null && province.Count > 0)
             {
@@ -86,7 +124,6 @@ namespace WYJK.Web.Controllers.Mvc
                                 Selected = item.RegionCode == cocode
                             }));
                         }
-
                     }
                 }
             }

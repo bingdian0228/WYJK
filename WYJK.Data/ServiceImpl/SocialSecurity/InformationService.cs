@@ -41,7 +41,7 @@ namespace WYJK.Data.ServiceImpl
 
         public async Task<PagedResult<Information>> GetNewNoticeList(InformationParameter parameter)
         {
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type) ii where ii.Row between @StartIndex AND @EndIndex";
+            string sql = $"select ID,Name,ImgUrls,ImgUrl,Type,CreateTime,Row from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type) ii where ii.Row between @StartIndex AND @EndIndex";
 
             List<Information> informationList = await DbHelper.QueryAsync<Information>(sql, new
             {
@@ -93,11 +93,12 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> ModifyInformation(Information model)
         {
-            string sql = $"update Information set Name = @Name, Type = @Type, ImgUrl = @ImgUrl where ID = @ID";
+            string sql = $"update Information set Name = @Name, Type = @Type,StrContent = @StrContent, ImgUrl = @ImgUrl where ID = @ID";
 
             DbParameter[] parameters = new DbParameter[] {
                 new SqlParameter("@Name", model.Name),
                 new SqlParameter("@Type", model.Type),
+                new SqlParameter("@StrContent", model.StrContent),
                 new SqlParameter("@ImgUrl", model.ImgUrl ?? (object)DBNull.Value),
                 new SqlParameter("@ID", model.ID)
             };

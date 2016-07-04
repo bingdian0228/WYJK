@@ -71,7 +71,6 @@ namespace WYJK.Web.Controllers.Mvc
                 model.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + model.ImgUrl.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
                 model.ImgUrls = model.ImgUrl.Split(';');
             }
-
             return View(model);
         }
 
