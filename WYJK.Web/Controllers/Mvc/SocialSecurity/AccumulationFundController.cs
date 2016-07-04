@@ -229,7 +229,7 @@ namespace WYJK.Web.Controllers.Mvc
             #endregion
 
 
-            return RedirectToAction("AccumulationFundDetail", new { SocialSecurityPeopleID = SocialSecurityPeopleID });
+            return RedirectToAction("AccumulationFundWaitingHandle", new { Status = 2 });
         }
 
         //异常处理

@@ -4037,6 +4037,11 @@
             密码
             </summary>
         </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.HashPassword">
+            <summary>
+            加密后的密码
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.ExtensionInformation.MemberPhone">
             <summary>
             用户手机号
@@ -4231,6 +4236,11 @@
              <summary>
             服务月数
              </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewalServicePayment.PlatType">
+            <summary>
+            平台类型
+            </summary>
         </member>
         <member name="T:WYJK.Entity.RechargeParameters">
             <summary>

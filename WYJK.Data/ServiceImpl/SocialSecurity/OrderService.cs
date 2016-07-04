@@ -68,15 +68,15 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public OrderDetailForMobile GetOrderDetail(int MemberID, string OrderCode)
         {
-            string sql = "declare @OrderCode nvarchar(50),@Names nvarchar(50), @SocialSecurityTotalAmount decimal(18, 2) = 0, @AccumulationFundTotalAmount decimal(18, 2) = 0, @ServiceCost decimal(18, 2) = 0, @FirstBacklogCost decimal(18, 2) = 0, @PaymentMethod nvarchar(50),@SocialSecurityBuCha decimal(18,2)=0"
-                        + " select @OrderCode =[Order].OrderCode, @Names = ISNULL(@Names + '，', '') + OrderDetails.SocialSecurityPeopleName,"
+            string sql = "declare @OrderID int, @OrderCode nvarchar(50),@Names nvarchar(50), @SocialSecurityTotalAmount decimal(18, 2) = 0, @AccumulationFundTotalAmount decimal(18, 2) = 0, @ServiceCost decimal(18, 2) = 0, @FirstBacklogCost decimal(18, 2) = 0, @PaymentMethod nvarchar(50),@SocialSecurityBuCha decimal(18,2)=0"
+                        + " select @OrderID=[Order].OrderID, @OrderCode =[Order].OrderCode, @Names = ISNULL(@Names + '，', '') + OrderDetails.SocialSecurityPeopleName,"
                         + " @SocialSecurityTotalAmount += OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth,"
                         + " @AccumulationFundTotalAmount += OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth,"
                         + " @ServiceCost += OrderDetails.SocialSecurityServiceCost + OrderDetails.AccumulationFundServiceCost,"
                         + " @FirstBacklogCost += OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.AccumulationFundFirstBacklogCost,"
                         + " @SocialSecurityBuCha += OrderDetails.SocialSecurityBuCha"
                         + " from[Order] right join OrderDetails on[Order].OrderCode = OrderDetails.OrderCode where [Order].MemberID = @MemberID and [order].OrderCode = @OrderCode1"
-                        + " select  @SocialSecurityBuCha SocialSecurityBuCha, @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
+                        + " select  @SocialSecurityBuCha SocialSecurityBuCha,@OrderID OrderID,  @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
 
             OrderDetailForMobile model = DbHelper.QuerySingle<OrderDetailForMobile>(sql, new
             {

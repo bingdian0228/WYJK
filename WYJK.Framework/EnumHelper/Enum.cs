@@ -8,17 +8,35 @@ namespace WYJK.Framework.EnumHelper
     /// </summary>
     public enum HouseholdPropertyEnum
     {
+        //[EnumDisplayName("本市农村")]
+        //InRural = 1,
+
+        //[EnumDisplayName("本市城镇")]
+        //InTown = 2,
+
+        //[EnumDisplayName("外市农村")]
+        //OutRural = 3,
+
+        //[EnumDisplayName("外市城镇")]
+        //OutTown = 4
+
         [EnumDisplayName("本市农村")]
-        InRural = 1,
+        ThisCityRural = 1,
 
         [EnumDisplayName("本市城镇")]
-        InTown = 2,
+        ThisCityTown = 2,
 
-        [EnumDisplayName("外市农村")]
-        OutRural = 3,
+        [EnumDisplayName("本省农村")]
+        ThisProvinceRural = 3,
 
-        [EnumDisplayName("外市城镇")]
-        OutTown = 4
+        [EnumDisplayName("本省城镇")]
+        ThisProvinceTown = 4,
+
+        [EnumDisplayName("外省农村")]
+        OtherProvinceRural = 5,
+
+        [EnumDisplayName("外省城镇")]
+        OtherProvinceTown = 6
     }
 
     /// <summary>

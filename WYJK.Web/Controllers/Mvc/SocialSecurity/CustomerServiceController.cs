@@ -199,7 +199,7 @@ namespace WYJK.Web.Controllers.Mvc
             ViewData["member"] = _memberService.GetMemberInfoForAdmin(MemberID.Value);
 
 
-            List<AccountRecord> accountRecordList = _memberService.GetAccountRecordList(MemberID.Value).OrderByDescending(n => n.CreateTime).ToList();
+            List<AccountRecord> accountRecordList = _memberService.GetAccountRecordList(MemberID.Value).OrderByDescending(n => n.ID).ToList();
             //获取账户列表
             ViewData["accountRecordList"] = accountRecordList;
 
@@ -281,13 +281,15 @@ namespace WYJK.Web.Controllers.Mvc
             decimal SSMaxBase = Math.Round(model.SocialAvgSalary * model.MaxSocial / 100);
             decimal SSMinBase = Math.Round(model.SocialAvgSalary * model.MinSocial / 100);
             decimal value = 0;
-            if (HouseholdProperty == (int)HouseholdPropertyEnum.InRural ||
-                HouseholdProperty == (int)HouseholdPropertyEnum.OutRural)
+            if (HouseholdProperty == (int)HouseholdPropertyEnum.ThisCityRural ||
+                HouseholdProperty == (int)HouseholdPropertyEnum.ThisProvinceRural ||
+                    HouseholdProperty == (int)HouseholdPropertyEnum.OtherProvinceRural)
             {
                 value = model.PersonalShiYeRural;
             }
-            else if (HouseholdProperty == (int)HouseholdPropertyEnum.InTown ||
-                HouseholdProperty == (int)HouseholdPropertyEnum.OutTown)
+            else if (HouseholdProperty == (int)HouseholdPropertyEnum.ThisCityTown ||
+                HouseholdProperty == (int)HouseholdPropertyEnum.ThisProvinceTown ||
+                    HouseholdProperty == (int)HouseholdPropertyEnum.OtherProvinceTown)
             {
                 value = model.PersonalShiYeTown;
             }
@@ -342,7 +344,7 @@ namespace WYJK.Web.Controllers.Mvc
       left join AccumulationFund on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
   where SocialSecurityPeople.CustomerServiceUserName = '{ HttpContext.User.Identity.Name}' and AccumulationFund.IsException = 1) t");
             if (exceptionTip != null)
-                return Json(new { status = true },JsonRequestBehavior.AllowGet);
+                return Json(new { status = true }, JsonRequestBehavior.AllowGet);
             else
                 return Json(new { status = false }, JsonRequestBehavior.AllowGet);
         }

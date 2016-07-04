@@ -125,7 +125,10 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                         {
                             <li><a _href='@Url.Action("GetRenewOrderList", "RenewOrders")?Status=-1' data-title="续费审核" href="javascript:void(0)">续费审核</a></li>
                         }
-                        <li><a _href='@Url.Action("GetBaseOrderList", "BaseOrders")?Status=-1' data-title="调基审核" href="javascript:void(0)">调基审核</a></li>
+                        @if (permissionList.Contains("调基审核"))
+                        {
+                            <li><a _href='@Url.Action("GetBaseOrderList", "BaseOrders")?Status=-1' data-title="调基审核" href="javascript:void(0)">调基审核</a></li>
+                        }
                     </ul>
                 </dd>
             </dl>
@@ -199,23 +202,23 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
             </dl>
         }
         @*@if (permissionList.Contains("基数审核"))
-        {
-            <dl id="menu-article">
-                <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-                <dd>
-                    <ul>
-                        @if (permissionList.Contains("社保基数审核"))
-                        {
-                            <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=0' data-title="社保基数审核" href="javascript:void(0)">社保基数审核</a></li>
-                        }
-                        @if (permissionList.Contains("公积金基数审核"))
-                        {
-                            <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=1' data-title="公积金基数审核" href="javascript:void(0)">公积金基数审核</a></li>
-                        }
-                    </ul>
-                </dd>
-            </dl>
-        }*@
+            {
+                <dl id="menu-article">
+                    <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                    <dd>
+                        <ul>
+                            @if (permissionList.Contains("社保基数审核"))
+                            {
+                                <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=0' data-title="社保基数审核" href="javascript:void(0)">社保基数审核</a></li>
+                            }
+                            @if (permissionList.Contains("公积金基数审核"))
+                            {
+                                <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=1' data-title="公积金基数审核" href="javascript:void(0)">公积金基数审核</a></li>
+                            }
+                        </ul>
+                    </dd>
+                </dl>
+            }*@
         @if (permissionList.Contains("个人借款"))
         {
             <dl id="menu-article">

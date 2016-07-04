@@ -8,17 +8,53 @@
     <script>
         $(function () {
             $(".Huialert.Huialert-info").fadeOut(2000);
+
+            @*//审核通过
+            $(".action-complete").click(function () {
+                if ($.trim($("[name='SocialSecurityNo']").val()) == '') {
+                    layer.msg("请填写社保号");
+                    return;
+                }
+
+
+                layer.confirm('确定要进行业务办结吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    var SocialSecurityPeopleID = '@Request["SocialSecurityPeopleID"]';
+                    var SocialSecurityNo = $.trim($("[name='SocialSecurityNo']").val());
+                    var index = layer.load(1, {
+                        shade: [0.1, '#000']
+                    });
+                    //提交办结
+                    $.ajax({
+                        url: "@Url.Action("Complete", "SocialSecurity")",
+                        data: { "SocialSecurityPeopleID": SocialSecurityPeopleID, "SocialSecurityNo": SocialSecurityNo },
+                        dataType: "json",
+                        type: "POST",
+                        success: function (response) {
+                            layer.close(index);
+                            if (response.status) {
+                                layer.msg("办结成功");
+                                refresh();
+                            } else {
+                                layer.msg(response.Message);
+                            }
+                        },
+                        error: function () {
+                            layer.close(index);
+                            layer.msg("出现异常");
+                        }
+                    });
+                });
+            });*@
         })
     </script>
 }
-<div class="pd-20">
+<div ())="pd-20">
     <form action='@Url.Action("SaveSocialSecurityNo","SocialSecurity")' method="post" class="form form-horizontal" id="form-article-add">
 
         @Html.HiddenFor(n => n.SocialSecurityPeopleID)
-        @if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
-        {
-            <div class="Huialert Huialert-info">@(TempData["Message"])</div>
-        }
+
         <div class="row cl" style="text-align:center;">
             <label style="font-size:24px;font-weight:bold;"> @(Model.SocialSecurityPeopleName)的社保业务信息</label>
         </div>
@@ -63,6 +99,7 @@
         <div class="row cl">
             <div class="col-10 col-offset-3">
                 <button class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+                @*<button class="btn btn-primary radius action-complete" type="button"><i class="Hui-iconfont">&#xe6e1;</i> 审核通过</button>*@
             </div>
         </div>
     </form>

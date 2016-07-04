@@ -29,6 +29,7 @@
         });
 
         $(function () {
+            $(".Huialert.Huialert-info").fadeOut(2000);
             //业务办结
             $(".action-complete").click(function () {
 
@@ -150,6 +151,10 @@
     </div>
 
     <div class="mt-20">
+        @if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
+        {
+            <div class="Huialert Huialert-info">@(TempData["Message"])</div>
+        }
         <table class="table table-border table-bordered table-bg table-hover table-sort">
             <thead>
                 <tr class="text-c">
@@ -208,7 +213,7 @@
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
-            <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 业务办结</a>
+            <a href="javascript:;" class="btn btn-primary radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 业务办结</a>
             <a href="javascript:;" class="btn btn-danger radius action-exception"><i class="Hui-iconfont">&#xe6e1;</i> 业务异常</a>
         </span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>

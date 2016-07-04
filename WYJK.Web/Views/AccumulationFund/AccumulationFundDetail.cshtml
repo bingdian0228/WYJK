@@ -14,10 +14,10 @@
 <div class="pd-20">
     <form action='@Url.Action("SaveAccumulationFundNo","AccumulationFund")' method="post" class="form form-horizontal" id="form-article-add">
         @Html.HiddenFor(n => n.SocialSecurityPeopleID)
-        @if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
+        @*@if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
         {
             <div class="Huialert Huialert-info">@(TempData["Message"])</div>
-        }
+        }*@
         <div class="row cl" style="text-align:center;">
             <label style="font-size:24px;font-weight:bold;"> @(Model.SocialSecurityPeopleName)的公积金业务信息</label>
         </div>

@@ -164,6 +164,13 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public JsonResult<dynamic> IsCanAutoPayment(GenerateOrderParameter parameter)
         {
+            /*************************待修改******************************/
+            return new JsonResult<dynamic>
+            {
+                status = false,
+                Message = "不可以自动扣款"
+            };
+
             //首先判断是否有未支付订单，若有，则不能生成订单
             if (_orderService.IsExistsWaitingPayOrderByMemberID(parameter.MemberID))
             {
@@ -513,14 +520,17 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             int orderID = parameter.OrderID;
             if (orderID > 0)
             {
-                BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID={orderID}");
+                decimal money = 0;
+                Order order = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID={orderID}");
+                money= DbHelper.QuerySingle<decimal>($"select SUM(SocialSecurityAmount*SocialSecuritypayMonth+SocialSecurityFirstBacklogCost+SocialSecurityBuCha+AccumulationFundAmount*AccumulationFundpayMonth+AccumulationFundFirstBacklogCost) from OrderDetails where OrderCode ='{order.OrderCode}'");
+
 
                 string BranchID = "0532";
                 string CoNo = "019387";
                 string BillNo = orderID.ToString().PadLeft(10, '0');
-                string Amount = Convert.ToDecimal(baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge).ToString();
+                string Amount = Convert.ToDecimal(money).ToString();
                 string Date = DateTime.Now.ToString("yyyyMMdd");
-                string MerchantUrl = ConfigurationManager.AppSettings["ServerUrl"] + "api/socialsecurity/AdjustingBase_Return";
+                string MerchantUrl = ConfigurationManager.AppSettings["ServerUrl"] + "api/Order/OrderPayment1_Return";
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
@@ -710,7 +720,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     string sqlAccountRecord = "";
                     string sqlSocialSecurityPeople = "";
 
-                    decimal memberAccount = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID = {model.MemberID}");
+                    decimal memberAccount = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID = {order.MemberID}");
                     //收支记录
                     string ShouNote = "缴费：";
                     string ZhiNote = string.Empty;

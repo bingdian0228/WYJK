@@ -175,6 +175,7 @@ namespace WYJK.Entity
     /// </summary>
     public class OrderDetailForMobile
     {
+        public int OrderID { get; set; }
         /// <summary>
         /// 订单编号
         /// </summary>

@@ -1124,6 +1124,24 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRenewalServiceOrderPayment(WYJK.Entity.RenewalServicePayment)">
+            <summary>
+            续费调取支付页面
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRenewalServiceOrderPayment_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            续费支付回调
+            </summary>
+            <param name="Succeed"></param>
+            <param name="BillNo"></param>
+            <param name="Amount"></param>
+            <param name="Date"></param>
+            <param name="Msg"></param>
+            <param name="Signature"></param>
+        </member>
         <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRenewalService(WYJK.Entity.RenewalServiceParameters)">
             <summary>
             续费
@@ -1136,6 +1154,24 @@
             </summary>
             <param name="parameter"></param>
             <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRechargeAmountPayment(WYJK.Entity.OrderPayParameter)">
+            <summary>
+            调取支付页面
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRechargeAmountPayment_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            充值支付回调
+            </summary>
+            <param name="Succeed"></param>
+            <param name="BillNo"></param>
+            <param name="Amount"></param>
+            <param name="Date"></param>
+            <param name="Msg"></param>
+            <param name="Signature"></param>
         </member>
         <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRechargeAmount(WYJK.Entity.RechargeParameters)">
             <summary>
