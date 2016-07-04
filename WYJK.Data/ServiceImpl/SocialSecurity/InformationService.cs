@@ -41,7 +41,7 @@ namespace WYJK.Data.ServiceImpl
 
         public async Task<PagedResult<Information>> GetNewNoticeList(InformationParameter parameter)
         {
-            string sql = $"select ID,Name,ImgUrls,ImgUrl,Type,CreateTime,Row from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type) ii where ii.Row between @StartIndex AND @EndIndex";
+            string sql = $"select ID,Name,ImgUrls,ImgUrl,Type,CreateTime,Row from (select ROW_NUMBER() OVER(ORDER BY i.ID )AS Row, i.* from Information i where Name like @Name and Type = @Type order by CreateTime desc) ii where ii.Row between @StartIndex AND @EndIndex";
 
             List<Information> informationList = await DbHelper.QueryAsync<Information>(sql, new
             {
