@@ -22,6 +22,9 @@ using System.Configuration;
 using System.Threading;
 using System.IO;
 using System.Text;
+using WYJK.Framework.Helpers;
+using CMBCHINALib;
+using System.Data.Common;
 
 namespace WYJK.Web.Controllers.Http
 {
@@ -42,6 +45,16 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<MemberRegisterModel>> RegisterMember(MemberRegisterModel entity)
         {
+            //短信验证
+            VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{entity.MemberPhone}' and Code='{entity.VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+            if (verificationCode == null)
+                return new JsonResult<MemberRegisterModel>
+                {
+                    status = false,
+                    Message = "验证码不正确或已失效！"
+                };
+
+
             Dictionary<bool, string> dic = await _memberService.RegisterMember(entity);
 
             if (dic.First().Key)
@@ -62,6 +75,53 @@ namespace WYJK.Web.Controllers.Http
                 Message = dic.First().Value,
                 Data = entity
             };
+        }
+
+        /// <summary>
+        /// 获取验证码
+        /// </summary>
+        /// <param name="MemberName"></param>
+        /// <param name="MemberPhone"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public JsonResult<dynamic> GetVerificationCode(string MemberName, string MemberPhone)
+        {
+            VerificationCode verificationCode = DbHelper.Query<VerificationCode>($"select * from VerificationCode where Phone='{MemberPhone}'").FirstOrDefault();
+            //生成随机数
+            Random rdm = new Random();
+            string code = rdm.Next(0, 9999).ToString().PadLeft(4, '0');
+            if (verificationCode == null)
+            {
+                DbHelper.ExecuteSqlCommand($"insert into VerificationCode(Phone,Code,CurrentTime) values('{MemberPhone}','{code}',getdate())", null);
+            }
+            else {
+                DbHelper.ExecuteSqlCommand($"update VerificationCode set Code='{code}',CurrentTime=getdate() where phone='{MemberPhone}'", null);
+            }
+
+            //发送短信
+            SendSms(MemberPhone, MemberName, code);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "发送成功"
+            };
+
+        }
+
+        private static string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
+        private static string apikey = ConfigurationManager.AppSettings["apikey"].ToString();
+        private static string contentFormat = ConfigurationManager.AppSettings["SMSVerifContentFormat"].ToString();
+        /// <summary>
+        /// 发送短信
+        /// </summary>
+        /// <param name="mobile"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public string SendSms(string mobile, string userName, string code)
+        {
+            string content = string.Format(contentFormat, userName, code, timespan);
+            return Sms.sendSms(apikey, content, mobile);
         }
 
         /// <summary>
@@ -103,6 +163,15 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<MemberForgetPasswordModel>> ForgetPassword(MemberForgetPasswordModel entity)
         {
+            //短信验证
+            VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{entity.MemberPhone}' and Code='{entity.VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+            if (verificationCode == null)
+                return new JsonResult<MemberForgetPasswordModel>
+                {
+                    status = false,
+                    Message = "验证码不正确或已失效！"
+                };
+
             Dictionary<bool, string> dic = await _memberService.ForgetPassword(entity);
 
             return new JsonResult<MemberForgetPasswordModel>
@@ -149,8 +218,23 @@ namespace WYJK.Web.Controllers.Http
         /// <param name="MemberPhone"></param>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-        public JsonResult<dynamic> SubmitMemberInfo(int MemberID, string TrueName, string MemberName, string MemberPhone)
+        public JsonResult<dynamic> SubmitMemberInfo(int MemberID, string TrueName, string MemberName, string MemberPhone, string VerificationCode)
         {
+            //如果新手机号与原手机号不同，则需要验证码
+            string oldMemberPhone = DbHelper.QuerySingle<string>($"select MemberPhone from Members where MemberID={MemberID}");
+            if (MemberPhone != oldMemberPhone)
+            {
+                //短信验证
+                VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{oldMemberPhone}' and Code='{VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+                if (verificationCode == null)
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "验证码不正确或已失效！"
+                    };
+            }
+
+
             //如果用户名重复
             if (DbHelper.QuerySingle<int>($"select count(1) from Members where MemberName='{MemberName}' and MemberID<>{MemberID}") > 0)
                 return new JsonResult<dynamic>
@@ -685,95 +769,6 @@ namespace WYJK.Web.Controllers.Http
                 Message = "获取续费服务集合成功",
                 Data = dic.ToList()
             };
-
-            #region 作废
-            ////所有服务月-账户余额，如果<0则去除
-            //for (int i = 0; i < 12; i++)
-            //{
-            //    dic[i + 1] = dic[i + 1] - accountInfo.Account;
-            //    if (dic[i + 1] <= 0)
-            //        dic.Remove(i + 1);
-            //}
-
-
-            ////1号前无需服务费；1号后看账户余额，如果够缴纳一个月，则不需要交服务费，否则需交所有人一个月服务费(同下)
-            ////账户余额够一个月，则无需交服务费，如果不够，则看1号前还是1号后，前不需要交，后需要交
-            ////一个月服务
-            //decimal MonthTotal = _socialSecurityService.GetMonthTotalAmountByMemberID(MemberID);
-            //Dictionary<int, decimal> dic = new Dictionary<int, decimal>();
-            //for (int i = 0; i < 12; i++)
-            //{
-            //    dic.Add(i + 1, MonthTotal * (i + 1));
-            //}
-            ////计算第一个月
-            //decimal TotalServiceCost = 0;
-            //decimal SSServiceCost = 0;
-            //decimal AFServiceCost = 0;
-
-            //AccountInfo accountInfo = _memberService.GetAccountInfo(MemberID);
-            //if (accountInfo.Account < MonthTotal)
-            //{
-            //    int day = DateTime.Now.Day;
-            //    //社保服务费
-            //    CostParameterSetting SSParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity);
-            //    if (SSParameter != null && !string.IsNullOrEmpty(SSParameter.RenewServiceCost))
-            //    {
-            //        string[] str = SSParameter.RenewServiceCost.Split(';');
-            //        foreach (var item in str)
-            //        {
-            //            string[] str1 = item.Split(',');
-
-            //            if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
-            //            {
-            //                //社保待办与正常与续费的人数
-            //                SSServiceCost = _socialSecurityService.GetSocialSecurityRenewListByMemberID(MemberID).Count * Convert.ToDecimal(str1[2]);
-            //                break;
-            //            }
-
-            //        }
-            //    }
-            //    //公积金服务费
-            //    CostParameterSetting AFParameter = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund);
-            //    if (AFParameter != null && !string.IsNullOrEmpty(AFParameter.RenewServiceCost))
-            //    {
-            //        string[] str = AFParameter.RenewServiceCost.Split(';');
-            //        foreach (var item in str)
-            //        {
-            //            string[] str1 = item.Split(',');
-
-            //            if (Convert.ToInt32(str1[0]) <= day && day <= Convert.ToInt32(str1[1]))
-            //            {
-            //                //社保待办与正常的人数
-            //                AFServiceCost = _socialSecurityService.GetAccumulationFundRenewListByMemberID(MemberID).Count * Convert.ToDecimal(str1[2]);
-            //                break;
-            //            }
-
-            //        }
-            //    }
-
-            //    //小于一个月的（现在处于小于一个月内），不管充几个月服务，都要加上这个服务费，然后减去账户金额
-            //    TotalServiceCost = SSServiceCost + AFServiceCost;
-            //    for (int i = 0; i < 12; i++)
-            //    {
-            //        dic[i + 1] = dic[i + 1] + TotalServiceCost;
-            //    }
-            //}
-
-            ////所有服务月-账户余额，如果<0则去除
-            //for (int i = 0; i < 12; i++)
-            //{
-            //    dic[i + 1] = dic[i + 1] - accountInfo.Account;
-            //    if (dic[i + 1] <= 0)
-            //        dic.Remove(i + 1);
-            //}
-
-            //return new JsonResult<List<KeyValuePair<int, decimal>>>
-            //{
-            //    status = true,
-            //    Message = "获取集合成功",
-            //    Data = dic.ToList()
-            //};
-            #endregion
         }
 
         /// <summary>
@@ -781,16 +776,180 @@ namespace WYJK.Web.Controllers.Http
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter) {
+        public JsonResult<dynamic> SubmitRenewalServiceOrder(RenewalServiceParameters parameter)
+        {
             string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
-            DbHelper.ExecuteSqlCommand($@"insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) 
-                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}',{parameter.MonthCount})", null);
+            int orderID = DbHelper.ExecuteSqlCommandScalar($@"insert into RenewOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money,MonthCount) 
+                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}',{parameter.MonthCount})", new DbParameter[] { });
 
             return new JsonResult<dynamic>
             {
                 status = true,
-                Message = "生成续费订单成功"
+                Message = "生成续费订单成功",
+                Data = new { OrderID = orderID }
             };
+        }
+
+        /// <summary>
+        /// 续费调取支付页面
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> SubmitRenewalServiceOrderPayment(RenewalServicePayment parameter)
+        {
+            int orderID = parameter.OrderID;
+            if (orderID > 0)
+            {
+                RenewOrders renewOrders = DbHelper.QuerySingle<RenewOrders>($"select * from RenewOrders where OrderID={orderID}");
+
+                string BranchID = "0532";
+                string CoNo = "019387";
+                string BillNo = orderID.ToString().PadLeft(10, '0');
+                string Amount = Convert.ToDecimal(renewOrders.Money).ToString();
+                string Date = DateTime.Now.ToString("yyyyMMdd");
+                string MerchantUrl = ConfigurationManager.AppSettings["ServerUrl"] + "api/Member/SubmitRenewalServiceOrderPayment_Return";
+                if (parameter.PlatType == "1")
+                {
+                    #region 移动端
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else {
+                    #region PC端
+                    string m_Action = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC2";//订单提交地址
+                    FirmClientClass fm = new FirmClientClass();
+                    string dtime = DateTime.Now.ToString("yyyyMMdd");
+                    var result = fm.exGenMerchantCode("Superman19810928", dtime, BranchID, CoNo, BillNo, Convert.ToDecimal(Amount).ToString("f"), "", MerchantUrl, "1231", "1231230", "58.56.179.142", "54011600", "");
+                    string responseText = "<form name='cbanksubmit' method='post' action='" + m_Action + "'>"
+    + "<input type='hidden' name='BranchID' value=" + BranchID + ">"
+    + "<input type='hidden' name='CoNo' value=" + CoNo + ">"
+    + "<input type='hidden' name='BillNo' value=" + BillNo + ">"
+    + "<input type='hidden' name='Amount' value=" + Convert.ToDecimal(Amount).ToString("f") + ">"
+    + "<input type='hidden' name='Date' value=" + dtime + ">"
+    + "<input type='hidden' name='MerchantUrl' value=" + MerchantUrl + ">"
+    + "<input type='hidden' name='MerchantCode' value='" + result.ToString() + "'>"
+    + "</form>"
+    + "<script>"
+    + "document.cbanksubmit.submit()"
+    + "</script>";
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "获取成功",
+                        Data = responseText
+                    };
+                    #endregion
+                }
+
+            }
+            else
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "提交失败"
+                };
+        }
+
+        private static object locker = new object();
+        /// <summary>
+        /// 续费支付回调
+        /// </summary>
+        /// <param name="Succeed"></param>
+        /// <param name="BillNo"></param>
+        /// <param name="Amount"></param>
+        /// <param name="Date"></param>
+        /// <param name="Msg"></param>
+        /// <param name="Signature"></param>
+        public void SubmitRenewalServiceOrderPayment_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
+        {
+            #region 招行提供
+            /*
+             * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
+             * 先判断是否支付成功
+             * 验证支付成功还要验证支付金额是否和订单的金额一致
+             */
+            string ReturnInfo = "Succeed=" + Succeed + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&Msg=" + Msg + "&Signature=" + Signature;
+            //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
+            StringBuilder str = new StringBuilder();
+            string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
+            if (!System.IO.Directory.Exists(upLoadPath))
+            {
+                System.IO.Directory.CreateDirectory(upLoadPath);
+            }
+            str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+            str.Append("\r\n\t请求信息：" + HttpContext.Current.Request.Form);
+            str.Append("\r\n\t参数：" + ReturnInfo);
+            str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+
+            try
+            {
+                string Key_Path = HttpContext.Current.Server.MapPath("~/") + @"key\public.key";//银行公用Key地址
+                FirmClientClass cbmBank = new FirmClientClass();
+                short key = cbmBank.exCheckInfoFromBank(Key_Path, ReturnInfo);
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\tkey：" + key);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+                if (key != 0)//验证银行返回数据是否合法
+                {
+                    string err = cbmBank.exGetLastErr(key);
+                    throw new Exception(err);
+                    //Response.Write("<script>alert('" + err + "')</script>");
+                    //return;
+                }
+                if (Succeed.Trim() != "Y")//验证支付结果是否成功
+                {
+                    throw new Exception("支付失败！");
+                    //Response.Write("<script>alert('支付失败！')</script>");
+                    //return;
+                }
+                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                {
+                    throw new Exception("支付金额与订单金额不一致！");
+                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    //return;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\t错误：" + ex);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+            }
+            System.IO.File.AppendAllText(upLoadPath + DateTime.Now.ToString("yyyy.MM.dd") + ".log", str.ToString(), System.Text.Encoding.UTF8);
+
+            #endregion
+
+            lock (locker)
+            {
+                string orderID = BillNo.TrimStart('0');
+                RenewOrders model = DbHelper.QuerySingle<RenewOrders>($"select * from RenewOrders where OrderID='{orderID}'");
+                if (model.Status == "0")
+                {
+
+                    RenewalServiceParameters parameter = new RenewalServiceParameters()
+                    {
+                        MemberID = model.MemberID,
+                        PayMethod = model.PaymentMethod,
+                        Amount = model.Money,
+                        MonthCount = model.MonthCount
+                    };
+                    SubmitRenewalService(parameter);
+                }
+
+            }
+
         }
 
         /// <summary>
@@ -1073,18 +1232,177 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public JsonResult<dynamic> SubmitRechargeAmountOrder(RechargeParameters parameter) {
+        public JsonResult<dynamic> SubmitRechargeAmountOrder(RechargeParameters parameter)
+        {
             string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
-            DbHelper.ExecuteSqlCommand($@"insert into RechargeOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money) 
-                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}')", null);
+            int orderID = DbHelper.ExecuteSqlCommandScalar($@"insert into RechargeOrders(OrderCode,MemberID,PaymentMethod,GenerateDate,Status,Money) 
+                values('{orderCode}',{parameter.MemberID},'银行卡',getdate(),0,'{parameter.Amount}')", new DbParameter[] { });
 
             return new JsonResult<dynamic>
             {
                 status = true,
-                Message = "生成充值订单成功"
+                Message = "生成充值订单成功",
+                Data = new { OrderID = orderID }
             };
         }
 
+        /// <summary>
+        /// 调取支付页面
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> SubmitRechargeAmountPayment(OrderPayParameter parameter)
+        {
+            int orderID = parameter.OrderID;
+            if (orderID > 0)
+            {
+                RechargeOrders rechargeOrders = DbHelper.QuerySingle<RechargeOrders>($"select * from RechargeOrders where OrderID={orderID}");
+
+                string BranchID = "0532";
+                string CoNo = "019387";
+                string BillNo = orderID.ToString().PadLeft(10, '0');
+                string Amount = Convert.ToDecimal(rechargeOrders.Money).ToString();
+                string Date = DateTime.Now.ToString("yyyyMMdd");
+                string MerchantUrl = ConfigurationManager.AppSettings["ServerUrl"] + "api/Member/SubmitRechargeAmountPayment_Return";
+                if (parameter.PlatType == "1")
+                {
+                    #region 移动端
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else {
+                    #region PC端
+                    string m_Action = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC2";//订单提交地址
+                    FirmClientClass fm = new FirmClientClass();
+                    string dtime = DateTime.Now.ToString("yyyyMMdd");
+                    var result = fm.exGenMerchantCode("Superman19810928", dtime, BranchID, CoNo, BillNo, Convert.ToDecimal(Amount).ToString("f"), "", MerchantUrl, "1231", "1231230", "58.56.179.142", "54011600", "");
+                    string responseText = "<form name='cbanksubmit' method='post' action='" + m_Action + "'>"
+    + "<input type='hidden' name='BranchID' value=" + BranchID + ">"
+    + "<input type='hidden' name='CoNo' value=" + CoNo + ">"
+    + "<input type='hidden' name='BillNo' value=" + BillNo + ">"
+    + "<input type='hidden' name='Amount' value=" + Convert.ToDecimal(Amount).ToString("f") + ">"
+    + "<input type='hidden' name='Date' value=" + dtime + ">"
+    + "<input type='hidden' name='MerchantUrl' value=" + MerchantUrl + ">"
+    + "<input type='hidden' name='MerchantCode' value='" + result.ToString() + "'>"
+    + "</form>"
+    + "<script>"
+    + "document.cbanksubmit.submit()"
+    + "</script>";
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "获取成功",
+                        Data = responseText
+                    };
+                    #endregion
+                }
+
+            }
+            else
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "提交失败"
+                };
+        }
+
+        private static object locker1 = new object();
+        /// <summary>
+        /// 充值支付回调
+        /// </summary>
+        /// <param name="Succeed"></param>
+        /// <param name="BillNo"></param>
+        /// <param name="Amount"></param>
+        /// <param name="Date"></param>
+        /// <param name="Msg"></param>
+        /// <param name="Signature"></param>
+        public void SubmitRechargeAmountPayment_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
+        {
+            #region 招行提供
+            /*
+             * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
+             * 先判断是否支付成功
+             * 验证支付成功还要验证支付金额是否和订单的金额一致
+             */
+            string ReturnInfo = "Succeed=" + Succeed + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&Msg=" + Msg + "&Signature=" + Signature;
+            //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
+            StringBuilder str = new StringBuilder();
+            string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
+            if (!System.IO.Directory.Exists(upLoadPath))
+            {
+                System.IO.Directory.CreateDirectory(upLoadPath);
+            }
+            str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+            str.Append("\r\n\t请求信息：" + HttpContext.Current.Request.Form);
+            str.Append("\r\n\t参数：" + ReturnInfo);
+            str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+
+            try
+            {
+                string Key_Path = HttpContext.Current.Server.MapPath("~/") + @"key\public.key";//银行公用Key地址
+                FirmClientClass cbmBank = new FirmClientClass();
+                short key = cbmBank.exCheckInfoFromBank(Key_Path, ReturnInfo);
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\tkey：" + key);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+                if (key != 0)//验证银行返回数据是否合法
+                {
+                    string err = cbmBank.exGetLastErr(key);
+                    throw new Exception(err);
+                    //Response.Write("<script>alert('" + err + "')</script>");
+                    //return;
+                }
+                if (Succeed.Trim() != "Y")//验证支付结果是否成功
+                {
+                    throw new Exception("支付失败！");
+                    //Response.Write("<script>alert('支付失败！')</script>");
+                    //return;
+                }
+                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                {
+                    throw new Exception("支付金额与订单金额不一致！");
+                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    //return;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\t错误：" + ex);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+            }
+            System.IO.File.AppendAllText(upLoadPath + DateTime.Now.ToString("yyyy.MM.dd") + ".log", str.ToString(), System.Text.Encoding.UTF8);
+
+            #endregion
+            lock (locker)
+            {
+                string orderID = BillNo.TrimStart('0');
+                RechargeOrders model = DbHelper.QuerySingle<RechargeOrders>($"select * from RechargeOrders where OrderID='{orderID}'");
+                if (model.Status == "0")
+                {
+                    RechargeParameters parameter = new RechargeParameters()
+                    {
+                        MemberID = model.MemberID,
+                        PayMethod = model.PaymentMethod,
+                        Amount = model.Money
+                    };
+                    SubmitRechargeAmount(parameter);
+                }
+
+            }
+        }
 
         /// <summary>
         /// 提交充值

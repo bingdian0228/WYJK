@@ -15,12 +15,14 @@
                 dateType: "json",
                 type: "post",
                 success: function (response) {
+
                     //layer.msg("请求成功");
                 },
                 error: function (error) {
                     //layer.msg("服务器错误");
                 }
             });
+
         }
 
         //SendOnlineUser();
@@ -33,7 +35,7 @@
     <a class="Hui-logo l" title="无忧借款 v1.0" href="/">无忧借款</a> <a class="Hui-logo-m l" href="/" title="H-ui.admin">H-ui</a> <span class="Hui-subtitle l">V1.0</span>
 
     <ul class="Hui-userbar">
-        <li>超级管理员</li>
+        <li></li>
         <li class="dropDown dropDown_hover">
             <a href="#" class="dropDown_A">@HttpContext.Current.User.Identity.Name <i class="Hui-iconfont">&#xe6d5;</i></a>
             <ul class="dropDown-menu radius box-shadow">
@@ -57,6 +59,7 @@
     </ul>
     <a href="javascript:;" class="Hui-nav-toggle Hui-iconfont" aria-hidden="false">&#xe667;</a>
 </header>
+<div id="bank"></div>
 <aside class="Hui-aside">
     <input runat="server" id="divScrollValue" type="hidden" value="" />
     <div class="menu_dropdown bk_2">
@@ -121,6 +124,10 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                         @if (permissionList.Contains("续费审核"))
                         {
                             <li><a _href='@Url.Action("GetRenewOrderList", "RenewOrders")?Status=-1' data-title="续费审核" href="javascript:void(0)">续费审核</a></li>
+                        }
+                        @if (permissionList.Contains("调基审核"))
+                        {
+                            <li><a _href='@Url.Action("GetBaseOrderList", "BaseOrders")?Status=-1' data-title="调基审核" href="javascript:void(0)">调基审核</a></li>
                         }
                     </ul>
                 </dd>
@@ -194,24 +201,24 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                 </dd>
             </dl>
         }
-        @if (permissionList.Contains("基数审核"))
-        {
-            <dl id="menu-article">
-                <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
-                <dd>
-                    <ul>
-                        @if (permissionList.Contains("社保基数审核"))
-                        {
-                            <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=0' data-title="社保基数审核" href="javascript:void(0)">社保基数审核</a></li>
-                        }
-                        @if (permissionList.Contains("公积金基数审核"))
-                        {
-                            <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=1' data-title="公积金基数审核" href="javascript:void(0)">公积金基数审核</a></li>
-                        }
-                    </ul>
-                </dd>
-            </dl>
-        }
+        @*@if (permissionList.Contains("基数审核"))
+            {
+                <dl id="menu-article">
+                    <dt><i class="Hui-iconfont">&#xe616;</i> 基数审核<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+                    <dd>
+                        <ul>
+                            @if (permissionList.Contains("社保基数审核"))
+                            {
+                                <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=0' data-title="社保基数审核" href="javascript:void(0)">社保基数审核</a></li>
+                            }
+                            @if (permissionList.Contains("公积金基数审核"))
+                            {
+                                <li><a _href='@Url.Action("GetBaseAuditList", "BaseAudit")?Type=1' data-title="公积金基数审核" href="javascript:void(0)">公积金基数审核</a></li>
+                            }
+                        </ul>
+                    </dd>
+                </dl>
+            }*@
         @if (permissionList.Contains("个人借款"))
         {
             <dl id="menu-article">

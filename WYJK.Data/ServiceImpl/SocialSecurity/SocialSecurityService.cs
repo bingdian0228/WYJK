@@ -47,7 +47,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
                       dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, SocialSecurity.AlreadyPayMonthCount,
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, SocialSecurity.UpdateDt,
-                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,
+                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,SocialSecurity.IsAdjustingBase,SocialSecurity.AdjustingBaseNote,
                         case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
@@ -240,17 +240,17 @@ where (tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1)";
         /// <returns></returns>
         public List<EnterpriseSocialSecurity> GetEnterpriseSocialSecurityByAreaList(string area, string HouseholdProperty)
         {
-            string sqlHouseholdProperty = string.Empty;
-            if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-                HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
-            {
-                sqlHouseholdProperty = Convert.ToString((int)HouseholdPropertyEnum.InRural) + "," + Convert.ToString((int)HouseholdPropertyEnum.OutRural);
-            }
-            else if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-              HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
-            {
-                sqlHouseholdProperty = Convert.ToString((int)HouseholdPropertyEnum.InTown) + "," + Convert.ToString((int)HouseholdPropertyEnum.OutTown);
-            }
+            //string sqlHouseholdProperty = string.Empty;
+            //if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
+            //    HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+            //{
+            //    sqlHouseholdProperty = Convert.ToString((int)HouseholdPropertyEnum.InRural) + "," + Convert.ToString((int)HouseholdPropertyEnum.OutRural);
+            //}
+            //else if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
+            //  HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+            //{
+            //    sqlHouseholdProperty = Convert.ToString((int)HouseholdPropertyEnum.InTown) + "," + Convert.ToString((int)HouseholdPropertyEnum.OutTown);
+            //}
 
 
             string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{area}%'";
@@ -268,13 +268,15 @@ where (tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1)";
             EnterpriseSocialSecurity model = GetDefaultEnterpriseSocialSecurityByArea(socialSecurity.InsuranceArea, socialSecurity.HouseholdProperty);
             decimal value = 0;
             //model.PersonalShiYeTown
-            if (socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-    socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+            if (socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
+    socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+    socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
             {
                 value = model.PersonalShiYeRural;
             }
-            else if (socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-              socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+            else if (socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
+              socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+              socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
             {
                 value = model.PersonalShiYeTown;
             }
@@ -675,13 +677,15 @@ where (tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1)";
             EnterpriseSocialSecurity model = GetDefaultEnterpriseSocialSecurityByArea(InsuranceArea, HouseholdProperty);
             decimal value = 0;
             //model.PersonalShiYeTown
-            if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-    HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+            if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
+    HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+    HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
             {
                 value = model.PersonalShiYeRural;
             }
-            else if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-              HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+            else if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
+              HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+              HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
             {
                 value = model.PersonalShiYeTown;
             }
@@ -807,21 +811,33 @@ where SocialSecurityPeople.SocialSecurityPeopleID={SocialSecurityPeopleID}";
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public bool AddAdjustingBase(AdjustingBaseParameter parameter)
+        public int AddAdjustingBase(AdjustingBaseParameter parameter)
         {
             string sqlstr = string.Empty;
+            string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
+            decimal SSBaseServiceCharge = 0, SSCurrentBase = 0, AFBaseServiceCharge = 0, AFCurrentBase = 0;
+
             if (parameter.IsPaySocialSecurity)
             {
-                sqlstr += $"insert into BaseAudit(SocialSecurityPeopleID,CurrentBase,BaseAdjusted,Type) values({parameter.SocialSecurityPeopleID},(select SocialSecurityBase from SocialSecurity where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}),'{parameter.SocialSecurityBaseAdjusted}',0); ";
+                SSBaseServiceCharge = DbHelper.QuerySingle<decimal>("select BaseServiceCharge from CostParameterSetting where Status=0");
+                SSCurrentBase = DbHelper.QuerySingle<decimal>($"select SocialSecurityBase from SocialSecurity where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+
             }
             if (parameter.IsPayAccumulationFund)
             {
-                sqlstr += $"insert into BaseAudit(SocialSecurityPeopleID,CurrentBase,BaseAdjusted,Type) values({parameter.SocialSecurityPeopleID},(select AccumulationFundBase from AccumulationFund where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}),'{parameter.AccumulationFundBaseAdjusted}',1) ;";
+                AFBaseServiceCharge = DbHelper.QuerySingle<decimal>("select BaseServiceCharge from CostParameterSetting where Status=1");
+                AFCurrentBase = DbHelper.QuerySingle<decimal>($"select AccumulationFundBase from AccumulationFund where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+
             }
+
+            int memberID = DbHelper.QuerySingle<int>($"select MemberID from SocialSecurityPeople where SocialSecurityPeopleID={parameter.SocialSecurityPeopleID}");
+
+            sqlstr = $@"insert into BaseOrders(OrderCode,MemberID,SocialSecurityPeopleID,IsPaySocialSecurity,SSCurrentBase,SSBaseAdjusted,SSAdjustingBaseNote,SSBaseServiceCharge,IsPayAccumulationFund,AFCurrentBase,AFBaseAdjusted,AFAdjustingBaseNote,AFBaseServiceCharge)
+values('{orderCode}',{memberID},{parameter.SocialSecurityPeopleID},{Convert.ToInt32(parameter.IsPaySocialSecurity) },{SSCurrentBase},{parameter.SocialSecurityBaseAdjusted},'{parameter.SSAdjustingBaseNote}',{SSBaseServiceCharge},{Convert.ToInt32(parameter.IsPayAccumulationFund)},{AFCurrentBase},{parameter.AccumulationFundBaseAdjusted},'{parameter.AFAdjustingBaseNote}',{AFBaseServiceCharge})";
 
             int result = DbHelper.ExecuteSqlCommandScalar(sqlstr, new DbParameter[] { });
 
-            return result > 0;
+            return result;
 
         }
 

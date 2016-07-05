@@ -175,6 +175,7 @@ namespace WYJK.Entity
     /// </summary>
     public class OrderDetailForMobile
     {
+        public int OrderID { get; set; }
         /// <summary>
         /// 订单编号
         /// </summary>
@@ -237,6 +238,15 @@ namespace WYJK.Entity
         /// </summary>
         public string MemberID { get; set; }
 
+    }
+
+    public class OrderPayParameter
+    {
+        public int OrderID { get; set; }
+        /// <summary>
+        /// 平台类型
+        /// </summary>
+        public string PlatType { get; set; } = "1";
     }
 
 

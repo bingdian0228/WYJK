@@ -12,7 +12,7 @@ namespace WYJK.Data.ServiceImpl
     {
         public async Task<PagedResult<RenewOrders>> GetRenewOrderList(RenewOrdersParameter parameter)
         {
-            string sqlWhere = $@" where m.MemberName like '%{parameter.SocialSecurityPeopleName}%' and (ro.Status = {parameter.Status} or {parameter.Status}=-1)";
+            string sqlWhere = $@" where m.MemberName like '%{parameter.SocialSecurityPeopleName}%' and ro.Status !=0 and (ro.Status = {parameter.Status} or {parameter.Status}=-1)";
 
 
             StringBuilder sbSql = new StringBuilder();

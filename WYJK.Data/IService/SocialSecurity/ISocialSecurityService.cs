@@ -280,7 +280,7 @@ namespace WYJK.Data.IServices
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        bool AddAdjustingBase(AdjustingBaseParameter parameter);
+        int AddAdjustingBase(AdjustingBaseParameter parameter);
 
         /// <summary>
         /// 获取该用户下所有参保人的所有待办金额之和

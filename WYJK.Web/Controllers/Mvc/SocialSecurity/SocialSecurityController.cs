@@ -180,6 +180,36 @@ namespace WYJK.Web.Controllers.Mvc
             return Json(new { status = flag, Message = flag ? "办结成功" : "办结失败" });
         }
 
+        ///// <summary>
+        ///// 单个办结
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public JsonResult Complete(int SocialSecurityPeopleID, string SocialSecurityNo)
+        //{
+        //    //判断客户社保号是否已经填写
+
+        //    if (string.IsNullOrEmpty(SocialSecurityNo))
+        //    {
+        //        return Json(new { status = false, Message = "无法办结，客户社保号没有填写完整" });
+        //    }
+
+        //    //修改参保人社保状态,并记录社保号
+        //    DbHelper.ExecuteSqlCommand($"update ",null);
+
+
+        //    #region 记录日志
+        //    if (flag == true)
+        //    {
+
+        //        string names = _socialSecurityService.GetSocialPeopleNames(SocialSecurityPeopleIDs);
+        //        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办结，客户:{0}", names) });
+        //    }
+        //    #endregion
+
+        //    return Json(new { status = flag, Message = flag ? "办结成功" : "办结失败" });
+        //}
+
         /// <summary>
         /// 社保办停
         /// </summary>
@@ -272,7 +302,7 @@ namespace WYJK.Web.Controllers.Mvc
         public ActionResult SaveSocialSecurityNo(int SocialSecurityPeopleID, string SocialSecurityNo)
         {
             bool flag = _socialSecurityService.SaveSocialSecurityNo(SocialSecurityPeopleID, SocialSecurityNo);
-            TempData["Message"] = flag ? "更新成功" : "更新失败";
+            TempData["Message"] = flag ? "社保号更新成功" : "社保号更新失败";
 
             #region 记录日志
             if (flag == true)
@@ -282,7 +312,9 @@ namespace WYJK.Web.Controllers.Mvc
             }
             #endregion
 
-            return RedirectToAction("SocialSecurityDetail", new { SocialSecurityPeopleID = SocialSecurityPeopleID });
+
+
+            return RedirectToAction("SocialSecurityWaitingHandle", new { Status = 2 });
         }
 
         //异常处理

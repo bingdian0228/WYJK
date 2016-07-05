@@ -28,7 +28,7 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, dbo.AccumulationFund.AccumulationFundID, 
                       dbo.AccumulationFund.AccumulationFundArea, dbo.AccumulationFund.AccumulationFundBase, dbo.AccumulationFund.PayProportion, dbo.AccumulationFund.PayTime, 
                       dbo.AccumulationFund.PayMonthCount,AccumulationFund.AlreadyPayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName,  AccumulationFund.UpdateDt,
-                      dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,
+                      dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,AccumulationFund.IsAdjustingBase,AccumulationFund.AdjustingBaseNote,
 case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID

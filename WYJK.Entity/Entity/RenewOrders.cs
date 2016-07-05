@@ -47,6 +47,8 @@ namespace WYJK.Entity
         /// 金额
         /// </summary>
         public decimal Money { get; set; }
+
+        public int MonthCount { get; set; }
     }
 
     /// <summary>

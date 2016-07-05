@@ -239,6 +239,11 @@ namespace WYJK.Entity
         /// 注册邀请码
         /// </summary>		
         public string InviteCode { get; set; }
+
+        /// <summary>
+        /// 验证码
+        /// </summary>
+        public string VerificationCode { get; set; }
     }
 
     /// <summary>
@@ -246,7 +251,10 @@ namespace WYJK.Entity
     /// </summary>
     public class MemberForgetPasswordModel : MemberSimpleModel
     {
-
+        /// <summary>
+        /// 验证码
+        /// </summary>
+        public string VerificationCode { get; set; }
     }
 
     /// <summary>
@@ -490,6 +498,21 @@ namespace WYJK.Entity
         [JsonIgnore]
         public string Password { get; set; }
         /// <summary>
+        /// 加密后的密码
+        /// </summary>
+        [JsonIgnore]
+        public string HashPassword
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(Password))
+                {
+                    return SecurityHelper.HashPassword(Password, Password);
+                }
+                return string.Empty;
+            }
+        }
+        /// <summary>
         /// 用户手机号
         /// </summary>
         [JsonIgnore]
@@ -651,6 +674,10 @@ namespace WYJK.Entity
         /// 客户名称
         /// </summary>
         public string SocialSecurityPeopleName { get; set; }
+
+        public string IdentityCard { get; set; }
+
+
     }
 
 
@@ -676,6 +703,14 @@ namespace WYJK.Entity
         ///服务月数
         /// </summary>
         public int MonthCount { get; set; }
+    }
+
+    public class RenewalServicePayment {
+        public int OrderID { get; set; }
+        /// <summary>
+        /// 平台类型
+        /// </summary>
+        public string PlatType { get; set; } = "1";
     }
 
     /// <summary>

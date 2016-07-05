@@ -49,6 +49,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Interop.CMBCHINALib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>bin\Interop.CMBCHINALib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.0.1011, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.0\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -284,6 +289,7 @@
     <Compile Include="Controllers\Mvc\Loan\LoanSettingController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\AccumulationFundController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\BaseAuditController.cs" />
+    <Compile Include="Controllers\Mvc\SocialSecurity\BaseOrdersController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\BusinessCommissionerController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\CertificationAuditController.cs" />
     <Compile Include="Controllers\Mvc\SocialSecurity\CustomerServiceController.cs" />
@@ -2529,6 +2535,8 @@
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="lib\Interop.CMBCHINALib.dll" />
+    <Content Include="lib\Newtonsoft.Json.dll" />
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -2890,6 +2898,7 @@
     <Content Include="Views\Order\GetPayList.cshtml" />
     <Content Include="Views\Order\GetAccountRecordList.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\BaseOrders\GetBaseOrderList.cshtml" />
     <None Include="Views\SocialSecurity\SocialSecurityWaitingHandle.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

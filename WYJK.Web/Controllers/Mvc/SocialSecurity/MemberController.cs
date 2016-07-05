@@ -179,6 +179,12 @@ namespace WYJK.Web.Controllers.Mvc
 
             bool flag = await _memberService.ModifyMemberExtensionInformation(model);
 
+            if (model.Password.Trim() != "")
+            {
+                DbHelper.ExecuteSqlCommand($"update Members set Password='{model.HashPassword}' where MemberID={model.MemberID}", null);
+            }
+
+
             TempData["Message"] = flag ? "保存成功" : "保存失败";
 
             #region 日志记录

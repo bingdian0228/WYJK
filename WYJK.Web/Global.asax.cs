@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,7 @@ using System.Web.Routing;
 using WYJK.Data;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
+using WYJK.Framework.Helpers;
 using WYJK.Web.Filters;
 
 namespace WYJK.Web
@@ -272,6 +274,12 @@ namespace WYJK.Web
 
                                 //发送消息提醒
                                 DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},'{message.ContentStr}')", null);
+
+                                #region 发送短信
+                                string content = string.Format(contentFormat, member.MemberPhone.Substring(member.MemberPhone.Length - 4), member.Account, DateTime.Now.AddMonths(1).Month, totalAccount, totalAccount - member.Account);
+
+                                Sms.sendSms(apikey, content, member.MemberPhone);
+                                #endregion
                             }
 
                             #endregion
@@ -293,6 +301,11 @@ namespace WYJK.Web
                 }
             }
         }
+
+        private static string apikey = ConfigurationManager.AppSettings["apikey"].ToString();
+        private static string contentFormat = ConfigurationManager.AppSettings["SMS15Warn"].ToString();
+
+
 
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {

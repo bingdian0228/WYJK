@@ -681,9 +681,134 @@
             调整后的社保基数
             </summary>
         </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.SSAdjustingBaseNote">
+            <summary>
+            社保调基备注
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.AdjustingBaseParameter.AccumulationFundBaseAdjusted">
             <summary>
             调整后的公积金基数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.AFAdjustingBaseNote">
+            <summary>
+            公积金调基备注
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AdjustingBaseParameter.PlatType">
+            <summary>
+            平台类型
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.BaseOrders">
+            <summary>
+            基数订单
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.OrderID">
+            <summary>
+            OrderID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.OrderCode">
+            <summary>
+            OrderCode
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.MemberID">
+            <summary>
+            用户ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.MemberName">
+            <summary>
+            用户名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.PaymentMethod">
+            <summary>
+            支付方式
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.GenerateDate">
+            <summary>
+            生成时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.Status">
+            <summary>
+            订单状态
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.PayTime">
+            <summary>
+            支付时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AuditTime">
+            <summary>
+            审核时间
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SocialSecurityPeopleID">
+            <summary>
+            参保人ID
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.IsPaySocialSecurity">
+            <summary>
+            IsPaySocialSecurity
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SSCurrentBase">
+            <summary>
+            当前基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SSBaseAdjusted">
+            <summary>
+            调整后基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.SSBaseServiceCharge">
+            <summary>
+            SSBaseServiceCharge
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.IsPayAccumulationFund">
+            <summary>
+            IsPayAccumulationFund
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AFCurrentBase">
+            <summary>
+            当前基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AFBaseAdjusted">
+            <summary>
+            调整后基数
+            </summary>		
+        </member>
+        <member name="P:WYJK.Entity.BaseOrders.AFBaseServiceCharge">
+            <summary>
+            AFBaseServiceCharge
+            </summary>		
+        </member>
+        <member name="T:WYJK.Entity.BaseOrdersParameter">
+            <summary>
+            调基分页查询类
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrdersParameter.SocialSecurityPeopleName">
+            <summary>
+            客户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.BaseOrdersParameter.Status">
+            <summary>
+            审核状态
             </summary>
         </member>
         <member name="T:WYJK.Entity.CertificationAudit">
@@ -1806,6 +1931,11 @@
             注册用户ID（代理机构）
             </summary>
         </member>
+        <member name="P:WYJK.Entity.OrderPayParameter.PlatType">
+            <summary>
+            平台类型
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.OrderDetails">
             <summary>
             从订单
@@ -2767,6 +2897,16 @@
             状态
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.IsAdjustingBase">
+            <summary>
+            是否调基
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.AdjustingBaseNote">
+            <summary>
+            调基备注
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.SocialSecurityShowModel.CollectType">
             <summary>
             收取方式
@@ -3667,9 +3807,19 @@
             注册邀请码
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.MemberRegisterModel.VerificationCode">
+            <summary>
+            验证码
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.MemberForgetPasswordModel">
             <summary>
             忘记密码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberForgetPasswordModel.VerificationCode">
+            <summary>
+            验证码
             </summary>
         </member>
         <member name="T:WYJK.Entity.MemberMidifyPassword">
@@ -3887,6 +4037,11 @@
             密码
             </summary>
         </member>
+        <member name="P:WYJK.Entity.ExtensionInformation.HashPassword">
+            <summary>
+            加密后的密码
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.ExtensionInformation.MemberPhone">
             <summary>
             用户手机号
@@ -4081,6 +4236,11 @@
              <summary>
             服务月数
              </summary>
+        </member>
+        <member name="P:WYJK.Entity.RenewalServicePayment.PlatType">
+            <summary>
+            平台类型
+            </summary>
         </member>
         <member name="T:WYJK.Entity.RechargeParameters">
             <summary>

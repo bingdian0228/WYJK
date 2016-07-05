@@ -29,6 +29,8 @@
         });
 
         $(function () {
+
+            $(".Huialert.Huialert-info").fadeOut(2000);
             //业务办结
             $(".action-complete").click(function () {
 
@@ -78,7 +80,7 @@
                     return;
                 }
 
-                if ($("input[type='checkbox']:checked").length >1) {
+                if ($("input[type='checkbox']:checked").length > 1) {
                     layer.msg("只能选择一个异常的客户");
                     return;
                 }
@@ -87,41 +89,41 @@
                 $("input[type='checkbox']:checked").each(function (i) {
                     SocialSecurityPeopleIDs[i] = $(this).val();
                 });
-                
+
                 var save = 0;
                 var layerObject = layer.open({
-                    type:2,
-                    title:"异常信息填写",
-                    area:['600px','300px'],
+                    type: 2,
+                    title: "异常信息填写",
+                    area: ['600px', '300px'],
                     content: "@Url.Action("AccumulationException", "AccumulationFund")?SocialSecurityPeopleIDs=" + SocialSecurityPeopleIDs,
-                    btn:["提交","取消"],
-                yes: function (index, layero) {
-                        
-                    var childIndex = layer.load(1, { shade: [0.1, '#000'] });
-                    debugger;
-                    var form = layer.getChildFrame('form', index);
-                    form.submit();
-               
-                    save = 1;
-                
-                    layer.close(childIndex);  
-                    return false;
-                },
-                end:function(index, layero) {
-                    if (save === 1) {
-                        refresh();
+                    btn: ["提交", "取消"],
+                    yes: function (index, layero) {
+
+                        var childIndex = layer.load(1, { shade: [0.1, '#000'] });
+                        debugger;
+                        var form = layer.getChildFrame('form', index);
+                        form.submit();
+
+                        save = 1;
+
+                        layer.close(childIndex);
+                        return false;
+                    },
+                    end: function (index, layero) {
+                        if (save === 1) {
+                            refresh();
+                        }
+                    },
+                    success: function (index, layero) {
+                        debugger;
+                        if (save === 1) {
+                            layer.closeAll();
+                            refresh();
+                        }
+                        layer.iframeAuto(layero);
                     }
-                },
-                success: function (index, layero) {
-                    debugger;
-                    if (save === 1) {
-                        layer.closeAll();
-                        refresh();
-                    }
-                    layer.iframeAuto(layero);
-                }
+                });
             });
-        });
         })
     </script>
 }
@@ -144,6 +146,10 @@
     </div>
 
     <div class="mt-20">
+        @if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
+        {
+            <div class="Huialert Huialert-info">@(TempData["Message"])</div>
+        }
         <table class="table table-border table-bordered table-bg table-hover table-sort">
             <thead>
                 <tr class="text-c">
@@ -180,7 +186,20 @@
                         <td>@accumulationFund.AccumulationFundBase.ToString("N2")</td>
                         <td>@accumulationFund.PayProportion.ToString("N2")</td>
                         <td>@Convert.ToDecimal(accumulationFund.AccumulationFundBase * accumulationFund.PayProportion / 100).ToString("N2")</td>
-                        <td class="td-status"><span class="label label-success radius">@EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)(Convert.ToInt32(accumulationFund.Status)))</span></td>
+                        <td class="td-status">
+                            @if (accumulationFund.IsAdjustingBase)
+                            {
+                                <span class="label label-danger radius">
+                                    @(EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)(Convert.ToInt32(accumulationFund.Status))))(调基)
+                                </span>
+                            }
+                            else {
+                                <span class="label label-success radius">
+                                    @EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)(Convert.ToInt32(accumulationFund.Status)))
+                                </span>
+                            }
+
+                        </td>
                         <td><a title="详情" href='@Url.Action("AccumulationFundDetail","AccumulationFund")?SocialSecurityPeopleID=@accumulationFund.SocialSecurityPeopleID' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a></td>
                     </tr>
                 }
@@ -190,7 +209,7 @@
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
-            <a href="javascript:;" class="btn btn-danger radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 业务办结</a>
+            <a href="javascript:;" class="btn btn-primary radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i> 业务办结</a>
             <a href="javascript:;" class="btn btn-danger radius action-exception"><i class="Hui-iconfont">&#xe6e1;</i> 业务异常</a>
         </span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>

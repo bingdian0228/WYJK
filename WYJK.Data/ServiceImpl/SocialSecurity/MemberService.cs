@@ -188,7 +188,7 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("@BusinessIdentityPhoto",parameter.BusinessIdentityPhoto),
                 new SqlParameter("@BusinessLicensePhoto",parameter.BusinessLicensePhoto),
                 new SqlParameter("@BusinessPositionName",parameter.BusinessPositionName)
-                
+
             };
             int result = await DbHelper.ExecuteSqlCommandAsync(sql, parameters);
             return result > 0;
@@ -399,8 +399,17 @@ namespace WYJK.Data.ServiceImpl
             {
                 strb.Append($" and Members.MemberID = {parameter.MemberID} ");
             }
+            if (String.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                strb.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName is null or SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%')");
+            else
+                strb.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' ");
 
-            //strb.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'  or SocialSecurityPeople.SocialSecurityPeopleName is null)");
+            if (String.IsNullOrEmpty(parameter.IdentityCard))
+                strb.Append($" and (SocialSecurityPeople.IdentityCard is null or SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%')");
+            else
+                strb.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%' ");
+
+
 
             string innersql = "select Members.MemberID,Max(Members.UserType) UserType, MAX(members.MemberName) MemberName,MAX(members.EnterpriseName) EnterpriseName,MAX(members.BusinessName) BusinessName,  MAX(members.MemberPhone) MemberPhone, COUNT(SocialSecurityPeople.SocialSecurityPeopleID) SocialSecurityPeopleCount,MAX(ISNULL(members.Account,0)) Account,Max(ISNULL(members.Bucha,0)) Bucha,"
                             + " case when exists("
@@ -478,7 +487,8 @@ where (SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or Accumula
         /// <param name="MemberID"></param>
         /// <param name="HeadPortrait"></param>
         /// <returns></returns>
-        public bool SaveHeadPortrait(int MemberID,string HeadPortrait) {
+        public bool SaveHeadPortrait(int MemberID, string HeadPortrait)
+        {
             string sqlstr = $"update Members set HeadPortrait='{HeadPortrait}' where MemberID={MemberID}";
             int result = DbHelper.ExecuteSqlCommand(sqlstr, null);
             return result > 0;

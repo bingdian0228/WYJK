@@ -25,7 +25,7 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public async Task<JsonResult<dynamic>> GetInformationList(string Type, int PageIndex, int PageSize)
         {
-            PagedResult<Information> informationList = await _informationService.GetNewNoticeList(new InformationParameter { PageIndex=PageIndex, PageSize=PageSize, Type = Type, IsDescending = true });
+            PagedResult<Information> informationList = await _informationService.GetNewNoticeList(new InformationParameter { PageIndex = PageIndex, PageSize = PageSize, Type = Type, IsDescending = true });
 
             return new JsonResult<dynamic>
             {
@@ -71,7 +71,7 @@ namespace WYJK.Web.Controllers.Http
                 Message = flag ? "保存成功" : "保存失败",
             };
         }
-        
+
         /// <summary>
         /// 保存编辑
         /// </summary>

@@ -8,21 +8,21 @@ using WYJK.Entity;
 
 namespace WYJK.Data.ServiceImpl
 {
-    public class RechargeOrdersService : IRechargeOrdersService
+    public class BaseOrdersService : IBaseOrdersService
     {
-        public async Task<PagedResult<RechargeOrders>> GetRechargeOrderList(RechargeOrdersParameter parameter)
+        public async Task<PagedResult<BaseOrders>> GetBaseOrderList(BaseOrdersParameter parameter)
         {
-            string sqlWhere = $@" where m.MemberName like '%{parameter.SocialSecurityPeopleName}%' and ro.Status!=0  and (ro.Status = {parameter.Status} or {parameter.Status}=-1)";
+            string sqlWhere = $@" where m.MemberName like '%{parameter.SocialSecurityPeopleName}%' and ro.Status!=0 and (ro.Status = {parameter.Status} or {parameter.Status}=-1)";
 
 
             StringBuilder sbSql = new StringBuilder();
             sbSql.AppendFormat("{0};{1}", $@"SELECT * from( SELECT ROW_NUMBER() OVER(ORDER BY ro.PayTime desc) AS rowindex,ro.* ,m.MemberName 
-        FROM RechargeOrders ro
+        FROM BaseOrders ro
         LEFT JOIN Members m ON ro.MemberId = m.MemberID
       {sqlWhere}) a  WHERE RowIndex BETWEEN {parameter.SkipCount} AND {parameter.TakeCount}", $"select count(0) from RechargeOrders ro left join  dbo.Members m on ro.MemberId = m.MemberID   {sqlWhere}");
 
-            var tuple = await DbHelper.QueryMultipleAsync<RechargeOrders, int>(sbSql.ToString(), null);
-            return new PagedResult<RechargeOrders>
+            var tuple = await DbHelper.QueryMultipleAsync<BaseOrders, int>(sbSql.ToString(), null);
+            return new PagedResult<BaseOrders>
             {
                 PageIndex = parameter.PageIndex,
                 PageSize = parameter.PageSize,

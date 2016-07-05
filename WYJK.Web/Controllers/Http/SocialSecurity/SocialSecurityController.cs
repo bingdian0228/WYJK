@@ -15,6 +15,9 @@ using System.Transactions;
 using WYJK.Data.IService;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using System.Net.Http;
+using System.Text;
+using CMBCHINALib;
 
 namespace WYJK.Web.Controllers.Http
 {
@@ -763,13 +766,15 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
                 decimal value = 0;
                 //model.PersonalShiYeTown
-                if (socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-        socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+                if (socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
+        socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+        socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
                 {
                     value = enterpriseSocialSecurity.PersonalShiYeRural;
                 }
-                else if (socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-                   socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                else if (socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
+                   socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+                   socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
                 {
                     value = enterpriseSocialSecurity.PersonalShiYeTown;
                 }
@@ -911,13 +916,15 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
                             decimal value = 0;
                             //model.PersonalShiYeTown
-                            if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+                            if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
+                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
                             {
                                 value = model.PersonalShiYeRural;
                             }
-                            else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                            else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
+                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
                             {
                                 value = model.PersonalShiYeTown;
                             }
@@ -1044,13 +1051,15 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
 
                                 decimal value = 0;
                                 //model.PersonalShiYeTown
-                                if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InRural)) ||
-                        socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutRural)))
+                                if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
+                        socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+                        socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
                                 {
                                     value = model.PersonalShiYeRural;
                                 }
-                                else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.InTown)) ||
-                                  socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OutTown)))
+                                else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
+                                  socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+                                  socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
                                 {
                                     value = model.PersonalShiYeTown;
                                 }
@@ -1961,19 +1970,181 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         }
 
         /// <summary>
-        /// 调整基数提交
+        /// 调整基数提交    PlatType:  Web/0;Mobile/1
         /// </summary>
         /// <returns></returns>
-        public JsonResult<dynamic> PostAdjustingBase(AdjustingBaseParameter parameter)
+        public async Task<JsonResult<dynamic>> PostAdjustingBase(AdjustingBaseParameter parameter)
         {
-            bool flag = _socialSecurityService.AddAdjustingBase(parameter);
+            int orderID = _socialSecurityService.AddAdjustingBase(parameter);
 
-            return new JsonResult<dynamic>
+            if (orderID > 0)
             {
-                status = flag,
-                Message = flag ? "提交成功" : "提交失败"
-            };
+                BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID={orderID}");
+
+                string BranchID = "0532";
+                string CoNo = "019387";
+                string BillNo = orderID.ToString().PadLeft(10, '0');
+                string Amount = Convert.ToDecimal(baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge).ToString();
+                string Date = DateTime.Now.ToString("yyyyMMdd");
+                string MerchantUrl = ConfigurationManager.AppSettings["ServerUrl"] + "api/socialsecurity/AdjustingBase_Return";
+                if (parameter.PlatType == "1")
+                {
+                    #region 移动端
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                    //HttpClient httpClient = new HttpClient();
+                    //string test =await httpClient.GetStringAsync(uri);
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else {
+                    #region PC端
+                    string m_Action = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC2";//订单提交地址
+                    FirmClientClass fm = new FirmClientClass();
+                    string dtime = DateTime.Now.ToString("yyyyMMdd");
+                    var result = fm.exGenMerchantCode("Superman19810928", dtime, BranchID, CoNo, BillNo, Convert.ToDecimal(Amount).ToString("f"), "", MerchantUrl, "1231", "1231230", "58.56.179.142", "54011600", "");
+                    string responseText = "<form name='cbanksubmit' method='post' action='" + m_Action + "'>"
+    + "<input type='hidden' name='BranchID' value=" + BranchID + ">"
+    + "<input type='hidden' name='CoNo' value=" + CoNo + ">"
+    + "<input type='hidden' name='BillNo' value=" + BillNo + ">"
+    + "<input type='hidden' name='Amount' value=" + Convert.ToDecimal(Amount).ToString("f") + ">"
+    + "<input type='hidden' name='Date' value=" + dtime + ">"
+    + "<input type='hidden' name='MerchantUrl' value=" + MerchantUrl + ">"
+    + "<input type='hidden' name='MerchantCode' value='" + result.ToString() + "'>"
+    + "</form>"
+    + "<script>"
+    + "document.cbanksubmit.submit()"
+    + "</script>";
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "获取成功",
+                        Data = responseText
+                    };
+                    #endregion
+                }
+
+            }
+            else
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "提交失败"
+                };
         }
+
+        private static object locker = new object();
+
+        /// <summary>
+        /// 调基回调
+        /// </summary>
+        /// <param name="Succeed"></param>
+        /// <param name="BillNo"></param>
+        /// <param name="Amount"></param>
+        /// <param name="Date"></param>
+        /// <param name="Msg"></param>
+        /// <param name="Signature"></param>
+        [System.Web.Http.HttpGet]
+        public void AdjustingBase_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
+        {
+            #region 招行提供
+            /*
+             * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
+             * 先判断是否支付成功
+             * 验证支付成功还要验证支付金额是否和订单的金额一致
+             */
+            string ReturnInfo = "Succeed=" + Succeed + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&Msg=" + Msg + "&Signature=" + Signature;
+            //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
+            StringBuilder str = new StringBuilder();
+            string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
+            if (!System.IO.Directory.Exists(upLoadPath))
+            {
+                System.IO.Directory.CreateDirectory(upLoadPath);
+            }
+            str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+            str.Append("\r\n\t请求信息：" + HttpContext.Current.Request.Form);
+            str.Append("\r\n\t参数：" + ReturnInfo);
+            str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+
+            try
+            {
+                string Key_Path = HttpContext.Current.Server.MapPath("~/") + @"key\public.key";//银行公用Key地址
+                FirmClientClass cbmBank = new FirmClientClass();
+                short key = cbmBank.exCheckInfoFromBank(Key_Path, ReturnInfo);
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\tkey：" + key);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+                if (key != 0)//验证银行返回数据是否合法
+                {
+                    string err = cbmBank.exGetLastErr(key);
+                    throw new Exception(err);
+                    //Response.Write("<script>alert('" + err + "')</script>");
+                    //return;
+                }
+                if (Succeed.Trim() != "Y")//验证支付结果是否成功
+                {
+                    throw new Exception("支付失败！");
+                    //Response.Write("<script>alert('支付失败！')</script>");
+                    //return;
+                }
+                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                {
+                    throw new Exception("支付金额与订单金额不一致！");
+                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    //return;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\t错误：" + ex);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+            }
+            System.IO.File.AppendAllText(upLoadPath + DateTime.Now.ToString("yyyy.MM.dd") + ".log", str.ToString(), System.Text.Encoding.UTF8);
+
+            #endregion
+
+            lock (locker)
+            {
+                string orderID = BillNo.TrimStart('0');
+                BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID='{orderID}'");
+                if (baseOrders.Status == "0")
+                {
+                    //更新订单
+                    DbHelper.ExecuteSqlCommand($"update BaseOrders set Status=1 where OrderID='{orderID}'", null);
+
+                    ////基数更改
+                    //if (baseOrders.IsPaySocialSecurity)
+                    //    DbHelper.ExecuteSqlCommand($"update SocialSecurity set SocialSecurityBase='{baseOrders.SSCurrentBase}' where SocialSecurityPeopleID={baseOrders.SocialSecurityPeopleID}", null);
+                    //if (baseOrders.IsPayAccumulationFund)
+                    //    DbHelper.ExecuteSqlCommand($"update AccumulationFund set AccumulationFundBase='{baseOrders.AFCurrentBase}' where SocialSecurityPeopleID={baseOrders.SocialSecurityPeopleID}", null);
+
+                    decimal account = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID={baseOrders.MemberID}");
+
+                    //生成日志
+                    string sqlAccountRecord = $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+    values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{baseOrders.MemberID},{baseOrders.SocialSecurityPeopleID},'','收入','银行卡','调基费',{baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge},{account + baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge},getdate());";
+
+                    sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+    values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{baseOrders.MemberID},{baseOrders.SocialSecurityPeopleID},'','支出','余额','调基费',{baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge},{account },getdate());";
+
+                    DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
+                }
+            }
+        }
+
+
 
         #region 参保介绍列表
         /// <summary>

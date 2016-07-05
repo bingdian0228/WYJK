@@ -73,7 +73,11 @@
                             }
                         },
                         success: function (index, layero) {
+                            
                             layer.iframeAuto(layero);
+                            if (save == 1) {
+                                layer.closeAll();
+                            }
                         }
                     });
                 } else {
