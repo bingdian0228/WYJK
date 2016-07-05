@@ -798,14 +798,14 @@
                         @if (isadd)
                         {
                             @Html.Action("RegionView", "OptionView", new
-                       {
-                           pname = string.Empty,
-                           cname = string.Empty,
-                           coname = string.Empty,
-                           IsHideCounty = true,
-                           Id = "SO",
-                           CallBack = "soCallback",
-                       });
+                            {
+                                pname = string.Empty,
+                                cname = string.Empty,
+                                coname = string.Empty,
+                                IsHideCounty = true,
+                                Id = "SO",
+                                CallBack = "soCallback",
+                            });
                             <input type="hidden" name="accumulationFund.AccumulationFundArea" value="" />
                             <script>
                                 function soCallback(p, city) {

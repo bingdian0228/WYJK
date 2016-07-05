@@ -217,6 +217,7 @@ namespace WYJK.Web.Controllers.Mvc
 
             #region 户口性质
             List<SelectListItem> list = EnumExt.GetSelectList(typeof(HouseholdPropertyEnum));
+            list.Insert(0, new SelectListItem() { Text = "请选择", Selected = false, Value = "" });
 
             int householdType = 0;
             foreach (var item in list)
@@ -463,7 +464,7 @@ namespace WYJK.Web.Controllers.Mvc
                     if (model.InviteCode != inviteCode) {
 
 
-                        logStr += "客服修改了{0}的业务专员,从"+;
+                        logStr += "客服修改了{0}的业务专员,从";
                     }
                     #endregion
 
@@ -733,9 +734,9 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
         public async Task<ActionResult> Payment(int? id, int? peopleid)
         {
             ViewBag.SocialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(peopleid.Value);
+            ViewBag.AccountInfo = _memberService.GetAccountInfo(id.Value);
             ViewBag.SocialSecurityDetail = _socialSecurityService.GetSocialSecurityDetail(peopleid.Value);
             ViewBag.AccumulationFund = _accumulationFundService.GetAccumulationFundDetail(peopleid.Value);
-            ViewBag.AccountInfo = _memberService.GetAccountInfo(id.Value);
 
             ////未参保状态
             int status = (int)SocialSecurityStatusEnum.UnInsured;
@@ -781,6 +782,11 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
 
                 var result = await req.Content.ReadAsAsync<JsonResult<string>>();
                 TempData["Message"] = result.Message;
+
+                var SocialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(peopleid.Value);
+                var AccountInfo = _memberService.GetAccountInfo(id.Value);
+
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = id, SocialSecurityPeopleID = peopleid, Contents = string.Format("线下交款：会员：{0}，参保人：{1}，金额：{2}，支付方式：{3}", AccountInfo.MemberName, SocialSecurityPeople.SocialSecurityPeopleName, Amount, PayMethod) });
 
                 if (result.status)
                 {
