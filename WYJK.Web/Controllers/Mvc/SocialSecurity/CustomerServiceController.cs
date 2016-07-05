@@ -422,6 +422,8 @@ namespace WYJK.Web.Controllers.Mvc
                     //日志记录
                     string logStr = string.Empty;
 
+
+
                     #region 更新参保人
 
                     #region 参保人的日志记录
@@ -457,7 +459,15 @@ namespace WYJK.Web.Controllers.Mvc
                     {
                         inviteCode = _userService.GetUserInfoByUserID(model.InviteCode).InviteCode;
                     }
-                    DbHelper.ExecuteSqlCommand($"update Members set InviteCode='{inviteCode}' where MemberID={model.MemberID}", null);
+                    #region 注册用户的日志记录
+                    if (model.InviteCode != inviteCode) {
+
+
+                        logStr += "客服修改了{0}的业务专员,从"+;
+                    }
+                    #endregion
+
+                        DbHelper.ExecuteSqlCommand($"update Members set InviteCode='{inviteCode}' where MemberID={model.MemberID}", null);
                     #endregion
 
                     #region 生成子订单

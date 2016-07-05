@@ -1,13 +1,13 @@
 ﻿@model RegionViewModel
 <div id="region-container@(ViewBag.Id)" class="region-container">
     <span class="select-box">
-        @Html.DropDownListFor(m=> m.ProvinceCode, Model.ProvinceList, new { @class = "select", @size = "1" ,id="province-input" + ViewBag.Id })
+        @Html.DropDownListFor(m => m.ProvinceCode, Model.ProvinceList, new { @class = "select", @size = "1", id = "province-input" + ViewBag.Id })
     </span>
     <span class="select-box">
-        @Html.DropDownListFor(m => m.CityCode, Model.CityList, new { @class = "select", @size = "1",id="city-input" + ViewBag.Id })
+        @Html.DropDownListFor(m => m.CityCode, Model.CityList, new { @class = "select", @size = "1", id = "city-input" + ViewBag.Id })
     </span>
     <span class="select-box" @Html.Raw((ViewBag.IsHideCounty ?? false) ? "style=\"display:none;\"" : "")>
-        @Html.DropDownListFor(m => m.CountyCode, Model.CountyList, new { @class = "select", @size = "1",id="county-input" + ViewBag.Id })
+        @Html.DropDownListFor(m => m.CountyCode, Model.CountyList, new { @class = "select", @size = "1", id = "county-input" + ViewBag.Id })
     </span>   
 </div>
 <div class="col-4">@Html.ValidationMessageFor(m => m.ProvinceCode)</div>
@@ -27,7 +27,7 @@
         }, function (response) {
             var html = $(response).filter("#region-container@(ViewBag.Id)").html();
             $("#region-container@(ViewBag.Id)").html(html);
-
+            
             @if (ViewBag.CallBack + "" != "")
             {
                 <text>

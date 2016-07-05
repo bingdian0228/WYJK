@@ -103,6 +103,9 @@ namespace WYJK.Entity
         /// </summary>
         [JsonIgnore]
         public decimal AFPayProportion { get; set; }
+
+        public string CustomerServiceUserName { get; set; }
+
     }
 
     /// <summary>

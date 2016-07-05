@@ -24,7 +24,7 @@ namespace WYJK.Web.Controllers
         private static readonly string BasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadFiles");
         private static readonly string[] ImageExt = { ".jpg", ".jpeg", ".png", ".gif" };
         private static readonly string[] FileExt = { ".doc", ".docx", ".xml", ".xmlx", ".pdf", ".txt" };
-        private static readonly int FileMaxSize = 4194304;//4MB
+        private static readonly int FileMaxSize = 10485760;//4MB
         private static readonly int MaxHeight = 260;
         private static readonly int Compression = 100;
 

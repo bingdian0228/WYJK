@@ -317,7 +317,7 @@
             </div>
             <label class="form-label col-1">客服专员：</label>
             <div class="formControls col-2">
-                <span class="lineheight">待添加</span>
+                <span class="lineheight">@Model.CustomerServiceUserName</span>
             </div>
         </div>
         <div class="row cl">
@@ -487,7 +487,7 @@
                         <span class="lineheight">
                             @if (string.IsNullOrWhiteSpace(Model.socialSecurity.SocialSecurityNo))
                             {
-                                @:无
+                                @:--
                             }
                             else
                             {
@@ -641,7 +641,7 @@
                     <label class="form-label col-3">交费至：</label>
                     <div class="formControls col-2">
                         <span class="lineheight">
-                            @Model.socialSecurity.PayTime.Value.AddMonths(Model.socialSecurity.PayMonthCount - 1).ToString("yyyy/MM")
+                            @Model.socialSecurity.PayTime.Value.AddMonths(Model.socialSecurity.PayMonthCount+ Model.socialSecurity.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
                         </span>
                     </div>
                 }
@@ -691,7 +691,7 @@
                                         }
                                         else
                                         {
-                                            @Model.socialSecurity.Note
+                                            @(string.IsNullOrEmpty(Model.socialSecurity.Note) ? "--":Model.socialSecurity.Note)
                                         }
                                     </span>
                                 </div>
@@ -716,7 +716,7 @@
                         {
                             if (string.IsNullOrWhiteSpace(Model.accumulationFund.AccumulationFundNo))
                             {
-                                @:无
+                                @:--
                             }
                             else {
                                 @Model.accumulationFund.AccumulationFundNo
@@ -867,7 +867,7 @@
                     <label class="form-label col-3">交费至：</label>
                     <div class="formControls col-2">
                         <span class="lineheight">
-                            @Model.accumulationFund.PayTime.Value.AddMonths(Model.accumulationFund.PayMonthCount - 1).ToString("yyyy/MM")
+                            @Model.accumulationFund.PayTime.Value.AddMonths(Model.accumulationFund.PayMonthCount+ Model.accumulationFund.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
                         </span>
                     </div>
                 }
@@ -917,7 +917,7 @@
                                         }
                                         else
                                         {
-                                            @Model.accumulationFund.Note
+                                            @(string.IsNullOrEmpty(Model.accumulationFund.Note) ? "--" : Model.accumulationFund.Note)
                                         }
                                     </span>
                                 </div>
