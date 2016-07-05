@@ -65,6 +65,10 @@ namespace WYJK.Web.Controllers.Mvc
 
 
                 DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=0,UserType={(int)UserTypeEnum.GeRen} where MemberID={certificationAudit.MemberID}",null);
+                
+                #region 记录日志
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = certificationAudit.MemberID, Contents = "用户{0}认证不通过" });
+                #endregion
             }
             else {
                 
@@ -77,7 +81,13 @@ namespace WYJK.Web.Controllers.Mvc
                     DbHelper.ExecuteSqlCommand($@"update CertificationAudit set Status={(int)CertificationAuditEnum.Pass},AuditDate=getdate() where ID={id};
                                       update Members set IsAuthentication=1,UserType={(int)UserTypeEnum.GeTiJingYing},BusinessName='{certificationAudit.BusinessName}',BusinessUser='{certificationAudit.BusinessUser}',BusinessIdentityCardNo='{certificationAudit.BusinessIdentityCardNo}',BusinessIdentityPhoto='{certificationAudit.BusinessIdentityPhoto}',BusinessLicensePhoto='{certificationAudit.BusinessLicensePhoto}',BusinessPositionName='{certificationAudit.BusinessPositionName}'  where MemberID={certificationAudit.MemberID};", null);
                 }
+
+                #region 记录日志
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = certificationAudit.MemberID, Contents = "用户{0}认证通过" });
+                #endregion
             }
+
+
 
             return Json(new { status = true, message = "审核成功" });
         }

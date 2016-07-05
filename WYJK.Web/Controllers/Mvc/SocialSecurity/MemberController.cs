@@ -42,6 +42,11 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpPost]
         public JsonResult BuchaToAccount()
         {
+            #region 日志记录
+            
+            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = "所有用户冻结费转账户余额" });
+            #endregion
+
             string sqlstr = "update Members set Account=ISNULL(Account,0)+Bucha,Bucha=0";
             DbHelper.ExecuteSqlCommand(sqlstr, null);
             return Json(new { status = true, message = "调整成功" });
@@ -56,8 +61,16 @@ namespace WYJK.Web.Controllers.Mvc
         [HttpPost]
         public JsonResult AdjustBucha(int memberID, decimal bucha)
         {
+            #region 日志记录
+            decimal bucha1 = DbHelper.QuerySingle<decimal>($"select Bucha from Members where  MemberID={memberID}");
+            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = memberID, Contents = "调整用户{0}的冻结费，从" + bucha1 + "到" + bucha });
+            #endregion
+
             string sqlstr = $"update Members set Bucha={bucha} where MemberID={memberID}";
             int result = DbHelper.ExecuteSqlCommand(sqlstr, null);
+
+
+
             return Json(new { status = result > 0, message = result > 0 ? "调整成功" : "调整失败" });
         }
 
@@ -179,7 +192,7 @@ namespace WYJK.Web.Controllers.Mvc
 
             bool flag = await _memberService.ModifyMemberExtensionInformation(model);
 
-            if (model.Password.Trim() != "")
+            if (!string.IsNullOrEmpty(model.Password))
             {
                 DbHelper.ExecuteSqlCommand($"update Members set Password='{model.HashPassword}' where MemberID={model.MemberID}", null);
             }
@@ -190,7 +203,7 @@ namespace WYJK.Web.Controllers.Mvc
             #region 日志记录
             if (flag == true)
             {
-                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("修改了用户{0}信息", (await _memberService.GetMemberInfo(model.MemberID)).MemberName) });
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = model.MemberID, Contents = string.Format("修改了用户{0}信息", (await _memberService.GetMemberInfo(model.MemberID)).MemberName) });
             }
             #endregion
 

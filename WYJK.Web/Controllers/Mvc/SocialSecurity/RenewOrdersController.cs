@@ -39,9 +39,9 @@ namespace WYJK.Web.Controllers.Mvc
         {
             DbHelper.ExecuteSqlCommand($"update RenewOrders set Status=2,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
 
-            string memberName = DbHelper.QuerySingle<string>($"select MemberName from Members where MemberID =(select MemberID from RenewOrders where OrderID={OrderIds[0]})");
+            AccountInfo accountInfo = DbHelper.QuerySingle<AccountInfo>($"select MemberID, MemberName from Members where MemberID =(select MemberID from RenewOrders where OrderID={OrderIds[0]})");
 
-            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("续费审核通过，注册客户:{0}", memberName) });
+            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name,MemberID= accountInfo.MemberID, Contents = string.Format("续费审核通过，注册客户:{0}", accountInfo.MemberName) });
 
             return Json(new { status = true, Message = "操作成功" });
 
@@ -49,16 +49,16 @@ namespace WYJK.Web.Controllers.Mvc
 
 
         /// <summary>
-        /// 通过
+        /// 不通过
         /// </summary>
         /// <returns></returns>
         public ActionResult NoAgree(int[] OrderIds)
         {
             DbHelper.ExecuteSqlCommand($"update RenewOrders set Status=3,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
 
-            string memberName = DbHelper.QuerySingle<string>($"select MemberName from Members where MemberID =(select MemberID from RenewOrders where OrderID={OrderIds[0]})");
+            AccountInfo accountInfo = DbHelper.QuerySingle<AccountInfo>($"select MemberID, MemberName from Members where MemberID =(select MemberID from RenewOrders where OrderID={OrderIds[0]})");
 
-            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("充值审核未通过，注册客户:{0}", memberName) });
+            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = accountInfo.MemberID, Contents = string.Format("充值审核未通过，注册客户:{0}", accountInfo.MemberName) });
 
             return Json(new { status = true, Message = "操作成功" });
 

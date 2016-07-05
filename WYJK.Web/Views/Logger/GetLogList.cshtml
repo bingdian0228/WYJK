@@ -30,7 +30,7 @@
     <div class="text-c">
        @using (Html.BeginForm("GetLogList", "Logger", FormMethod.Get))
        {
-        @:用户名： @Html.TextBox("MemberName", null, new { style = "width:250px", @class = "input-text", placeholder = "用户名" })
+        @:注册用户： @Html.TextBox("MemberName", null, new { style = "width:250px", @class = "input-text", placeholder = "用户名" })
         @:参保人姓名： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "参保人姓名" })
 
             <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>

@@ -32,9 +32,9 @@ namespace WYJK.Web.Controllers.Mvc
 
             List<SelectListItem> ApplyStatus = new List<SelectListItem>();
             ApplyStatus.Insert(0, new SelectListItem { Text = "全部", Value = "-1" });
-            ApplyStatus.Insert(1, new SelectListItem { Text = "未审核", Value = "0" });
-            ApplyStatus.Insert(2, new SelectListItem { Text = "已审核", Value = "1" });
-            ApplyStatus.Insert(2, new SelectListItem { Text = "审核未通过", Value = "2" });
+            ApplyStatus.Insert(1, new SelectListItem { Text = "审核中", Value = "1" });
+            ApplyStatus.Insert(2, new SelectListItem { Text = "已通过", Value = "2" });
+            ApplyStatus.Insert(3, new SelectListItem { Text = "未通过", Value = "3" });
             ViewData["ApplyStatus"] = new SelectList(ApplyStatus, "Value", "Text");
 
             return View(list);
@@ -54,17 +54,21 @@ namespace WYJK.Web.Controllers.Mvc
             if (restult > 0)
             {
                 flag = true;
-                List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberName, Account,Bucha,HeadPortrait from Members where MemberID in(select memberid from DrawCash  WHERE DrawCashId IN ({dcIds})) ");
-                string names = string.Empty;
+                List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account,Bucha,HeadPortrait from Members where MemberID in(select memberid from DrawCash  WHERE DrawCashId IN ({dcIds})) ");
+                //string names = string.Empty;
+                //list.ForEach(l =>
+                //{
+                //    names = names + l.MemberName + ',';
+                //});
+                //if (!string.IsNullOrEmpty(names))
+                //{
+                //    names = names.TrimEnd(',');
+                //}
                 list.ForEach(l =>
                 {
-                    names = names + l.MemberName + ',';
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = l.MemberID, Contents = string.Format("拒绝提现申请业务，注册客户:{0}", l.MemberName) });
                 });
-                if (!string.IsNullOrEmpty(names))
-                {
-                    names = names.TrimEnd(',');
-                }
-                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("拒绝提现申请业务，注册客户:{0}", names) });
+
             }
             return Json(new { status = flag, Message = flag ? "操作成功" : "操作失败" });
         }
@@ -162,17 +166,20 @@ namespace WYJK.Web.Controllers.Mvc
                     }
 
                     await Data.DbHelper.ExecuteSqlCommandAsync(sql);
-                    List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberName, Account,Bucha,HeadPortrait from Members where MemberID in(select memberid from DrawCash  WHERE DrawCashId IN ({model.DrawCashIds})) ");
-                    string names = string.Empty;
-                    list.ForEach(l =>
-                    {
-                        names = names + l.MemberName + ',';
+                    List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account,Bucha,HeadPortrait from Members where MemberID in(select memberid from DrawCash  WHERE DrawCashId IN ({model.DrawCashIds})) ");
+                    //string names = string.Empty;
+                    //list.ForEach(l =>
+                    //{
+                    //    names = names + l.MemberName + ',';
+                    //});
+                    //if (!string.IsNullOrEmpty(names))
+                    //{
+                    //    names = names.TrimEnd(',');
+                    //}
+                    list.ForEach(l =>{
+                        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name,MemberID=l.MemberID, Contents = string.Format("提现申请成功客户:{0}", l.MemberName) });
                     });
-                    if (!string.IsNullOrEmpty(names))
-                    {
-                        names = names.TrimEnd(',');
-                    }
-                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("提现申请成功客户:{0}", names) });
+                    
                 }
                 catch (Exception ex)
                 {

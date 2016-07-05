@@ -460,6 +460,7 @@ namespace WYJK.Entity
     /// </summary>
     public class AccountInfo
     {
+        public int MemberID { get; set; }
         /// <summary>
         /// 用户名
         /// </summary>		
@@ -705,7 +706,8 @@ namespace WYJK.Entity
         public int MonthCount { get; set; }
     }
 
-    public class RenewalServicePayment {
+    public class RenewalServicePayment
+    {
         public int OrderID { get; set; }
         /// <summary>
         /// 平台类型

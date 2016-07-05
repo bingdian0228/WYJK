@@ -523,6 +523,7 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public JsonResult<List<string>> GetPoliticalStatus()
         {
+           
             List<string> list = new List<string>() {
                 "中共党员","共青团员","群众"
             };

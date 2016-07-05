@@ -104,14 +104,15 @@
                         $("#MemberID").empty();
                         $("#MemberID").append("<option value=''>全部</option>");
                         $.each(data, function (i, obj) {
-                            $("#MemberID").append("<option value='" + obj.MemberID + "'>" + obj.MemberName + "</option>");
+                            var str = obj.MemberID == '@Request["MemberID"]' ? "selected" : "";
+                            $("#MemberID").append("<option value='" + obj.MemberID + "'" + str + " >" + obj.MemberName + "</option>");
                         });
                     },
                     error: function () {
                         alert("服务器错误");
                     }
                 });
-            });
+            }).change();
 
             //订单查看
             $(".order-view").click(function () {

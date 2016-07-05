@@ -1339,6 +1339,12 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.AccumulationFundController.GetMemberList1(System.String)">
+            <summary>
+            获取用户列表
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Mvc.AccumulationFundController.AccumulationFundOverview(WYJK.Entity.AccumulationFundParameter)">
             <summary>
             公积金业务总览
@@ -1944,7 +1950,7 @@
         </member>
         <member name="M:WYJK.Web.Controllers.Mvc.RenewOrdersController.NoAgree(System.Int32[])">
             <summary>
-            通过
+            不通过
             </summary>
             <returns></returns>
         </member>
@@ -1952,6 +1958,12 @@
             <summary>
             服务协议
             </summary>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.SocialSecurityController.GetMemberList1(System.String)">
+            <summary>
+            获取用户列表
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:WYJK.Web.Controllers.Mvc.SocialSecurityController.SocialSecurityOverview(WYJK.Entity.SocialSecurityParameter)">
             <summary>
