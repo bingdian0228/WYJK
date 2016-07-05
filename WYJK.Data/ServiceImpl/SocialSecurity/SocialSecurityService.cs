@@ -113,10 +113,10 @@ case when exists (select * from dbo.AccumulationFund where SocialSecurityPeopleI
 
 from dbo.SocialSecurityPeople t
 where MemberID={memberID} ) tt
-where tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1";
+where (tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1)";
             if (peopleid != 0)
             {
-                sql += $" and SocialSecurityPeople.SocialSecurityPeopleID = {peopleid}";
+                sql += $" and tt.SocialSecurityPeopleID = {peopleid}";
             }
             List<UnInsuredPeople> unIsuredPeopleList = await DbHelper.QueryAsync<UnInsuredPeople>(sql, new
             {

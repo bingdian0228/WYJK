@@ -732,7 +732,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
 
             if (item == null)
             {
-                TempData["Message"] = "已参保。";
+                TempData["Message"] = "获取不到未参保。";
                 return RedirectToAction("CustomerPaymentManagement");
             }
 
@@ -767,12 +767,12 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
             {
                 var req = await client.PostAsJsonAsync(url + "/Order/GenerateOrder", new { MemberID = id, SocialSecurityPeopleIDS = new[] { peopleid } });
 
-                var result = await req.Content.ReadAsAsync<JsonResult<Dictionary<bool, string>>>();
+                var result = await req.Content.ReadAsAsync<JsonResult<string>>();
                 TempData["Message"] = result.Message;
 
                 if (result.status)
                 {
-                    var ordercode = result.Data[true];
+                    var ordercode = result.Data;
                     var payreq = await client.PostAsJsonAsync(url + "/Order/OrderPayment", new { OrderCode = ordercode, MemberID = id, PaymentMethod = PayMethod, GenerateDate = DateTime.Now, Status = 2, PayTime = DateTime.Now, AuditTime = DateTime.Now });
 
                     var result1 = await payreq.Content.ReadAsAsync<JsonResult<Dictionary<bool, string>>>();
