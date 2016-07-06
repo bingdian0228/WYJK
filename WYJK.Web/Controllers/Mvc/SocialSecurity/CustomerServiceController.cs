@@ -800,7 +800,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
 
                     var result1 = await payreq.Content.ReadAsAsync<JsonResult<Dictionary<bool, string>>>();
                     TempData["Message"] = result1.Message;
-                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = id, SocialSecurityPeopleID = peopleid, Contents = string.Format("线下交款：会员：{0}，参保人：{1}，金额：{2}，支付方式：{3}", AccountInfo.MemberName, SocialSecurityPeople.SocialSecurityPeopleName, Amount, PayMethod) });
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = id, SocialSecurityPeopleID = peopleid, Contents = string.Format("线下交款：会员：{0}，参保人：{1}，金额：{2}，支付方式：{3}", AccountInfo.MemberName, SocialSecurityPeople.SocialSecurityPeopleName, (Amount ?? 0).ToString("0.00"), PayMethod) });
                 }
             }
             catch (Exception ex)
