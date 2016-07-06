@@ -1116,11 +1116,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 }
 
                                 else {
-                                    //删除参保方案
-                                    DbHelper.ExecuteSqlCommand($"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
-
-
-                                    SocialSecurityID = _socialSecurityService.AddSocialSecurity(socialSecurityPeople.socialSecurity);
+                                    ////删除参保方案  标记
+                                    //DbHelper.ExecuteSqlCommand($"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+                                    //更新社保方案
+                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}'
+  where SocialSecurityPeopleID = '{socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}'", null);
+                                    SocialSecurityID = SocialSecurity.SocialSecurityID;
+                                    //SocialSecurityID = _socialSecurityService.AddSocialSecurity(socialSecurityPeople.socialSecurity);
                                     //查询社保金额
                                     SocialSecurityAmount = _socialSecurityService.GetSocialSecurityAmount(SocialSecurityID);
                                     //查询社保月数
@@ -1283,10 +1285,14 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                     /**********************/
                                 }
                                 else {
-                                    //删除公积金方案
-                                    DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+                                    ////删除公积金方案 标记
+                                    //DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
+                                    //更新公积金方案
+                                    DbHelper.ExecuteSqlCommand($@"update AccumulationFund set AccumulationFundArea='{socialSecurityPeople.accumulationFund.AccumulationFundArea}',AccumulationFundBase='{socialSecurityPeople.accumulationFund.AccumulationFundBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.accumulationFund.PayTime}',PayMonthCount='{socialSecurityPeople.accumulationFund.PayMonthCount}',Note='{socialSecurityPeople.accumulationFund.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',AccumulationFundType='{socialSecurityPeople.accumulationFund.AccumulationFundType}'
+  where SocialSecurityPeopleID = '{socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}'", null);
 
-                                    AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
+                                    //AccumulationFundID = _socialSecurityService.AddAccumulationFund(socialSecurityPeople.accumulationFund);
+                                    AccumulationFundID = accumulationFund.AccumulationFundID;
                                     //查询公积金金额
                                     AccumulationFundAmount = _socialSecurityService.GetAccumulationFundAmount(AccumulationFundID);
                                     //查询公积金月数

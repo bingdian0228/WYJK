@@ -35,7 +35,7 @@
                     return;
                 }
                 var status = $("input[type='checkbox']:checked").parents("tr").find(".Status").val();
-                if (status != "0") {
+                if (status != "1") {
                     layer.msg("此条已审核无需审核");
                     return;
                 }
@@ -92,7 +92,7 @@
                 }
 
                 var status = $("input[type='checkbox']:checked").parents("tr").find(".Status").val();
-                if (status != "0") {
+                if (status != "1") {
                     layer.msg("此条已审核无需审核");
                     return;
                 }

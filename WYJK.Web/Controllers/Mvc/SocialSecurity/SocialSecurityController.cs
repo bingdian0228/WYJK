@@ -18,7 +18,19 @@ namespace WYJK.Web.Controllers.Mvc
     public class SocialSecurityController : BaseController
     {
         private readonly ISocialSecurityService _socialSecurityService = new SocialSecurityService();
+        private readonly IMemberService _memberService = new MemberService();
 
+        /// <summary>
+        /// 获取用户列表
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult GetMemberList1(string UserType)
+        {
+            List<Members> memberList = _memberService.GetMembersList();
+            var list = memberList.Where(n => UserType == string.Empty ? true : n.UserType == UserType)
+                .Select(item => new { MemberID = item.MemberID, MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName) });
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
         /// <summary>
         /// 社保业务总览
         /// </summary>
@@ -41,6 +53,12 @@ namespace WYJK.Web.Controllers.Mvc
 
             ViewData["Status"] = new SelectList(StatusList, "Value", "Text", parameter.Status);
 
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
 
             return View(list);
         }
@@ -61,7 +79,12 @@ namespace WYJK.Web.Controllers.Mvc
             UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "", Selected = true });
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
-
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
             return View(list);
         }
 
@@ -81,7 +104,12 @@ namespace WYJK.Web.Controllers.Mvc
             UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
-
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
             return View(list);
         }
 
@@ -101,7 +129,12 @@ namespace WYJK.Web.Controllers.Mvc
             UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
-
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
             return View(list);
         }
 
@@ -121,7 +154,12 @@ namespace WYJK.Web.Controllers.Mvc
             UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
-
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
             return View(list);
         }
 
@@ -141,7 +179,12 @@ namespace WYJK.Web.Controllers.Mvc
             UserTypeList.Insert(0, new SelectListItem { Text = "全部", Value = "" });
 
             ViewData["UserType"] = new SelectList(UserTypeList, "Value", "Text", parameter.UserType);
-
+            List<Members> memberList = _memberService.GetMembersList();
+            memberList.ForEach(item =>
+            {
+                item.MemberName = item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName);
+            });
+            ViewBag.memberList = memberList;
             return View(list);
         }
 
@@ -171,9 +214,13 @@ namespace WYJK.Web.Controllers.Mvc
             #region 记录日志
             if (flag == true)
             {
+                List<SocialSecurityPeople> socialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID in({string.Join(", ", SocialSecurityPeopleIDs)})");
+                //string names = _socialSecurityService.GetSocialPeopleNames(SocialSecurityPeopleIDs);
+                socialSecurityPeopleList.ForEach(n =>
+                {
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = n.MemberID, SocialSecurityPeopleID = n.SocialSecurityPeopleID, Contents = string.Format("社保业务办结，客户:{0}", n.SocialSecurityPeopleName) });
+                });
 
-                string names = _socialSecurityService.GetSocialPeopleNames(SocialSecurityPeopleIDs);
-                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办结，客户:{0}", names) });
             }
             #endregion
 
@@ -225,8 +272,9 @@ namespace WYJK.Web.Controllers.Mvc
             #region 记录日志
             if (result > 0)
             {
-                string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleIDs });
-                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("社保业务办停，客户:{0}", names) });
+                //string names = _socialSecurityService.GetSocialPeopleNames(new int[] { SocialSecurityPeopleIDs });
+                SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID ={SocialSecurityPeopleIDs}");
+                LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = socialSecurityPeople.MemberID, SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID, Contents = string.Format("社保业务办停，客户:{0}", socialSecurityPeople.SocialSecurityPeopleName) });
             }
             #endregion
 
@@ -359,7 +407,7 @@ namespace WYJK.Web.Controllers.Mvc
                     DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({memberID},'{memberLogStr}')", null);
                     #endregion
 
-                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("办理社保异常客户:{0},原因:{1}", names, model.Exception) });
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = socialSecurityPeople.MemberID, SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID, Contents = string.Format("办理社保异常客户:{0},原因:{1}", names, model.Exception) });
                 }
                 catch (Exception ex)
                 {

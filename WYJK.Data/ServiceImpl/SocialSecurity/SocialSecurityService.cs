@@ -41,7 +41,10 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<PagedResult<SocialSecurityShowModel>> GetSocialSecurityList(SocialSecurityParameter parameter)
         {
+
             string userTypeSql = string.IsNullOrEmpty(parameter.UserType) ? "1=1" : "UserType=" + parameter.UserType;
+
+
 
             string innersqlstr = $@"SELECT dbo.SocialSecurityPeople.SocialSecurityPeopleName, dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, 
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
@@ -59,8 +62,9 @@ namespace WYJK.Data.ServiceImpl
                       INNER JOIN dbo.SocialSecurity ON dbo.SocialSecurityPeople.SocialSecurityPeopleID = dbo.SocialSecurity.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";
 
+            string sqlMemberID = string.IsNullOrEmpty(parameter.MemberID) ? "1=1" : $" MemberID = {parameter.MemberID}";
             string sqlstr = string.IsNullOrEmpty(parameter.Status) ? "1=1" : $" Status = {parameter.Status}";
-            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.UpdateDt desc )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
+            string sql = $"select * from (select ROW_NUMBER() OVER(ORDER BY S.UpdateDt desc )AS Row,s.* from ({innersqlstr}) s where " + userTypeSql + $" and {sqlMemberID} and {sqlstr} and SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%' ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex";
 
             List<SocialSecurityShowModel> modelList = await DbHelper.QueryAsync<SocialSecurityShowModel>(sql, new
             {
@@ -68,7 +72,7 @@ namespace WYJK.Data.ServiceImpl
                 EndIndex = parameter.TakeCount
             });
 
-            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) t  where  " + userTypeSql + $" and {sqlstr} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
+            int totalCount = await DbHelper.QuerySingleAsync<int>($"SELECT COUNT(0) AS TotalCount FROM ({innersqlstr}) t  where  " + userTypeSql + $" and {sqlMemberID}  and {sqlstr} and  SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' and IdentityCard like '%{parameter.IdentityCard}%'");
 
             return new PagedResult<SocialSecurityShowModel>
             {

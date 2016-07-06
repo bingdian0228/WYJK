@@ -32,19 +32,29 @@ namespace WYJK.Data.ServiceImpl
             //    stringBuilder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'");
             //}
 
-            if (string.IsNullOrEmpty(parameter.MemberName))
+            //if (string.IsNullOrEmpty(parameter.MemberName))
+            //{
+            //    stringBuilder.Append($" and (Members.MemberName is null or  Members.MemberName like '%{parameter.MemberName}%')");
+            //}
+            //else {
+            //    stringBuilder.Append($" and Members.MemberName like '%{parameter.MemberName}%'");
+            //}
+
+            if (!string.IsNullOrEmpty(parameter.MemberName))
             {
-                stringBuilder.Append($" and (Members.MemberName is null or  Members.MemberName like '%{parameter.MemberName}%')");
-            }
-            else {
                 stringBuilder.Append($" and Members.MemberName like '%{parameter.MemberName}%'");
             }
 
-            if (string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+            //if (string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+            //{
+            //    stringBuilder.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName is null or SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%')");
+            //}
+            //else {
+            //    stringBuilder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'");
+            //}
+
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
             {
-                stringBuilder.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName is null or SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%')");
-            }
-            else {
                 stringBuilder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'");
             }
 

@@ -461,14 +461,17 @@ namespace WYJK.Web.Controllers.Mvc
                         inviteCode = _userService.GetUserInfoByUserID(model.InviteCode).InviteCode;
                     }
                     #region 注册用户的日志记录
-                    if (model.InviteCode != inviteCode) {
 
+                    string oldUserName = DbHelper.QuerySingle<string>($"select TrueName from Users where InviteCode=(select InviteCode from Members where MemberID={model.MemberID})") ?? "公司";
 
-                        logStr += "客服修改了{0}的业务专员,从";
+                    string newUserName = DbHelper.QuerySingle<string>($"select TrueName from Users where UserID='{model.InviteCode}'") ?? "公司";
+                    if (oldUserName != newUserName)
+                    {
+                        logStr += "客服修改了{0}的业务专员,从" + oldUserName + "到" + newUserName + ";";
                     }
                     #endregion
 
-                        DbHelper.ExecuteSqlCommand($"update Members set InviteCode='{inviteCode}' where MemberID={model.MemberID}", null);
+                    DbHelper.ExecuteSqlCommand($"update Members set InviteCode='{inviteCode}' where MemberID={model.MemberID}", null);
                     #endregion
 
                     #region 生成子订单
@@ -538,7 +541,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                         //参保原数据
                         SocialSecurity oldSocialSecurity = _socialSecurityService.GetSocialSecurityDetail(model.SocialSecurityPeopleID);
                         //客户社保号
-                        if (oldSocialSecurity.SocialSecurityNo != model.SocialSecurityNo)
+                        if (oldSocialSecurity.SocialSecurityNo != (model.SocialSecurityNo ?? ""))
                         {
                             logStr += "客服修改了{1}的客户社保号,从" + oldSocialSecurity.SocialSecurityNo + "到" + model.SocialSecurityNo + ";";
                         }
@@ -567,7 +570,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                         //公积金原数据
                         AccumulationFund oldAccumulationFund = _accumulationFundService.GetAccumulationFundDetail(model.SocialSecurityPeopleID);
                         //客户公积金号
-                        if (oldAccumulationFund.AccumulationFundNo != model.AccumulationFundNo)
+                        if (oldAccumulationFund.AccumulationFundNo != (model.AccumulationFundNo ?? ""))
                         {
                             logStr += "客服修改了{1}的客户公积金号,从" + oldAccumulationFund.AccumulationFundNo + "到" + model.AccumulationFundNo + ";";
                         }
@@ -592,7 +595,10 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                     }
 
                     if (logStr != string.Empty)
-                        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = logStr, SocialSecurityPeopleID = model.SocialSecurityPeopleID });
+                    {
+                        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = logStr, MemberID = model.MemberID, SocialSecurityPeopleID = model.SocialSecurityPeopleID });
+                    }
+
 
                     transaction.Complete();
                 }

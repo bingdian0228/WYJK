@@ -30,6 +30,17 @@
                     return;
                 }
 
+                if ($("input[type='checkbox']:checked").length > 1) {
+                    layer.msg("只能选择一个客户进行审核");
+                    return;
+                }
+
+                var status = $("input[type='checkbox']:checked").parents("tr").find(".DrawStatus").val();
+                if (status != "1") {
+                    layer.msg("此条已审核无需审核");
+                    return;
+                }
+
                 layer.confirm('确定不通过审核吗？', {
                     btn: ['确定', '取消'] //按钮
                 }, function () {
@@ -82,9 +93,9 @@
                     layer.msg("只能选择一个用户进行审核");
                     return;
                 }
-                debugger;
+
                 var status = $("input[type='checkbox']:checked").parents("tr").find(".DrawStatus").val();
-                if (status!="0")
+                if (status!="1")
                 {
                     layer.msg("此条已审核无需审核");
                     return;
@@ -175,17 +186,17 @@
                         <td>@drawCash.ArrearAmount.ToString("N2")</td>                        
                         <td>
                             <input type="hidden" value="@drawCash.ApplyStatus" class="DrawStatus" />
-                        @if (drawCash.ApplyStatus == 0)
+                        @if (drawCash.ApplyStatus == 1)
                         {
-                            @:未审核
+                            @:审核中
                         }
-                        else if (drawCash.ApplyStatus == 1)
+                        else if (drawCash.ApplyStatus == 2)
                         {
-                            @:审核通过
+                            @:已通过
                         }
                         else
                         {
-                            @:审核未通过
+                            @:未通过
                         }
                         <td>@drawCash.PaySN</td>
                         <td>@(drawCash.AgreeTime.Year==1900?"":drawCash.AgreeTime.ToString())</td>                       

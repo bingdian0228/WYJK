@@ -259,6 +259,8 @@ namespace WYJK.Entity
         /// </summary>
         public string Status { get; set; }
 
+        public string MemberID { get; set; }
+
 
     }
 }

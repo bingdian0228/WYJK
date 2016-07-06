@@ -476,7 +476,6 @@ namespace WYJK.Web.Controllers.Mvc
                 }
             }
 
-
             return RedirectToAction("GetUserList");
         }
 

@@ -51,9 +51,9 @@ namespace WYJK.Web.Controllers.Mvc
                 DbHelper.ExecuteSqlCommand($"update AccumulationFund set Status=2 ,IsAdjustingBase=1,AccumulationFundBase='{baseOrders.AFCurrentBase}',AdjustingBaseNote='{baseOrders.AFAdjustingBaseNote}' where SocialSecurityPeopleID={baseOrders.SocialSecurityPeopleID}", null);
             }
 
-            string memberName = DbHelper.QuerySingle<string>($"select MemberName from Members where MemberID =(select MemberID from BaseOrders where OrderID={OrderIds[0]})");
+            AccountInfo accountInfo = DbHelper.QuerySingle<AccountInfo>($"select MemberID, MemberName from Members where MemberID =(select MemberID from BaseOrders where OrderID={OrderIds[0]})");
 
-            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("调基审核通过，注册客户:{0}", memberName) });
+            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = accountInfo.MemberID, Contents = string.Format("调基审核通过，注册客户:{0}", accountInfo.MemberName) });
 
             return Json(new { status = true, Message = "操作成功" });
 
@@ -68,9 +68,9 @@ namespace WYJK.Web.Controllers.Mvc
         {
             DbHelper.ExecuteSqlCommand($"update BaseOrders set Status=3,AuditTime=getdate() where OrderID in({string.Join(",", OrderIds)})", null);
 
-            string memberName = DbHelper.QuerySingle<string>($"select MemberName from Members where MemberID =(select MemberID from BaseOrders where OrderID={OrderIds[0]})");
+            AccountInfo accountInfo = DbHelper.QuerySingle<AccountInfo>($"select MemberID,MemberName from Members where MemberID =(select MemberID from BaseOrders where OrderID={OrderIds[0]})");
 
-            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = string.Format("调基审核未通过，注册客户:{0}", memberName) });
+            LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = accountInfo.MemberID, Contents = string.Format("调基审核未通过，注册客户:{0}", accountInfo.MemberName) });
 
             return Json(new { status = true, Message = "操作成功" });
 

@@ -22,14 +22,33 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard' + "&Status=" + '@Request.Params["Status"]';
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&SocialSecurityPeopleName=" + '@SocialSecurityPeopleName' + "&IdentityCard=" + '@IdentityCard' + "&Status=" + '@Request.Params["Status"]' + "&MemberID=" + '@Request.QueryString["MemberID"]';
 
                 }
             }
         });
 
         $(function () {
+            $("#UserType").change(function () {
+                $this = $(this);
 
+                $.ajax({
+                    url: '@Url.Action("GetMemberList1", "CustomerService")?UserType=' + $this.val(),
+                    dataType: "json",
+                    type: "get",
+                    success: function (data) {
+                        $("#MemberID").empty();
+                        $("#MemberID").append("<option value=''>全部</option>");
+                        $.each(data, function (i, obj) {
+                            var str = obj.MemberID == '@Request["MemberID"]' ? "selected" : "";
+                            $("#MemberID").append("<option value='" + obj.MemberID + "'" + str + " >" + obj.MemberName + "</option>");
+                        });
+                    },
+                    error: function () {
+                        alert("服务器错误");
+                    }
+                });
+            }).change();
             $(".Huialert.Huialert-info").fadeOut(2000);
             //业务办结
             $(".action-complete").click(function () {
@@ -137,7 +156,20 @@
             <span class="select-box inline">
                 @Html.DropDownList("UserType", ViewData["UserType"] as SelectList, new { @class = "select" })
             </span>
-
+            @Html.Raw("代理机构:")
+            <span class="select-box inline">
+                @{
+                    var memberList = ViewBag.memberList as List<Members>;
+                    var list = new List<SelectListItem> { new SelectListItem { Text = "全部", Value = "" } };
+                    var value = 0;
+                    list.AddRange(memberList.Select(item => new SelectListItem
+                    {
+                        Text = item.MemberName,
+                        Value = item.MemberID.ToString()
+                    }));
+                }
+                @Html.DropDownList("MemberID", list, new { @class = "select" })
+            </span>
             @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
             @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
             <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
