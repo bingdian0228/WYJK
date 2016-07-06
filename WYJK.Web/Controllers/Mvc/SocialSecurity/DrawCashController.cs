@@ -189,8 +189,8 @@ namespace WYJK.Web.Controllers.Mvc
                     #region 记录流水
                     decimal money = DbHelper.QuerySingle<decimal>($"select Money from DrawCash where DrawCashId={model.DrawCashIds}");
                     string sqlAccountRecord = $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},'','','支出','余额','提现',{money},{member.Account - money},getdate())"; 
-
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},'','','支出','余额','提现',{money},{member.Account },getdate())";
+                    DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
                     #endregion
 
                     List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account, Bucha, HeadPortrait from Members where MemberID in(select memberid from DrawCash WHERE DrawCashId IN ({ model.DrawCashIds})) ");

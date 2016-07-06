@@ -522,7 +522,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             {
                 decimal money = 0;
                 Order order = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID={orderID}");
-                money= DbHelper.QuerySingle<decimal>($"select SUM(SocialSecurityAmount*SocialSecuritypayMonth+SocialSecurityFirstBacklogCost+SocialSecurityBuCha+AccumulationFundAmount*AccumulationFundpayMonth+AccumulationFundFirstBacklogCost) from OrderDetails where OrderCode ='{order.OrderCode}'");
+                money = DbHelper.QuerySingle<decimal>($"select SUM(SocialSecurityAmount*SocialSecuritypayMonth+SocialSecurityFirstBacklogCost+SocialSecurityBuCha+AccumulationFundAmount*AccumulationFundpayMonth+AccumulationFundFirstBacklogCost) from OrderDetails where OrderCode ='{order.OrderCode}'");
 
 
                 string BranchID = "0532";
@@ -591,8 +591,13 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// <param name="Msg"></param>
         /// <param name="Signature"></param>
         /// <returns></returns>
+        [System.Web.Http.HttpGet]
         public void OrderPayment1_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
         {
+            string orderID = BillNo.TrimStart('0');
+            Order model = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID='{orderID}'");
+            decimal money = DbHelper.QuerySingle<decimal>($"select SUM(SocialSecurityAmount*SocialSecuritypayMonth+SocialSecurityFirstBacklogCost+SocialSecurityBuCha+AccumulationFundAmount*AccumulationFundpayMonth+AccumulationFundFirstBacklogCost) from OrderDetails where OrderCode ='{model.OrderCode}'");
+
             #region 招行提供
             /*
              * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
@@ -625,22 +630,22 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 if (key != 0)//验证银行返回数据是否合法
                 {
                     string err = cbmBank.exGetLastErr(key);
-                    throw new Exception(err);
-                    //Response.Write("<script>alert('" + err + "')</script>");
-                    //return;
+                    //throw new Exception(err);
+                    HttpContext.Current.Response.Write("<script>alert('" + err + "')</script>");
+                    return;
                 }
                 if (Succeed.Trim() != "Y")//验证支付结果是否成功
                 {
-                    throw new Exception("支付失败！");
-                    //Response.Write("<script>alert('支付失败！')</script>");
-                    //return;
+                    //throw new Exception("支付失败！");
+                    HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
+                    return;
                 }
-                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = money;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
-                    throw new Exception("支付金额与订单金额不一致！");
-                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
-                    //return;
+                    //throw new Exception("支付金额与订单金额不一致！");
+                    HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    return;
                 }
             }
             catch (Exception ex)
@@ -657,8 +662,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
             lock (locker)
             {
-                string orderID = BillNo.TrimStart('0');
-                Order model = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID='{orderID}'");
+
                 if (model.Status == "0")
                     OrderPayment(model);
             }

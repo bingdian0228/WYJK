@@ -1982,7 +1982,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         /// 调整基数提交    PlatType:  Web/0;Mobile/1
         /// </summary>
         /// <returns></returns>
-        public async Task<JsonResult<dynamic>> PostAdjustingBase(AdjustingBaseParameter parameter)
+        public JsonResult<dynamic> PostAdjustingBase(AdjustingBaseParameter parameter)
         {
             int orderID = _socialSecurityService.AddAdjustingBase(parameter);
 
@@ -2062,6 +2062,8 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         [System.Web.Http.HttpGet]
         public void AdjustingBase_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
         {
+            string orderID = BillNo.TrimStart('0');
+            BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID='{orderID}'");
             #region 招行提供
             /*
              * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
@@ -2094,22 +2096,22 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                 if (key != 0)//验证银行返回数据是否合法
                 {
                     string err = cbmBank.exGetLastErr(key);
-                    throw new Exception(err);
-                    //Response.Write("<script>alert('" + err + "')</script>");
-                    //return;
+                    //throw new Exception(err);
+                    HttpContext.Current.Response.Write("<script>alert('" + err + "')</script>");
+                    return;
                 }
                 if (Succeed.Trim() != "Y")//验证支付结果是否成功
                 {
-                    throw new Exception("支付失败！");
-                    //Response.Write("<script>alert('支付失败！')</script>");
-                    //return;
+                    //throw new Exception("支付失败！");
+                    HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
+                    return;
                 }
-                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
-                    throw new Exception("支付金额与订单金额不一致！");
-                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
-                    //return;
+                    //throw new Exception("支付金额与订单金额不一致！");
+                    HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    return;
                 }
             }
             catch (Exception ex)
@@ -2126,8 +2128,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
 
             lock (locker)
             {
-                string orderID = BillNo.TrimStart('0');
-                BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID='{orderID}'");
+
                 if (baseOrders.Status == "0")
                 {
                     //更新订单

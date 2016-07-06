@@ -523,7 +523,7 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public JsonResult<List<string>> GetPoliticalStatus()
         {
-           
+
             List<string> list = new List<string>() {
                 "中共党员","共青团员","群众"
             };
@@ -868,8 +868,11 @@ namespace WYJK.Web.Controllers.Http
         /// <param name="Date"></param>
         /// <param name="Msg"></param>
         /// <param name="Signature"></param>
+        [System.Web.Http.HttpGet]
         public void SubmitRenewalServiceOrderPayment_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
         {
+            string orderID = BillNo.TrimStart('0');
+            RenewOrders model = DbHelper.QuerySingle<RenewOrders>($"select * from RenewOrders where OrderID='{orderID}'");
             #region 招行提供
             /*
              * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
@@ -902,22 +905,22 @@ namespace WYJK.Web.Controllers.Http
                 if (key != 0)//验证银行返回数据是否合法
                 {
                     string err = cbmBank.exGetLastErr(key);
-                    throw new Exception(err);
-                    //Response.Write("<script>alert('" + err + "')</script>");
-                    //return;
+                    //throw new Exception(err);
+                    HttpContext.Current.Response.Write("<script>alert('" + err + "')</script>");
+                    return;
                 }
                 if (Succeed.Trim() != "Y")//验证支付结果是否成功
                 {
-                    throw new Exception("支付失败！");
-                    //Response.Write("<script>alert('支付失败！')</script>");
-                    //return;
+                    //throw new Exception("支付失败！");
+                    HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
+                    return;
                 }
-                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = model.Money;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
-                    throw new Exception("支付金额与订单金额不一致！");
-                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
-                    //return;
+                    //throw new Exception("支付金额与订单金额不一致！");
+                    HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    return;
                 }
             }
             catch (Exception ex)
@@ -934,8 +937,7 @@ namespace WYJK.Web.Controllers.Http
 
             lock (locker)
             {
-                string orderID = BillNo.TrimStart('0');
-                RenewOrders model = DbHelper.QuerySingle<RenewOrders>($"select * from RenewOrders where OrderID='{orderID}'");
+
                 if (model.Status == "0")
                 {
 
@@ -947,6 +949,7 @@ namespace WYJK.Web.Controllers.Http
                         MonthCount = model.MonthCount
                     };
                     SubmitRenewalService(parameter);
+                    DbHelper.ExecuteSqlCommand($"update RenewOrders set status=1 where OrderID={orderID}", null);
                 }
 
             }
@@ -1324,8 +1327,11 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// <param name="Date"></param>
         /// <param name="Msg"></param>
         /// <param name="Signature"></param>
+        [System.Web.Http.HttpGet]
         public void SubmitRechargeAmountPayment_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
         {
+            string orderID = BillNo.TrimStart('0');
+            RechargeOrders model = DbHelper.QuerySingle<RechargeOrders>($"select * from RechargeOrders where OrderID='{orderID}'");
             #region 招行提供
             /*
              * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
@@ -1358,22 +1364,22 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 if (key != 0)//验证银行返回数据是否合法
                 {
                     string err = cbmBank.exGetLastErr(key);
-                    throw new Exception(err);
-                    //Response.Write("<script>alert('" + err + "')</script>");
-                    //return;
+                    //throw new Exception(err);
+                    HttpContext.Current.Response.Write("<script>alert('" + err + "')</script>");
+                    return;
                 }
                 if (Succeed.Trim() != "Y")//验证支付结果是否成功
                 {
-                    throw new Exception("支付失败！");
-                    //Response.Write("<script>alert('支付失败！')</script>");
-                    //return;
+                    //throw new Exception("支付失败！");
+                    HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
+                    return;
                 }
-                decimal payMoney = 5M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = model.Money;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
-                    throw new Exception("支付金额与订单金额不一致！");
-                    //Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
-                    //return;
+                    //throw new Exception("支付金额与订单金额不一致！");
+                    HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    return;
                 }
             }
             catch (Exception ex)
@@ -1389,8 +1395,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             #endregion
             lock (locker)
             {
-                string orderID = BillNo.TrimStart('0');
-                RechargeOrders model = DbHelper.QuerySingle<RechargeOrders>($"select * from RechargeOrders where OrderID='{orderID}'");
+
+
                 if (model.Status == "0")
                 {
                     RechargeParameters parameter = new RechargeParameters()
@@ -1400,6 +1406,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         Amount = model.Money
                     };
                     SubmitRechargeAmount(parameter);
+                    DbHelper.ExecuteSqlCommand($"update RechargeOrders set status=1 where OrderID={orderID}", null);
                 }
 
             }
@@ -1417,6 +1424,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             {
                 try
                 {
+
                     AccountInfo info = _memberService.GetAccountInfo(parameter.MemberID);
                     //检查账户状态
                     if (!_socialSecurityService.IsExistsRenew(parameter.MemberID))
@@ -1553,7 +1561,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         public JsonResult<dynamic> DrawCash(int memberID)
         {
             Members member = DbHelper.QuerySingle<Members>($"select * from Members where MemberID={memberID}");
-            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={memberID}");
+            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={memberID}  and ApplyStatus=1");
             return new JsonResult<dynamic>
             {
                 status = true,
@@ -1576,8 +1584,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         {
             //检测提现金额不能大于可提取余额
             decimal Account = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID={drawCash.MemberID}");
-            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={drawCash.MemberID} where ApplyStatus=1");
-            if(drawCash.Money> Account- DongJie)
+            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={drawCash.MemberID} and ApplyStatus=1");
+            if (drawCash.Money > Account - DongJie)
                 return new JsonResult<dynamic>
                 {
                     status = false,
@@ -1602,8 +1610,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         {
             bool isBound;
             //获取注册人银行账号 BankCardNo
-            string BankCardNo = DbHelper.QuerySingle<string>($"select * from Members where MemberId={memberID}");
-            if (BankCardNo.Trim() != string.Empty)
+            string BankCardNo = DbHelper.QuerySingle<string>($"select BankCardNo from Members where MemberId={memberID}");
+            if (!string.IsNullOrWhiteSpace(BankCardNo))
                 isBound = true;
             else
                 isBound = false;

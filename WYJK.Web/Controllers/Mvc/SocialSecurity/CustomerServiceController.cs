@@ -541,7 +541,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                         //参保原数据
                         SocialSecurity oldSocialSecurity = _socialSecurityService.GetSocialSecurityDetail(model.SocialSecurityPeopleID);
                         //客户社保号
-                        if (oldSocialSecurity.SocialSecurityNo != (model.SocialSecurityNo ?? ""))
+                        if ((oldSocialSecurity.SocialSecurityNo ?? "")!= (model.SocialSecurityNo ?? ""))
                         {
                             logStr += "客服修改了{1}的客户社保号,从" + oldSocialSecurity.SocialSecurityNo + "到" + model.SocialSecurityNo + ";";
                         }
@@ -570,7 +570,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                         //公积金原数据
                         AccumulationFund oldAccumulationFund = _accumulationFundService.GetAccumulationFundDetail(model.SocialSecurityPeopleID);
                         //客户公积金号
-                        if (oldAccumulationFund.AccumulationFundNo != (model.AccumulationFundNo ?? ""))
+                        if ((oldAccumulationFund.AccumulationFundNo ?? "") != (model.AccumulationFundNo ?? ""))
                         {
                             logStr += "客服修改了{1}的客户公积金号,从" + oldAccumulationFund.AccumulationFundNo + "到" + model.AccumulationFundNo + ";";
                         }
