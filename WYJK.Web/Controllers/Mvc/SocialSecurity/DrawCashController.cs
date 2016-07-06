@@ -167,6 +167,7 @@ namespace WYJK.Web.Controllers.Mvc
                             sqlStr2 += $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID ={accumulationFund.SocialSecurityPeopleID};";
                         }
 
+
                         Message message = new Message();
                         message.MemberID = member.MemberID;
                         message.ContentStr = "您的账户余额已不足抵扣下个月社保、公积金.请及时充值.";
@@ -182,7 +183,8 @@ namespace WYJK.Web.Controllers.Mvc
 
                     }
                     #endregion
-
+                    if (sqlStr2.Trim() != string.Empty)
+                        DbHelper.ExecuteSqlCommand(sqlStr2, null);
 
                     #endregion
 

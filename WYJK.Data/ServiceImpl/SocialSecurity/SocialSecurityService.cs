@@ -878,7 +878,7 @@ values('{orderCode}',{memberID},{parameter.SocialSecurityPeopleID},{Convert.ToIn
         /// <returns></returns>
         public decimal GetRenewAmountByMemberID(int MemberID)
         {
-            string sqlstr = $@"declare @SocialSecurityAmount decimal = 0, @AccumulationFundAmount decimal = 0,@totalAmount decimal =0
+            string sqlstr = $@"declare @SocialSecurityAmount decimal(18,2) = 0, @AccumulationFundAmount decimal(18,2) = 0,@totalAmount decimal(18,2) =0
 select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
       left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
       where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status = 4;
