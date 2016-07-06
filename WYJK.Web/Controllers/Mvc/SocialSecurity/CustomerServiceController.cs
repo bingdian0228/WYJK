@@ -803,7 +803,7 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
         public async Task<ActionResult> BuyService(int? id)
         {
             var req1 = await client.GetAsync(url + $"/Member/GetAccountStatus?MemberID={id}");
-            if ((await req1.Content.ReadAsAsync<JsonResult<string>>()).Data == "待续费")
+            if ((await req1.Content.ReadAsAsync<JsonResult<string>>()).Data == "续费")
             {
                 var req = await client.GetAsync(url + $"/Member/GetRenewalServiceList?MemberID={id}");
                 ViewBag.RenewalServiceList = (await req.Content.ReadAsAsync<JsonResult<List<KeyValuePair<int, decimal>>>>()).Data;

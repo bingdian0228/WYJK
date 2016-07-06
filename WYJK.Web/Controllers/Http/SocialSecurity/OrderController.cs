@@ -724,7 +724,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     string sqlAccountRecord = "";
                     string sqlSocialSecurityPeople = "";
 
-                    decimal memberAccount = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID = {order.MemberID}");
+                    decimal memberAccount = DbHelper.QuerySingle<decimal>($"select isnull(Account,0) Account from Members where MemberID = {order.MemberID}");
                     //收支记录
                     string ShouNote = "缴费：";
                     string ZhiNote = string.Empty;
