@@ -744,18 +744,23 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
             ViewBag.SocialSecurityDetail = _socialSecurityService.GetSocialSecurityDetail(peopleid.Value);
             ViewBag.AccumulationFund = _accumulationFundService.GetAccumulationFundDetail(peopleid.Value);
 
-            var req = await client.GetAsync(url + "/Order/SocialSecurity/GetUnInsuredPeopleList?memberID="+id);
+            var req = await client.GetAsync(url + "/SocialSecurity/GetUnInsuredPeopleList?memberID=" + id);
+            var result = (await req.Content.ReadAsAsync<JsonResult<List<UnInsuredPeople>>>());
 
-            var item = (await req.Content.ReadAsAsync<JsonResult<List<UnInsuredPeople>>>()).Data.Where(a => a.SocialSecurityPeopleID == peopleid.Value).FirstOrDefault();
-
-
-            if (item == null)
+            if (result.Data != null)
             {
-                TempData["Message"] = "获取不到未参保。";
-                return RedirectToAction("CustomerPaymentManagement");
-            }
+                var item = result.Data.Where(a => a.SocialSecurityPeopleID == peopleid.Value).FirstOrDefault();
 
-            return View(item);
+                if (item == null)
+                {
+                    TempData["Message"] = "获取不到未参保。";
+                    return RedirectToAction("CustomerPaymentManagement");
+                }
+                return View(item);
+            }
+            TempData["Message"] = result.Message;
+            return RedirectToAction("CustomerPaymentManagement");
+
         }
 
         [HttpPost]
