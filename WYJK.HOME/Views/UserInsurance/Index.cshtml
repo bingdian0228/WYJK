@@ -1,0 +1,152 @@
+﻿@model WYJK.Entity.PagedResult<WYJK.HOME.Models.InsuranceListViewModel>
+@{
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+@Html.Partial("~/Views/_Pager.cshtml") 
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+        @using (Html.BeginForm("Index", "UserInsurance", FormMethod.Get))
+        {
+            <h3 class="panel-title row">
+                <div class="col-lg-3">
+                    @Html.Hidden("PageIndex")
+                    @Html.TextBox("SocialSecurityPeopleName", null,new { @class= "form-control" ,placeholder = "姓名" })
+                </div>
+                <div class="col-lg-3">
+                    @Html.DropDownList("HouseholdProperty", ViewData["HouseholdProperty"] as SelectList, new { @class = "form-control" })
+                </div>
+                <div class="col-lg-3">
+                    @Html.TextBox("InsuranceArea", null, new { @class = "form-control", placeholder = "参保城市" })
+                </div>
+                <div class="col-lg-3 text-right">
+                    <button type="button" id="search" class="btn btn-info bg-lightblue">查询</button>
+                </div>
+            </h3>
+        }
+           
+        </div>
+
+        <form action="/UserInsurance/StopSocialSecurity" method="post">
+            <div class="insurance-list-w">
+                <ul class="list-unstyled am-margin-0">
+                    @foreach (var item in Model.Items)
+                    {
+                        <li class="row bg-white">
+                            <div class="col-lg-1">
+                                <div class="checkbox">
+                                    <label>
+                                        @Html.Hidden("people_" + @item.SocialSecurityPeopleID, @item.SocialSecurityPeopleID)
+                                        <input type="checkbox" name="cbxSS" id="" value="@item.SocialSecurityPeopleID" aria-label="...">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-11">
+                                <dl class="am-margin-0">
+                                    <dd class="row am-padding-vertical-sm">
+                                        <div class="col-lg-4">
+                                            姓名：<span class="orange">@item.SocialSecurityPeopleName</span>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            身份证：@item.IdentityCard
+                                        </div>
+                                        <div class="col-lg-4">
+                                            户籍性质：@item.HouseholdProperty
+                                        </div>
+                                    </dd>
+                                    <dd class="row am-padding-vertical-sm">
+                                        <div class="col-lg-4">
+                                            起缴月份：@item.PayTime
+                                        </div>
+                                        <div class="col-lg-4">
+                                            结束月份：@item.StopDate
+                                        </div>
+                                        <div class="col-lg-4">
+                                            社保基数：@item.SocialSecurityBase
+                                        </div>
+                                    </dd>
+                                    <dd class="row am-padding-vertical-sm">
+                                        <div class="col-lg-4">
+                                            社保金额：@item.SocialSecurityAmount
+                                        </div>
+                                        <div class="col-lg-4">
+                                            公积金基数：@item.AccumulationFundBase
+
+                                        </div>
+                                        <div class="col-lg-4">
+                                            公积金金额：@item.SocialSecurityAmount
+                                        </div>
+                                    </dd>
+                                    <dd class="row am-padding-vertical-sm">
+                                        <div class="col-lg-4">
+                                            社保状态：
+                                            @if (item.SocialSecurityStatus != null)
+                                            {
+                                                @EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)item.SocialSecurityStatus.AsInt())
+                                            }
+
+                                        </div>
+                                        <div class="col-lg-4">
+                                            公积金状态：
+                                            @if (item.AccumulationFundStatus != null)
+                                            {
+                                                @EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)item.SocialSecurityStatus.AsInt())
+                                            }
+                                        </div>
+                                        <div class="col-lg-4">
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div id="pager" style="margin-top: 20px;"></div>
+            <div class="row am-padding-vertical-xl">
+                <div class="col-lg-2 col-lg-offset-3">
+                    <input type="button" class="btn btn-info bg-lightblue btn-block" id="btnAll" value="全选" />
+                </div>
+                <div class="col-lg-2">
+                    <input type="submit" class="btn btn-info bg-lightblue btn-block" id="btnStopSS" value="停保" />
+                </div>
+                <div class="col-lg-2">
+                    <input type="submit" formaction="/UserInsurance/StopAF" formmethod="post" class="btn btn-info bg-lightblue btn-block" id="btnStopAF" value="停公积金" />
+                </div>
+            </div>
+
+        </form>
+
+        
+    </div>
+</div>
+@section Footer{
+
+    <script>
+
+        $(function () {
+
+            //全选全不选
+            $("#btnAll").click(function () {
+
+                if ($(this).val() == "全选") {
+                    $("input[name=cbxSS]").attr("checked", true);
+                    $("input[name=cbxSS]").prop("checked", true);
+                    $(this).val("全不选");
+                }
+                else {
+                    $("input[name=cbxSS]").attr("checked", false);
+                    $("input[name=cbxSS]").prop("checked", false);
+                    $(this).val("全选");
+                }
+
+            });
+
+        });
+
+
+    </script>
+
+
+}

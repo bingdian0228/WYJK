@@ -1,0 +1,29 @@
+﻿@if (TempData["Message"] != null && TempData["Message"].ToString().Length > 0)
+{
+    if (TempData["MessageType"].Equals(true))
+    {
+        <div class="alert alert-success" id="message_panel" role="alert">@TempData["Message"]</div>
+    }
+    else
+    {
+        <div class="alert alert-danger" id="message_panel" role="alert">@TempData["Message"]</div>
+    }
+ 
+}
+<div class="alert alert-danger" id="error_message_panel" style="display:none;">
+    <span id="validationSummary">@Html.ValidationSummary()</span>
+</div>
+
+<script>
+    $(function () {
+        setTimeout('$("#message_panel").hide(300)', 1500);
+        
+        if ($.trim($("#errorMsg").html()).length > 0) {
+            $("#error_message_panel").show();
+        }
+
+        if ($("#validationSummary li:not([style='display:none'])").length > 0) {
+            $("#error_message_panel").show();
+        }
+    })
+</script>

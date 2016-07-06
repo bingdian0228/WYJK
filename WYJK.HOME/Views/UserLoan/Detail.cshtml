@@ -1,0 +1,97 @@
+﻿@model MemberLoanAudit
+
+@{
+    ViewBag.Title = "借款详情";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                借款详情
+            </h3>
+        </div>
+        <div class="panel-body bg-white">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <td>借款金额</td>
+                        <td>@Model.ApplyAmount</td>
+                    </tr>
+                    <tr>
+                        <td>本金</td>
+                        <td>@Model.ApplyAmount</td>
+                    </tr>
+                    <tr>
+                        <td>利息</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>违约金</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>滞纳金</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>还款方式</td>
+                        <td>@EnumExt.GetEnumCustomDescription((LoanMethodEnum)int.Parse(Model.LoanMethod))</td>
+                    </tr>
+                    <tr>
+                        <td>借款状态</td>
+                        <td><span class="text-primary">@EnumExt.GetEnumCustomDescription((LoanAuditEnum)Convert.ToInt32(Model.Status))</span></td>
+                    </tr>
+                    <tr>
+                        <td>借款日期</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>还款日期</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!--还款记录-->
+            <h4 class="text-primary">还款记录</h4>
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>还款日期</th>
+                    <th>本金</th>
+                    <th>利息</th>
+                    <th>应还金额</th>
+                    <th>实付金额</th>
+                    <th>还款状态</th>
+                </tr>
+                <tbody>
+                    <tr>
+                        <td>2016-04-15</td>
+                        <td>2154.0</td>
+                        <td>12.3</td>
+                        <td>2265.3</td>
+                        <td>2265.3</td>
+                        <td>已结清</td>
+                    </tr>
+                    <tr>
+                        <td>2016-04-15</td>
+                        <td>2154.0</td>
+                        <td>12.3</td>
+                        <td>2265.3</td>
+                        <td>2265.3</td>
+                        <td>已结清</td>
+                    </tr>
+                    <tr>
+                        <td>2016-04-15</td>
+                        <td>2154.0</td>
+                        <td>12.3</td>
+                        <td>2265.3</td>
+                        <td>2265.3</td>
+                        <td>已结清</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+

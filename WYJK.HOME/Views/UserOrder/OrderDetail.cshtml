@@ -1,0 +1,103 @@
+﻿@model List<OrderDetaisViewModel>
+@{
+    ViewBag.Title = "订单详情";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                <div class="pull-left">
+                    <i class="icon-w icon-files-b am-margin-right-xs"></i>
+                    <span class="am-text-middle">订单信息</span>
+                </div>
+            </h3>
+        </div>
+        <div class="insurance-list-w">
+            <ul class="list-unstyled am-margin-0">
+
+                @foreach (var item in Model)
+                {
+                    <li class="row bg-white">
+                        <div class="col-lg-12">
+                            <dl class="am-margin-0">
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4">
+                                        姓名：@item.SocialSecurityPeopleName
+                                    </div>
+                                    <div class="col-lg-4">
+                                        城市：@item.InsuranceArea
+                                    </div>
+                                    <div class="col-lg-4">
+                                        户籍性质：@item.HouseholdProperty
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4">
+                                        起缴月份：@item.SocialSecuritypayMonth
+                                    </div>
+                                    <div class="col-lg-4">
+                                        结束月份：2016-05
+                                    </div>
+                                    <div class="col-lg-4">
+                                        社保基数：@item.SocialSecurityBase
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4">
+                                        社保：@item.SocialSecurityAmount
+                                    </div>
+                                    <div class="col-lg-4">
+                                        公积金基数：@item.AccumulationFundBase
+                                    </div>
+                                    <div class="col-lg-4">
+                                        公积金：@item.AccumulationFundAmount
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4">
+                                        冻结费：
+                                    </div>
+                                    <div class="col-lg-4">
+                                        服务费：
+                                    </div>
+                                    <div class="col-lg-4">
+                                        缴纳金额：
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </li>
+                }
+
+            </ul>
+        </div>
+        <!--合计-->
+        <table class="table">
+            <thead>
+                <tr class="warning">
+                    <th>社保金额</th>
+                    <th>公积金</th>
+                    <th>服务费</th>
+                    <th>代办费</th>
+                    <th>合计</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ 
+
+                    OrderDetailForMobile detail = ViewBag.Detail;
+                }
+                <tr class="warning">
+                    <td>@detail.SocialSecurityTotalAmount</td>
+                    <td>@detail.AccumulationFundTotalAmount</td>
+                    <td>@detail.ServiceCost</td>
+                    <td>@detail.FirstBacklogCost</td>
+                    <td class="orange">@(detail.SocialSecurityTotalAmount+ detail.AccumulationFundTotalAmount+ detail.ServiceCost+ detail.FirstBacklogCost)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

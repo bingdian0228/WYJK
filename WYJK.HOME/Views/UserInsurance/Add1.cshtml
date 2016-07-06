@@ -1,0 +1,120 @@
+﻿@model InsuranceAdd1ViewModel
+@{
+    Layout = "~/Views/_Layout_black.cshtml";
+}
+
+@section Header {
+    <link rel="stylesheet" type="text/css" href="~/Content/css/fileinput.min.css" />
+    <style>
+        .field-validation-error
+        {
+            color:red;
+        }
+    </style>
+}
+@section Footer {
+    <script src="~/scripts/fileinput.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="~/scripts/fileinput_locale_zh.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+			        $('#file-5').fileinput({
+				        language: 'zh',
+				        uploadUrl: '/UserInsurance/UploadIDCard',
+				        dropZoneTitle:'请上传身份证正、反两面各一张',
+				        allowedFileExtensions: ['jpg', 'png', 'gif']
+			        });
+
+			        $("#file-5").on("fileuploaded", function (event, data, previewId, index) {
+			            
+			            $("#IdentityCardPhoto").val($("#IdentityCardPhoto").val() + "," + data.response);
+
+			        });
+    </script>
+}
+
+<div class="bg-lightgrey">
+
+
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                立即投保/新增参保人
+            </span>
+        </div>
+        @Html.Partial("~/Views/Message.cshtml")
+        <!--进度条-->
+        <div class="statusBox-w add-insurance am-padding-vertical-sm">
+            <ul class="clearfix am-padding-0">
+                <li class="current">
+                    <b class="num pull-left">1</b>
+                    <span class="pull-left">添加参保人</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="">
+                    <b class="num pull-left">2</b>
+                    <span class="pull-left">缴纳社保</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="">
+                    <b class="num pull-left">3</b>
+                    <span class="pull-left">缴纳公积金</span>
+                </li>
+            </ul>
+        </div>
+        <!--表单计算-->
+
+        @using (Html.BeginForm("Add1", "UserInsurance", FormMethod.Post, new { enctype = "multipart/form-data",@class="form-horizontal" }))
+        {
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-lg-offset-2 control-label">姓名</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.SocialSecurityPeopleName, new { @class = "form-control", @placeholder = "请输入姓名" })
+                        @*@Html.ValidationMessageFor(m => m.SocialSecurityPeopleName)*@
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-lg-offset-2 control-label">身份证</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.IdentityCard, new { @class = "form-control", @placeholder = "请输入身份证" })
+                        @*@Html.ValidationMessageFor(m => m.IdentityCard)*@
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-lg-offset-2 control-label">身份证照片</label>
+                    <div class="col-lg-7">
+                        <input id="file-5" name="IdentityCardPhoto" value="" class="file" type="file" placeholder="" multiple="multiple">
+
+                        <input type="hidden" id="filePath" />
+                        @Html.HiddenFor(m => m.IdentityCardPhoto, new { })
+                        
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-lg-offset-2 control-label">户籍性质</label>
+                    <div class="col-lg-4">
+                        @Html.DropDownListFor(m => m.HouseholdProperty, ViewData["HouseholdProperty"] as SelectList, new { @class = "form-control" })
+                        @*@Html.ValidationMessageFor(m => m.HouseholdProperty)*@
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-lg-offset-2 control-label">所需材料</label>
+                    <div class="col-lg-8 control-label">
+                        <div class="text-left">
+                            本市城镇：若有失业证，则需邮寄失业证，或线下递交
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group am-padding-vertical-xl">
+                    <div class="row">
+                        <div class="col-lg-offset-4 col-lg-4 text-center">
+                            <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">下一步</button>
+                        </div>
+                    </div>
+                </div>
+
+        }
+
+        
+    </div>
+
+</div>

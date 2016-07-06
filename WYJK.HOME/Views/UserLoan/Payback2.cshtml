@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "Payback2";
+    Layout = "~/Views/_Layout_black.cshtml";
+}
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                还款（二）
+            </span>
+        </div>
+        <!--表单计算-->
+        <div class="am-padding-xl">
+            <form class="form-horizontal" action="/UserLoan/Payback2" method="post">
+                <div class="row am-margin-bottom-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>贷款金额(元)</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        30000
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>贷款余额（元）</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        10000
+                    </div>
+                </div>
+                <div class="row am-margin-bottom-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>还款类型</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        全部提前还款
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>还款账号</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        623582000009369730
+                    </div>
+                </div>
+                <div class="row am-margin-bottom-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>还款金额(元)</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        32000
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>本金(元)</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        21000
+                    </div>
+                </div>
+                <div class="row am-margin-bottom-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>利息(元)</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        32000
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>违约金(元)</strong>
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-4">
+                        21000
+                    </div>
+                </div>
+
+                <div class="row am-margin-vertical-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>滞纳金（元）</strong>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        0.00
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-4 col-lg-4 text-center">
+                        <input type="submit" class="btn btn-info bg-lightblue btn-lg btn-block" value="继续" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

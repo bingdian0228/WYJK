@@ -1,0 +1,58 @@
+﻿@model WYJK.Entity.PagedResult<WYJK.HOME.Models.SocialSecurityPeopleViewModel>
+
+@{
+    ViewBag.Title = "RecSB";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+@Html.Partial("~/Views/_Pager.cshtml") 
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                社保基数变更历史
+            </h3>
+        </div>
+        <div class="insurance-list-w">
+            <ul class="list-unstyled am-margin-0">
+
+                @foreach (var item in Model.Items)
+                {
+                    <li class="row bg-white">
+                        <div class="col-lg-12">
+                            <dl class="am-margin-0">
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-6">
+                                        姓名：<span class="orange">@item.SocialSecurityPeopleName</span>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        身份证：@item.IdentityCard
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-6">
+                                        户籍性质：@item.HouseholdProperty
+                                    </div>
+                                    <div class="col-lg-6">
+                                        原有社保基数：@item.CurrentBase
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-6 col-lg-offset-6">
+                                        变更后基数：<span class="orange">@item.BaseAdjusted</span>
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </li>
+                }
+
+            </ul>
+        </div>
+        
+        <div id="pager" style="margin-top: 20px;"></div>
+
+    </div>
+</div>
+

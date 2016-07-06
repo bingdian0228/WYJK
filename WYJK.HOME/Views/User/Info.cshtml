@@ -1,0 +1,216 @@
+﻿@model WYJK.Entity.Members 
+@{
+    ViewBag.title = "个人中心";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                <div class="pull-left">
+                    <i class="icon-w icon-info am-margin-right-xs"></i>
+                    <span class="am-text-middle">补充信息</span>
+                </div>
+                <div class="pull-right">
+                    <a href="@Url.Action("InfoChange","User")">
+                        <i class="icon-w icon-edit am-margin-right-xs"></i>
+                        <span class="am-text-middle">修改</span>
+                    </a>
+                </div>
+            </h3>
+        </div>
+        <ul class="list-group grey">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        真实姓名：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.TrueName
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        证件类型：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.CertificateType
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        证件号码：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.CertificateNo
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        政治面貌：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.PoliticalStatus
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        学 历：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.Education
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        生 日：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.Birthday
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        性 别：
+                    </div>
+                    <div class="col-lg-10">
+                        @(Model.Sex == null ? "" : Model.Sex.Equals("0") ? "男" : "女")
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        居住地址：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.Address
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        手机号码：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.Phone
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        邮 箱：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.Email
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        Q Q：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.QQ
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        支付宝账号：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.Alipay
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        银行账号：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.BankCardNo
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        开 户 行：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.BankAccount
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        开 户 人：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.UserAccount
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        第二联系人：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.SecondContact
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        第二联系人手机：
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.SecondContactPhone
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        投 保 地:
+                    </div>
+                    <div class="col-lg-10">
+                        @Model.InsuranceArea
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2 col-sm-2">
+                        户口性质：
+                    </div>
+                    <div class="col-lg-10">
+                        @*@(!string.IsNullOrEmpty(Model.HouseholdType) ? EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)int.Parse(Model.HouseholdType)) : "")*@
+                        @Model.HouseholdType
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

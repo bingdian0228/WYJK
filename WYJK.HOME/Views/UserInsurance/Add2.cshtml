@@ -1,0 +1,161 @@
+﻿@model InsuranceAdd2ViewModel
+@{
+    Layout = "~/Views/_Layout_black.cshtml";
+}
+
+@section Header {
+    <style>
+        .field-validation-error {
+            color: red;
+        }
+    </style>
+}
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                立即投保/新增参保人
+            </span>
+        </div>
+        @Html.Partial("~/Views/Message.cshtml")
+        <!--进度条-->
+        <div class="statusBox-w add-insurance am-padding-vertical-sm">
+            <ul class="clearfix am-padding-0">
+                <li class="prev">
+                    <b class="num pull-left">1</b>
+                    <span class="pull-left">添加参保人</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="current">
+                    <b class="num pull-left">2</b>
+                    <span class="pull-left">缴纳社保</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="">
+                    <b class="num pull-left">3</b>
+                    <span class="pull-left">缴纳公积金</span>
+                </li>
+            </ul>
+        </div>
+        <!--表单计算-->
+@using (Html.BeginForm("Add2", "UserInsurance", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保地</label>
+
+            <div class="col-lg-3">
+                @Html.DropDownList("province", ViewBag.Provinces as List<SelectListItem>, new { @class = "form-control" })
+                <input type="hidden" id="provinceText" name="provinceText" />
+            </div>
+            <div class="col-lg-3">
+                <select id="city" name="city" class="form-control">
+                    <option>请选择城市</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">社保基数</label>
+            <div class="col-lg-6">
+                @Html.TextBoxFor(m => m.SocialSecurityBase, new { @class = "form-control", placeholder = "请输入社保基数" })
+                @*@Html.ValidationMessageFor(m => m.SocialSecurityBase)*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">起缴时间</label>
+            <div class="col-lg-6">
+                @Html.TextBoxFor(m => m.PayTime, new { @class = "form-control", placeholder = "请选择起缴年/月" })
+                @*@Html.ValidationMessageFor(m => m.PayTime)*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保月份</label>
+            <div class="col-lg-6">
+
+                @Html.TextBoxFor(m => m.PayMonthCount, new { @class = "form-control", placeholder = "请输入参保月份" })
+                @*@Html.ValidationMessageFor(m => m.PayMonthCount)*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">补交月份</label>
+            <div class="col-lg-6">
+                @Html.TextBoxFor(m => m.PayBeforeMonthCount, new { @class = "form-control", placeholder = "请输入补交月份" })
+                @*@Html.ValidationMessageFor(m => m.PayBeforeMonthCount)*@
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">今年参保情况</label>
+            <div class="col-lg-6">
+                在银行缴纳 @Html.TextBoxFor(m => m.BankPayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月，
+                在企业缴纳 @Html.TextBoxFor(m => m.EnterprisePayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-lg-2 col-lg-offset-1 control-label">备注</label>
+            <div class="col-lg-6">
+                @Html.TextAreaFor(m => m.Note, new { @class = "form-control", placeholder = "请填写备注" })
+            </div>
+        </div>
+        <div class="form-group am-padding-top-xl">
+            <div class="row">
+                <div class="col-lg-offset-4 col-lg-4 text-center">
+                    <button type="submit" id="confirm" class="btn btn-info bg-lightblue btn-lg btn-block">确认参保</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group am-padding-bottom-xl">
+            <div class="row">
+                <div class="col-lg-offset-4 col-lg-4 text-center">
+                    <button type="submit" formaction="/UserInsurance/Add2Next" id="next" class="btn btn-info bg-lightblue btn-lg btn-block">下一步</button>
+                </div>
+            </div>
+        </div>
+}
+        
+    </div>
+
+</div>
+@section Footer
+{
+    <script>
+
+        $("#city").change(function () {
+
+            var province = $("#province").val();
+            var provinceText = $("#province option[value=" + province + "]").text();
+
+            var city = $("#city").val();
+
+            var area = provinceText + "|" + city;
+
+            //console.log(provinceText + "==" + city + "===" + usertypeText);
+
+            $.ajax({
+
+                url: '/Calculator/GetSocialSecurityBase',
+                data: 'area=' + area + '&householdProperty=""',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.MinBase == 0) {
+
+                        $("#SocialSecurityBase").attr("placeholder", "(暂无该地区社保基数范围)");
+                    }
+                    else {
+                        $("#SocialSecurityBase").attr("placeholder", "社保基数(" + data.MinBase + "-" + data.MaxBase + ")");
+                    }
+                },
+                error: function (a, b, c) {
+                    console.log(a);
+                }
+
+
+            });
+
+        });
+
+
+
+    </script>
+
+
+}

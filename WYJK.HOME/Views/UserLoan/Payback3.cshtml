@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "Payback3";
+    Layout = "~/Views/_Layout_black.cshtml";
+}
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                还款（三）
+            </span>
+        </div>
+        <!--表单计算-->
+        <div class="am-padding-xl">
+            <form class="form-horizontal" action="/UserLoan/Payback3" method="post">
+                <div class="form-group am-padding-left-xl">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="" value="option2">
+                            网银
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group am-padding-left-xl">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="" value="option2">
+                            我的账户 <span class="am-padding-left-lg">50000</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-12 text-right orange">
+                        应还款项合计：32100
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-4 col-lg-4 text-center">
+                        <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">确认</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

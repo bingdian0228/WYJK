@@ -1,0 +1,90 @@
+﻿@model WYJK.HOME.Models.UserOrderPageResult<WYJK.HOME.Models.UserOrderViewModel>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+@Html.Partial("~/Views/_Pager.cshtml")
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <form action="/UserOrder/Index">
+
+            @Html.Hidden("PageIndex")
+            <div class="panel-heading">
+                <h3 class="panel-title">
+
+                    <ul class="order-titleBox-w clearfix">
+                        <li>
+                            <a href="/UserOrder/Index" class="@(Model.Status == null ? "active":"text-muted")">全部</a>
+                        </li>
+                        <li>
+                            <a href="/UserOrder/Index/0" class="@(Model.Status != null && Model.Status.Value == 0 ? "active":"text-muted")">待支付</a>
+                        </li>
+                        <li>
+                            <a href="/UserOrder/Index/1" class="@(Model.Status != null && Model.Status.Value == 1 ? "active":"text-muted")">审核中</a>
+                        </li>
+                        <li>
+                            <a href="/UserOrder/Index/2" class="@(Model.Status != null && Model.Status.Value == 2 ? "active":"text-muted")">交易完成</a>
+                        </li>
+                    </ul>
+                </h3>
+            </div>
+        </form>
+        
+        <div class="insurance-list-w">
+            <ul class="list-unstyled am-margin-0">
+
+                @foreach (var item in Model.Items)
+                {
+                    <li class="row bg-white">
+                        <div class="col-lg-12">
+                            <dl class="am-margin-0">
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4">
+                                        社保/公积金
+                                    </div>
+                                    <div class="col-lg-4">
+                                        订单号：@item.OrderCode
+                                    </div>
+                                    <div class="col-lg-4">
+                                        生成时间：@item.GenerateDate
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4">
+                                        缴交共计：@item.Amounts
+                                    </div>
+                                    <div class="col-lg-4">
+                                        缴交人数：@item.Names.Split(',').Length
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <span class="orange">@EnumExt.GetEnumCustomDescription((OrderEnum)item.Status)</span>
+                                    </div>
+                                </dd>
+                                
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-4 col-lg-offset-8">
+                                        @if (item.Status == 0)
+                                        {
+                                            <a href="/UserOrder/Pay/@item.OrderCode" class="pull-left">立即付款</a>
+                                        }
+                                        
+                                        <a href="/UserOrder/OrderDetail/@item.OrderCode" class="pull-right text-muted"><span class="am-text-middle">详情</span><i class="glyphicon glyphicon-menu-right am-text-middle"></i></a>
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+        <!--分页-->
+        <div id="pager" style="margin-top: 20px;"></div>
+        
+        
+        
+    </div>
+</div>
+

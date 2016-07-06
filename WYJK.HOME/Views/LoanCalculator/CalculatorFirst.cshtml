@@ -1,0 +1,159 @@
+﻿
+@{
+    ViewBag.Title = "CalculatorFirst";
+    Layout = "~/Views/_Layout_SocialSecurity.cshtml";
+}
+
+@section head
+{
+    <link href="~/Content/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+}
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                身价计算
+            </span>
+        </div>
+        <!--进度条-->
+        <div class="statusBox-w am-padding-vertical-sm">
+            <ul class="clearfix am-padding-0">
+                <li class="current">
+                    <b class="num pull-left">1</b>
+                    <span class="pull-left">身价计算(一)</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="">
+                    <b class="num pull-left">2</b>
+                    <span class="pull-left">身价计算(二)</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="">
+                    <b class="num pull-left">3</b>
+                    <span class="pull-left">身价计算(三)</span>
+                    <i class="icon-w pull-right"></i>
+                </li>
+                <li class="">
+                    <b class="num pull-left">4</b>
+                    <span class="pull-left">身价计算(四)</span>
+                </li>
+            </ul>
+        </div>
+        <!--表单计算-->
+        <form class="form-horizontal" >
+            <div class="form-group">
+                <div class="col-lg-12">
+                    （一）社保交费时段
+                </div>
+            </div>
+
+
+            <div id="jiaofeiDiv">
+
+                @for (int i = 1; i <= 2; i++)
+            {
+                    <div class="form-group" id="form-group-@i" title="@i">
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <input class="form-control" type="text" id="" placeholder="请选择开始时间">
+                        </div>
+                        <div class="col-lg-1 col-md-1 col-sm-1 text-center">
+                            <div class="am-padding-vertical-xs">
+                                至
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <input class="form-control" type="text" id="" placeholder="请选择结束时间" >
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 orange text-center">
+                            <div class="am-padding-vertical-xs">
+                                共计<span id="jiaofeiSpan_@i">0</span>个月
+                            </div>
+                        </div>
+                        <div class="col-lg-1 col-md-1 col-sm-1 text-right">
+                            <div class="am-padding-vertical-xs">
+                                <i class="glyphicon glyphicon-remove text-primary" title="@i" onclick="javascript: removeFormGrop(this)"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                }
+
+
+
+            </div>
+            
+            <!--继续添加-->
+            <div class="form-group">
+                <div class="col-lg-12 text-right">
+                    <a href="javascript:void(0)" id="continueAdd">继续添加</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-12 text-primary">
+                    @*注释：从近期往前期时段添加，为保证即时到账，请平时添加，以备急用。*@
+                </div>
+            </div>
+            <div class="form-group am-padding-vertical-xxl">
+                <div class="col-lg-offset-4 col-lg-4 text-center">
+                    <a href="/LoanCalculator/CalculatorSecond" class="btn btn-info bg-lightblue btn-lg btn-block">下一步</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="/scripts/bootstrap-datetimepicker.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/scripts/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+			    $(document).ready(function() {
+			        inputDatepicker();
+			    });
+
+			    function inputDatepicker(){
+			        $('input').datetimepicker({
+			            language: 'zh-CN',
+			            format: 'yyyy-mm',
+			            weekStart: 1,
+			            autoclose: 1,
+			            todayHighlight: 1,
+			            startView: 4,
+			            minView: 3,
+			            forceParse: 0
+			        });
+			    }
+
+    </script>
+    <script>
+
+        $(function () {
+
+            //动态添加时间段
+            $("#continueAdd").click(function () {
+
+                var num = $("#jiaofeiDiv .form-group:last").attr("title");
+
+                num++;
+
+                var timeStr = '<div id="form-group-' + num + '" class="form-group" title=' + num + '><div class="col-lg-4 col-md-4 col-sm-4"><input class="form-control" type="text" id="" placeholder="请选择开始时间"></div><div class="col-lg-1 col-md-1 col-sm-1 text-center"><div class="am-padding-vertical-xs">至</div></div><div class="col-lg-4 col-md-4 col-sm-4"><input class="form-control" type="text" id="" placeholder="请选择结束时间"></div><div class="col-lg-2 col-md-2 col-sm-2 orange text-center"><div class="am-padding-vertical-xs">共计20个月</div></div><div class="col-lg-1 col-md-1 col-sm-1 text-right"><div class="am-padding-vertical-xs"><i class="glyphicon glyphicon-remove text-primary" title=' + num + ' onclick="javascript: removeFormGrop(this)"></i></div></div></div>';
+                $("#jiaofeiDiv").append(timeStr);
+
+                inputDatepicker();
+
+            });
+
+        });
+
+        //动态删除时间段
+        function removeFormGrop(obj) {
+
+            $("#form-group-" + obj.title).remove();
+        }
+
+
+    </script>
+ }
+
