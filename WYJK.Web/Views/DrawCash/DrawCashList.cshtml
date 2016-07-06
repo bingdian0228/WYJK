@@ -17,10 +17,18 @@
             curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
                 var page = location.search.match(/PageIndex=(\d+)/);
                 return page ? page[1] : 1;
-            }()            
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr
+                    + "&SocialSecurityPeopleName=" + '@Request.QueryString["SocialSecurityPeopleName"]'
+                    + "&Status=" + '@Request.QueryString["Status"]';
+
+                }
+            }
         });
 
-        $(function () {        
+        $(function () {
 
             //不通过审核
             $(".action-noagree").click(function () {
@@ -83,7 +91,7 @@
                 }
                 var DrawCashIds = [];
                 var count = 0;
-                
+
                 $("input[type='checkbox']:checked").each(function (i) {
                     count++;
                     DrawCashIds[i] = $(this).val();
@@ -111,7 +119,7 @@
                 yes: function (index, layero) {
 
                     var childIndex = layer.load(1, { shade: [0.1, '#000'] });
-                    
+
                     var form = layer.getChildFrame('form', index);
                     form.submit();
 
@@ -125,7 +133,7 @@
                         refresh();
                     }
                 },
-                success: function (index, layero) {                    
+                success: function (index, layero) {
                     if (save === 1) {
                         layer.closeAll();
                         refresh();

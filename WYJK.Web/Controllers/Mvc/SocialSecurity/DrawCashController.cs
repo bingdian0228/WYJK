@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,6 +11,7 @@ using WYJK.Data.IServices;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
+using WYJK.Framework.Helpers;
 using WYJK.Web.Models;
 
 namespace WYJK.Web.Controllers.Mvc
@@ -49,7 +51,7 @@ namespace WYJK.Web.Controllers.Mvc
         public async Task<JsonResult> NotAgree(int[] DrawCashIds)
         {
             string dcIds = string.Join(",", DrawCashIds);
-            int restult = await DbHelper.ExecuteSqlCommandAsync($"UPDATE dbo.DrawCash SET ApplyStatus=2 WHERE DrawCashId IN ({ dcIds}) ");
+            int restult = await DbHelper.ExecuteSqlCommandAsync($"UPDATE dbo.DrawCash SET ApplyStatus=3 WHERE DrawCashId IN ({ dcIds}) ");
             bool flag = false;
             if (restult > 0)
             {
@@ -92,60 +94,12 @@ namespace WYJK.Web.Controllers.Mvc
             DrawCash entity = DbHelper.QuerySingle<DrawCash>(sql);
             ViewData["money"] = entity.Money.ToString("N2");
 
-            #region 检测余额是否够用,不够用则状态变为待续费
-            string sqlStr2 = string.Empty;
-            #region 查询每个用户余额
-            int memberid = DbHelper.QuerySingle<int>($"select MemberId from DrawCash where DrawCashId={DrawCashIds[0]}");
-            Members member = DbHelper.QuerySingle<Members>($"select * from Members where MemberID={memberid}");
-            decimal totalAccount = 0;
-            //查询该用户下的所有参保人
-            string sqlSocialSecurityPeople = $"select * from SocialSecurityPeople where MemberID={member.MemberID}";
-            List<SocialSecurityPeople> SocialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>(sqlSocialSecurityPeople);
-            string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
 
-            //查询该用户下的所有正常参保方案
-            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
-            List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
-            foreach (SocialSecurity socialSecurity in SocialSecurityList)
-            {
-                //社保单月金额
-                decimal account = socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100;
-                totalAccount += account;
-            }
-
-            //查询该用户下的所有正常参公积金方案
-            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
-            List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
-            foreach (AccumulationFund accumulationFund in AccumulationFundList)
-            {
-                //公积金单月金额
-                decimal account = accumulationFund.AccumulationFundBase * accumulationFund.PayProportion / 100;
-                totalAccount += account;
-            }
-            #endregion
-
-            #region 查询余额是否够用,若不够用，则变为待续费
-            if (member.Account < totalAccount)
-            {
-                //该用户下的正常社保变为待续费
-                foreach (SocialSecurity socialSecurity in SocialSecurityList)
-                {
-                    sqlStr2 += $"update SocialSecurity set Status ={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
-                }
-                //该用户下的正常公积金变为待续费
-                foreach (AccumulationFund accumulationFund in AccumulationFundList)
-                {
-                    sqlStr2 += $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID ={accumulationFund.SocialSecurityPeopleID};";
-                }
-
-            }
-            #endregion
-
-            #endregion
 
             return View(model);
         }
-
+        private static string apikey = ConfigurationManager.AppSettings["apikey"].ToString();
+        private static string contentFormat = ConfigurationManager.AppSettings["SMS15Warn"].ToString();
         /// <summary>
         /// 同意提现填写打款信息
         /// </summary>
@@ -159,14 +113,87 @@ namespace WYJK.Web.Controllers.Mvc
                 try
                 {
 
-                    string sql = $"update DrawCash set ApplyStatus=1,agreetime=getdate(),paysn='{model.OrderNo}' where DrawCashId in ({model.DrawCashIds});";
+                    string sql = $"update DrawCash set ApplyStatus=2,agreetime=getdate(),paysn='{model.OrderNo}' where DrawCashId in ({model.DrawCashIds});";
                     foreach (string item in model.DrawCashIds.Split(','))
                     {
                         sql += $"update Members set Account=Account-(select money from DrawCash where DrawCashid={item}) where memberid = (select memberid from DrawCash where DrawCashid={item});";
                     }
 
                     await Data.DbHelper.ExecuteSqlCommandAsync(sql);
-                    List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account,Bucha,HeadPortrait from Members where MemberID in(select memberid from DrawCash  WHERE DrawCashId IN ({model.DrawCashIds})) ");
+
+                    #region 检测余额是否够用,不够用则状态变为待续费
+                    string sqlStr2 = string.Empty;
+                    #region 查询每个用户余额
+                    int memberid = DbHelper.QuerySingle<int>($"select MemberId from DrawCash where DrawCashId={model.DrawCashIds}");
+                    Members member = DbHelper.QuerySingle<Members>($"select * from Members where MemberID={memberid}");
+                    decimal totalAccount = 0;
+                    //查询该用户下的所有参保人
+                    string sqlSocialSecurityPeople = $"select * from SocialSecurityPeople where MemberID={member.MemberID}";
+                    List<SocialSecurityPeople> SocialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>(sqlSocialSecurityPeople);
+                    string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
+
+                    //查询该用户下的所有正常参保方案
+                    string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
+                    List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
+                    foreach (SocialSecurity socialSecurity in SocialSecurityList)
+                    {
+                        //社保单月金额
+                        decimal account = socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100;
+                        totalAccount += account;
+                    }
+
+                    //查询该用户下的所有正常参公积金方案
+                    string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Normal}";
+                    List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
+                    foreach (AccumulationFund accumulationFund in AccumulationFundList)
+                    {
+                        //公积金单月金额
+                        decimal account = accumulationFund.AccumulationFundBase * accumulationFund.PayProportion / 100;
+                        totalAccount += account;
+                    }
+                    #endregion
+
+                    #region 查询余额是否够用,若不够用，则变为待续费
+                    if (member.Account < totalAccount)
+                    {
+                        //该用户下的正常社保变为待续费
+                        foreach (SocialSecurity socialSecurity in SocialSecurityList)
+                        {
+                            sqlStr2 += $"update SocialSecurity set Status ={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
+                        }
+                        //该用户下的正常公积金变为待续费
+                        foreach (AccumulationFund accumulationFund in AccumulationFundList)
+                        {
+                            sqlStr2 += $"update AccumulationFund set Status={(int)SocialSecurityStatusEnum.Renew} where SocialSecurityPeopleID ={accumulationFund.SocialSecurityPeopleID};";
+                        }
+
+                        Message message = new Message();
+                        message.MemberID = member.MemberID;
+                        message.ContentStr = "您的账户余额已不足抵扣下个月社保、公积金.请及时充值.";
+
+                        //发送消息提醒
+                        DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},'{message.ContentStr}')", null);
+
+                        #region 发送短信
+                        string content = string.Format(contentFormat, member.MemberPhone.Substring(member.MemberPhone.Length - 4), member.Account, DateTime.Now.AddMonths(1).Month, totalAccount, totalAccount - member.Account);
+
+                        Sms.sendSms(apikey, content, member.MemberPhone);
+                        #endregion
+
+                    }
+                    #endregion
+
+
+                    #endregion
+
+                    #region 记录流水
+                    decimal money = DbHelper.QuerySingle<decimal>($"select Money from DrawCash where DrawCashId={model.DrawCashIds}");
+                    string sqlAccountRecord = $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{member.MemberID},'','','支出','余额','提现',{money},{member.Account - money},getdate())"; 
+
+                    #endregion
+
+                    List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account, Bucha, HeadPortrait from Members where MemberID in(select memberid from DrawCash WHERE DrawCashId IN ({ model.DrawCashIds})) ");
                     //string names = string.Empty;
                     //list.ForEach(l =>
                     //{
@@ -176,10 +203,11 @@ namespace WYJK.Web.Controllers.Mvc
                     //{
                     //    names = names.TrimEnd(',');
                     //}
-                    list.ForEach(l =>{
-                        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name,MemberID=l.MemberID, Contents = string.Format("提现申请成功客户:{0}", l.MemberName) });
+                    list.ForEach(l =>
+                    {
+                        LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = l.MemberID, Contents = string.Format("提现申请成功客户:{0}", l.MemberName) });
                     });
-                    
+
                 }
                 catch (Exception ex)
                 {
