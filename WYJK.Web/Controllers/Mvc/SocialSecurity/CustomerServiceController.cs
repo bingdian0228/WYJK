@@ -744,39 +744,23 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
             ViewBag.SocialSecurityDetail = _socialSecurityService.GetSocialSecurityDetail(peopleid.Value);
             ViewBag.AccumulationFund = _accumulationFundService.GetAccumulationFundDetail(peopleid.Value);
 
-            ////未参保状态
-            int status = (int)SocialSecurityStatusEnum.UnInsured;
+            var req = await client.GetAsync(url + "/SocialSecurity/GetUnInsuredPeopleList?memberID=" + id);
+            var result = (await req.Content.ReadAsAsync<JsonResult<List<UnInsuredPeople>>>());
 
-            UnInsuredPeople item = (await _socialSecurityService.GetUnInsuredPeopleList(id.Value, status, peopleid.Value)).FirstOrDefault();
-
-            if (item == null)
+            if (result.Data != null)
             {
-                TempData["Message"] = "获取不到未参保。";
-                return RedirectToAction("CustomerPaymentManagement");
-            }
+                var item = result.Data.Where(a => a.SocialSecurityPeopleID == peopleid.Value).FirstOrDefault();
 
-            if (item.IsPaySocialSecurity)
-            {
-                item.SocialSecurityAmount = item.SocialSecurityBase * item.SSPayProportion / 100 * item.SSPayMonthCount;
-                item.socialSecurityFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.SocialSecurity).BacklogCost;
+                if (item == null)
+                {
+                    TempData["Message"] = "获取不到未参保。";
+                    return RedirectToAction("CustomerPaymentManagement");
+                }
+                return View(item);
             }
-            if (item.IsPayAccumulationFund)
-            {
-                item.AccumulationFundAmount = item.AccumulationFundBase * item.AFPayProportion / 100 * item.AFPayMonthCount;
-                item.AccumulationFundFirstBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
-            }
+            TempData["Message"] = result.Message;
+            return RedirectToAction("CustomerPaymentManagement");
 
-            if (item.SSStatus != (int)SocialSecurityStatusEnum.UnInsured)
-            {
-                item.SSStatus = 0;
-            }
-
-            if (item.AFStatus != (int)SocialSecurityStatusEnum.UnInsured)
-            {
-                item.AFStatus = 0;
-            }
-
-            return View(item);
         }
 
         [HttpPost]
@@ -789,9 +773,6 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                 var result = await req.Content.ReadAsAsync<JsonResult<string>>();
                 TempData["Message"] = result.Message;
 
-                var SocialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(peopleid.Value);
-                var AccountInfo = _memberService.GetAccountInfo(id.Value);
-
 
                 if (result.status)
                 {
@@ -800,7 +781,11 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
 
                     var result1 = await payreq.Content.ReadAsAsync<JsonResult<Dictionary<bool, string>>>();
                     TempData["Message"] = result1.Message;
-                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = id, SocialSecurityPeopleID = peopleid, Contents = string.Format("线下交款：会员：{0}，参保人：{1}，金额：{2}，支付方式：{3}", AccountInfo.MemberName, SocialSecurityPeople.SocialSecurityPeopleName, Amount, PayMethod) });
+
+                    var memberInfo = _memberService.GetMemberInfoForAdmin(id.Value);
+                    var socialSecurityPeople = _socialSecurityService.GetSocialSecurityPeopleForAdmin(peopleid.Value);
+
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = id, SocialSecurityPeopleID = peopleid, Contents = string.Format("线下交款：会员：{0}，参保人：{1}，金额：{2}，支付方式：{3}", memberInfo.MemberName, socialSecurityPeople.SocialSecurityPeopleName, (Amount ?? 0).ToString("0.00"), PayMethod) });
                 }
             }
             catch (Exception ex)
