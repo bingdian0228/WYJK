@@ -353,7 +353,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 {
                     if (socialSecurityPeople.accumulationFund.AccumulationFundID > 0)
                     {
-                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IsPayAccumulationFund=1 where IdentityCard='{socialSecurityPeople.IdentityCard}'", null);
+                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IsPayAccumulationFund=1,CreateDt=getdate() where IdentityCard='{socialSecurityPeople.IdentityCard}'", null);
                         int socialSecurityPeopleID = DbHelper.QuerySingle<int>($"select SocialSecurityPeopleID from SocialSecurityPeople where IdentityCard='{socialSecurityPeople.IdentityCard}'");
                         DbHelper.ExecuteSqlCommand($"update AccumulationFund set SocialSecurityPeopleID = {socialSecurityPeopleID} where AccumulationFundID = {socialSecurityPeople.accumulationFund.AccumulationFundID }", null);
                     }
@@ -370,7 +370,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 {
                     if (socialSecurityPeople.socialSecurity.SocialSecurityID > 0)
                     {
-                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IsPaySocialSecurity=1 where IdentityCard='{socialSecurityPeople.IdentityCard}'", null);
+                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set IsPaySocialSecurity=1,CreateDt=getdate() where IdentityCard='{socialSecurityPeople.IdentityCard}'", null);
                         int socialSecurityPeopleID = DbHelper.QuerySingle<int>($"select SocialSecurityPeopleID from SocialSecurityPeople where IdentityCard='{socialSecurityPeople.IdentityCard}'");
                         DbHelper.ExecuteSqlCommand($"update SocialSecurity set SocialSecurityPeopleID = {socialSecurityPeopleID} where SocialSecurityID = {socialSecurityPeople.socialSecurity.SocialSecurityID}", null);
                     }
@@ -906,6 +906,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                     //如果是从重新办理过来的
                     if (socialSecurityPeople.IsReApply)
                     {
+                        //更新参保人的客服时间
+                        DbHelper.ExecuteSqlCommand($"update SocialSecurityPeople set CreateDt=getdate() where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID}", null);
+
                         //保存社保参保方案
                         if (socialSecurityPeople.socialSecurity != null)
                         {

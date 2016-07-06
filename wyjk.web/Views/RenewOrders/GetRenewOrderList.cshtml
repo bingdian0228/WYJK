@@ -17,7 +17,15 @@
             curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
                 var page = location.search.match(/PageIndex=(\d+)/);
                 return page ? page[1] : 1;
-            }()
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr
+                    + "&SocialSecurityPeopleName=" + '@Request.QueryString["SocialSecurityPeopleName"]'
+                    + "&Status=" + '@Request.QueryString["Status"]';
+
+                }
+            }
         });
 
         $(function () {

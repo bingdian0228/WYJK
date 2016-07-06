@@ -396,7 +396,7 @@ namespace WYJK.Web.Controllers.Mvc
 
                     #region 提示客服并提示客户
                     //参保人名称
-                    SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID={model.PeopleIds[0]}");
+                    SocialSecurityPeople socialSecurityPeople = DbHelper.QuerySingle<SocialSecurityPeople>($"select * from SocialSecurityPeople where SocialSecurityPeopleID={model.PeopleIds}");
                     string socialSecurityPeopleName = socialSecurityPeople.SocialSecurityPeopleName;
                     int memberID = socialSecurityPeople.MemberID;
 

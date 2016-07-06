@@ -1576,7 +1576,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         {
             //检测提现金额不能大于可提取余额
             decimal Account = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID={drawCash.MemberID}");
-            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={drawCash.MemberID}");
+            decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={drawCash.MemberID} where ApplyStatus=1");
             if(drawCash.Money> Account- DongJie)
                 return new JsonResult<dynamic>
                 {
@@ -1584,7 +1584,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     Message = "提现金额不能大于可提取余额"
                 };
 
-            DbHelper.ExecuteSqlCommand($"insert into DrawCash(MemberId,Money,ApplyTime,ApplyStatus,LeftAccount) values({drawCash.MemberID},'{drawCash.Money}','{DateTime.Now}',0,'{drawCash.LeftAccount}')", null);
+            DbHelper.ExecuteSqlCommand($"insert into DrawCash(MemberId,Money,ApplyTime,ApplyStatus,LeftAccount) values({drawCash.MemberID},'{drawCash.Money}','{DateTime.Now}',1,'{drawCash.LeftAccount}')", null);
             return new JsonResult<dynamic>
             {
                 status = true,
