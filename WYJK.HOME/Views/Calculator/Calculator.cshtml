@@ -1,0 +1,169 @@
+﻿@model SocialSecurityBase
+
+@{
+    ViewBag.Title = "Calculator";
+    Layout = "~/Views/_Layout_SocialSecurity.cshtml";
+}
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w grey">
+                社保计算器
+            </span>
+        </div>
+        <!--表单计算-->
+        <div class="am-padding-xl">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-lg-2 col-md-2 col-sm-2 control-label">选择城市</label>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+
+                        @Html.DropDownList("province", ViewBag.Provinces as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+                        <select id="city" name="city" class="form-control">
+                            <option>请选择城市</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label">户籍性质</label>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+                        @Html.DropDownList("usertype", ViewBag.UserTypes as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-md-2 col-sm-2 control-label">社保基数</label>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+                        <input class="form-control" type="text" id="txtSSBase" name="txtSSBase" placeholder="请输入社保基数">
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+                        <div class="am-padding-top-xs">
+                            基数范围：<span class="text-primary" id="ssBase"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 col-md-2 col-sm-2 control-label">公积金基数</label>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+                        <input class="form-control" type="text" id="txtAFBase" name="txtAFBase" placeholder="请输入公积金基数">
+                    </div>
+                    <div class="col-lg-3 col-md-5 col-sm-5">
+                        <div class="am-padding-top-xs">
+                            基数范围：<span class="text-primary" id="afBase"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-3">
+                        <button id="calculatorBtn" type="button" class="btn btn-info bg-lightblue btn-block">计算</button>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="reset" class="btn btn-info bg-lightblue btn-block">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--计算结果-->
+    <div class="container bg-white am-margin-top-lg">
+        <div class="am-padding-lg">
+            <div class="relative text-center am-margin-bottom-xl">
+                <hr />
+                <span class="hrTitle-w grey">
+                    社保公积金缴费金额
+                </span>
+            </div>
+            <div class="text-right orange" id="divCalculatorResult">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    
+<script src="~/scripts/ProvinceAndCity.js"></script>
+<script>
+
+    $("#usertype").change(function () {
+
+        var province = $("#province").val();
+        var provinceText = $("#province option[value=" + province + "]").text();
+
+        var city = $("#city").val();
+
+        var usertype = $("#usertype").val();
+        var usertypeText = $("#usertype option[value=" + usertype + "]").text();
+
+        console.log(provinceText + "==" + city + "===" + usertypeText);
+
+        $.ajax({
+
+            url: '/Calculator/GetSocialSecurityBase',
+            data: "area=山东省|青岛市|崂山区&householdProperty=" + usertypeText,
+            dataType: 'json',
+            success: function (data) {
+
+                console.log(data.MinBase);
+                $("#ssBase").html(data.MinBase + "-" + data.MaxBase);
+                $("#afBase").html(data.AFMinBase + "-" + data.AFMaxBase);
+
+
+
+            },
+            error: function (a, b, c) {
+                console.log(a);
+            }
+
+
+        });
+
+
+    });
+
+    $("#calculatorBtn").click(function () {
+
+        var province = $("#province").val();
+        var provinceText = $("#province option[value=" + province + "]").text();
+
+        var city = $("#city").val();
+
+        var usertype = $("#usertype").val();
+        var usertypeText = $("#usertype option[value=" + usertype + "]").text();
+
+        var ssbase = $("#txtSSBase").val();
+        var afbase = $("#txtAFBase").val();
+
+        $.ajax({
+
+            url: '/Calculator/CalculatorResult',
+            data: "InsuranceArea=山东省|青岛市|崂山区&HouseholdProperty=" + usertypeText + "&SocialSecurityBase=" + ssbase + "&AccountRecordBase=" + afbase,
+            dataType: 'json',
+            success: function (data) {
+
+                var result = "社保应缴纳：" + data.SocialSecuritAmount + " 公积金应缴纳：" + data.AccumulationFundAmount + " 共缴纳：" + data.TotalAmount;
+
+                $("#divCalculatorResult").html(result);
+
+
+            },
+            error: function (a, b, c) {
+                console.log(a);
+            }
+
+
+        });
+
+    });
+
+
+
+
+</script>    
+    
+}

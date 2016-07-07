@@ -1,0 +1,154 @@
+﻿@model WYJK.HOME.Models.InfoChangeViewModel
+@{
+    ViewBag.title = "补充信息";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                <div class="pull-left">
+                    <i class="icon-w icon-info am-margin-right-xs"></i>
+                    <span class="am-text-middle">补充信息</span>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            
+            <form class="form-horizontal" action='@Url.Action("InfoChange", "User")' method="post">
+                @Html.HiddenFor(m => m.MemberID)
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">真实姓名</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m=>m.TrueName,new { @class = "form-control" , @placeholder = "请输入您的真实姓名" })
+                    </div>
+                    <label for="" class="col-lg-2 control-label">证件类型</label>
+                    <div class="col-lg-4">
+                        @Html.DropDownListFor(m => m.CertificateType, ViewData["CertificateType"] as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">证件号码</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.CertificateNo, new { @class = "form-control", @placeholder = "请输入证件号码" })
+
+                    </div>
+                    <label for="" class="col-lg-2 control-label">政治面貌</label>
+                    <div class="col-lg-4">
+                        @Html.DropDownListFor(m => m.PoliticalStatus, ViewData["PoliticalStatus"] as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">学历</label>
+                    <div class="col-lg-4">
+                      @Html.DropDownListFor(m => m.Education, ViewData["Education"] as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                    <label for="" class="col-lg-2 control-label">生日</label>
+                    <div class="col-lg-4">
+                        @Html.TextBox("Birthday", Model.Birthday == null ? "" : Model.Birthday.Value.ToShortDateString(), new { @class = "form-control"})
+                    </div>
+                    
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">性别</label>
+                    <div class="col-lg-4">
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(m => m.Sex, 0, new { id = "sex-1" })
+                             男
+                            
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(m => m.Sex, 1, new { id = "sex-2" })
+                             女
+                            
+                        </label>
+                    </div>
+                    <label for="" class="col-lg-2 control-label">居住地址</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", @placeholder = "请输入居住地址" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">手机号码</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", @placeholder = "请输入手机号码" })
+                    </div>
+                    <label for="" class="col-lg-2 control-label">邮箱</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "请输入邮箱" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">QQ号码</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.QQ, new { @class = "form-control", @placeholder = "QQ" })
+                    </div>
+                    <label for="" class="col-lg-2 control-label">支付宝账号</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.Alipay, new { @class = "form-control", @placeholder = "请输入支付宝账号" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">银行账号</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.BankCardNo, new { @class = "form-control", @placeholder = "请输入银行账号" })
+                    </div>
+                    <label for="" class="col-lg-2 control-label">开户行</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.BankAccount, new { @class = "form-control", @placeholder = "请输入开户人" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">开户人</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.UserAccount, new { @class = "form-control", @placeholder = "请输入开户人" })
+                    </div>
+                    <label for="" class="col-lg-2 control-label">第二联系人</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.SecondContact, new { @class = "form-control", @placeholder = "请输入第二联系人" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">投保地</label>
+                    <!--
+                    <div class="col-lg-2">
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                        </select>
+                    </div>
+                    -->
+                        <div class="col-lg-4">
+                            @Html.TextBoxFor(m => m.InsuranceArea, new { @class = "form-control", placeholder = "格式如:山东省|青岛市" })
+                        </div>
+                        <label for="" class="col-lg-2 control-label">户口性质</label>
+                        <div class="col-lg-4">
+                            @Html.DropDownListFor(m => m.HouseholdType, ViewData["HouseholdType"] as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+                <div class="form-group">
+                    <label for="" class="col-lg-2 control-label">第二联系人手机</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.SecondContactPhone, new { @class = "form-control", @placeholder = "请输入第二联系人手机" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-4">
+                        <button type="button" class="btn btn-info bg-lightblue btn-lg btn-block" onclick="history.back();">取消</button>
+                    </div>
+                    <div class="col-lg-4">
+                        <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>

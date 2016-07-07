@@ -1,0 +1,109 @@
+﻿@model LoanSubject
+@{
+    ViewBag.Title = "Calculator";
+    Layout = "~/Views/_Layout_SocialSecurity.cshtml";
+}
+
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                身价计算
+            </span>
+        </div>
+        <!--进度条-->
+        <div class="statusBox-w am-padding-vertical-sm">
+
+            @{ 
+                int relationCount = ((List<SubjectAnswerRelation>)Session["relations"]).Count;
+                List<string> words = new List<string> {"一","二","三","四"};
+             }
+
+            <ul class="clearfix am-padding-0">
+
+                @for (int i = 0; i < Model.SubjectCount; i++)
+                {
+                    string classStr = "";
+
+                    if (i == relationCount)
+                    {
+                        classStr = "current";
+                    }
+                    else if (i == relationCount -1)
+                    {
+                        classStr = "prev";
+                    }
+
+
+
+                    if (i == Model.SubjectCount - 1)
+                    {
+                        <li class="@classStr">
+                            <b class="num pull-left">@(i+1)</b>
+                            <span class="pull-left">身价计算(@words[i])</span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="@classStr">
+                            <b class="num pull-left">@(i+1)</b>
+                            <span class="pull-left">身价计算(@words[i])</span>
+                            <i class="icon-w pull-right"></i>
+                        </li>
+                    }
+
+
+                    
+                }
+
+            </ul>
+        </div>
+        <!--表单计算-->
+        <form class="" action="/LoanCalculator/Calculator" method="post">
+            <div class="form-group">
+                （二）@Model.Subject
+            </div>
+            <div class="form-group am-padding-left-lg">
+                @foreach (LoanAnswer item in Model.LoanAnswerList)
+                {
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="optionRadio"  value="@item.AnswerID">
+                            @item.Answer
+                        </label>
+                    </div>
+                }
+            </div>
+
+            @Html.HiddenFor(m => m.SubjectID)
+            @Html.HiddenFor(m=>m.NextSubjectID)
+            @Html.HiddenFor(m => m.SubjectCount)
+            <div class="form-group text-primary">
+                @*注释：查询交费历史*@
+            </div>
+            <div class="form-group am-padding-top-xl">
+                <div class="row">
+                    <div class="col-lg-offset-4 col-lg-4 text-center">
+                        <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">立即计算</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group am-padding-bottom-xl">
+                <div class="row">
+                    <div class="col-lg-offset-4 col-lg-4 text-center">
+                        @if (Model.NextSubjectID > 0)
+                        {
+                            <button type="submit" formaction="/LoanCalculator/CalculatorNext" formmethod="post" class="btn btn-info bg-lightblue btn-lg btn-block">下一题</button>
+                        }
+                        
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+

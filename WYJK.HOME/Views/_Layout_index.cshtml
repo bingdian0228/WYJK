@@ -1,0 +1,208 @@
+﻿@using WYJK.HOME.Models;
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.title</title>
+
+    <!-- Bootstrap -->
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/Content/css/common.css">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="~/Scripts/jquery-1.12.3.min.js"></script>
+</head>
+
+<body>
+    <div class="project">
+        <!--header-->
+        @Html.Partial("Navbar")
+        <!--logo/搜索-->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+                    <a href="@Url.Action("Index", "Index", new { }, "http")">
+                        <img src="~/Content/img/logo.png" width="210" height="66">
+                    </a>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <div class="input-group am-padding-top-lg">
+                        <input type="text" class="form-control" placeholder="搜索您想要的内容">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">
+                                <i class="glyphicon glyphicon-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    <div class="text-right text-nowrap am-padding-top-xl">
+
+                        @if (CommonHelper.CurrentUser == null)
+                        {
+                            <!--未登录-->
+                            <a href="@Url.Action("Login", "User", new { }, "http")" class="orange">登录</a>
+
+                        }
+                        else
+                        {
+                            <!--登陆之后-->
+                            <span class="relative">
+                                <a href="@Url.Action("Info", "User", new { }, "http")" class="dropdown-toggle orange" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    我的账户
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                                    <li class="">
+                                        <a href="@Url.Action("Info", "User", new { }, "http")">
+                                            <div class="am-padding-vertical-sm">
+                                                我的账户
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="/UserInsurance/Index">
+                                            <div class="am-padding-vertical-sm">
+                                                参保人
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="/UserOrder/Index">
+                                            <div class="am-padding-vertical-sm">
+                                                我的订单
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="">
+                                        <a href="/User/LoginOut">
+                                            <div class="am-padding-vertical-sm">
+                                                安全退出
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </span>
+                        }
+
+
+                        
+                        <!--消息-->
+                        <span class="light-grey am-padding-horizontal-xs">|</span>
+                        <a href="#" class="orange">消息</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--导航栏-->
+        <nav class="navbar navbar-default navlist-w navbar-static-top am-margin-top-lg am-margin-bottom-0">
+            <div class="container">
+                <ul class="nav navbar-nav">
+
+                    @{ 
+                        //获取action名称
+                        string action = ViewContext.RouteData.Values["action"].ToString();
+                    }
+
+                    <li class="@(action == "Index" ? "active":"")">
+                        <a href="/Index/Index" class="">
+                            <span class="am-text-default">首页</span>
+                        </a>
+                    </li>
+                    <li class="@(action == "Insurance" ? "active":"")">
+                        <a href="/Index/Insurance" class="">
+                            <span class="am-text-default">社保/公积金</span>
+                        </a>
+                    </li>
+                    <li class="@(action == "Loan" ? "active":"")">
+                        <a href="/Index/Loan" class="">
+                            <span class="am-text-default">无忧借款</span>
+                        </a>
+                    </li>
+                    <li class="@(action == "About" ? "active":"")">
+                        <a href="/Index/About" class="">
+                            <span class="am-text-default">关于我们</span>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+        <!--轮播图-->
+        <div class="fullSlide">
+            <div class="bd">
+                <ul style="position: relative; width: 1157px; height: 418px;">
+                    <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/1.jpg') 50% 0px no-repeat rgb(226, 2, 94);">
+                        <a href="http://www.baidu.com"></a>
+                    </li>
+                    <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/2.jpg') 50% 0px no-repeat rgb(222, 213, 161);">
+                        <a href="http://www.baidu.com"></a>
+                    </li>
+                    <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/1.jpg') 50% 0px no-repeat rgb(184, 206, 209);">
+                        <a href="http://www.baidu.com"></a>
+                    </li>
+                    <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: list-item; background: url('/Content/img/2.jpg') 50% 0px no-repeat rgb(152, 145, 142);">
+                        <a href="http://www.baidu.com"></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="hd">
+                <ul><li class="">1</li><li class="">2</li><li class="">3</li><li class="on">4</li></ul>
+            </div>
+            <span class="prev" style="opacity: 0.5; display: none;"></span>
+            <span class="next" style="opacity: 0.5; display: none;"></span>
+        </div>
+        <!--fullSlide end-->
+        @RenderBody()
+        <!--footer-->
+        
+
+        @Html.Partial("_Partial_Bottom")
+
+    </div>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/superslide.2.1.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+			$(window).load(function() {
+				$(".fullSlide").hover(function() {
+						$(this).find(".prev,.next").stop(true, true).fadeTo("show", 0.5)
+					},
+					function() {
+						$(this).find(".prev,.next").fadeOut()
+					});
+				$(".fullSlide").slide({
+					titCell: ".hd ul",
+					mainCell: ".bd ul",
+					effect: "fold",
+					autoPlay: true,
+					autoPage: true,
+					trigger: "click",
+					startFun: function(i) {
+						var curLi = jQuery(".fullSlide .bd li").eq(i);
+						if (!!curLi.attr("_src")) {
+							curLi.css("background-image", curLi.attr("_src")).removeAttr("_src")
+						}
+					}
+				});
+			});
+    </script>
+    <script type="text/javascript">
+			//图文版块hover
+			$('.mediaBox-w a').hover(function() {
+				$(this).find('.date').stop().fadeOut(800);
+			}, function() {
+				$(this).find('.date').stop().fadeIn(800);
+			})
+    </script>
+
+
+</body>
+</html>

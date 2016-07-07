@@ -1,0 +1,39 @@
+﻿<script src="~/Content/laypage/1.3/laypage.js"></script>
+
+<script>
+    $(function () {
+        laypage({
+            cont: $('#pager'),
+            prev: "«",
+            next: "»",
+            skin: '#AF0000', //皮肤
+            pages: '@Model.TotalPageCount', //可以叫服务端把总页数放在某一个隐藏域，再获取。假设我们获取到的是18
+            curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/PageIndex=(\d+)/);
+                return page ? page[1] : 1;
+            }(),
+            jump: jfuntion
+        });
+
+        $("#search").click(function () {
+            $("#PageIndex").val(1);
+            $("form").submit();
+        });
+
+        $("#pager li [data-page]").click(function () {
+            var ele = $(this);
+            ele.curr = ele.attr("data-page");
+            jfuntion(ele, false);
+
+        });
+    });
+
+    function jfuntion (e, first) { //触发分页后的回调
+        if (!first) { //一定要加此判断，否则初始时会无限刷新
+            //location.href = '?PageIndex=' + e.curr;
+            $("#PageIndex").val(e.curr);
+            $("form").submit();
+        }
+    }
+
+</script>

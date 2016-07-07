@@ -1,0 +1,88 @@
+﻿@model PagedResult<MemberLoanAudit>
+@{
+    Layout = "~/Views/User/_Layout_user.cshtml";
+    ViewBag.Title = "我的借款";
+}
+@Html.Partial("~/Views/_Pager.cshtml") 
+@section Header{
+    <script>
+        $(function () {
+            var menus = $("#leftMenu li");
+            menus.removeClass("active");
+
+            $("#leftMenu #userLoanItem").addClass("active");
+            
+        });
+
+    </script>
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+            <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <form action="@Url.Action("Index","UserLoan")" method="get" class="form-inline">
+                            @Html.Hidden("PageIndex")
+                            <div class="clearfix">
+                                <div class="form-group pull-left">
+                                    <label for="" class="am-padding-right-sm">审核状态</label>
+                                    @Html.DropDownList("Status", ViewData["StatusType"] as List<SelectListItem>, new { @class = "form-control" })
+                                </div>
+                                <div class="pull-right">
+                                    <button type="submit" class="btn btn-info bg-lightblue">查询</button>
+                                </div>
+                            </div>
+                        </form>
+                    </h3>
+                </div>
+                <!--列表-->
+                <div class="insurance-list-w">
+                    <ul class="list-unstyled am-margin-0">
+                        @foreach (var item in Model.Items)
+                        {
+                            <li class="row bg-white">
+                                <div class="col-lg-12">
+                                    <dl class="am-margin-0">
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                借款额度：@item.ApplyAmount
+                                            </div>
+                                            <div class="col-lg-4">
+                                                还款期限：@EnumExt.GetEnumCustomDescription((LoanTermEnum)int.Parse(item.LoanTerm))
+                                            </div>
+                                            <div class="col-lg-4">
+                                                还款方式：@EnumExt.GetEnumCustomDescription((LoanMethodEnum)int.Parse(item.LoanMethod))
+                                            </div>
+                                        </dd>
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                状态：<span class="text-primary">@EnumExt.GetEnumCustomDescription((LoanAuditEnum)Convert.ToInt32(item.Status))</span>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                提交时间：@(item.ApplyDate == null ? "--" : item.ApplyDate.ToString("yyyy-MM-dd"))
+                                            </div>
+                                            <div class="col-lg-4">
+                                                审核时间：@(item.AuditDate.Year == 1900 ? "--" : item.AuditDate.ToString("yyyy-MM-dd"))
+                                            </div>
+                                        </dd>
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                滞纳金
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <a href="/UserLoan/Payback1/@item.ID" class="orange">我要还款</a>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <a href="/UserLoan/Detail/@item.ID" class="orange">查看详情</a>
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </li>
+                        }
+                        
+                    </ul>
+                </div>
+                <!--分页-->
+                <div id="pager" style="margin-top: 20px;"></div>
+            </div>
+        </div>

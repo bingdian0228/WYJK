@@ -1,0 +1,150 @@
+﻿@model SocialSecurityPeopleViewModel
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/_Layout_SocialSecurity.cshtml";
+}
+
+
+
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                立即投保/生成订单
+            </span>
+        </div>
+
+
+        @using (Html.BeginForm("Create", "UserOrder", FormMethod.Post))
+        {
+            <!--表单计算-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <i class="icon-w icon-card-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">支付方式</span>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="radio am-padding-vertical-sm">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                            支付宝
+                        </label>
+                    </div>
+                    <div class="radio am-padding-vertical-sm">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            微信
+                        </label>
+                    </div>
+                    <div class="radio am-padding-vertical-sm">
+                        <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            网银
+                        </label>
+                    </div>
+                </div>
+            </div>
+        <!--订单信息-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <i class="icon-w icon-files-b am-margin-right-xs"></i>
+                        <span class="am-text-middle">订单详情</span>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="insurance-list-w">
+                        <ul class="list-unstyled am-margin-0">
+                            <li class="row bg-white">
+                                <div class="col-lg-12">
+                                    <dl class="am-margin-0">
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                姓名：@Model.SocialSecurityPeopleName
+                                            </div>
+                                            <div class="col-lg-4">
+                                                城市：@Model.InsuranceArea
+                                            </div>
+                                            <div class="col-lg-4">
+                                                户籍性质：@Model.HouseholdProperty
+                                            </div>
+                                        </dd>
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                起缴月份：@Model.PayTime
+                                            </div>
+                                            <div class="col-lg-4">
+                                                结束月份：
+                                            </div>
+                                            <div class="col-lg-4">
+                                                社保基数：@Model.SocialSecurityBase
+                                            </div>
+                                        </dd>
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                社保：@Model.Calculation.SocialSecuritAmount
+                                            </div>
+                                            <div class="col-lg-4">
+                                                公积金基数：@Model.AccumulationFundBase
+                                            </div>
+                                            <div class="col-lg-4">
+                                                公积金：@Model.Calculation.AccumulationFundAmount
+                                            </div>
+                                        </dd>
+                                        <dd class="row am-padding-vertical-sm">
+                                            <div class="col-lg-4">
+                                                冻结费：0
+                                            </div>
+                                            <div class="col-lg-4">
+                                                服务费：0
+                                            </div>
+                                            <div class="col-lg-4">
+                                                缴纳金额：@(Model.Calculation.SocialSecuritAmount + Model.Calculation.AccumulationFundAmount)
+                                            </div>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <!--合计-->
+                    <table class="table">
+                        <thead>
+                            <tr class="warning">
+                                <th>社保金额</th>
+                                <th>公积金</th>
+                                <th>服务费</th>
+                                <th>代办费</th>
+                                <th>合计</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="warning">
+                                <td>@Model.Calculation.SocialSecuritAmount</td>
+                                <td>@Model.Calculation.AccumulationFundAmount</td>
+                                <td>0</td>
+                                <td>20</td>
+                                <td class="orange">@(Model.Calculation.SocialSecuritAmount + Model.Calculation.AccumulationFundAmount + 20)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--btn-->
+                    <div class="row am-padding-vertical-lg">
+                        <div class="col-lg-4 col-lg-offset-4">
+                            @Html.HiddenFor(m => m.SocialSecurityPeopleID)
+                            <input type="submit" value="提交订单" class="btn btn-info bg-lightblue btn-lg btn-block" />
+                            <span class="label label-danger">@ViewBag.ErrorMessage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</div>

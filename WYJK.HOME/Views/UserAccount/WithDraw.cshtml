@@ -1,0 +1,55 @@
+﻿@model WYJK.HOME.Models.DrawCash
+@{
+    ViewBag.Title = "提现";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                提现
+            </h3>
+        </div>
+        <div class="panel-body">
+            @using (Html.BeginForm("WithDraw", "UserAccount", FormMethod.Post,new { @class = "form-horizontal" }))
+            {
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">账户余额</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static">@CommonHelper.CurrentUser.Account</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">冻结金额</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static">@Html.DisplayFor(m=>m.FrozenMoney)</p>
+                        @Html.HiddenFor(m=>m.FrozenMoney)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">可提取余额</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static">@Html.DisplayFor(m => m.LeftAccount)</p>
+                        @Html.HiddenFor(m => m.LeftAccount)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">提现金额</label>
+                    <div class="col-sm-6">
+                        @Html.TextBoxFor(m=>m.Money,new {@class="form-control" ,placeholder="请输入提现金额" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-3">
+                        <button type="reset" class="btn btn-info bg-lightblue btn-block">取消</button>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-info bg-lightblue btn-block">提现</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

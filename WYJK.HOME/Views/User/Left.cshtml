@@ -1,0 +1,127 @@
+﻿
+<div class="user-left-w pull-left am-text-lg am-margin-bottom-lg">
+    <div class="am-padding-lg text-center">
+        <img src="/Content/img/photo.png" width="110" height="110" alt="" class="img-circle">
+        <div class="am-margin-top-sm">
+            <a href="@Url.Action("InfoChange", "User")" class="white">
+                <i class="icon-w icon-info-w am-margin-right-xs"></i>
+                <span class="am-text-middle">补充信息</span>
+            </a>
+        </div>
+    </div>
+    <div class="cateMenu text-center" id="cateMenu">
+        <ul class="am-margin-0 am-padding-0" id="leftMenu">
+
+
+            @{
+                //获取controller名称
+                string controller = ViewContext.RouteData.Values["controller"].ToString();
+                //获取action名称
+                string action = ViewContext.RouteData.Values["action"].ToString();
+            }
+
+            <li class="@(controller == "User" ? "active":"")">
+                <div class="cate-tag">
+                    <a href="@Url.Action("Info", "User")" class="white center-block">
+                        <i class="icon-w icon-man-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">个人中心</span>
+                    </a>
+                </div>
+            </li>
+            <li class="@(controller == "UserInsurance" ? "active":"")">
+                <div class="cate-tag">
+                    <a href="@Url.Action("Index", "UserInsurance")" class="white center-block">
+                        <i class="icon-w icon-people-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">参保人&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    </a>
+                </div>
+                <div class="list-item-w" style="top: 48px; display: none;">
+                    <dl class="am-margin-0">
+                        <dd>
+                            <a href="@Url.Action("Index", "UserInsurance")" class="white center-block">
+                                全部
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="@Url.Action("Add1", "UserInsurance")" class="white center-block">
+                                添加参保人
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="@Url.Action("ChangeSB", "UserInsurance")" class="white center-block">
+                                社保基数变更
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="@Url.Action("ChangeFund", "UserInsurance")" class="white center-block">
+                                公积金基数变更
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="@Url.Action("RecSB", "UserInsurance")" class="white center-block">
+                                社保基数变更历史
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="@Url.Action("RecFund", "UserInsurance")" class="white center-block">
+                                公积金基数变更历史
+                            </a>
+                        </dd>
+                    </dl>
+                </div>
+            </li>
+            <li class="@(controller == "UserAccount" ? "active":"")">
+                <div class="cate-tag">
+                    <a href="/UserAccount/MyAccount" class="white center-block">
+                        <i class="icon-w icon-files-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">我的账户</span>
+                    </a>
+                </div>
+                <div class="list-item-w" style="display: none; top: 48px;">
+                    <dl class="am-margin-0">
+                        <dd>
+                            <a href="/UserAccount/Charge" class="white center-block">
+                                充值
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="/UserAccount/WithDraw" class="white center-block">
+                                提现
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="#" class="white center-block">
+                                续费
+                            </a>
+                        </dd>
+                    </dl>
+                </div>
+            </li>
+            <li class="@(controller == "UserOrder" ? "active":"")">
+                <div class="cate-tag">
+                    <a href="@Url.Action("Index", "UserOrder")" class="white center-block">
+                        <i class="icon-w icon-order-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">我的订单</span>
+                    </a>
+                </div>
+            </li>
+            <li class="@(controller == "UserApplyWithDraw" ? "active":"")">
+                <div class="cate-tag">
+                    <a href="@Url.Action("Index", "UserApplyWithDraw")" class="white center-block">
+                        <i class="icon-w icon-submit-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">提现申请</span>
+                    </a>
+                </div>
+            </li>
+
+            <li class="@(controller == "UserLoan" ? "active":"")" id="userLoanItem">
+                <div class="cate-tag">
+                    <a href="@Url.Action("Index", "UserLoan")" class="white center-block">
+                        <i class="icon-w icon-list-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">我的借款</span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>

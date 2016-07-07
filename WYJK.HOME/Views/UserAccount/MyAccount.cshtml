@@ -1,0 +1,155 @@
+﻿@model PagedResult<AccountRecord>
+@{
+    ViewBag.Title = "MyAccount";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+@Html.Partial("~/Views/_Pager.cshtml")
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                个人账户
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="">
+                        账户余额(元):
+                    </div>
+                    <div class="text-center">
+                        <span class="am-text-xxxl text-primary am-text-middle">@ViewBag.Account</span>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="">
+                        冻结金额(元):
+                    </div>
+                    <div class="text-center">
+                        <span class="am-text-xxxl text-primary am-text-middle">0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row text-center am-padding-vertical-sm">
+                <div class="col-lg-6">
+                    <a href="/UserAccount/Charge" class="btn btn-info bg-lightblue">充 值</a>
+                </div>
+                <div class="col-lg-6">
+                    <a href="/UserAccount/WithDraw" class="btn btn-info bg-lightblue">提 现</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--列表-->
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title row">
+                    @using (Html.BeginForm("MyAccount", "UserAccount", FormMethod.Post,new { @class="form-inline"}))
+                    {
+                        @Html.Hidden("PageIndex")
+                        <div class="clearfix">
+                            <div class="pull-left">
+                                <div class="form-group am-padding-horizontal-sm">
+                                    <label for="" class="am-padding-right-sm">操作类型</label>
+                                    <select class="form-control">
+                                        <option value="">户籍性质</option>
+                                        <option>1</option>
+                                        <option>2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="am-padding-right-sm">起止时间</label>
+                                    @Html.TextBox("BeginTime","",new { @class="form-control date", placeholder="开始时间"})
+                                    <span>——</span>
+                                    @Html.TextBox("EndTime", "", new { @class = "form-control date", placeholder = "结束时间" })
+                                </div>
+                            </div>
+                            <div class="pull-right">
+                                <div class="form-group am-padding-right-sm">
+                                    <button type="submit" class="btn btn-info bg-lightblue">查询</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+            </h3>
+        </div>
+        <div class="insurance-list-w">
+            <ul class="list-unstyled am-margin-0">
+
+                @foreach (var item in Model)
+                {
+                    <li class="row bg-white">
+                        <div class="col-lg-12">
+                            <dl class="am-margin-0">
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-6">
+                                        流水号：@item.SerialNum
+                                    </div>
+                                    <div class="col-lg-6">
+                                        类型：@item.ShouZhiType
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-6">
+                                        收入(元)：@item.Cost
+                                    </div>
+                                    <div class="col-lg-6">
+                                        支出(元)：0
+                                    </div>
+                                </dd>
+                                <dd class="row am-padding-vertical-sm">
+                                    <div class="col-lg-6">
+                                        账户余额：@item.Balance
+                                    </div>
+                                    <div class="col-lg-6">
+                                        操作时间：@item.CreateTime.ToString("yyyy-MM-dd")
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </li>
+                    }
+
+               
+            </ul>
+        </div>
+        <!--翻页-->
+        <div id="pager" style="margin-top: 20px;"></div>
+
+        
+    </div>
+</div>
+
+@section Footer{
+    
+    <script>
+
+        var nameArray = ["#BeginTime", "#EndTime"];
+
+        function initDatepicker() {
+
+            for (var i = 0; i < nameArray.length; i++) {
+
+                $(''+nameArray[i]+'').datetimepicker({
+                    language: 'zh-CN',
+                    format: 'yyyy-mm',
+                    weekStart: 1,
+                    autoclose: 1,
+                    todayHighlight: 1,
+                    startView: 4,
+                    minView: 3,
+                    forceParse: 0
+                });
+            }
+            
+        }
+
+        initDatepicker();
+
+    </script>
+    
+        
+}

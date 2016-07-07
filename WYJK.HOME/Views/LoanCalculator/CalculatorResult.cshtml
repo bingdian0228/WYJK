@@ -1,0 +1,46 @@
+﻿@model decimal
+@{
+    ViewBag.Title = "CalculatorResult";
+    Layout = "~/Views/_Layout_SocialSecurity.cshtml";
+}
+
+<div class="bg-lightgrey">
+    <div class="container bg-white">
+        <div class="relative text-center">
+            <hr />
+            <span class="hrTitle-w left grey">
+                计算结果
+            </span>
+        </div>
+        <!--表单计算-->
+        <div class="am-padding-xl">
+            <!--计算结果-->
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <th>Column heading</th>
+                    <th>Column heading</th>
+                    <th>Column heading</th>
+                </tr>
+                <tr>
+                    <td>Table cell</td>
+                    <td>Table cell</td>
+                    <td>Table cell</td>
+                    <td>Table cell</td>
+                </tr>
+            </table>
+            <div class="text-primary">
+                计算结果：您本次可贷款的额度为 @Model
+            </div>
+            <form class="form-horizontal">
+                <div class="form-group am-padding-top-xl">
+                    <div class="col-lg-offset-4 col-lg-4 text-center">
+                        <button type="reset" class="btn btn-info bg-lightblue btn-lg btn-block">确定借款</button>
+                        <a href="/Loan/Loan" class="btn btn-info bg-lightblue btn-lg btn-block">确定借款</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
