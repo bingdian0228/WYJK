@@ -52,12 +52,20 @@ namespace WYJK.Web
 
 
             #region 定时任务 15号
-            Timer myTimer = new Timer();
-            myTimer.Elapsed += new ElapsedEventHandler(theout);
-            myTimer.Interval = 1000;
-            myTimer.AutoReset = true;
-            myTimer.Enabled = true;
+            Timer Timer15 = new Timer();
+            Timer15.Elapsed += new ElapsedEventHandler(business15);
+            Timer15.Interval = 1000;
+            Timer15.AutoReset = true;
+            Timer15.Enabled = true;
 
+            #endregion
+
+            #region 13号
+            Timer Timer13 = new Timer();
+            Timer13.Elapsed += new ElapsedEventHandler(business13);
+            Timer13.Interval = 1000;
+            Timer13.AutoReset = true;
+            Timer13.Enabled = true;
             #endregion
         }
 
@@ -135,21 +143,20 @@ namespace WYJK.Web
             }
         }
 
-
         /// <summary>
-        /// 触发事件
+        /// 13触发事件
         /// </summary>
         /// <param name="source"></param>
         /// <param name="e"></param>
-        public void theout(object source, System.Timers.ElapsedEventArgs e)
+        public void business13(object source, System.Timers.ElapsedEventArgs e)
         {
             int CurrentDay = DateTime.Now.Day;
             int CurrentHour = DateTime.Now.Hour;
             int CurrentMinute = DateTime.Now.Minute;
             int CurrentSecond = DateTime.Now.Second;
 
-            //定制时间 每月16号 00：00：00 开始执行
-            int CustomDay = 16;
+            //定制时间 每月13号 00：00：00 开始执行
+            int CustomDay = 13;
             int CustomHour = 00;
             int CustomMinute = 00;
             int CustomSecond = 00;
@@ -159,7 +166,45 @@ namespace WYJK.Web
             if (CurrentDay == CustomDay && CurrentHour == CustomHour
                 && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
             {
-                Console.WriteLine("每月16号 00：00：00 开始执行");
+                Console.WriteLine("每月13号 00：00：00 开始执行");
+
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    try
+                    {
+                        //将所有待续费变成待停保
+
+                    }
+                    catch (Exception ex) { }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 15触发事件
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        public void business15(object source, System.Timers.ElapsedEventArgs e)
+        {
+            int CurrentDay = DateTime.Now.Day;
+            int CurrentHour = DateTime.Now.Hour;
+            int CurrentMinute = DateTime.Now.Minute;
+            int CurrentSecond = DateTime.Now.Second;
+
+            //定制时间 每月15号 00：00：00 开始执行
+            int CustomDay = 15;
+            int CustomHour = 00;
+            int CustomMinute = 00;
+            int CustomSecond = 00;
+
+            Debug.WriteLine(DateTime.Now);
+
+            if (CurrentDay == CustomDay && CurrentHour == CustomHour
+                && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
+            {
+                Console.WriteLine("每月15号 00：00：00 开始执行");
 
                 using (TransactionScope transaction = new TransactionScope())
                 {

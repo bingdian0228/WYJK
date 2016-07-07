@@ -1841,6 +1841,11 @@
             用户ID
             </summary>
         </member>
+        <member name="P:WYJK.Entity.GenerateOrderParameter.PlatType">
+            <summary>
+            平台类型  0:线下；1：移动端
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.OrderListForMobile">
             <summary>
             移动端订单列表

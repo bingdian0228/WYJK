@@ -148,6 +148,11 @@ namespace WYJK.Entity
         /// 用户ID
         /// </summary>
         public int MemberID { get; set; }
+
+        /// <summary>
+        /// 平台类型  0:线下；1：移动端
+        /// </summary>
+        public string PlatType { get; set; } = "1";
     }
 
 

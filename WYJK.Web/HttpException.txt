@@ -14748,7 +14748,11 @@
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+<<<<<<< HEAD
 2016/7/6 13:08:34:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 791
+=======
+2016/7/6 13:38:46:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 C:\Users\Jcn\Source\Repos\WYJK2\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 790
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
@@ -14765,7 +14769,11 @@
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+<<<<<<< HEAD
 2016/7/6 13:26:55:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 791
+=======
+2016/7/6 15:27:15:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 C:\Users\Jcn\Source\Repos\WYJK2\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 790
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
@@ -14782,6 +14790,7 @@
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+<<<<<<< HEAD
 2016/7/6 13:30:16:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 791
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
@@ -15054,6 +15063,9 @@
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
 2016/7/6 14:28:26:   在 WYJK.Web.Controllers.Http.MemberController.IsBoundAccount(Int32 memberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\MemberController.cs:行号 1613
+=======
+2016/7/6 15:30:22:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 C:\Users\Jcn\Source\Repos\WYJK2\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 790
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
@@ -15061,16 +15073,30 @@
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
 2016/7/6 14:28:26:   在 WYJK.Web.Controllers.Http.MemberController.IsBoundAccount(Int32 memberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\MemberController.cs:行号 1613
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+2016/7/6 15:31:03:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 C:\Users\Jcn\Source\Repos\WYJK2\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 790
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
@@ -15078,16 +15104,30 @@
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
 2016/7/6 14:28:26:   在 WYJK.Web.Controllers.Http.MemberController.IsBoundAccount(Int32 memberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\MemberController.cs:行号 1613
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+2016/7/6 15:44:45:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 C:\Users\Jcn\Source\Repos\WYJK2\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 790
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
@@ -15095,14 +15135,23 @@
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+<<<<<<< HEAD
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
 2016/7/6 15:54:21:   在 Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext() 位置 D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:行号 1610
    在 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
@@ -15110,6 +15159,11 @@
    在 Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType) 位置 D:\Dev\dapper-dot-net\Dapper NET40\SqlMapper.cs:行号 1479
    在 WYJK.Data.DbHelper.QuerySingle[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 78
    在 WYJK.Web.Controllers.Http.MemberController.GetAccountStatus(Int32 MemberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\MemberController.cs:行号 631
+=======
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+2016/7/6 15:45:25:   在 WYJK.Web.Controllers.Http.OrderController.OrderPayment(Order model) 位置 C:\Users\Jcn\Source\Repos\WYJK2\WYJK.Web\Controllers\Http\SocialSecurity\OrderController.cs:行号 790
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
    在 lambda_method(Closure , Object , Object[] )
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
    在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
@@ -15129,6 +15183,7 @@
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+<<<<<<< HEAD
 2016/7/6 16:25:56:   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
@@ -15165,6 +15220,94 @@
    在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
 --- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+=======
+>>>>>>> 63aa37ee43d658dee7966ee45145b7248a12cb87
+2016/7/6 18:43:42:   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.QuerySingle[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 77
+   在 WYJK.Data.ServiceImpl.MemberService.GetAccountStatus(Int32 MemberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\ServiceImpl\SocialSecurity\MemberService.cs:行号 469
+   在 WYJK.Web.Controllers.Http.MemberController.GetAccountStatus(Int32 MemberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\MemberController.cs:行号 632
+   在 lambda_method(Closure , Object , Object[] )
+   在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
+   在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
+   在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+2016/7/6 18:43:42:   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 32
+   在 WYJK.Web.Controllers.Http.SocialSecurityController.GetAlreadyStop(Int32 MemberID) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\SocialSecurityController.cs:行号 1880
+   在 lambda_method(Closure , Object , Object[] )
+   在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
+   在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
+   在 System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+2016/7/6 18:43:42:   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.WaitForPendingOpen()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+   在 WYJK.Data.DbHelper.<QuerySingleAsync>d__5`1.MoveNext() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 86
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   在 WYJK.Data.ServiceImpl.InformationService.<GetNewNoticeList>d__1.MoveNext() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\ServiceImpl\SocialSecurity\InformationService.cs:行号 53
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   在 WYJK.Web.Controllers.Http.InformationController.<GetInformationList>d__1.MoveNext() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\SocialSecurity\InformationController.cs:行号 28
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Threading.Tasks.TaskHelpersExtensions.<CastToObject>d__3`1.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
    在 System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
    在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
    在 System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()

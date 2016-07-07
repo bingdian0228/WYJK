@@ -561,7 +561,7 @@ namespace WYJK.Web.Controllers.Mvc
                             string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
 
                             //查询该用户下的所有正常参保方案
-                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status in({(int)SocialSecurityStatusEnum.Normal},{(int)SocialSecurityStatusEnum.WaitingHandle})";
+                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status in({(int)SocialSecurityStatusEnum.Normal})";
                             List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
                             foreach (SocialSecurity socialSecurity in SocialSecurityList)
                             {

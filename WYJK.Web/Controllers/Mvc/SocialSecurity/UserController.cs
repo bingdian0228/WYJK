@@ -44,6 +44,10 @@ namespace WYJK.Web.Controllers.Mvc
             return View();
         }
 
+        public ActionResult Qc_back() {
+            return View();
+        }
+
         #region 显示验证码
         /// <summary>
         /// 显示验证码
@@ -109,6 +113,7 @@ namespace WYJK.Web.Controllers.Mvc
 
             return View();
         }
+
 
 
         #region 私有方法

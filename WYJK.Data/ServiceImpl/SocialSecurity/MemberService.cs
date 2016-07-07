@@ -240,7 +240,7 @@ namespace WYJK.Data.ServiceImpl
 
 
             StringBuilder sbSql = new StringBuilder();
-            sbSql.AppendFormat("{0};{1}", $"select * from (select ROW_NUMBER() OVER(ORDER BY AccountRecord.CreateTime desc )AS Row,AccountRecord.* from AccountRecord  where MemberID ={MemberID} and {sqlShouZhiType} and {sqlTime} ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex", $"select count(0) from AccountRecord  where MemberID ={ MemberID}  and {sqlShouZhiType} and {sqlTime} ");
+            sbSql.AppendFormat("{0};{1}", $"select * from (select ROW_NUMBER() OVER(ORDER BY AccountRecord.ID desc )AS Row,AccountRecord.* from AccountRecord  where MemberID ={MemberID} and {sqlShouZhiType} and {sqlTime} ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex", $"select count(0) from AccountRecord  where MemberID ={ MemberID}  and {sqlShouZhiType} and {sqlTime} ");
 
             DbParameter[] parameters = new DbParameter[] {
                     new SqlParameter("@StartIndex", parameter.SkipCount),

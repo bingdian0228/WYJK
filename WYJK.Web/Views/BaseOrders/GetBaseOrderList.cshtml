@@ -1,0 +1,217 @@
+﻿@model PagedResult<BaseOrders>
+@{
+    ViewBag.Title = "调基申请列表";
+
+}
+@section Header
+{
+    <script type="text/javascript" src="~/Content/lib/laypage/1.3/laypage.js"></script>
+}
+@section Footer
+{
+    <script type="text/javascript">
+        laypage({
+            cont: $('#pager'),
+            skin: '#AF0000', //皮肤
+            pages: '@Model.TotalPageCount', //可以叫服务端把总页数放在某一个隐藏域，再获取。假设我们获取到的是18
+            curr: function () { //通过url获取当前页，也可以同上（pages）方式获取
+                var page = location.search.match(/PageIndex=(\d+)/);
+                return page ? page[1] : 1;
+            }(),
+            jump: function (e, first) { //触发分页后的回调
+                if (!first) { //一定要加此判断，否则初始时会无限刷新
+                    location.href = '?PageIndex=' + e.curr
+                    + "&SocialSecurityPeopleName=" + '@Request.QueryString["SocialSecurityPeopleName"]'
+                    + "&Status=" + '@Request.QueryString["Status"]';
+
+                }
+            }
+        });
+
+        $(function () {
+
+            //不通过审核
+            $(".action-noagree").click(function () {
+
+                if ($("input[type='checkbox']:checked").length <= 0) {
+                    layer.msg("请选择需要审核的客户");
+                    return;
+                }
+
+                if ($("input[type='checkbox']:checked").length > 1) {
+                    layer.msg("只能选择一个用户进行审核");
+                    return;
+                }
+                var status = $("input[type='checkbox']:checked").parents("tr").find(".Status").val();
+                if (status != "1") {
+                    layer.msg("此条已审核无需审核");
+                    return;
+                }
+                layer.confirm('确定不通过审核吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    var OrderIds = [];
+                    $("input[type='checkbox']:checked").each(function (i) {
+                        OrderIds[i] = $(this).val();
+                    });
+                    var index = layer.load(1, {
+                        shade: [0.1, '#000']
+                    });
+                    //提交办结
+                    $.ajax({
+                        url: "@Url.Action("NoAgree", "RechargeOrders")",
+                        data: { "OrderIds": OrderIds },
+                        dataType: "json",
+                        type: "POST",
+                        success: function (response) {
+                            layer.close(index);
+                            if (response.status) {
+                                layer.msg("操作成功");
+                                refresh();
+                            } else {
+                                layer.msg("操作失败");
+                            }
+                        },
+                        error: function () {
+                            layer.close(index);
+                            layer.msg("出现异常");
+                        }
+                    });
+                });
+            });
+
+            //通过审核
+            $(".action-agree").click(function () {
+
+                if ($("input[type='checkbox']:checked").length <= 0) {
+                    layer.msg("请选择需要审核的客户");
+                    return;
+                }
+                var OrderIds = [];
+                var count = 0;
+
+                $("input[type='checkbox']:checked").each(function (i) {
+                    count++;
+                    OrderIds[i] = $(this).val();
+                });
+                if (count > 1) {
+                    layer.msg("只能选择一个用户进行审核");
+                    return;
+                }
+
+                var status = $("input[type='checkbox']:checked").parents("tr").find(".Status").val();
+                if (status != "1") {
+                    layer.msg("此条已审核无需审核");
+                    return;
+                }
+                var index = layer.load(1, {
+                    shade: [0.1, '#000']
+                });
+
+                layer.confirm('确定通过审核吗？', {
+                    btn: ['确定', '取消'] //按钮
+                }, function () {
+                    //通过审核
+                    $.ajax({
+                        url: "@Url.Action("Agree", "RechargeOrders")",
+                        data: { "OrderIds": OrderIds },
+                        dataType: "json",
+                        type: "POST",
+                        success: function (response) {
+                            layer.close(index);
+                            if (response.status) {
+                                layer.msg("操作成功");
+                                refresh();
+                            } else {
+                                layer.msg("操作失败");
+                            }
+                        },
+                        error: function () {
+                            layer.close(index);
+                            layer.msg("出现异常");
+                        }
+                    });
+                });
+            });
+        })
+    </script>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 财务管理 <span class="c-gray en">&gt;</span> 充值申请<a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="text-c">
+        @using (Html.BeginForm("GetBaseOrderList", "BaseOrders", FormMethod.Get))
+        {
+            @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+
+
+            @Html.Raw("审核状态:")
+            <span class="select-box inline">
+                @Html.DropDownList("Status", ViewData["ApplyStatus"] as SelectList, new { @class = "select" })
+            </span>
+
+            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+
+        }
+    </div>
+
+    <div class="mt-20" id="divTable">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    <th width="25"><input type="checkbox" name="" value=""></th>
+                    <th width="80">姓名</th>
+                    <th width="80">社保当前基数</th>
+                    <th width="80">社保调整基数</th>
+                    <th width="80">社保服务费</th>
+                    <th width="80">公积金当前基数</th>
+                    <th width="80">公积金调整基数</th>
+                    <th width="80">公积金服务费</th>
+                    <th width="80">支付时间</th>
+                    <th width="80">审核状态</th>
+                    <th width="80">审核时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr class="text-c">
+                        <td><input type="checkbox" value="@item.OrderID" name="chk"></td>
+                        <td>@item.MemberName</td>
+                        <td>@item.SSCurrentBase</td>
+                        <td>@item.SSBaseAdjusted</td>
+                        <td>@item.SSBaseServiceCharge</td>
+                        <td>@item.AFCurrentBase</td>
+                        <td>@item.AFBaseAdjusted</td>
+                        <td>@item.AFBaseServiceCharge</td>
+                        <td>@item.PayTime</td>
+                        <td>
+                            <input type="hidden" value="@item.Status" class="Status" />
+                            @if (item.Status == "1")
+                            {
+                                @:审核中
+                        }
+                            else if (item.Status == "2")
+                            {
+                                @:已通过
+                        }
+                            else
+                            {
+                                @:未通过
+                        }
+                        </td>
+                        <td>@item.AuditTime</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="pager" style="margin-top: 20px;"></div>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span class="l">
+            <a href="javascript:;" class="btn btn-primary radius action-agree"><i class="Hui-iconfont">&#xe6e1;</i> 通过</a>
+            <a href="javascript:;" class="btn btn-danger radius action-noagree"><i class="Hui-iconfont">&#xe6e1;</i>不通过</a>
+        </span>
+        <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
+    </div>
+</div>

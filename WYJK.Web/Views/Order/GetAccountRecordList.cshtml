@@ -1,0 +1,41 @@
+﻿@model List<AccountRecord>
+    @{
+        var member = ViewData["member"] as Members;
+    }
+
+    <div class="pd-20">
+        <form action='' method="post" class="form form-horizontal" id="form-article-add">
+            <div class="row cl" style="text-align:center;">
+                <label style="font-size:24px;font-weight:bold;">@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))的账户信息</label>
+            </div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="80">收支类型</th>
+                            <th width="80">来源</th>
+                            <th width="80">备注</th>
+                            <th width="80">费用</th>
+                            <th width="80">余额</th>
+                            <th width="80">时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var accountRecord in Model)
+                {
+                <tr class="text-c">
+                    <td>@accountRecord.ShouZhiType</td>
+                    <td>@accountRecord.LaiYuan</td>
+                    <td>@accountRecord.OperationType</td>
+                    <td>@accountRecord.Cost</td>
+                    <td>@accountRecord.Balance</td>
+                    <td>@accountRecord.CreateTime.ToString("yyyy/MM/dd HH:mm")</td>
+                </tr>
+                }
+
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+

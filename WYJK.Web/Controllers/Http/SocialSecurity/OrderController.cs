@@ -39,7 +39,13 @@ namespace WYJK.Web.Controllers.Http
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
-                { //首先判断是否有未支付订单，若有，则不能生成订单
+                {
+                    //如果是线下缴费，则删除订单
+                    if (parameter.PlatType == "0") {
+                        DbHelper.ExecuteSqlCommand($"delete from [Order] where MemberID={parameter.MemberID}",null);
+                    }
+
+                    //首先判断是否有未支付订单，若有，则不能生成订单
                     if (_orderService.IsExistsWaitingPayOrderByMemberID(parameter.MemberID))
                     {
                         return new JsonResult<dynamic>
