@@ -625,6 +625,18 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:WYJK.Web.Controllers.Http.OrderController.MoneyType">
+            <summary>
+            获取各项金额值
+            </summary>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.OrderController.IsCanBalancePayment(WYJK.Entity.GenerateOrderParameter)">
+            <summary>
+            是否可以账户余额扣款  不可以余额扣款即Data = 0，调用接口GenerateOrder; 可以余额扣款Data=1，弹窗提示
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Http.OrderController.IsCanAutoPayment(WYJK.Entity.GenerateOrderParameter)">
             <summary>
             是否可以自动付款  
@@ -632,9 +644,16 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.OrderController.AutoPayment(WYJK.Entity.GenerateOrderParameter)">
+        <member name="M:WYJK.Web.Controllers.Http.OrderController.CheckBalanceIsEnough(WYJK.Entity.GenerateOrderParameter)">
             <summary>
-            自动扣款
+            弹窗点击确定时 检测余额是否足够，如果足够即data=1则调用BalancePayment接口，如果不够即data=0，则调用GenerateOrder接口
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.OrderController.BalancePayment(WYJK.Entity.GenerateOrderParameter)">
+            <summary>
+            余额扣款
             </summary>
             <param name="parameter"></param>
             <returns></returns>
@@ -654,7 +673,7 @@
         </member>
         <member name="M:WYJK.Web.Controllers.Http.OrderController.GetOrderDetail(System.Int32,System.String)">
             <summary>
-            订单支付详情
+            订单支付详情 总额是各项值加起来减去余额支付的额度(Balance)
             </summary>
             <returns></returns>
         </member>
@@ -665,7 +684,7 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.OrderController.OrderPayment1_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.OrderController.OrderPayment1_Return(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
             <summary>
             支付回调
             </summary>
@@ -908,7 +927,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.SocialSecurityController.AdjustingBase_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.SocialSecurityController.AdjustingBase_Return(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
             <summary>
             调基回调
             </summary>
@@ -1131,7 +1150,7 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRenewalServiceOrderPayment_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRenewalServiceOrderPayment_Return(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
             <summary>
             续费支付回调
             </summary>
@@ -1162,7 +1181,7 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRechargeAmountPayment_Return(System.String,System.String,System.String,System.String,System.String,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.SubmitRechargeAmountPayment_Return(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
             <summary>
             充值支付回调
             </summary>
@@ -1178,6 +1197,13 @@
             提交充值
             </summary>
             <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.CheckAccountIsFrozen(System.Int32)">
+            <summary>
+            检测账户是否已冻结  提现，续费，充值，基数调整，支付的按钮都需要加这个判断
+            </summary>
+            <param name="MemberID"></param>
             <returns></returns>
         </member>
         <member name="M:WYJK.Web.Controllers.Http.MemberController.DrawCash(System.Int32)">
@@ -1873,6 +1899,12 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.OrderController.BanJieKouFei">
+            <summary>
+            15号办结扣费
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:WYJK.Web.Controllers.Mvc.OrderController.GetAccountRecordList(System.Int32)">
             <summary>
             根据用户ID获取账户列表
@@ -1891,6 +1923,15 @@
             订单批量审核 若审核通过，订单变成已完成，并且参保人状态变成待办
             </summary>
             <param name="OrderCodes"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Mvc.OrderController.BatchNoPass(System.String,System.String,System.Int32)">
+            <summary>
+            财务审核不通过
+            </summary>
+            <param name="OrderCodeStr"></param>
+            <param name="Amount"></param>
+            <param name="Type"></param>
             <returns></returns>
         </member>
         <member name="M:WYJK.Web.Controllers.Mvc.OrderController.GetSubOrderList(System.String)">

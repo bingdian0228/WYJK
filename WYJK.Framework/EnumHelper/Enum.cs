@@ -80,7 +80,9 @@ namespace WYJK.Framework.EnumHelper
         [EnumDisplayName("审核中")]
         Auditing = 1,
         [EnumDisplayName("已完成")]
-        completed = 2
+        completed = 2,
+        [EnumDisplayName("不通过")]
+        NoPass = 3
     }
 
     /// <summary>

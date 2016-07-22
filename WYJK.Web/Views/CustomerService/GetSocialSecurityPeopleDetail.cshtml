@@ -627,13 +627,31 @@
                 <label class="form-label col-3">业务申请时间：</label>
                 <div class="formControls col-2">
                     <span class="lineheight">
-                        @{
+                        @*@{
                             string sqlstr = @"  select * from [Order]
   left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
   where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID;
                             Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
                         }
-                        @(order != null ? order.PayTime.ToString() : "--")
+                        @(order != null ? order.PayTime.ToString() : "--")*@
+
+                        @if (Model.socialSecurity.IsPay)
+                        {
+                            string sqlstr = @"  select top 1 * from [Order]
+  left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+  where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID + "and IsPaySocialSecurity=1 order by [Order].PayTime desc";
+                            Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                            if (order != null)
+                            {
+                                @order.PayTime.ToString()
+                            }
+                            else {
+                                @:--
+                            }
+                        }
+                        else {
+                            @:--
+                        }
                     </span>
                 </div>
                 @if (!isadd)
@@ -641,7 +659,7 @@
                     <label class="form-label col-3">交费至：</label>
                     <div class="formControls col-2">
                         <span class="lineheight">
-                            @Model.socialSecurity.PayTime.Value.AddMonths(Model.socialSecurity.PayMonthCount+ Model.socialSecurity.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
+                            @Model.socialSecurity.PayTime.Value.AddMonths(Model.socialSecurity.PayMonthCount + Model.socialSecurity.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
                         </span>
                     </div>
                 }
@@ -691,7 +709,7 @@
                                         }
                                         else
                                         {
-                                            @(string.IsNullOrEmpty(Model.socialSecurity.Note) ? "--":Model.socialSecurity.Note)
+                                            @(string.IsNullOrEmpty(Model.socialSecurity.Note) ? "--" : Model.socialSecurity.Note)
                                         }
                                     </span>
                                 </div>
@@ -798,14 +816,14 @@
                         @if (isadd)
                         {
                             @Html.Action("RegionView", "OptionView", new
-                            {
-                                pname = string.Empty,
-                                cname = string.Empty,
-                                coname = string.Empty,
-                                IsHideCounty = true,
-                                Id = "SO",
-                                CallBack = "soCallback",
-                            });
+                       {
+                           pname = string.Empty,
+                           cname = string.Empty,
+                           coname = string.Empty,
+                           IsHideCounty = true,
+                           Id = "SO",
+                           CallBack = "soCallback",
+                       });
                             <input type="hidden" name="accumulationFund.AccumulationFundArea" value="" />
                             <script>
                                 function soCallback(p, city) {
@@ -853,13 +871,32 @@
                 <label class="form-label col-3">业务申请时间：</label>
                 <div class="formControls col-2">
                     <span class="lineheight">
-                        @{
-                            string sqlstr = @"  select * from [Order]
+                        @*@{
+                                                      string sqlstr = @"  select * from [Order]
+                            left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+                            where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID;
+                                                      Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                                                  }
+                                                  @(order != null ? order.PayTime.ToString() : "--")*@
+
+                        @if (Model.accumulationFund.IsPay)
+                        {
+                            string sqlstr = @"  select top 1 * from [Order]
   left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
-  where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID;
+  where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID + " and IsPayAccumulationFund=1 order by [Order].PayTime desc";
                             Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                            if (order != null)
+                            {
+                                @order.PayTime.ToString()
+                            }
+                            else {
+                                @:--
+                            }
                         }
-                        @(order != null ? order.PayTime.ToString() : "--")
+                        else {
+                            @:--
+                        }
+
                     </span>
                 </div>
                 @if (!isadd)
@@ -867,65 +904,65 @@
                     <label class="form-label col-3">交费至：</label>
                     <div class="formControls col-2">
                         <span class="lineheight">
-                            @Model.accumulationFund.PayTime.Value.AddMonths(Model.accumulationFund.PayMonthCount+ Model.accumulationFund.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
+                            @Model.accumulationFund.PayTime.Value.AddMonths(Model.accumulationFund.PayMonthCount + Model.accumulationFund.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
                         </span>
                     </div>
                 }
             </div>
-                            if (isadd)
-                            {
-                                <div class="row cl">
-                                    <label class="form-label col-3">缴费月数：</label>
-                                    <div class="formControls col-2">
-                                        <span class="lineheight">
-                                            <input type="text" value="@Model.accumulationFund.PayMonthCount" placeholder="" name="accumulationFund.PayMonthCount" class="input-text" />
-                                        </span>
-                                    </div>
-                                    <label class="form-label col-3">补交月数：</label>
-                                    <div class="formControls col-2">
-                                        <span class="lineheight">
-                                            <input type="text" value="@Model.accumulationFund.PayBeforeMonthCount" placeholder="" name="accumulationFund.PayBeforeMonthCount" class="input-text" />
-                                        </span>
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="row cl">
-                                    <label class="form-label col-3">业务办停时间：</label>
-                                    <div class="formControls col-2">
-                                        <span class="lineheight">
-                                            @(Model.accumulationFund.StopDate == null ? "--" : Convert.ToString(Model.accumulationFund.StopDate))
-                                        </span>
-                                    </div>
-                                    <label class="form-label col-3">业务办理时间：</label>
-                                    <div class="formControls col-2">
-                                        <span class="lineheight">
-                                            @(Model.accumulationFund.HandleDate == null ? "--" : Convert.ToString(Model.accumulationFund.HandleDate))
-                                        </span>
-                                    </div>
-                                </div>
-                            }
+            if (isadd)
+            {
+                <div class="row cl">
+                    <label class="form-label col-3">缴费月数：</label>
+                    <div class="formControls col-2">
+                        <span class="lineheight">
+                            <input type="text" value="@Model.accumulationFund.PayMonthCount" placeholder="" name="accumulationFund.PayMonthCount" class="input-text" />
+                        </span>
+                    </div>
+                    <label class="form-label col-3">补交月数：</label>
+                    <div class="formControls col-2">
+                        <span class="lineheight">
+                            <input type="text" value="@Model.accumulationFund.PayBeforeMonthCount" placeholder="" name="accumulationFund.PayBeforeMonthCount" class="input-text" />
+                        </span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row cl">
+                    <label class="form-label col-3">业务办停时间：</label>
+                    <div class="formControls col-2">
+                        <span class="lineheight">
+                            @(Model.accumulationFund.StopDate == null ? "--" : Convert.ToString(Model.accumulationFund.StopDate))
+                        </span>
+                    </div>
+                    <label class="form-label col-3">业务办理时间：</label>
+                    <div class="formControls col-2">
+                        <span class="lineheight">
+                            @(Model.accumulationFund.HandleDate == null ? "--" : Convert.ToString(Model.accumulationFund.HandleDate))
+                        </span>
+                    </div>
+                </div>
+            }
 
-                            <div class="row cl">
-                                <label class="form-label col-3">备注：</label>
-                                <div class="formControls col-2">
-                                    <span class="lineheight">
-                                        @if (isadd)
-                                        {
-                                            <input type="text" value="@Model.accumulationFund.Note" placeholder="" name="accumulationFund.Note" class="input-text" />
-                                        }
-                                        else
-                                        {
-                                            @(string.IsNullOrEmpty(Model.accumulationFund.Note) ? "--" : Model.accumulationFund.Note)
-                                        }
-                                    </span>
-                                </div>
-                            </div>
-                            }
-                            else {
-                                @Html.Hidden("IsPayAccumulationFund", false)
-                            }
+            <div class="row cl">
+                <label class="form-label col-3">备注：</label>
+                <div class="formControls col-2">
+                    <span class="lineheight">
+                        @if (isadd)
+                        {
+                            <input type="text" value="@Model.accumulationFund.Note" placeholder="" name="accumulationFund.Note" class="input-text" />
+                        }
+                        else
+                        {
+                            @(string.IsNullOrEmpty(Model.accumulationFund.Note) ? "--" : Model.accumulationFund.Note)
+                        }
+                    </span>
+                </div>
+            </div>
+        }
+        else {
+            @Html.Hidden("IsPayAccumulationFund", false)
+        }
         @if (type == "1" || isadd)
         {
             <div class="row cl">

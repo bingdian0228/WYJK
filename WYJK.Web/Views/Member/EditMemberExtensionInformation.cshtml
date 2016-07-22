@@ -49,7 +49,7 @@
                 </div>
             </div>
         }
-        <div class="row cl">
+        @*<div class="row cl">
             <label class="form-label col-2">政治面貌：</label>
             <div class="formControls col-2">
                 @Html.DropDownListFor(m => m.PoliticalStatus, ViewData["PoliticalStatus"] as List<SelectListItem>, new { @class = "input-text" })
@@ -58,7 +58,7 @@
             <div class="formControls col-2">
                 @Html.DropDownListFor(m => m.Education, ViewData["Education"] as List<SelectListItem>, new { @class = "input-text" })
             </div>
-        </div>
+        </div>*@
         <div class="row cl">
             <label class="form-label col-2">真实姓名：</label>
             <div class="formControls col-6">
@@ -166,7 +166,22 @@
         <div class="row cl">
             <label class="form-label col-2">密码：</label>
             <div class="formControls col-2">
-                <input name="Password" placeholder="不修改密码请留空" class = "input-text" />
+                <input name="Password" placeholder="不修改密码请留空" class="input-text" />
+            </div>
+            <label class="form-label col-2">冻结账户：</label>
+            <div class="formControls col-2">
+                <div class="radio-box">
+                    @Html.RadioButtonFor(m => m.IsFrozen, true, new { id = "state-1" })@Html.Label("state-1", "是")
+                </div>
+                <div class="radio-box">
+                    @Html.RadioButtonFor(m => m.IsFrozen, false, new { id = "state-2" })@Html.Label("state-2", "否")
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">注册电话：</label>
+            <div class="formControls col-2">
+                @Html.TextBoxFor(m => m.MemberPhone, new { @class = "input-text" })
             </div>
         </div>
         <div class="row cl">

@@ -486,6 +486,11 @@
             状态
             </summary>		
         </member>
+        <member name="P:WYJK.Entity.AccumulationFundShowModel.HandleDate">
+            <summary>
+            归档时间
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.AccumulationFundParameter">
             <summary>
             公积金参数 (Admin)
@@ -1766,6 +1771,11 @@
             审核时间
             </summary>
         </member>
+        <member name="P:WYJK.Entity.Order.Balance">
+            <summary>
+            余额
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.FinanceOrder">
             <summary>
             财务主订单(Admin)
@@ -1799,6 +1809,11 @@
         <member name="P:WYJK.Entity.FinanceOrder.payUserCount">
             <summary>
             用户支付数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FinanceOrder.payUserName">
+            <summary>
+            缴费用户名
             </summary>
         </member>
         <member name="P:WYJK.Entity.FinanceOrder.PaymentMethod">
@@ -1844,6 +1859,11 @@
         <member name="P:WYJK.Entity.GenerateOrderParameter.PlatType">
             <summary>
             平台类型  0:线下；1：移动端
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.GenerateOrderParameter.IsUseBalance">
+            <summary>
+            是否使用余额
             </summary>
         </member>
         <member name="T:WYJK.Entity.OrderListForMobile">
@@ -1909,6 +1929,11 @@
         <member name="P:WYJK.Entity.OrderDetailForMobile.PaymentMethod">
             <summary>
             支付方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.OrderDetailForMobile.Balance">
+            <summary>
+            余额支付额度
             </summary>
         </member>
         <member name="T:WYJK.Entity.OrderCodeArrayParameter">
@@ -2940,6 +2965,11 @@
         <member name="P:WYJK.Entity.SocialSecurityShowModel.ExpressCompany">
             <summary>
             快递公司
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityShowModel.HandleDate">
+            <summary>
+            归档时间
             </summary>
         </member>
         <member name="T:WYJK.Entity.SocialSecurityParameter">
@@ -4195,6 +4225,111 @@
         <member name="P:WYJK.Entity.MembersStatistics.IsArrears">
             <summary>
             是否欠费
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MembersPayList">
+            <summary>
+            用户缴费列表
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.PeopleCount">
+            <summary>
+            人数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.ShouZhiType">
+            <summary>
+            收支类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.OperationType">
+            <summary>
+            备注
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.LaiYuan">
+            <summary>
+            来源
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.Cost">
+            <summary>
+            费用
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.Balance">
+            <summary>
+            余额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.Payee">
+            <summary>
+            收款人
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.Account">
+            <summary>
+            账户金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.CreateTime">
+            <summary>
+            记录时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.Bucha">
+            <summary>
+            冻结费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.AccountStatus">
+            <summary>
+            账户状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayList.IsArrears">
+            <summary>
+            是否欠费
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MembersPayParameters">
+            <summary>
+            缴费记录参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.UserType">
+            <summary>
+            用户类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.MemberID">
+            <summary>
+            注册用户ID（代理机构）
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.SocialSecurityPeopleName">
+            <summary>
+            客户名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.PaymentMethod">
+            <summary>
+            费用来源
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.Payee">
+            <summary>
+            收款人
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.StartTime">
+            <summary>
+            开始时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MembersPayParameters.EndTime">
+            <summary>
+            结束时间
             </summary>
         </member>
         <member name="T:WYJK.Entity.MembersParameters">

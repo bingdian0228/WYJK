@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -270,7 +271,7 @@ namespace WYJK.Data.ServiceImpl
                 + " Sex=@Sex,Address=@Address,Phone=@Phone,Email=@Email,QQ=@QQ,Alipay=@Alipay,"
                 + " BankCardNo=@BankCardNo,BankAccount=@BankAccount,UserAccount=@UserAccount,"
                 + " SecondContact=@SecondContact,SecondContactPhone=@SecondContactPhone,InsuranceArea=@InsuranceArea,"
-                + " HouseholdType=@HouseholdType,IsComplete= 1 "
+                + " HouseholdType=@HouseholdType,IsComplete= 1,IsFrozen=@IsFrozen,MemberPhone=@MemberPhone "
                 + " where MemberID=@MemberID";
 
             DbParameter[] parameters = new DbParameter[] {
@@ -293,6 +294,8 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("@SecondContactPhone",model.SecondContactPhone ?? ""),
                 new SqlParameter("@InsuranceArea",model.InsuranceArea ?? ""),
                 new SqlParameter("@HouseholdType",model.HouseholdType ?? ""),
+                new SqlParameter("@IsFrozen",model.IsFrozen),
+                new SqlParameter("@MemberPhone",model.MemberPhone),
                 new SqlParameter("@MemberID",model.MemberID)
             };
 
@@ -341,7 +344,7 @@ namespace WYJK.Data.ServiceImpl
                 + " Sex,Address,Phone,Email,QQ,Alipay,"
                 + " BankCardNo,BankAccount,UserAccount,"
                 + " SecondContact,SecondContactPhone,InsuranceArea,"
-                + " HouseholdType from Members "
+                + " HouseholdType,IsFrozen,MemberPhone from Members "
                 + $" where MemberID={MemberID}";
             ExtensionInformationParameter model = await DbHelper.QuerySingleAsync<ExtensionInformationParameter>(sql);
             return model;
@@ -380,6 +383,161 @@ namespace WYJK.Data.ServiceImpl
             string sqlstr = $"select * from Members where MemberID = {MemberID}";
             Members member = DbHelper.QuerySingle<Members>(sqlstr);
             return member;
+        }
+
+        /// <summary>
+        /// 获取缴费记录列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public PagedResult<MembersPayList> GetMembersPayList(MembersPayParameters parameter)
+        {
+            StringBuilder strb = new StringBuilder("where 1 = 1");
+            if (!string.IsNullOrEmpty(parameter.UserType))
+            {
+                strb.Append($" and UserType = {parameter.UserType} ");
+            }
+
+            if (!string.IsNullOrEmpty(parameter.MemberID))
+            {
+                strb.Append($" and Members.MemberID = {parameter.MemberID} ");
+            }
+            if (!String.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                strb.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' ");
+
+            if (!String.IsNullOrEmpty(parameter.IdentityCard))
+                strb.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%' ");
+
+            //缴费来源
+            if (!String.IsNullOrEmpty(parameter.PaymentMethod))
+            {
+                strb.Append($" and AccountRecord.LaiYuan='{parameter.PaymentMethod}'");
+            }
+            //收款人
+            if (parameter.Payee != "全部" && !string.IsNullOrEmpty(parameter.Payee))
+            {
+                strb.Append($" and AccountRecord.Payee='{parameter.Payee}'");
+            }
+
+            if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                strb.Append("and 1 = 1 ");
+            }
+            else if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && !string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                strb.Append($"and CreateTime < '{ parameter.EndTime.Value.AddDays(1)}' ");
+            }
+            else if (!string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                strb.Append($"and CreateTime > '{parameter.StartTime}'");
+            }
+            else {
+                strb.Append($"and CreateTime between '{parameter.StartTime}' and '{parameter.EndTime.Value.AddDays(1)}'");
+            }
+
+            string innersql = "select Members.MemberID,Members.UserType UserType,members.MemberName MemberName,members.EnterpriseName EnterpriseName,members.BusinessName BusinessName,members.MemberPhone MemberPhone, AccountRecord.PeopleCount,ISNULL(members.Account,0) Account,ISNULL(members.Bucha,0) Bucha,AccountRecord.ID,AccountRecord.ShouZhiType,AccountRecord.LaiYuan,AccountRecord.OperationType,AccountRecord.Cost,AccountRecord.Balance,AccountRecord.CreateTime,AccountRecord.Payee,"
+                            + " case when exists("
+                            + " select * from SocialSecurityPeople"
+                            + " left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
+                            + " left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"
+                            + $" where MemberID = members.MemberID and(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew})"
+                            + " ) "
+                            + " then '待续费' else '正常' end AccountStatus"
+                            + " from Members "
+                            + " left join AccountRecord on Members.MemberID = AccountRecord.MemberID"
+                            + " left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = AccountRecord.SocialSecurityPeopleID"
+                            + $"  {strb.ToString()}";
+            string sqlstr = "select * from (select ROW_NUMBER() OVER(ORDER BY t.MemberID,t.ID desc )AS Row,t.* from"
+                            + $" ({innersql}) t) tt"
+                            + " where tt.Row BETWEEN @StartIndex AND @EndIndex";
+            List<MembersPayList> memberList = DbHelper.Query<MembersPayList>(sqlstr, new
+            {
+                StartIndex = parameter.SkipCount,
+                EndIndex = parameter.TakeCount
+            });
+
+            int totalCount = DbHelper.QuerySingle<int>($"select count(0) from ({innersql}) t");
+
+            return new PagedResult<MembersPayList>
+            {
+                PageIndex = parameter.PageIndex,
+                PageSize = parameter.PageSize,
+                TotalItemCount = totalCount,
+                Items = memberList
+            };
+        }
+
+        /// <summary>
+        /// 获取缴费金额列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public dynamic GetMembersPayAmount(MembersPayParameters parameter)
+        {
+            StringBuilder strb = new StringBuilder("where 1 = 1");
+            if (!string.IsNullOrEmpty(parameter.UserType))
+            {
+                strb.Append($" and UserType = {parameter.UserType} ");
+            }
+
+            if (!string.IsNullOrEmpty(parameter.MemberID))
+            {
+                strb.Append($" and Members.MemberID = {parameter.MemberID} ");
+            }
+            if (!String.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                strb.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' ");
+
+            if (!String.IsNullOrEmpty(parameter.IdentityCard))
+                strb.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%' ");
+
+            //缴费来源
+            if (!String.IsNullOrEmpty(parameter.PaymentMethod))
+            {
+                strb.Append($" and AccountRecord.LaiYuan='{parameter.PaymentMethod}'");
+            }
+            //收款人
+            if (parameter.Payee != "全部" && !string.IsNullOrEmpty(parameter.Payee))
+            {
+                strb.Append($" and AccountRecord.Payee='{parameter.Payee}'");
+            }
+
+            if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                strb.Append("and 1 = 1 ");
+            }
+            else if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && !string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                strb.Append($"and CreateTime < '{ parameter.EndTime.Value.AddDays(1)}' ");
+            }
+            else if (!string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                strb.Append($"and CreateTime > '{parameter.StartTime}'");
+            }
+            else {
+                strb.Append($"and CreateTime between '{parameter.StartTime}' and '{parameter.EndTime.Value.AddDays(1)}'");
+            }
+
+            string innersql = "select Members.MemberID,Members.UserType UserType,members.MemberName MemberName,members.EnterpriseName EnterpriseName,members.BusinessName BusinessName,members.MemberPhone MemberPhone, AccountRecord.PeopleCount,ISNULL(members.Account,0) Account,ISNULL(members.Bucha,0) Bucha,AccountRecord.ID,AccountRecord.ShouZhiType,AccountRecord.LaiYuan,AccountRecord.OperationType,AccountRecord.Cost,AccountRecord.Balance,AccountRecord.CreateTime,AccountRecord.Payee,"
+                            + " case when exists("
+                            + " select * from SocialSecurityPeople"
+                            + " left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID"
+                            + " left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID"
+                            + $" where MemberID = members.MemberID and(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew})"
+                            + " ) "
+                            + " then '待续费' else '正常' end AccountStatus"
+                            + " from Members "
+                            + " left join AccountRecord on Members.MemberID = AccountRecord.MemberID"
+                            + " left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = AccountRecord.SocialSecurityPeopleID"
+                            + $"  {strb.ToString()}";
+
+
+
+            List<MembersPayList> membersPayList = DbHelper.Query<MembersPayList>($"select * from ({innersql}) t");
+            dynamic dyn = new ExpandoObject();
+            dyn.TotalAmount = membersPayList.Where(n => n.ShouZhiType == "收入").Sum(n => n.Cost);
+            dyn.DeduceAmount = membersPayList.Where(n => n.ShouZhiType == "支出").Sum(n => n.Cost);
+
+            return dyn;
         }
 
         /// <summary>
@@ -465,7 +623,7 @@ namespace WYJK.Data.ServiceImpl
 left join SocialSecurityPeople on SocialSecurityPeople.MemberID = members.MemberID
 left join SocialSecurity on SocialSecurity.SocialSecurityPeopleID = socialsecuritypeople.SocialSecurityPeopleID
 left join AccumulationFund on AccumulationFund.SocialSecurityPeopleID = socialsecuritypeople.SocialSecurityPeopleID
-where (SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew}) and members.MemberID={MemberID}";
+where (SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew} or (SocialSecurity.Status ={(int)SocialSecurityStatusEnum.WaitingStop} and SocialSecurity.StopMethod=1) or (AccumulationFund.Status ={(int)SocialSecurityStatusEnum.WaitingStop} and AccumulationFund.StopMethod=1)) and members.MemberID={MemberID}";
             int result = DbHelper.QuerySingle<int>(sqlstr);
             return result > 0;
         }

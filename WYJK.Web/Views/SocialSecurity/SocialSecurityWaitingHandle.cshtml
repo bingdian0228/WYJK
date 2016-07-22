@@ -204,6 +204,8 @@
                     <th width="80">基数</th>
                     <th width="80">比例</th>
                     <th width="80">每月交费</th>
+                    @*<th width="80">归档时间</th>*@
+                    <th width="80">业务申请时间</th>
                     <th width="80">状态</th>
                     <th width="120">查看</th>
                 </tr>
@@ -226,7 +228,26 @@
                         <td>@socialSecurity.SocialSecurityBase.ToString("N2")</td>
                         <td>@socialSecurity.PayProportion.ToString("N2")</td>
                         <td>@Convert.ToDecimal(socialSecurity.SocialSecurityBase * socialSecurity.PayProportion / 100).ToString("N2")</td>
-
+                        @*<td>@(socialSecurity.HandleDate != null ? socialSecurity.HandleDate.Value.ToString() : "--")</td>*@
+                        <td>
+                            @if (socialSecurity.IsPay)
+                            {
+                                string sqlstr = @"  select top 1 * from [Order]
+  left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+  where OrderDetails.SocialSecurityPeopleID = " + socialSecurity.SocialSecurityPeopleID + "and IsPaySocialSecurity=1 order by [Order].PayTime desc";
+                                Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                                if (order != null)
+                                {
+                                    @order.PayTime.ToString()
+                                }
+                                else {
+                                    @:--
+                            }
+                            }
+                            else {
+                                @:--
+                        }
+                        </td>
                         <td class="td-status">
                             @if (socialSecurity.IsAdjustingBase)
                             {

@@ -1988,6 +1988,16 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         {
             int orderID = _socialSecurityService.AddAdjustingBase(parameter);
 
+            //判断账户是否冻结，如果冻结，则不能进行支付
+            bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
+  where MemberID = (select MemberID from[Order] where OrderID = {orderID})");
+            if (isFrozen == false)
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "该账户被冻结，不允许支付"
+                };
+
             if (orderID > 0)
             {
                 BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID={orderID}");
@@ -2062,7 +2072,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         /// <param name="Msg"></param>
         /// <param name="Signature"></param>
         [System.Web.Http.HttpGet]
-        public void AdjustingBase_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
+        public void AdjustingBase_Return(string Succeed, string CoNo, string BillNo, string Amount, string Date, string MerchantPara, string Msg, string Signature)
         {
             string orderID = BillNo.TrimStart('0');
             BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID='{orderID}'");
@@ -2072,7 +2082,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
              * 先判断是否支付成功
              * 验证支付成功还要验证支付金额是否和订单的金额一致
              */
-            string ReturnInfo = "Succeed=" + Succeed + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&Msg=" + Msg + "&Signature=" + Signature;
+            string ReturnInfo = "Succeed=" + Succeed + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&MerchantPara=" + MerchantPara + "&Msg=" + Msg + "&Signature=" + Signature;
             //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
             StringBuilder str = new StringBuilder();
             string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
@@ -2152,6 +2162,9 @@ where SocialSecurityPeople.MemberID = {MemberID}";
     values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{baseOrders.MemberID},{baseOrders.SocialSecurityPeopleID},'','支出','余额','调基费',{baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge},{account },getdate());";
 
                     DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
+
+                    HttpContext.Current.Response.Status = "200";
+                    HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
                 }
             }
         }
@@ -2204,6 +2217,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         public JsonResult<dynamic> GetServiceProtocol()
         {
             ServiceProtocol serviceProtocol = DbHelper.QuerySingle<ServiceProtocol>("select ServiceProtocolContent from ServiceProtocol");
+            serviceProtocol.ServiceProtocolContent = serviceProtocol.ServiceProtocolContent.Replace("/Content/lib", ConfigurationManager.AppSettings["ServerUrl"] + "Content/lib");
             return new JsonResult<dynamic>
             {
                 status = true,

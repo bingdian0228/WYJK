@@ -28,14 +28,14 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurityPeople.IdentityCard, dbo.SocialSecurityPeople.HouseholdProperty, dbo.AccumulationFund.AccumulationFundID, 
                       dbo.AccumulationFund.AccumulationFundArea, dbo.AccumulationFund.AccumulationFundBase, dbo.AccumulationFund.PayProportion, dbo.AccumulationFund.PayTime, 
                       dbo.AccumulationFund.PayMonthCount,AccumulationFund.AlreadyPayMonthCount, dbo.AccumulationFund.PayBeforeMonthCount, dbo.AccumulationFund.Status, dbo.Members.MemberName,  AccumulationFund.UpdateDt,
-                      dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,AccumulationFund.IsAdjustingBase,AccumulationFund.AdjustingBaseNote,
+                      dbo.Members.MemberID,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account,  dbo.AccumulationFund.StopDate, dbo.AccumulationFund.ApplyStopDate,AccumulationFund.IsAdjustingBase,AccumulationFund.AdjustingBaseNote,AccumulationFund.IsPay,
 case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
                               left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
                               where MemberID = members.MemberID and(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew})
                              ) 
-                             then 1 else 0 end IsArrears
+                             then 1 else 0 end IsArrears,HandleDate
                       FROM  dbo.AccumulationFund 
                       INNER JOIN dbo.SocialSecurityPeople ON dbo.AccumulationFund.SocialSecurityPeopleID = dbo.SocialSecurityPeople.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";

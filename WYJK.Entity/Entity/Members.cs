@@ -606,6 +606,8 @@ namespace WYJK.Entity
         /// 户口性质
         /// </summary>		
         public string HouseholdType { get; set; }
+
+        public bool IsFrozen { get; set; }
     }
 
     /// <summary>
@@ -617,6 +619,7 @@ namespace WYJK.Entity
         /// 用户ID
         /// </summary>
         public int MemberID { get; set; }
+        public string MemberPhone { get; set; }
     }
 
     /// <summary>
@@ -656,6 +659,120 @@ namespace WYJK.Entity
 
     }
 
+    /// <summary>
+    /// 用户缴费列表
+    /// </summary>
+    public class MembersPayList
+    {
+        public int MemberID { get; set; }
+        public string UserType { get; set; }
+        public string MemberName { get; set; }
+
+        public string EnterpriseName { get; set; }
+
+        public string BusinessName { get; set; }
+        public string MemberPhone { get; set; }
+        /// <summary>
+        /// 人数
+        /// </summary>
+        public string PeopleCount { get; set; }
+
+        /// <summary>
+        /// 收支类型
+        /// </summary>
+        public string ShouZhiType { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string OperationType { get; set; }
+
+
+
+        /// <summary>
+        /// 来源
+        /// </summary>
+        public string LaiYuan { get; set; }
+
+        /// <summary>
+        /// 费用
+        /// </summary>
+        public decimal Cost { get; set; }
+
+        /// <summary>
+        /// 余额
+        /// </summary>
+        public decimal Balance { get; set; }
+
+        /// <summary>
+        /// 收款人
+        /// </summary>
+        public string Payee { get; set; }
+        /// <summary>
+        /// 账户金额
+        /// </summary>
+        public string Account { get; set; }
+
+        /// <summary>
+        /// 记录时间
+        /// </summary>
+        public DateTime? CreateTime { get; set; }
+
+        /// <summary>
+        /// 冻结费
+        /// </summary>
+        public string Bucha { get; set; }
+        /// <summary>
+        /// 账户状态
+        /// </summary>
+        public string AccountStatus { get; set; }
+        /// <summary>
+        /// 是否欠费
+        /// </summary>
+        public string IsArrears { get; set; }
+
+    }
+
+    /// <summary>
+    /// 缴费记录参数
+    /// </summary>
+    public class MembersPayParameters : PagedParameter
+    {
+        /// <summary>
+        /// 用户类型
+        /// </summary>
+        public string UserType { get; set; }
+        /// <summary>
+        /// 注册用户ID（代理机构）
+        /// </summary>
+        public string MemberID { get; set; }
+
+        /// <summary>
+        /// 客户名称
+        /// </summary>
+        public string SocialSecurityPeopleName { get; set; }
+
+        public string IdentityCard { get; set; }
+
+        /// <summary>
+        /// 费用来源
+        /// </summary>
+        public string PaymentMethod { get; set; }
+
+        /// <summary>
+        /// 收款人
+        /// </summary>
+        public string Payee { get; set; }
+
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public DateTime? StartTime { get; set; }
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        public DateTime? EndTime { get; set; }
+    }
 
     /// <summary>
     /// 会员参数

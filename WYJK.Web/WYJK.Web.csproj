@@ -2639,6 +2639,7 @@
     <Content Include="Views\User\UserAdd.cshtml" />
     <Content Include="Views\User\UserEdit.cshtml" />
     <Content Include="Views\User\Qc_back.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

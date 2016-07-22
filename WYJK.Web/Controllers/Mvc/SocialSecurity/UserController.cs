@@ -44,6 +44,9 @@ namespace WYJK.Web.Controllers.Mvc
             return View();
         }
 
+        public ActionResult Index() {
+            return View();
+        }
         public ActionResult Qc_back() {
             return View();
         }

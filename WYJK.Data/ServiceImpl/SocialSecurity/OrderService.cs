@@ -21,14 +21,15 @@ namespace WYJK.Data.ServiceImpl
         /// <param name="MemberID"></param>
         /// <param name="orderCode"></param>
         /// <returns></returns>
-        public Dictionary<bool, string> GenerateOrder(string SocialSecurityPeopleIDStr, int MemberID, string orderCode)
+        public Dictionary<bool, string> GenerateOrder(string SocialSecurityPeopleIDStr, int MemberID, string orderCode, decimal Balance)
         {
             Dictionary<bool, string> dic = new Dictionary<bool, string>();
             DbParameter[] parameters = new DbParameter[] {
                 new SqlParameter("@Flag",SqlDbType.Bit) {Direction = ParameterDirection.Output },
                 new SqlParameter("@OrderCode",orderCode) {Direction = ParameterDirection.InputOutput },
                 new SqlParameter("@MemberID",MemberID),
-                new SqlParameter("@SocialSecurityPeopleIDS",SocialSecurityPeopleIDStr)
+                new SqlParameter("@SocialSecurityPeopleIDS",SocialSecurityPeopleIDStr),
+                new SqlParameter("@Balance",Balance)
             };
 
             DbHelper.ExecuteSqlCommand("Order_Generate", parameters, CommandType.StoredProcedure);
@@ -68,15 +69,15 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public OrderDetailForMobile GetOrderDetail(int MemberID, string OrderCode)
         {
-            string sql = "declare @OrderID int, @OrderCode nvarchar(50),@Names nvarchar(50), @SocialSecurityTotalAmount decimal(18, 2) = 0, @AccumulationFundTotalAmount decimal(18, 2) = 0, @ServiceCost decimal(18, 2) = 0, @FirstBacklogCost decimal(18, 2) = 0, @PaymentMethod nvarchar(50),@SocialSecurityBuCha decimal(18,2)=0"
-                        + " select @OrderID=[Order].OrderID, @OrderCode =[Order].OrderCode, @Names = ISNULL(@Names + '，', '') + OrderDetails.SocialSecurityPeopleName,"
+            string sql = "declare @Balance decimal(18,2), @OrderID int, @OrderCode nvarchar(50),@Names nvarchar(50), @SocialSecurityTotalAmount decimal(18, 2) = 0, @AccumulationFundTotalAmount decimal(18, 2) = 0, @ServiceCost decimal(18, 2) = 0, @FirstBacklogCost decimal(18, 2) = 0, @PaymentMethod nvarchar(50),@SocialSecurityBuCha decimal(18,2)=0"
+                        + " select @Balance=ISNULL([Order].Balance,0), @OrderID=[Order].OrderID, @OrderCode =[Order].OrderCode, @Names = ISNULL(@Names + '，', '') + OrderDetails.SocialSecurityPeopleName,"
                         + " @SocialSecurityTotalAmount += OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth,"
                         + " @AccumulationFundTotalAmount += OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth,"
                         + " @ServiceCost += OrderDetails.SocialSecurityServiceCost + OrderDetails.AccumulationFundServiceCost,"
                         + " @FirstBacklogCost += OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.AccumulationFundFirstBacklogCost,"
                         + " @SocialSecurityBuCha += OrderDetails.SocialSecurityBuCha"
                         + " from[Order] right join OrderDetails on[Order].OrderCode = OrderDetails.OrderCode where [Order].MemberID = @MemberID and [order].OrderCode = @OrderCode1"
-                        + " select  @SocialSecurityBuCha SocialSecurityBuCha,@OrderID OrderID,  @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
+                        + " select @Balance Balance,  @SocialSecurityBuCha SocialSecurityBuCha,@OrderID OrderID,  @OrderCode OrderCode, @Names Names, @SocialSecurityTotalAmount SocialSecurityTotalAmount, @AccumulationFundTotalAmount AccumulationFundTotalAmount, @ServiceCost ServiceCost, @FirstBacklogCost FirstBacklogCost, ISNULL(@PaymentMethod, '')  PaymentMethod";
 
             OrderDetailForMobile model = DbHelper.QuerySingle<OrderDetailForMobile>(sql, new
             {
@@ -99,7 +100,8 @@ namespace WYJK.Data.ServiceImpl
                 builder.AppendFormat(" and Members.MemberID = {0}", parameter.MemberID);
             }
 
-            if (!string.IsNullOrEmpty(parameter.PaymentMethod)) {
+            if (!string.IsNullOrEmpty(parameter.PaymentMethod))
+            {
                 builder.AppendFormat($" and orders.PaymentMethod='{parameter.PaymentMethod}'");
             }
 
@@ -131,6 +133,7 @@ namespace WYJK.Data.ServiceImpl
 
             string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberID,members.MemberName,members.EnterpriseName,members.BusinessName,"
                             + " (select COUNT(*) from OrderDetails where OrderDetails.OrderCode = Orders.OrderCode) payUserCount,"
+                            + " (select left((select SocialSecurityPeopleName+','  from OrderDetails  where OrderCode=Orders.OrderCode for xml path('')),LEN((select SocialSecurityPeopleName+','  from OrderDetails  where OrderCode=Orders.OrderCode for xml path('')))-1))  payUserName,"
                             + " orders.PaymentMethod,"
                             + " (select  SUM(OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth + OrderDetails.SocialSecurityServiceCost + OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.SocialSecurityBuCha + OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth + OrderDetails.AccumulationFundServiceCost + OrderDetails.AccumulationFundFirstBacklogCost)  from OrderDetails where OrderDetails.OrderCode = orders.OrderCode) Amounts,"
                             + " orders.Status"
@@ -157,6 +160,64 @@ namespace WYJK.Data.ServiceImpl
                 TotalItemCount = totalCount,
                 Items = orderList
             };
+        }
+
+        /// <summary>
+        /// 获取订单查询总金额
+        /// </summary>
+        /// <returns></returns>
+        public decimal GetFinanceOrderAmount(FinanceOrderParameter parameter)
+        {
+            StringBuilder builder = new StringBuilder(" where 1 = 1");
+            if (!string.IsNullOrEmpty(parameter.MemberID))
+            {
+                builder.AppendFormat(" and Members.MemberID = {0}", parameter.MemberID);
+            }
+
+            if (!string.IsNullOrEmpty(parameter.PaymentMethod))
+            {
+                builder.AppendFormat($" and orders.PaymentMethod='{parameter.PaymentMethod}'");
+            }
+
+            builder.Append($" and OrderCode like '%{parameter.OrderCode}%'");
+
+            if (!string.IsNullOrEmpty(parameter.Status))
+            {
+                builder.Append($" and orders.Status = {parameter.Status}");
+            }
+            else {
+                builder.Append($" and orders.Status in(1,2)");
+            }
+
+            if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                builder.Append("and 1 = 1 ");
+            }
+            else if (string.IsNullOrEmpty(parameter.StartTime.ToString()) && !string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                builder.Append($"and PayTime < '{ parameter.EndTime.Value.AddDays(1)}' ");
+            }
+            else if (!string.IsNullOrEmpty(parameter.StartTime.ToString()) && string.IsNullOrEmpty(parameter.EndTime.ToString()))
+            {
+                builder.Append($"and PayTime > '{parameter.StartTime}'");
+            }
+            else {
+                builder.Append($"and PayTime between '{parameter.StartTime}' and '{parameter.EndTime.Value.AddDays(1)}'");
+            }
+
+            string innerSql = "select Orders.PayTime,orders.OrderCode,members.UserType,members.MemberID,members.MemberName,members.EnterpriseName,members.BusinessName,"
+                            + " (select COUNT(*) from OrderDetails where OrderDetails.OrderCode = Orders.OrderCode) payUserCount,"
+                            + " (select left((select SocialSecurityPeopleName+','  from OrderDetails  where OrderCode=Orders.OrderCode for xml path('')),LEN((select SocialSecurityPeopleName+','  from OrderDetails  where OrderCode=Orders.OrderCode for xml path('')))-1))  payUserName,"
+                            + " orders.PaymentMethod,"
+                            + " (select  SUM(OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth + OrderDetails.SocialSecurityServiceCost + OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.SocialSecurityBuCha + OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth + OrderDetails.AccumulationFundServiceCost + OrderDetails.AccumulationFundFirstBacklogCost)  from OrderDetails where OrderDetails.OrderCode = orders.OrderCode) Amounts,"
+                            + " orders.Status"
+                            + " from[Order] orders"
+                            + " left join Members on orders.MemberID = Members.MemberID"
+                            + $"  {builder.ToString()}";
+            
+            decimal totalAmount = DbHelper.QuerySingle<decimal>($"select ISNULL(sum(Amounts),0) as TotalCount from ({innerSql}) t");
+
+            return totalAmount;
         }
 
         /// <summary>

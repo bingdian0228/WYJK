@@ -19,7 +19,7 @@ namespace WYJK.Data.IService
         /// <param name="MemberID"></param>
         /// <param name="orderCode"></param>
         /// <returns></returns>
-        Dictionary<bool, string> GenerateOrder(string SocialSecurityPeopleIDStr, int MemberID, string orderCode);
+        Dictionary<bool, string> GenerateOrder(string SocialSecurityPeopleIDStr, int MemberID, string orderCode, decimal Balance = 0);
 
         /// <summary>
         /// 获取订单列表(Mobile)
@@ -27,7 +27,7 @@ namespace WYJK.Data.IService
         /// <param name="MemberID"></param>
         /// <param name="Status"></param>
         /// <returns></returns>
-        List<OrderListForMobile> GetOrderList(int MemberID,int Status);
+        List<OrderListForMobile> GetOrderList(int MemberID, int Status);
         /// <summary>
         /// 获取订单详情(Mobile)
         /// </summary>
@@ -43,6 +43,13 @@ namespace WYJK.Data.IService
         PagedResult<FinanceOrder> GetFinanceOrderList(FinanceOrderParameter parameter);
 
         /// <summary>
+        /// 获取订单总金额
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        decimal GetFinanceOrderAmount(FinanceOrderParameter parameter);
+
+        /// <summary>
         /// 修改订单状态(Admin)
         /// </summary>
         /// <param name="OrderCode"></param>
@@ -53,7 +60,7 @@ namespace WYJK.Data.IService
         /// 修改订单对应的参保人的社保和公积金状态(Admin)
         /// </summary>
         /// <returns></returns>
-        bool ModifySocialSecurityPeopleForOrder(int Status,string OrderCodeStr);
+        bool ModifySocialSecurityPeopleForOrder(int Status, string OrderCodeStr);
 
         /// <summary>
         /// 获取子订单列表(Admin)

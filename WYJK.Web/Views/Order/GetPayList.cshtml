@@ -1,4 +1,4 @@
-﻿@model PagedResult<MembersStatistics>
+﻿@model PagedResult<MembersPayList>
 @{
     var memberList = ViewBag.memberList as List<Members>;
     var MemberID = Request.Params["MemberID"];
@@ -6,6 +6,7 @@
 @section Header
 {
     <script type="text/javascript" src="~/Content/lib/laypage/1.3/laypage.js"></script>
+    <script src="~/Content/lib/My97DatePicker/WdatePicker.js"></script>
 }
 @section Footer
 {
@@ -22,7 +23,7 @@
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
 
-                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&MemberID=" + '@MemberID' + "&SocialSecurityPeopleName=" + '@Request.Params["SocialSecurityPeopleName"]' + "&IdentityCard=" + '@Request.Params["IdentityCard"]';// + "&Cost=" + '@Request.Params["Cost"]'
+                    location.href = '?PageIndex=' + e.curr + "&UserType=" + '@Request.Params["UserType"]' + "&MemberID=" + '@MemberID' + "&SocialSecurityPeopleName=" + '@Request.Params["SocialSecurityPeopleName"]' + "&IdentityCard=" + '@Request.Params["IdentityCard"]' + "&PaymentMethod=" + '@Request["PaymentMethod"]' + '&Payee=' + '@Request["Payee"]' + "&StartTime=" + '@Request["StartTime"]' + "&EndTime=" + '@Request["EndTime"]';
 
                 }
             }
@@ -79,11 +80,25 @@
                 }
                 @Html.DropDownList("MemberID", list, new { @class = "select" })
             </span>
-            @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
-            @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
+            @:费用来源：
+                    <span class="select-box inline">
+                        @Html.DropDownList("PaymentMethod", ViewData["PaymentMethod"] as List<SelectListItem>, new { @class = "select" })
+                        <script>
+                            $("#PaymentMethod").prepend("<option value='' @((Request["PaymentMethod"] ?? "")=="" ? "selected":"")>全部</option>");
+                        </script>
+                    </span>
+                    @:客户名称： @Html.TextBox("SocialSecurityPeopleName", null, new { style = "width:250px", @class = "input-text", placeholder = "客户名称" })
+                    @:身份证号： @Html.TextBox("IdentityCard", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })
                     @*@:费用：@Html.TextBox("Cost", null, new { style = "width:250px", @class = "input-text", placeholder = "身份证号" })*@
+                    @:收款人:
+                    <span class="select-box inline">
+                        @Html.DropDownList("Payee", ViewData["Payee"] as List<SelectListItem>, new { @class = "select" })
 
-
+                    </span>
+                    @:日期范围：
+                    <input type="text" name="StartTime" value='@Request.Params["StartTime"]' onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}'})" id="logmin" class="input-text Wdate" style="width:120px;">
+                    @:-
+                    <input type="text" name="EndTime" value='@Request.Params["EndTime"]' onfocus="WdatePicker({minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d'})" id="logmax" class="input-text Wdate" style="width:120px;">
 
 
 
@@ -109,13 +124,20 @@
                 <tr class="text-c">
                     <th width="80">用户类型</th>
                     <th width="80">代理机构</th>
-                    <th width="80">注册电话</th>
+                    @*<th width="80">注册电话</th>*@
+                    <th width="80">收支类型</th>
+                    <th width="80">来源</th>
+                    <th width="80">备注</th>
+                    <th width="80">费用</th>
+                    <th width="80">余额</th>
+                    <th width="80">时间</th>
+                    <th width="80">收款人</th>
                     <th width="80">人数</th>
-                    <th width="80">账户余额</th>
+                    @*<th width="80">账户余额</th>*@
                     <th width="200">冻结费</th>
                     <th width="80">账户状态</th>
                     <th width="80">是否欠费</th>
-                    <th width="120">查看</th>
+                    @*<th width="120">查看</th>*@
                 </tr>
             </thead>
             <tbody>
@@ -127,9 +149,17 @@
                         </td>
                         <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation","Member")?MemberID=@member.MemberID&type=1">@(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))</a></td>
                         @*<td>@member.MemberName</td>*@
-                        <td>@member.MemberPhone</td>
-                        <td>@member.SocialSecurityPeopleCount</td>
-                        <td>@member.Account</td>
+                        @*<td>@member.MemberPhone</td>*@
+                        <td>@member.ShouZhiType</td>
+                        <td>@member.LaiYuan</td>
+                        <td>@member.OperationType</td>
+                        <td>@member.Cost</td>
+                        <td>@member.Balance</td>
+                        <td>@member.CreateTime</td>
+                        <td>@(string.IsNullOrWhiteSpace(member.Payee) ? "--" : member.Payee)</td>
+
+                        <td>@(string.IsNullOrWhiteSpace(member.PeopleCount) ? "--" : member.PeopleCount)</td>
+                        @*<td>@member.Account</td>*@
                         <td>
                             @member.Bucha
                         </td>
@@ -137,9 +167,9 @@
                         <td>
                             @(Convert.ToDecimal(member.Account) < 0 ? "是" : "否")
                         </td>
-                        <td>
-                            <a title="缴费记录" href='@Url.Action("GetAccountRecordList","Order")?MemberID=@member.MemberID' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
-                        </td>
+                        @*<td>
+                                <a title="缴费记录" href='@Url.Action("GetAccountRecordList","Order")?MemberID=@member.MemberID' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a>
+                            </td>*@
                     </tr>
                 }
             </tbody>
@@ -147,7 +177,7 @@
         <div id="pager" style="margin-top: 20px;"></div>
     </div>
     <div class="cl pd-5 bg-1 bk-gray mt-20">
-
+        <span class="l">总计交费：<strong>@ViewBag.TotalAmount</strong>&nbsp;扣费：<strong>@ViewBag.DeduceAmount</strong></span>
         <span class="r">共有数据：<strong>@Model.TotalItemCount</strong> 条</span>
     </div>
 </div>

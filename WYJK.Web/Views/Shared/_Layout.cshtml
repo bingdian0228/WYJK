@@ -44,5 +44,20 @@
     @RenderSection("Footer", required: false)
     <script type="text/javascript" src="~/Content/lib/layer/2.1/layer.js"></script>
     <script type="text/javascript"  src="/Content/js/common.js"></script>
+    <script type="text/javascript">
+        
+        var DEFAULT_VERSION = "8.0";
+        var ua = navigator.userAgent.toLowerCase();
+        var isIE = ua.indexOf("msie") > -1;
+        var safariVersion;
+        if (isIE) {
+            safariVersion = ua.match(/msie ([\d.]+)/)[1];
+        }
+
+        if (safariVersion <= DEFAULT_VERSION) {
+            // 进行你所要的操作
+            alert("建议升级到IE9及以上版本");
+        }
+    </script>
 </body>
 </html>
