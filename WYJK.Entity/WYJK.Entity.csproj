@@ -66,6 +66,7 @@
     <Compile Include="Entity\Log.cs" />
     <Compile Include="Entity\MemberLoan.cs" />
     <Compile Include="Entity\MemberLoanAudit.cs" />
+    <Compile Include="Entity\MemberLoanRepayment.cs" />
     <Compile Include="Entity\Message.cs" />
     <Compile Include="Entity\Order.cs" />
     <Compile Include="Entity\OrderDetails.cs" />

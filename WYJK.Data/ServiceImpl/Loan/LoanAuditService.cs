@@ -28,7 +28,7 @@ namespace WYJK.Data.ServiceImpl
 
             string innersqlstr = $@"select MemberLoanAudit.ID,Members.MemberID,Members.MemberName,Members.UserType,members.MemberPhone,members.EnterpriseName,members.BusinessName,
 MemberLoan.TotalAmount,memberloan.AlreadyUsedAmount,memberloan.AvailableAmount,
-MemberLoanAudit.ApplyAmount,MemberLoanAudit.Status,MemberLoanAudit.ApplyDate,MemberLoanAudit.AuditDate
+MemberLoanAudit.ApplyAmount,MemberLoanAudit.Status,MemberLoanAudit.ApplyDate,MemberLoanAudit.AuditDate,MemberLoanAudit.AlreadyLoanDate
 from MemberLoanAudit
 left join MemberLoan on MemberLoanAudit.MemberID = MemberLoan.MemberID
 left join Members on  MemberLoanAudit.MemberID = Members.MemberID"
@@ -61,16 +61,19 @@ left join Members on  MemberLoanAudit.MemberID = Members.MemberID"
         /// <param name="MembersStr"></param>
         /// <param name="Status"></param>
         /// <returns></returns>
-        public bool MemberLoanAudit(int[] IDs, string Status)
+        public bool MemberLoanAudit(int ID, string Status)
         {
             string sqlstr = string.Empty;
-            foreach (var ID in IDs)
+            if (Status == Convert.ToString((int)LoanAuditEnum.NoPass) || Status == Convert.ToString((int)LoanAuditEnum.Pass))
             {
-                sqlstr+= $"update MemberLoanAudit set Status={Status} ,AuditDate=getdate() where ID ={ID};";
-                if (Status == Convert.ToString((int)LoanAuditEnum.Pass)) {
-                    string sqlstr1 = $"select ApplyAmount from MemberLoanAudit where ID={ID}";
-                    sqlstr += $"update MemberLoan set AlreadyUsedAmount+=({sqlstr1}),AvailableAmount-=({sqlstr1}) where MemberID=(select MemberID from MemberLoanAudit where ID={ID});";
-                }
+                sqlstr += $"update MemberLoanAudit set Status={Status} ,AuditDate=getdate() where ID ={ID};";
+            }
+
+            if (Status == Convert.ToString((int)LoanAuditEnum.AlreadyLoan))
+            {
+                string sqlstr1 = $"select ApplyAmount from MemberLoanAudit where ID={ID}";
+                sqlstr += $"update MemberLoan set AlreadyUsedAmount+=({sqlstr1}),AvailableAmount-=({sqlstr1}) where MemberID=(select MemberID from MemberLoanAudit where ID={ID});";
+                sqlstr += $"update MemberLoanAudit set Status={Status} ,AlreadyLoanDate=getdate(),LoanBalance=ApplyAmount where ID ={ID};";
             }
 
             int result = DbHelper.ExecuteSqlCommand(sqlstr, null);

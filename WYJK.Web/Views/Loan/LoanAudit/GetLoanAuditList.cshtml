@@ -29,6 +29,11 @@
                     layer.msg("请选择申请借款选项");
                     return;
                 }
+
+                if ($("input[type='checkbox'][name='LoanAudit']:checked").length > 1) {
+                    layer.msg("只能选择一项进行审核");
+                    return;
+                }
                 var $this = $(this);
                 layer.confirm('确定审核选中的项目？',
                    { btn: ['确定', '取消'] },
@@ -47,7 +52,7 @@
                        //提交
                        $.ajax({
                            url: "@Url.Action("BatchAudit", "LoanAudit")",
-                           data: { "IDs": IDs, "Status": Status },
+                           data: { "ID": IDs, "Status": Status },
                            dataType: "json",
                            type: "post",
                            success: function (response) {
@@ -67,10 +72,6 @@
                    })
             });
 
-            //审核不通过
-            $(".action-audit-nopass").click(function () {
-
-            });
         })
     </script>
 }
@@ -120,7 +121,7 @@
                         <td>@EnumExt.GetEnumCustomDescription((LoanAuditEnum)Convert.ToInt32(item.Status)) </td>
                         <td>@(item.ApplyDate == null ? "--" : Convert.ToString(item.ApplyDate))</td>
                         <td>@(item.AuditDate == null ? "--" : Convert.ToString(item.AuditDate))</td>
-                        <td>@(item.AlreadyloanDate == null ? "--" : Convert.ToString(item.AlreadyloanDate))</td>
+                        <td>@(item.AlreadyLoanDate == null ? "--" : Convert.ToString(item.AlreadyLoanDate))</td>
                     </tr>
                 }
             </tbody>

@@ -15,6 +15,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using WYJK.Data;
+using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
 using WYJK.Framework.Helpers;
@@ -195,7 +196,7 @@ namespace WYJK.Web
                             List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
                             foreach (SocialSecurity socialSecurity in SocialSecurityList)
                             {
-                                sqlStr3 += $"update SocialSecurity set Status ={(int)SocialSecurityStatusEnum.WaitingStop},ApplyStopDate=getdate() where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
+                                sqlStr3 += $"update SocialSecurity set Status ={(int)SocialSecurityStatusEnum.WaitingStop},ApplyStopDate=getdate(),StopMethod=1 where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
                             }
 
                             //查询该用户下的所有待停保参公积金方案
@@ -203,7 +204,7 @@ namespace WYJK.Web
                             List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
                             foreach (AccumulationFund accumulationFund in AccumulationFundList)
                             {
-                                sqlStr3 += $"update AccumulationFund set Status ={(int)SocialSecurityStatusEnum.WaitingStop},ApplyStopDate=getdate() where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
+                                sqlStr3 += $"update AccumulationFund set Status ={(int)SocialSecurityStatusEnum.WaitingStop},ApplyStopDate=getdate(),StopMethod=1 where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
                             }
                         }
                         if (sqlStr3.Trim() != string.Empty)
@@ -212,7 +213,15 @@ namespace WYJK.Web
                         transaction.Complete();
 
                     }
-                    catch (Exception ex) { }
+                    catch (Exception ex)
+                    {
+                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
+
+                        logManager.SaveLog(ex.ToString(), DateTime.Now);
+                    }
+                    finally {
+                        transaction.Dispose();
+                    }
                 }
             }
         }
@@ -404,7 +413,9 @@ namespace WYJK.Web
                     }
                     catch (Exception ex)
                     {
+                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
 
+                        logManager.SaveLog(ex.ToString(), DateTime.Now);
                     }
                     finally
                     {

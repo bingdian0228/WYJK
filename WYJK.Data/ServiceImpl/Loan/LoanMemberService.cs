@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,8 +49,9 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public AppayLoan GetMemberLoanDetail(int MemberID)
         {
-            string sqlstr = $"select AlreadyUsedAmount,AvailableAmount from MemberLoan where MemberID={MemberID}";
+            string sqlstr = $"select AlreadyUsedAmount,AvailableAmount,(select ISNULL(sum(ApplyAmount),0) from MemberLoanAudit where MemberID={MemberID} and Status in(1,2)) as FreezingAmount from MemberLoan where MemberID={MemberID}";
             AppayLoan appayLoan = DbHelper.QuerySingle<AppayLoan>(sqlstr);
+            appayLoan.AvailableAmount = appayLoan.AvailableAmount - appayLoan.FreezingAmount;
             return appayLoan;
         }
 
@@ -64,6 +66,48 @@ namespace WYJK.Data.ServiceImpl
                                 values({model.MemberID},{model.ApplyAmount},{model.LoanTerm},{model.LoanMethod})";
             int result = DbHelper.ExecuteSqlCommandScalar(sqlstr, new DbParameter[] { });
             return result > 0;
+        }
+
+        /// <summary>
+        /// 获取借款详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public MemberLoanAudit GetMemberLoanAuditDetail(int id)
+        {
+            MemberLoanAudit memberLoanAudit = DbHelper.QuerySingle<MemberLoanAudit>($"select * from MemberLoanAudit where id={id}");
+            return memberLoanAudit;
+        }
+
+        /// <summary>
+        /// 获取借款审核列表
+        /// </summary>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+        public async Task<PagedResult<MemberLoanAudit>> GetMemberLoanAuditList(int memberID, PagedParameter parameter, string status)
+        {
+            string sqlStatus = string.Empty;
+            if (!string.IsNullOrEmpty(status))
+            {
+                sqlStatus = " and Status=" + status;
+            }
+
+            StringBuilder sbSql = new StringBuilder();
+            sbSql.AppendFormat("{0};{1}", $"select * from (select ROW_NUMBER() OVER(ORDER BY MemberLoanAudit.ApplyDate desc )AS Row,MemberLoanAudit.* from MemberLoanAudit  where MemberID ={memberID}{sqlStatus} ) ss WHERE ss.Row BETWEEN @StartIndex AND @EndIndex", $"select count(0) from MemberLoanAudit where MemberID ={ memberID}{sqlStatus}");
+
+            DbParameter[] parameters = new DbParameter[] {
+                    new SqlParameter("@StartIndex", parameter.SkipCount),
+                    new SqlParameter("@EndIndex", parameter.TakeCount)
+            };
+
+            var tuple = await DbHelper.QueryMultipleAsync<MemberLoanAudit, int>(sbSql.ToString(), parameters);
+            return new PagedResult<MemberLoanAudit>
+            {
+                PageIndex = parameter.PageIndex,
+                PageSize = parameter.PageSize,
+                Items = tuple.Item1,
+                TotalItemCount = tuple.Item2?.FirstOrDefault() ?? 0,
+            };
         }
 
         /// <summary>

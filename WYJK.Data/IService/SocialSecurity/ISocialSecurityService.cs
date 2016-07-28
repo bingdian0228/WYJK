@@ -240,6 +240,13 @@ namespace WYJK.Data.IServices
         decimal GetRenewAmountByMemberID(int MemberID);
 
         /// <summary>
+        /// 未参保但已付款金额
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        decimal GetUnInsured_IsPayAmountByMemberID(int MemberID);
+
+        /// <summary>
         /// 获取待续费和未续费待停用户所产生的金额和
         /// </summary>
         /// <param name="MemberID"></param>

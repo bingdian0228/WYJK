@@ -577,6 +577,38 @@
             <param name="model"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.GetLoanApplayProgress(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取借款申请进度  {借款金额：ApplyAmount,申请日期：ApplyDate,状态：Status}
+            </summary>
+            <param name="memberID"></param>
+            <param name="PageIndex"></param>
+            <param name="PageSize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.GetMemberLoanAuditList(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            获取借款列表 {借款金额：ApplyAmount,借款余额：LoanBalance,时间：AlreadyLoanDate,状态：RepaymentStatus}
+            </summary>
+            <param name="memberID"></param>
+            <param name="PageIndex"></param>
+            <param name="PageSize"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.GetMemberLoanAuditDetail(System.Int32)">
+            <summary>
+            获取借款详情 {借款金额：ApplyAmount,借款余额：LoanBalance,时间：AlreadyLoanDate,状态：RepaymentStatus,还款方式：LoanTerm+LoanMethod}
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.MemberLoanRepayment(System.Int32)">
+            <summary>
+            新建我要还款
+            </summary>
+            <param name="id">借款id</param>
+            <returns></returns>
+        </member>
         <member name="T:WYJK.Web.Controllers.Http.InformationController">
             <summary>
             信息展示
@@ -1298,7 +1330,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Mvc.Loan.LoanAuditController.BatchAudit(System.Int32[],System.String)">
+        <member name="M:WYJK.Web.Controllers.Mvc.Loan.LoanAuditController.BatchAudit(System.Int32,System.String)">
             <summary>
             批量审核
             1、修改审核状态和审核时间

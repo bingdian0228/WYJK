@@ -44,6 +44,20 @@ namespace WYJK.Entity
         /// 审核日期
         /// </summary>		
         public DateTime AuditDate { get; set; }
+        /// <summary>
+        /// 放款时间
+        /// </summary>
+        public DateTime AlreadyLoanDate { get; set; }
+
+        /// <summary>
+        /// 还款状态
+        /// </summary>
+        public string RepaymentStatus { get; set; }
+
+        /// <summary>
+        /// 借款余额
+        /// </summary>
+        public decimal LoanBalance { get; set; }
     }
 
     /// <summary>
@@ -93,13 +107,14 @@ namespace WYJK.Entity
         /// <summary>
         /// 放款时间
         /// </summary>
-        public DateTime? AlreadyloanDate { get; set; }
+        public DateTime? AlreadyLoanDate { get; set; }
     }
 
     /// <summary>
     /// 用户借款审核参数
     /// </summary>
-    public class MemberLoanAuditListParameter : PagedParameter {
+    public class MemberLoanAuditListParameter : PagedParameter
+    {
         /// <summary>
         /// 用户名
         /// </summary>

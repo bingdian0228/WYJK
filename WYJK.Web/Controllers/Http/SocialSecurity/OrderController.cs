@@ -186,17 +186,8 @@ namespace WYJK.Web.Controllers.Http
             //待办与正常的参保人所有所要缴纳金额
             decimal totalAmount = _socialSecurityService.GetMonthTotalAmountByMemberID(parameter.MemberID);
 
-            string str = $@"select ISNULL(sum(SocialSecurityAmount*SocialSecuritypayMonth+SocialSecurityServiceCost+SocialSecurityFirstBacklogCost+SocialSecurityBuCha
-  + AccumulationFundAmount * AccumulationFundpayMonth + AccumulationFundServiceCost + AccumulationFundFirstBacklogCost),0)
-   from OrderDetails
-   where OrderDetails.SocialSecurityPeopleID in 
-   (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
-    left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID  where MemberID = {parameter.MemberID} and SocialSecurityPeople.IsPay = 1 and SocialSecurity.Status = 1)
-    or SocialSecurityPeopleID in 
-    (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
-    left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID  where MemberID = {parameter.MemberID} and SocialSecurityPeople.IsPay = 1 and AccumulationFund.Status = 1)";
             //未参保但已付款金额
-            decimal autoAmount = DbHelper.QuerySingle<decimal>(str);
+            decimal autoAmount = _socialSecurityService.GetUnInsured_IsPayAmountByMemberID(parameter.MemberID);
 
             //本次订单金额
             string SocialSecurityPeopleIDsStr = string.Join(",", parameter.SocialSecurityPeopleIDS);
@@ -660,7 +651,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     if (!(updateResult > 0)) throw new Exception("更新个人账户失败");
 
                     //更新订单
-                    string sqlUpdateOrder = $"update [Order] set Status = {(int)OrderEnum.completed},PaymentMethod='余额扣款',PayTime=getdate() where OrderCode={dic.First().Value}";
+                    string sqlUpdateOrder = $"update [Order] set Status = {(int)OrderEnum.Auditing},PaymentMethod='余额扣款',PayTime=getdate() where OrderCode={dic.First().Value}";
                     DbHelper.ExecuteSqlCommand(sqlUpdateOrder, null);
                     transaction.Complete();
                 }
@@ -754,7 +745,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             //判断账户是否冻结，如果冻结，则不能进行支付
             bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
   where MemberID = (select MemberID from[Order] where OrderID = {parameter.OrderID})");
-            if (isFrozen == false)
+            if (isFrozen)
                 return new JsonResult<dynamic>
                 {
                     status = false,

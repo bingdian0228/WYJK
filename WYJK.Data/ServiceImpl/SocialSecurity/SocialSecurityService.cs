@@ -928,6 +928,26 @@ select @totalAmount";
             decimal result = DbHelper.QuerySingle<decimal>(sqlstr);
             return result;
         }
+
+        /// <summary>
+        /// 未参保但已付款金额
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public decimal GetUnInsured_IsPayAmountByMemberID(int MemberID)
+        {
+            string str = $@"select ISNULL(sum(SocialSecurityAmount*SocialSecuritypayMonth+ AccumulationFundAmount * AccumulationFundpayMonth),0)
+   from OrderDetails
+   where OrderDetails.SocialSecurityPeopleID in 
+   (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
+    left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID  where MemberID = {MemberID} and SocialSecurityPeople.IsPay = 1 and SocialSecurity.Status = 1)
+    or SocialSecurityPeopleID in 
+    (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
+    left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID  where MemberID = {MemberID} and SocialSecurityPeople.IsPay = 1 and AccumulationFund.Status = 1)";
+
+            return DbHelper.QuerySingle<decimal>(str);
+        }
+
         /// <summary>
         /// 获取待续费和未续费待停用户所产生的金额和
         /// </summary>

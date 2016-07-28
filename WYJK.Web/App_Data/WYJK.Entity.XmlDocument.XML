@@ -1581,14 +1581,24 @@
             申请借款
             </summary>
         </member>
+        <member name="P:WYJK.Entity.AppayLoan.TotalAmount">
+            <summary>
+            总额度
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.AppayLoan.AlreadyUsedAmount">
             <summary>
-            已借
+            已借额度
             </summary>
         </member>
         <member name="P:WYJK.Entity.AppayLoan.AvailableAmount">
             <summary>
-            可借
+            可借额度
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.AppayLoan.FreezingAmount">
+            <summary>
+            冻结额度
             </summary>
         </member>
         <member name="T:WYJK.Entity.MemberLoanAudit">
@@ -1635,6 +1645,21 @@
             <summary>
             审核日期
             </summary>		
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.AlreadyLoanDate">
+            <summary>
+            放款时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.RepaymentStatus">
+            <summary>
+            还款状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAudit.LoanBalance">
+            <summary>
+            借款余额
+            </summary>
         </member>
         <member name="T:WYJK.Entity.MemberLoanAuditParameter">
             <summary>
@@ -1686,7 +1711,7 @@
             审核日期
             </summary>		
         </member>
-        <member name="P:WYJK.Entity.MemberLoanAuditList.AlreadyloanDate">
+        <member name="P:WYJK.Entity.MemberLoanAuditList.AlreadyLoanDate">
             <summary>
             放款时间
             </summary>
@@ -1705,6 +1730,21 @@
             <summary>
             状态
             </summary>		
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanRepayment">
+            <summary>
+            还款
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.RepaymentType">
+            <summary>
+            还款类型 正常还：1，提前还：2，逾期还：3
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.JieID">
+            <summary>
+            借款ID
+            </summary>
         </member>
         <member name="T:WYJK.Entity.Message">
             <summary>

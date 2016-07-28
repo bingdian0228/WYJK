@@ -1397,7 +1397,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         string ShouNote = "充值：";//收入备注
                         string ZhiNote = "";//支出备注
                         int day = DateTime.Now.Day;
-                        //社保待续费人员列表
+                        //社保待续费(包括未续费待停保的)人员列表
                         List<SocialSecurityPeople> SocialSecurityPeopleList = _socialSecurityService.GetSocialSecurityRenewListByMemberID(parameter.MemberID);
 
                         //社保服务费
@@ -1419,7 +1419,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
                             }
                         }
-                        //公积金人员列表
+                        //公积金人员（包括未续费待停保）列表
                         List<SocialSecurityPeople> SocialSecurityPeopleList1 = _socialSecurityService.GetAccumulationFundRenewListByMemberID(parameter.MemberID);
 
                         //公积金服务费

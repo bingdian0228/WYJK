@@ -24,7 +24,7 @@ namespace WYJK.Data.IService
         /// <param name="MembersStr"></param>
         /// <param name="Status"></param>
         /// <returns></returns>
-        bool MemberLoanAudit(int[] IDs,string Status);
+        bool MemberLoanAudit(int ID,string Status);
 
         /// <summary>
         /// 查找未审核列表

@@ -193,6 +193,31 @@ namespace WYJK.Framework.EnumHelper
     }
 
     /// <summary>
+    /// 还款状态
+    /// </summary>
+    public enum RepaymentStatusEnum
+    {
+        [EnumDisplayName("未结清")]
+        NoSettled = 1,
+        [EnumDisplayName("已逾期")]
+        Overdue = 2,
+        [EnumDisplayName("已结清")]
+        Settled = 3
+    }
+
+    /// <summary>
+    /// 还款类型
+    /// </summary>
+    public enum RepaymentTypeEnum
+    {
+        [EnumDisplayName("正常还")]
+        DangQiHuan = 1,
+        [EnumDisplayName("提前还")]
+        TiQianHuan = 2
+
+    }
+
+    /// <summary>
     /// 基数审核
     /// </summary>
     public enum BaseAuditEnum
