@@ -1746,6 +1746,61 @@
             借款ID
             </summary>
         </member>
+        <member name="T:WYJK.Entity.Repayment">
+            <summary>
+            我要还款展示
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Repayment.LoanMethod">
+            <summary>
+            还款方式
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Repayment.RepaymentType">
+            <summary>
+            还款类型 正常还：1，提前还：2，逾期还：3
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Repayment.TotalAmount">
+            <summary>
+            还款总额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Repayment.WeiYueJin">
+            <summary>
+            违约金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.Repayment.DetailList">
+            <summary>
+            详情列表
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RepaymentDetail">
+            <summary>
+            还款展示详情
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RepaymentDetail.BenJin">
+            <summary>
+            本金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RepaymentDetail.LiXi">
+            <summary>
+            利息
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RepaymentDetail.ZhiNaJin">
+            <summary>
+            滞纳金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RepaymentDetail.MonthDt">
+            <summary>
+            所还月份
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.Message">
             <summary>
             消息实体

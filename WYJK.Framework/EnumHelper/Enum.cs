@@ -211,7 +211,7 @@ namespace WYJK.Framework.EnumHelper
     public enum RepaymentTypeEnum
     {
         [EnumDisplayName("正常还")]
-        DangQiHuan = 1,
+        Normal = 1,
         [EnumDisplayName("提前还")]
         TiQianHuan = 2
 

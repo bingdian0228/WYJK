@@ -20,6 +20,7 @@ namespace WYJK.Web.Controllers.Http
     {
         private ILoanSubjectService _loanSubjectService = new LoanSubjectService();
         private ILoanMemberService _loanMemberService = new LoanMemberService();
+        private ILoanRepayment _loanRepayment = new LoanRepaymentService();
         /// <summary>
         /// 获取身价计算选择题 注：1、如果获取第一道题目，则无需传参 2、如果“下一题目ID”为0，则没有下一道题
         /// </summary>
@@ -262,27 +263,33 @@ namespace WYJK.Web.Controllers.Http
             };
         }
 
+
+
         /// <summary>
         /// 新建我要还款
         /// </summary>
         /// <param name="id">借款id</param>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-        public JsonResult<dynamic> MemberLoanRepayment(int id)
+        public JsonResult<Repayment> MemberLoanRepayment(int id)
         {
+            Repayment repayment = null;//我要还款展示实体
+
             decimal InThreeMonthsDayLiLv = (decimal)0.018 / 30;//随借随还日利率
+            const int InThreeMonthsCount = 3;
             decimal HalfYearMonthLiLv = 0.015M;//半年等额本息月利率
-            decimal OneYearPeriodMonthLiLv = 0.018M;//一年等额本息月利率
+            const int HalfYearMonthCount = 6;
+            decimal OneYearPeriodMonthLiLv = 0.012M;//一年等额本息月利率
+            const int OneYearPeriodMonthCount = 12;
+            decimal ZhiNaJinPercent = 0;//滞纳金百分比
 
-
-
-            decimal totalAmount = 0;//还款总金额
+            //decimal totalAmount = 0;//还款总金额
             decimal BenJin = 0;//本金
             decimal LiXi = 0;//利息
-            decimal ZhiNaJin = 0;//滞纳金
-            decimal WeiYueJin = 0;//违约金
+
+            //decimal WeiYueJin = 0;//违约金
             string LoanMethod = string.Empty;//还款方式
-            string LoanType = string.Empty;//还款类型
+
 
             //借款详情
             MemberLoanAudit memberLoanAudit = _loanMemberService.GetMemberLoanAuditDetail(id);
@@ -290,23 +297,30 @@ namespace WYJK.Web.Controllers.Http
 
             if (memberLoanAudit.RepaymentStatus == Convert.ToString((int)RepaymentStatusEnum.NoSettled))
             {
-                LoanType = "正常";
+                repayment.RepaymentType = "正常还";
                 if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.InThreeMonths))
                 {
                     #region 随借随还
-                    LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.InThreeMonths));
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.InThreeMonths));
 
                     BenJin = memberLoanAudit.ApplyAmount;
-                    LiXi = memberLoanAudit.ApplyAmount * (decimal)((DateTime.Now - memberLoanAudit.AlreadyLoanDate).Days * InThreeMonthsDayLiLv); 
-                    totalAmount = BenJin + LiXi;
+                    LiXi = memberLoanAudit.ApplyAmount * (decimal)((DateTime.Now - memberLoanAudit.AlreadyLoanDate).Days * InThreeMonthsDayLiLv);
+                    repayment.TotalAmount = BenJin + LiXi;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi });
+
                     #endregion
                 }
                 else if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.HalfYear))
                 {
                     #region 半年期
-                    LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.HalfYear))
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.HalfYear))
                         + EnumExt.GetEnumCustomDescription((LoanMethodEnum)((int)LoanMethodEnum.DengEBenXi));
                     //等额本息计算方式：{每月偿还本息：[贷款本金×月利率×（1+月利率）^还款月数]÷[（1+月利率）^还款月数－1]}
+                    decimal MonthBenXi = GetMonthBenXi(memberLoanAudit.ApplyAmount, HalfYearMonthLiLv, HalfYearMonthCount);
+                    LiXi = memberLoanAudit.LoanBalance * HalfYearMonthLiLv;
+                    BenJin = MonthBenXi - LiXi;
+                    repayment.TotalAmount = MonthBenXi;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthDt = DateTime.Now.ToString("yyyy-MM") });
 
 
                     #endregion
@@ -315,20 +329,206 @@ namespace WYJK.Web.Controllers.Http
                 else if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
                 {
                     #region 一年期
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.OneYearPeriod))
+    + EnumExt.GetEnumCustomDescription((LoanMethodEnum)((int)LoanMethodEnum.DengEBenXi));
+                    decimal MonthBenXi = GetMonthBenXi(memberLoanAudit.ApplyAmount, OneYearPeriodMonthLiLv, OneYearPeriodMonthCount);
+                    LiXi = memberLoanAudit.LoanBalance * OneYearPeriodMonthLiLv;
+                    BenJin = MonthBenXi - LiXi;
+                    repayment.TotalAmount = MonthBenXi;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthDt = DateTime.Now.ToString("yyyy-MM") });
+                    #endregion
+                }
+            }
+            else if (memberLoanAudit.RepaymentStatus == Convert.ToString((int)RepaymentStatusEnum.Overdue))
+            {
+                repayment.RepaymentType = "逾期还";
+                if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.InThreeMonths))
+                {
+                    #region 随借随还
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.InThreeMonths));
+
+                    BenJin = memberLoanAudit.ApplyAmount;
+                    LiXi = memberLoanAudit.ApplyAmount * (decimal)((memberLoanAudit.AlreadyLoanDate.AddMonths(InThreeMonthsCount) - memberLoanAudit.AlreadyLoanDate).Days * InThreeMonthsDayLiLv);
+
+                    decimal ZhiNaJin = (DateTime.Now - memberLoanAudit.AlreadyLoanDate.AddMonths(InThreeMonthsCount)).Days * (BenJin + LiXi) * ZhiNaJinPercent;
+                    repayment.TotalAmount = BenJin + LiXi + ZhiNaJin;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, ZhiNaJin = ZhiNaJin, MonthDt = DateTime.Now.ToString("yyyy-MM") });
+
+                    #endregion
+                }
+                else if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.HalfYear))
+                {
+                    #region 半年期
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.HalfYear))
+                        + EnumExt.GetEnumCustomDescription((LoanMethodEnum)((int)LoanMethodEnum.DengEBenXi));
+
+                    decimal MonthBenXi = GetMonthBenXi(memberLoanAudit.ApplyAmount, HalfYearMonthLiLv, HalfYearMonthCount);
+                    LiXi = memberLoanAudit.LoanBalance * HalfYearMonthLiLv;
+                    BenJin = MonthBenXi - LiXi;
+
+                    List<MemberLoanRepayment> memberLoanRepaymentList = _loanRepayment.GetMemberLoanRepaymentList(id);//借款对应的还款列表
+
+                    for (int i = memberLoanRepaymentList.Sum(n => n.MonthCount); i <= HalfYearMonthCount; i++)
+                    {
+                        DateTime TempDt = memberLoanAudit.AlreadyLoanDate.AddMonths(i);
+
+                        DateTime t1 = new DateTime(TempDt.Year, TempDt.Month, 1);
+                        DateTime t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                        if (DateTime.Compare(t1, t2) == 0)
+                        {
+                            break;
+                        }
+
+                        DateTime t3 = t1.AddMonths(1).AddDays(-1);
+                        int ZhiNaDayCount = (DateTime.Now - t3).Days;
+
+                        decimal ZhiNaJin = MonthBenXi * ZhiNaDayCount * ZhiNaJinPercent;//滞纳金
+
+                        repayment.TotalAmount += MonthBenXi + ZhiNaJin;
+                        repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, ZhiNaJin = ZhiNaJin, MonthDt = TempDt.ToString("yyyy-MM") });
+
+                    }
+
+                    #endregion
+                }
+                else if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
+                {
+                    #region 一年期
                     LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.OneYearPeriod))
     + EnumExt.GetEnumCustomDescription((LoanMethodEnum)((int)LoanMethodEnum.DengEBenXi));
+                    decimal MonthBenXi = GetMonthBenXi(memberLoanAudit.ApplyAmount, OneYearPeriodMonthLiLv, OneYearPeriodMonthCount);
+                    LiXi = memberLoanAudit.LoanBalance * OneYearPeriodMonthLiLv;
+                    BenJin = MonthBenXi - LiXi;
 
+                    List<MemberLoanRepayment> memberLoanRepaymentList = _loanRepayment.GetMemberLoanRepaymentList(id);//借款对应的还款列表
 
+                    for (int i = memberLoanRepaymentList.Sum(n => n.MonthCount); i <= OneYearPeriodMonthCount; i++)
+                    {
+                        DateTime TempDt = memberLoanAudit.AlreadyLoanDate.AddMonths(i);
+
+                        DateTime t1 = new DateTime(TempDt.Year, TempDt.Month, 1);
+                        DateTime t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                        if (DateTime.Compare(t1, t2) == 0)
+                        {
+                            break;
+                        }
+
+                        DateTime t3 = t1.AddMonths(1).AddDays(-1);
+                        int ZhiNaDayCount = (DateTime.Now - t3).Days;
+
+                        decimal ZhiNaJin = MonthBenXi * ZhiNaDayCount * ZhiNaJinPercent;//滞纳金
+
+                        repayment.TotalAmount += MonthBenXi + ZhiNaJin;
+                        repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, ZhiNaJin = ZhiNaJin, MonthDt = TempDt.ToString("yyyy-MM") });
+
+                    }
                     #endregion
                 }
             }
 
-            return new JsonResult<dynamic>
+            return new JsonResult<Repayment>
             {
                 status = true,
-                Message = "获取成功"
+                Message = "获取成功",
+                Data = repayment
             };
+        }
 
+        /// <summary>
+        /// 选择还款类型
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="RepaymentType"></param>
+        /// <returns></returns>
+        public JsonResult<Repayment> SelectRepaymentType(int id, int RepaymentType)
+        {
+            Repayment repayment = null;//我要还款展示实体
+
+            decimal InThreeMonthsDayLiLv = (decimal)0.018 / 30;//随借随还日利率
+            const int InThreeMonthsCount = 3;
+            decimal HalfYearMonthLiLv = 0.015M;//半年等额本息月利率
+            const int HalfYearMonthCount = 6;
+            decimal OneYearPeriodMonthLiLv = 0.012M;//一年等额本息月利率
+            const int OneYearPeriodMonthCount = 12;
+            decimal ZhiNaJinPercent = 0;//滞纳金百分比
+
+            decimal BenJin = 0;//本金
+            decimal LiXi = 0;//利息
+
+            string LoanMethod = string.Empty;//还款方式
+
+
+            //借款详情
+            MemberLoanAudit memberLoanAudit = _loanMemberService.GetMemberLoanAuditDetail(id);
+            //根据还款状态进行还款,分为正常和逾期
+
+            if (RepaymentType == (int)RepaymentTypeEnum.Normal)
+            {
+                if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.InThreeMonths))
+                {
+                    #region 随借随还
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.InThreeMonths));
+
+                    BenJin = memberLoanAudit.ApplyAmount;
+                    LiXi = memberLoanAudit.ApplyAmount * (decimal)((DateTime.Now - memberLoanAudit.AlreadyLoanDate).Days * InThreeMonthsDayLiLv);
+                    repayment.TotalAmount = BenJin + LiXi;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi });
+
+                    #endregion
+                }
+                else if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.HalfYear))
+                {
+                    #region 半年期
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.HalfYear))
+                        + EnumExt.GetEnumCustomDescription((LoanMethodEnum)((int)LoanMethodEnum.DengEBenXi));
+                    //等额本息计算方式：{每月偿还本息：[贷款本金×月利率×（1+月利率）^还款月数]÷[（1+月利率）^还款月数－1]}
+                    decimal MonthBenXi = GetMonthBenXi(memberLoanAudit.ApplyAmount, HalfYearMonthLiLv, HalfYearMonthCount);
+                    LiXi = memberLoanAudit.LoanBalance * HalfYearMonthLiLv;
+                    BenJin = MonthBenXi - LiXi;
+                    repayment.TotalAmount = MonthBenXi;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthDt = DateTime.Now.ToString("yyyy-MM") });
+
+                    #endregion
+
+                }
+                else if (memberLoanAudit.LoanMethod == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
+                {
+                    #region 一年期
+                    repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.OneYearPeriod))
+    + EnumExt.GetEnumCustomDescription((LoanMethodEnum)((int)LoanMethodEnum.DengEBenXi));
+                    decimal MonthBenXi = GetMonthBenXi(memberLoanAudit.ApplyAmount, OneYearPeriodMonthLiLv, OneYearPeriodMonthCount);
+                    LiXi = memberLoanAudit.LoanBalance * OneYearPeriodMonthLiLv;
+                    BenJin = MonthBenXi - LiXi;
+                    repayment.TotalAmount = MonthBenXi;
+                    repayment.DetailList.Add(new RepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthDt = DateTime.Now.ToString("yyyy-MM") });
+                    #endregion
+                }
+            }
+            else if (RepaymentType == (int)RepaymentTypeEnum.TiQianHuan)
+            {
+                //提前还
+
+            }
+
+            return new JsonResult<Repayment>
+            {
+                status = true,
+                Message = "获取成功",
+                Data = repayment
+            };
+        }
+
+        /// <summary>
+        /// 等额本息获取还款本息
+        /// </summary>
+        /// <param name="applyAmount"></param>
+        /// <param name="monthLiLv"></param>
+        /// <param name="monthCount"></param>
+        /// <returns></returns>
+        private decimal GetMonthBenXi(decimal applyAmount, decimal monthLiLv, int monthCount)
+        {
+            //等额本息计算方式：{每月偿还本息：[贷款本金×月利率×（1+月利率）^还款月数]÷[（1+月利率）^还款月数－1]}
+            return (applyAmount * monthLiLv * Convert.ToDecimal(Math.Pow(Convert.ToDouble((1 + monthLiLv)), monthCount))) / Convert.ToDecimal((Math.Pow(Convert.ToDouble(1 + monthLiLv), monthCount) - 1));
         }
     }
 }
