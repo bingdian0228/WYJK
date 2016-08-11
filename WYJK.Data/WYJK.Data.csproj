@@ -51,7 +51,7 @@
     <Compile Include="IService\Loan\ILoanAuditService.cs" />
     <Compile Include="IService\Loan\ILoanMemberService.cs" />
     <Compile Include="IService\Loan\ILoanSubjectService.cs" />
-    <Compile Include="IService\Loan\ILoanRepayment.cs" />
+    <Compile Include="IService\Loan\ILoanRepaymentService.cs" />
     <Compile Include="IService\SocialSecurity\IBaseAuditService.cs" />
     <Compile Include="IService\SocialSecurity\IAccumulationFundService.cs" />
     <Compile Include="IService\SocialSecurity\IBaseOrdersService.cs" />

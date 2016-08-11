@@ -210,10 +210,12 @@ namespace WYJK.Framework.EnumHelper
     /// </summary>
     public enum RepaymentTypeEnum
     {
+        [EnumDisplayName("逾期还")]
+        YuQiHuan = 1,
         [EnumDisplayName("正常还")]
-        Normal = 1,
+        Normal = 2,
         [EnumDisplayName("提前还")]
-        TiQianHuan = 2
+        TiQianHuan = 3
 
     }
 
@@ -234,6 +236,19 @@ namespace WYJK.Framework.EnumHelper
     /// 认证审核
     /// </summary>
     public enum CertificationAuditEnum
+    {
+        [EnumDisplayName("审核中")]
+        NoAudited = 1,
+        [EnumDisplayName("已通过")]
+        Pass = 2,
+        [EnumDisplayName("未通过")]
+        NoPass = 3
+    }
+
+    /// <summary>
+    /// 还款审核
+    /// </summary>
+    public enum RepaymentAuditEnum
     {
         [EnumDisplayName("审核中")]
         NoAudited = 1,

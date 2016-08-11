@@ -54,7 +54,6 @@ namespace WYJK.Entity
         public int PayBeforeMonthCount { get; set; }
         /// <summary>
         /// 银行缴费月数
-
         /// </summary>		
         public int BankPayMonth { get; set; }
         /// <summary>

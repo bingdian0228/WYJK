@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WYJK.Framework.EnumHelper;
 
 namespace WYJK.Entity
 {
@@ -12,39 +13,6 @@ namespace WYJK.Entity
     public class MemberLoanRepayment
     {
         public int ID { get; set; }
-        public decimal BenJin { get; set; }
-        public decimal LiXi { get; set; }
-        public decimal ZhiNaJin { get; set; }
-        public decimal WeiYueJin { get; set; }
-        public int MonthCount { get; set; }
-        public string MonthStr { get; set; }
-        public string RepaymentDt { get; set; }
-        /// <summary>
-        /// 还款类型 正常还：1，提前还：2，逾期还：3
-        /// </summary>
-        public string RepaymentType { get; set; }
-        /// <summary>
-        /// 借款ID
-        /// </summary>
-        public int JieID { get; set; }
-
-    }
-
-    /// <summary>
-    /// 我要还款展示
-    /// </summary>
-    public class Repayment
-    {
-        /// <summary>
-        /// 还款方式
-        /// </summary>
-        public string LoanMethod { get; set; }
-
-        /// <summary>
-        /// 还款类型 正常还：1，提前还：2，逾期还：3
-        /// </summary>
-        public string RepaymentType { get; set; }
-
         /// <summary>
         /// 还款总额
         /// </summary>
@@ -56,18 +24,53 @@ namespace WYJK.Entity
         public decimal WeiYueJin { get; set; }
 
         /// <summary>
-        /// 详情列表
+        /// 还款时间
         /// </summary>
-        public List<RepaymentDetail> DetailList { get; set; }
+        public string RepaymentDt { get; set; }
+        /// <summary>
+        /// 还款类型 逾期还：1，正常还：2，提前还：3
+        /// </summary>
+        public string RepaymentType { get; set; }
+
+        /// <summary>
+        /// 借款方式
+        /// </summary>
+        public string LoanMethod { get; set; }
+
+        /// <summary>
+        /// 借款ID
+        /// </summary>
+        public int JieID { get; set; }
+
+        /// <summary>
+        /// 还款审核状态
+        /// </summary>
+        public string Status { get; set; }
+
+        /// <summary>
+        /// 审核时间
+        /// </summary>
+        public DateTime? AuditDt { get; set; }
+
+        /// <summary>
+        /// 还款类型
+        /// </summary>
+        public List<Property> RepaymentTypeList { get; set; } = new List<Property>();
+
+        /// <summary>
+        /// 还款详情列表
+        /// </summary>
+        public List<MemberLoanRepaymentDetail> DetailList { get; set; } = new List<MemberLoanRepaymentDetail>();
 
     }
 
     /// <summary>
-    /// 还款展示详情
+    /// 我要还款展示
     /// </summary>
-    public class RepaymentDetail
+    public class MemberLoanRepaymentDetail
     {
 
+        public int ID { get; set; }
         /// <summary>
         /// 本金
         /// </summary>
@@ -84,8 +87,26 @@ namespace WYJK.Entity
         /// <summary>
         /// 所还月份
         /// </summary>
-        public string MonthDt { get; set; }
+        public string MonthStr { get; set; }
+
+        public int HuanID { get; set; }
+
     }
 
+    /// <summary>
+    /// 还款
+    /// </summary>
+    public class MemberLoanRepaymentParameter
+    {
+        /// <summary>
+        /// 借款ID
+        /// </summary>
+        public int ID { get; set; }
 
+        /// <summary>
+        /// 还款类型
+        /// </summary>
+        public string RepaymentType { get; set; }
+
+    }
 }

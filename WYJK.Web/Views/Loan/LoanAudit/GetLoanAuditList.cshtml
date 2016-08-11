@@ -75,7 +75,7 @@
         })
     </script>
 }
-<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 个人借款 <span class="c-gray en">&gt;</span> 用户列表 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 个人借款 <span class="c-gray en">&gt;</span> 借款审核 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="pd-20">
     <div class="text-c">
         @using (Html.BeginForm("GetLoanAuditList", "LoanAudit", FormMethod.Get))
@@ -101,10 +101,13 @@
                     <th width="80">已用循环额度</th>
                     <th width="80">可用循环额度</th>
                     <th width="80">申请额度</th>
-                    <th width="80">状态</th>
+                    <th width="80">借款状态</th>
+                    <th width="80">还款状态</th>
+                    <th width="80">还款余额</th>
                     <th width="100">提交时间</th>
                     <th width="100">审核时间</th>
                     <th width="100">放款时间</th>
+                    <th width="100">查看</th>
                 </tr>
             </thead>
             <tbody>
@@ -119,9 +122,12 @@
                         <td>@item.AvailableAmount</td>
                         <td>@item.ApplyAmount</td>
                         <td>@EnumExt.GetEnumCustomDescription((LoanAuditEnum)Convert.ToInt32(item.Status)) </td>
+                        <td>@EnumExt.GetEnumCustomDescription((RepaymentStatusEnum)Convert.ToInt32(item.RepaymentStatus))</td>
+                        <td>@item.LoanBalance</td>
                         <td>@(item.ApplyDate == null ? "--" : Convert.ToString(item.ApplyDate))</td>
                         <td>@(item.AuditDate == null ? "--" : Convert.ToString(item.AuditDate))</td>
                         <td>@(item.AlreadyLoanDate == null ? "--" : Convert.ToString(item.AlreadyLoanDate))</td>
+                        <td><a title="还款记录" href='@Url.Action("GetMemberLoanRepaymentList","LoanAudit")?ID=@item.ID' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a></td>
                     </tr>
                 }
             </tbody>
@@ -134,11 +140,11 @@
             @if (Request.Params["Status"] == ((int)LoanAuditEnum.NoAudited).ToString())
             {
                 <a href="javascript:;" class="btn btn-primary radius action-audit-pass" data-type="@Convert.ToInt32(LoanAuditEnum.Pass)"><i class="Hui-iconfont">&#xe6e1;</i> 通过</a>
-                <a href="javascript:;" class="btn btn-danger radius action-audit-nopass"  data-type="@Convert.ToInt32(LoanAuditEnum.NoPass)"><i class="Hui-iconfont">&#xe6dd;</i> 不通过</a>
+                <a href="javascript:;" class="btn btn-danger radius action-audit-nopass" data-type="@Convert.ToInt32(LoanAuditEnum.NoPass)"><i class="Hui-iconfont">&#xe6dd;</i> 不通过</a>
             }
             @if (Request.Params["Status"] == ((int)LoanAuditEnum.Pass).ToString())
             {
-                <a href="javascript:;" class="btn btn-default radius action-audit-alreadyloan"  data-type="@Convert.ToInt32(LoanAuditEnum.AlreadyLoan)"><i class="Hui-iconfont">&#xe63a;</i> 放款</a>
+                <a href="javascript:;" class="btn btn-default radius action-audit-alreadyloan" data-type="@Convert.ToInt32(LoanAuditEnum.AlreadyLoan)"><i class="Hui-iconfont">&#xe63a;</i> 放款</a>
             }
         </span>
 

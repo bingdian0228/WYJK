@@ -15,10 +15,12 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using WYJK.Data;
+using WYJK.Data.IService;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
 using WYJK.Framework.Helpers;
+using WYJK.Web.Controllers.Http;
 using WYJK.Web.Filters;
 
 namespace WYJK.Web
@@ -39,6 +41,7 @@ namespace WYJK.Web
                {
                    DateFormatString = "yyyy-MM-dd HH:mm:ss"
                };
+
 
 
 
@@ -68,6 +71,346 @@ namespace WYJK.Web
             Timer13.AutoReset = true;
             Timer13.Enabled = true;
             #endregion
+
+            #region 针对借款每月1号自动还款
+            Timer Timer11 = new Timer();
+            Timer11.Elapsed += new ElapsedEventHandler(business1Before1Minutes);
+            Timer11.Interval = 1000;
+            Timer11.AutoReset = true;
+            Timer11.Enabled = true;
+            #endregion
+
+            #region 1号针对借款更新状态
+            Timer Timer1 = new Timer();
+            Timer1.Elapsed += new ElapsedEventHandler(business1);
+            Timer1.Interval = 1000;
+            Timer1.AutoReset = true;
+            Timer1.Enabled = true;
+            #endregion
+
+            #region  随借随还满三个月修改状态为已逾期
+            Timer Timer3 = new Timer();
+            Timer3.Elapsed += new ElapsedEventHandler(business3);
+            Timer3.Interval = 1000;
+            Timer3.AutoReset = true;
+            Timer3.Enabled = true;
+            #endregion
+        }
+
+        /// <summary>
+        /// 随借随还满三个月修改状态为已逾期
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        public void business3(object source, System.Timers.ElapsedEventArgs e)
+        {
+
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    /* 查看未结清的，检测是否要变成已逾期
+                    */
+                    List<Members> memberList = DbHelper.Query<Members>("select * from Members");//查询所有用户
+
+                    LoanController loanController = new LoanController();
+
+                    foreach (Members members in memberList)
+                    {
+                        List<MemberLoanAudit> memberLoanAuditList = DbHelper.Query<MemberLoanAudit>($"select * from MemberLoanAudit where MemberID={members.MemberID} and LoanTerm =1 and Status=4 and RepaymentStatus=1");
+
+                        foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
+                        {
+                            //如果已经超过3个月，但是还没还款，则逾期
+                            if (memberLoanAudit.AlreadyLoanDate.AddMonths(3) >= DateTime.Now)
+                            {
+
+                                ILoanRepaymentService _loanRepaymentService = new LoanRepaymentService();
+                                //借款对应的还款列表
+                                List<MemberLoanRepayment> memberLoanRepaymentList = _loanRepaymentService.GetMemberLoanRepaymentList(memberLoanAudit.ID);
+
+                                if (memberLoanRepaymentList != null && memberLoanRepaymentList.Count == 0)
+                                {
+                                    //变已逾期
+                                    DbHelper.ExecuteSqlCommand($"update MemberLoanRepayment set RepaymentStatus=2 where ID={memberLoanAudit.ID}", null);
+                                }
+                            }
+                        }
+                    }
+
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+                    LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
+
+                    logManager.SaveLog(ex.ToString(), DateTime.Now);
+                }
+                finally
+                {
+                    transaction.Dispose();
+                }
+            }
+
+        }
+
+
+        /// <summary>
+        /// 1号针对借款更新状态
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        public void business1(object source, System.Timers.ElapsedEventArgs e)
+        {
+            int CurrentDay = DateTime.Now.Day;
+            int CurrentHour = DateTime.Now.Hour;
+            int CurrentMinute = DateTime.Now.Minute;
+            int CurrentSecond = DateTime.Now.Second;
+
+            //定制时间 每月1号 开始执行
+            int CustomDay = 1;
+            int CustomHour = 00;
+            int CustomMinute = 00;
+            int CustomSecond = 00;
+
+            Debug.WriteLine(DateTime.Now);
+
+            if (CurrentDay == CustomDay && CurrentHour == CustomHour
+                && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
+            {
+                Console.WriteLine("每月1号 开始执行");
+
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    try
+                    {
+                        /* 查看未结清的，检测是否要变成已逾期
+                        */
+                        List<Members> memberList = DbHelper.Query<Members>("select * from Members");//查询所有用户
+
+                        LoanController loanController = new LoanController();
+
+                        foreach (Members members in memberList)
+                        {
+                            List<MemberLoanAudit> memberLoanAuditList = DbHelper.Query<MemberLoanAudit>($"select * from MemberLoanAudit where MemberID={members.MemberID} and LoanTerm in(2,3) and Status=4 and RepaymentStatus=1");
+
+                            foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
+                            {
+                                ILoanRepaymentService _loanRepaymentService = new LoanRepaymentService();
+                                //借款对应的还款列表
+                                List<MemberLoanRepayment> memberLoanRepaymentList = _loanRepaymentService.GetMemberLoanRepaymentList(memberLoanAudit.ID);
+
+                                int period = 0;
+                                if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.HalfYear))
+                                {
+                                    period = 6;
+                                }
+                                else if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
+                                {
+                                    period = 12;
+                                }
+
+                                DateTime TempDt = memberLoanAudit.AlreadyLoanDate;
+                                DateTime t1 = new DateTime(TempDt.Year, TempDt.Month, 1);
+                                DateTime t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                                if (memberLoanRepaymentList.Count < period)
+                                {
+                                    if ((t2.Year * 12 + t2.Month - (t1.Year * 12 + t1.Month)) > memberLoanRepaymentList.Count)
+                                    {
+                                        //变已逾期 待开发
+                                        DbHelper.ExecuteSqlCommand($"update MemberLoanRepayment set RepaymentStatus=2 where ID={memberLoanAudit.ID}", null);
+                                    }
+                                }
+                            }
+                        }
+                        transaction.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
+
+                        logManager.SaveLog(ex.ToString(), DateTime.Now);
+                    }
+                    finally
+                    {
+                        transaction.Dispose();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 1号针对半年期、一年期扣款
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        public void business1Before1Minutes(object source, System.Timers.ElapsedEventArgs e)
+        {
+            int CurrentDay = DateTime.Now.Day;
+            int CurrentHour = DateTime.Now.Hour;
+            int CurrentMinute = DateTime.Now.Minute;
+            int CurrentSecond = DateTime.Now.Second;
+
+            //定制时间 每月1号前1分钟 开始执行
+            int CustomDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1).Day;
+            int CustomHour = 23;
+            int CustomMinute = 00;
+            int CustomSecond = 00;
+
+            Debug.WriteLine(DateTime.Now);
+
+            if (CurrentDay == CustomDay && CurrentHour == CustomHour
+                && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
+            {
+                Console.WriteLine("每月1号前一分钟 开始执行");
+
+                using (TransactionScope transaction = new TransactionScope())
+                {
+                    try
+                    {
+                        /*
+                            【未参保（已付款）+待办】（此部分不能减掉）+正常+剩余=余额
+                            1、当前用户还款金额<=剩余金额，则扣余额
+                            2、还款金额<=正常+剩余，则扣余额&&正常=>待续费
+                            3、还款金额>正常+剩余，则不能扣款
+                        */
+
+                        List<Members> memberList = DbHelper.Query<Members>("select * from Members");//查询所有用户
+
+                        LoanController loanController = new LoanController();
+
+                        foreach (Members members in memberList)
+                        {
+                            string UnInsuredIsPay_WaitingHandle_Sql = $@"declare @SocialSecurityAmount decimal(18, 2) = 0, @AccumulationFundAmount decimal(18, 2) = 0,@totalAmount decimal(18, 2) = 0
+                            select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
+                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+                              where SocialSecurityPeople.MemberID = { members.MemberID}
+                            and ((SocialSecurity.Status =1 and SocialSecurity.IsPay=1) or SocialSecurity.Status=2);
+                            select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase * AccumulationFund.PayProportion / 100 from SocialSecurityPeople
+                                  left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+                                  where SocialSecurityPeople.MemberID = { members.MemberID}
+                            and ((AccumulationFund.Status =1 and AccumulationFund.IsPay=1) or AccumulationFund.Status=2);
+                            select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
+                            select @totalAmount";
+                            //未参保（已付款）+待办的金额
+                            decimal UnInsuredIsPay_WaitingHandleAmount = DbHelper.QuerySingle<decimal>(UnInsuredIsPay_WaitingHandle_Sql);
+
+                            string Normal_Sql = $@"declare @SocialSecurityAmount decimal(18, 2) = 0, @AccumulationFundAmount decimal(18, 2) = 0,@totalAmount decimal(18, 2) = 0
+                            select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
+                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+                              where SocialSecurityPeople.MemberID = { members.MemberID}
+                            and  SocialSecurity.Status=3;
+                            select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase * AccumulationFund.PayProportion / 100 from SocialSecurityPeople
+                                  left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+                                  where SocialSecurityPeople.MemberID = { members.MemberID}
+                            and AccumulationFund.Status=3;
+                            select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
+                            select @totalAmount";
+                            //正常金额
+                            decimal NormalAmount = DbHelper.QuerySingle<decimal>(Normal_Sql);
+                            //其它金额
+                            decimal OtherAmount = members.Account - UnInsuredIsPay_WaitingHandleAmount - NormalAmount;
+
+                            //查询当前用户的还款金额(只针对半年期和一年期)
+                            decimal RepaymentAmount = 0;//还款金额
+                            List<MemberLoanAudit> memberLoanAuditList = DbHelper.Query<MemberLoanAudit>($"select * from MemberLoanAudit where MemberID={members.MemberID} and LoanTerm in(2,3) and Status=4 and RepaymentStatus<>3");
+                            foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
+                            {
+                                //正常或逾期
+                                MemberLoanRepayment memberLoanRepayment = loanController.GetMemberLoanRepayment(memberLoanAudit.ID);
+                                RepaymentAmount += memberLoanRepayment.TotalAmount;
+
+                                //如果是逾期，则查询交完逾期额后是否至少还能交一个月
+                                if (memberLoanRepayment.RepaymentType == "1")
+                                {
+                                    int period = 0;
+                                    if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.HalfYear))
+                                    {
+                                        period = 6;
+                                    }
+                                    else if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
+                                    {
+                                        period = 12;
+                                    }
+                                    //已交月数，算上本次
+                                    int IsRepaymentedMonth = DbHelper.QuerySingle<int>($"select count(*) from MemberLoanRepayment left join MemberLoanRepaymentDetail on MemberLoanRepayment.id=MemberLoanRepaymentDetail.HuanID  where JieID={memberLoanAudit.ID}") + memberLoanRepayment.DetailList.Count;
+                                    if (IsRepaymentedMonth < period)
+                                    {
+                                        RepaymentAmount += memberLoanRepayment.DetailList[0].BenJin + memberLoanRepayment.DetailList[0].LiXi;
+                                    }
+                                }
+                            }
+
+                            //当前用户还款金额<=剩余金额，则扣余额
+                            if (RepaymentAmount > 0 && RepaymentAmount <= NormalAmount + OtherAmount)
+                            {
+                                //扣余额
+                                DbHelper.ExecuteSqlCommand($"update Members set Account-={RepaymentAmount} where MemberID={members.MemberID}", null);
+
+                                //还款
+                                foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
+                                {
+                                    string RepaymentType = string.Empty;
+                                    if (memberLoanAudit.RepaymentStatus == "1")
+                                    {
+                                        RepaymentType = "2";
+                                    }
+                                    else if (memberLoanAudit.RepaymentStatus == "2")
+                                    {
+                                        RepaymentType = "1";
+                                    }
+
+                                    loanController.MemberLoanRepayment(memberLoanAudit.ID, RepaymentType);
+
+                                    //如果是逾期交，则判断是否需要交本月
+                                    if (RepaymentType == "1")
+                                    {
+                                        int period = 0;
+                                        if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.HalfYear))
+                                        {
+                                            period = 6;
+                                        }
+                                        else if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
+                                        {
+                                            period = 12;
+                                        }
+                                        //已交月数
+                                        int IsRepaymentedMonth = DbHelper.QuerySingle<int>($"select count(*) from MemberLoanRepayment left join MemberLoanRepaymentDetail on MemberLoanRepayment.id=MemberLoanRepaymentDetail.HuanID  where JieID={memberLoanAudit.ID}");
+                                        if (IsRepaymentedMonth < period)
+                                        {
+                                            loanController.MemberLoanRepayment(memberLoanAudit.ID, "2");
+                                        }
+                                    }
+
+                                }
+
+                                if (RepaymentAmount <= OtherAmount)
+                                {
+                                    return;
+                                }
+                                else {
+                                    //正常变待续费
+                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set Status=4 where SocialSecurityPeopleID in(select SocialSecurityPeopleID from SocialSecurityPeople where MemberID={members.MemberID}) and Status=3;
+                                                                update AccumulationFund set Status=4 where SocialSecurityPeopleID in(select SocialSecurityPeopleID from SocialSecurityPeople where MemberID={members.MemberID}) and Status=3;", null);
+                                }
+
+                            }
+                        }
+
+                        transaction.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
+
+                        logManager.SaveLog(ex.ToString(), DateTime.Now);
+                    }
+                    finally
+                    {
+                        transaction.Dispose();
+                    }
+                }
+            }
         }
 
         protected void Application_End(object sender, EventArgs e)
@@ -219,7 +562,8 @@ namespace WYJK.Web
 
                         logManager.SaveLog(ex.ToString(), DateTime.Now);
                     }
-                    finally {
+                    finally
+                    {
                         transaction.Dispose();
                     }
                 }

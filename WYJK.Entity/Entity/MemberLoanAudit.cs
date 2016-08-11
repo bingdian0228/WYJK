@@ -108,6 +108,16 @@ namespace WYJK.Entity
         /// 放款时间
         /// </summary>
         public DateTime? AlreadyLoanDate { get; set; }
+
+        /// <summary>
+        /// 还款状态
+        /// </summary>
+        public string RepaymentStatus { get; set; }
+
+        /// <summary>
+        /// 还款余额
+        /// </summary>
+        public decimal LoanBalance { get; set; }
     }
 
     /// <summary>

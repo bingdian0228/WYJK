@@ -310,6 +310,10 @@ where users.UserName='" + HttpContext.Current.User.Identity.Name + "'").Select(n
                         {
                             <li><a _href="@Url.Action("GetCostParameter", "ParameterSetting")?Status=@((int)PayTypeEnum.AccumulationFund)" data-title="公积金收费标准" href="javascript:void(0)">公积金收费标准</a></li>
                         }
+                        @if (permissionList.Contains("借款收费标准"))
+                        {
+                            <li><a _href="@Url.Action("GetCostParameterForLoan", "LoanSetting")" data-title="借款收费标准" href="javascript:void(0)">借款收费标准</a></li>
+                        }
                         @if (permissionList.Contains("服务协议"))
                         {
                             <li><a _href='@Url.Action("GetServiceProtocol", "ServiceProtocol")' data-title="服务协议" href="javascript:void(0)">服务协议</a></li>

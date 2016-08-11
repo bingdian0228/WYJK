@@ -970,6 +970,8 @@ select @totalAmount";
             return result;
         }
 
+
+
         /// <summary>
         ///  获取该用户下所有参保人的所有待办金额之和
         /// </summary>
