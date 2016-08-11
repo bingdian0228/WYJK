@@ -42,6 +42,7 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> GetInfomationDetail(int? id)
         {
             Information information = await _informationService.GetInfomationDetail(id.Value);
+            information.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + information.ImgUrl;
 
             return new JsonResult<dynamic>
             {
