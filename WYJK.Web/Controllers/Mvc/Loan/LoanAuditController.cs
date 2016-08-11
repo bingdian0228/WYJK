@@ -42,7 +42,7 @@ namespace WYJK.Web.Controllers.Mvc.Loan
         /// <param name="IDs"></param>
         /// <param name="Status"></param>
         /// <returns></returns>
-        public ActionResult BatchAudit(int[] IDs, string Status)
+        public ActionResult BatchAudit(int ID, string Status)
         {
             //string IDsStr = string.Join(",", IDs);
             //如果未审核，则进行下面的操作
@@ -55,7 +55,7 @@ namespace WYJK.Web.Controllers.Mvc.Loan
             //        IDs1[i] = NoAuditedList[i].ID;
             //    }
 
-            bool flag = _loanAuditService.MemberLoanAudit(IDs, Status);
+            bool flag = _loanAuditService.MemberLoanAudit(ID, Status);
             if (flag == false)
                 return Json(new { status = false, message = "审核失败" });
 

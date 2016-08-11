@@ -127,6 +127,19 @@ namespace WYJK.Data.IServices
         Task<ExtensionInformationParameter> GetMemberExtensionInformation(int MemberID);
 
         /// <summary>
+        /// 获取交费记录列表
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        PagedResult<MembersPayList> GetMembersPayList(MembersPayParameters parameter);
+
+        /// <summary>
+        /// 获取交费金额
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        dynamic GetMembersPayAmount(MembersPayParameters parameter);
+        /// <summary>
         /// 会员统计列表
         /// </summary>
         /// <param name="parameter"></param>

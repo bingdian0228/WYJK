@@ -34,12 +34,24 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<dynamic> GenerateOrder(GenerateOrderParameter parameter)
         {
             //var headers = HttpContext.Current.Request.Headers["Content-Type"];
+            decimal UseBalance = 0;
+            //是否使用余额
+            if (parameter.IsUseBalance)
+            {
+                //计算本次金额
+                MoneyType moneyType = new MoneyType();
+                moneyType = GetMoneyValue(parameter);
+                UseBalance = moneyType.AccountAmount - moneyType.TotalAmount - moneyType.AutoAmount;
+            }
 
             Dictionary<bool, string> dic = null;
             using (TransactionScope transaction = new TransactionScope())
             {
                 try
-                { //首先判断是否有未支付订单，若有，则不能生成订单
+                {
+
+
+                    //首先判断是否有未支付订单，若有，则不能生成订单
                     if (_orderService.IsExistsWaitingPayOrderByMemberID(parameter.MemberID))
                     {
                         return new JsonResult<dynamic>
@@ -80,7 +92,7 @@ namespace WYJK.Web.Controllers.Http
 
                     string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
 
-                    dic = _orderService.GenerateOrder(SocialSecurityPeopleIDStr, parameter.MemberID, orderCode);
+                    dic = _orderService.GenerateOrder(SocialSecurityPeopleIDStr, parameter.MemberID, orderCode, UseBalance);
 
                     //通过前面生成的订单，再加上冻结费
                     if (dic.First().Key)
@@ -158,6 +170,185 @@ namespace WYJK.Web.Controllers.Http
         }
 
         /// <summary>
+        /// 获取各项金额值
+        /// </summary>
+        private class MoneyType
+        {
+            public decimal TotalAmount { get; set; }
+            public decimal AutoAmount { get; set; }
+            public decimal ThisAmount { get; set; }
+            public decimal AccountAmount { get; set; }
+        }
+        private MoneyType GetMoneyValue(GenerateOrderParameter parameter)
+        {
+            //判断待办与正常的参保人所有所要缴纳金额+未参保但已付款金额+本次金额之和与账户金额作比较
+
+            //待办与正常的参保人所有所要缴纳金额
+            decimal totalAmount = _socialSecurityService.GetMonthTotalAmountByMemberID(parameter.MemberID);
+
+            //未参保但已付款金额
+            decimal autoAmount = _socialSecurityService.GetUnInsured_IsPayAmountByMemberID(parameter.MemberID);
+
+            //本次订单金额
+            string SocialSecurityPeopleIDsStr = string.Join(",", parameter.SocialSecurityPeopleIDS);
+            decimal SS_Amount = DbHelper.QuerySingle<decimal>($@"select ISNULL(SUM(ISNULL(dbo.SocialSecurity.SocialSecurityBase*SocialSecurity.PayProportion/100,0)*ISNULL(dbo.SocialSecurity.PayMonthCount,0)),0)
+from dbo.SocialSecurityPeople
+left join dbo.SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsStr}) and SocialSecurity.IsPay=0 and  SocialSecurity.Status = 1");
+
+            decimal AF_Amount = DbHelper.QuerySingle<decimal>($@"select ISNULL(SUM(ISNULL(dbo.AccumulationFund.AccumulationFundBase * AccumulationFund.PayProportion / 100, 0) * ISNULL(dbo.AccumulationFund.PayMonthCount, 0)),0)
+from dbo.SocialSecurityPeople
+left join dbo.AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsStr}) and AccumulationFund.IsPay=0 and  AccumulationFund.Status = 1");
+
+
+
+            int SSNum = DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurityPeople 
+                left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr}) and SocialSecurity.IsPay=0 and  SocialSecurity.Status = 1");
+            decimal SSBacklogCost = DbHelper.QuerySingle<decimal>("select BacklogCost from CostParameterSetting where Status =0 ") * SSNum;
+
+
+            int AFNum = DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurityPeople 
+                left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr}) and AccumulationFund.IsPay=0 and  AccumulationFund.Status = 1");
+            decimal AFBacklogCost = DbHelper.QuerySingle<decimal>("select BacklogCost from CostParameterSetting where Status =1 ") * AFNum;
+
+            #region 补差费
+            int[] SocialSecurityPeopleIDS = DbHelper.Query<int>($@"select SocialSecurityPeople.SocialSecurityPeopleID
+from dbo.SocialSecurityPeople
+left join dbo.SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsStr}) and SocialSecurity.IsPay=0 and  SocialSecurity.Status = 1").ToArray();
+            decimal BuchaAmountTotal = 0;
+            //每人每月补差费用
+            decimal FreezingAmount = DbHelper.QuerySingle<decimal>("select FreezingAmount from CostParameterSetting where Status = 0");
+            //更新订单补差费用
+            string BuchaSqlStr = string.Empty;
+            //遍历订单下的所有子订单
+            foreach (var SocialSecurityPeopleID in SocialSecurityPeopleIDS)
+            {
+                //参保月份、参保月数、签约单位ID
+                SocialSecurity socialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select InsuranceArea,PayTime,PayMonthCount,RelationEnterprise from SocialSecurity where SocialSecurityPeopleID ={SocialSecurityPeopleID}");
+                decimal BuchaAmount = 0;
+                if (socialSecurity != null)
+                {
+                    int payMonth = socialSecurity.PayTime.Value.Month;
+                    int monthCount = socialSecurity.PayMonthCount;
+                    //相对应的签约单位城市是否已调差（社平工资）
+                    EnterpriseSocialSecurity enterpriseSocialSecurity = _enterpriseService.GetEnterpriseSocialSecurity(socialSecurity.RelationEnterprise);//签约公司
+                    //已调,当年以后知道年末都不需交，直到一月份开始交
+                    if (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year == DateTime.Now.Year)
+                    {
+                        int freeBuchaMonthCount = 12 + 1 - payMonth;//免补差月数
+                        int BuchaMonthCount = monthCount - freeBuchaMonthCount;
+                        if (freeBuchaMonthCount < monthCount)
+                        {
+                            BuchaAmount = FreezingAmount * BuchaMonthCount;
+                        }
+                    }
+                    //未调，往后每个月都需要交，许吧当年1月份到现在的都要交上
+                    if (enterpriseSocialSecurity.AdjustDt == null || (enterpriseSocialSecurity.AdjustDt != null && enterpriseSocialSecurity.AdjustDt.Value.Year != DateTime.Now.Year))
+                    {
+                        int BuchaMonthCount = payMonth - 1 + monthCount;
+                        BuchaAmount = FreezingAmount * BuchaMonthCount;
+                    }
+                }
+                BuchaAmountTotal += BuchaAmount;
+            }
+            #endregion
+            decimal SSAF_Amount = SS_Amount + AF_Amount;
+
+            decimal ThisAmount = SSAF_Amount + SSBacklogCost + AFBacklogCost + BuchaAmountTotal;
+
+            decimal AccountAmount = DbHelper.QuerySingle<decimal>($"select ISNULL(Account,0) from Members where MemberID = {parameter.MemberID}");
+
+            return new MoneyType
+            {
+                TotalAmount = totalAmount,
+                AutoAmount = autoAmount,
+                ThisAmount = ThisAmount,
+                AccountAmount = AccountAmount
+            };
+        }
+
+
+        /// <summary>
+        /// 是否可以账户余额扣款  不可以余额扣款即Data = 0，调用接口GenerateOrder; 可以余额扣款Data=1，弹窗提示
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> IsCanBalancePayment(GenerateOrderParameter parameter)
+        {
+            //如果是线下缴费，则删除订单
+            if (parameter.PlatType == "0")
+            {
+                DbHelper.ExecuteSqlCommand($"delete from [Order] where MemberID={parameter.MemberID}", null);
+            }
+
+            //首先判断是否有未支付订单，若有，则不能生成订单
+            if (_orderService.IsExistsWaitingPayOrderByMemberID(parameter.MemberID))
+            {
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "有未支付的订单，请先进行支付"
+                };
+            }
+            //判断所选参保人中有没有超过13号的
+            string SocialSecurityPeopleIDStr = string.Join(",", parameter.SocialSecurityPeopleIDS);
+
+            string sqlstr2 = $"select * from SocialSecurity where SocialSecurityPeopleID in({SocialSecurityPeopleIDStr})";
+            List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr2);
+            foreach (var socialSecurity in socialSecurityList)
+            {
+                if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
+                {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "社保日期已失效，请修改"
+                    };
+                }
+            }
+
+            string sqlstr1 = $"select * from AccumulationFund where SocialSecurityPeopleID in({SocialSecurityPeopleIDStr})";
+            List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
+            foreach (var accumulationFund in accumulationFundList)
+            {
+                if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
+                {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "公积金日期已失效，请修改"
+                    };
+                }
+            }
+
+            //检测余额，如果有则直接跳转到结算页面，如果没有，则弹出提示
+            MoneyType moneyType = new MoneyType();
+            moneyType = GetMoneyValue(parameter);
+
+            //如果三项金额加起来-余额=0，则不弹提示；如果>0
+            if (moneyType.TotalAmount + moneyType.AutoAmount >= moneyType.AccountAmount)
+                return new JsonResult<dynamic>
+                {
+                    status = true,
+                    Message = "不可以余额扣款",
+                    Data = 0
+
+                };
+            else
+                return new JsonResult<dynamic>
+                {
+                    status = true,
+                    Message = "您需要用账户余额扣款吗?",
+                    Data = 1
+                };
+        }
+
+
+        /// <summary>
         /// 是否可以自动付款  
         /// </summary>
         /// <param name="parameter"></param>
@@ -186,7 +377,7 @@ namespace WYJK.Web.Controllers.Http
             List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr2);
             foreach (var socialSecurity in socialSecurityList)
             {
-                if (socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                 {
                     return new JsonResult<dynamic>
                     {
@@ -200,7 +391,7 @@ namespace WYJK.Web.Controllers.Http
             List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
             foreach (var accumulationFund in accumulationFundList)
             {
-                if (accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13))
+                if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                 {
                     return new JsonResult<dynamic>
                     {
@@ -226,7 +417,7 @@ namespace WYJK.Web.Controllers.Http
     or SocialSecurityPeopleID in 
     (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
     left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID  where MemberID = {parameter.MemberID} and SocialSecurityPeople.IsPay = 1 and AccumulationFund.Status = 1)";
-
+            //未参保但已付款金额
             decimal autoAmount = DbHelper.QuerySingle<decimal>(str);
 
             //本次订单金额
@@ -307,15 +498,48 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
                 };
         }
 
+        /// <summary>
+        /// 弹窗点击确定时 检测余额是否足够，如果足够即data=1则调用BalancePayment接口，如果不够即data=0，则调用GenerateOrder接口
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> CheckBalanceIsEnough(GenerateOrderParameter parameter)
+        {
+            MoneyType moneyType = new MoneyType();
+            moneyType = GetMoneyValue(parameter);
+            if (moneyType.TotalAmount + moneyType.AutoAmount + moneyType.ThisAmount <= moneyType.AccountAmount)
+            {
+                return new JsonResult<dynamic>
+                {
+                    status = true,
+                    Message = "余额足够",
+                    Data = 1
+                };
+            }
+            else {
+                return new JsonResult<dynamic>
+                {
+                    status = true,
+                    Message = "余额不够",
+                    Data = 0
+                };
+            }
+        }
+
 
         /// <summary>
-        /// 自动扣款
+        /// 余额扣款
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
         [System.Web.Http.HttpPost]
-        public JsonResult<dynamic> AutoPayment(GenerateOrderParameter parameter)
+        public JsonResult<dynamic> BalancePayment(GenerateOrderParameter parameter)
         {
+            //计算本次金额
+            MoneyType moneyType = new MoneyType();
+            moneyType = GetMoneyValue(parameter);
+            decimal UseBalance = moneyType.ThisAmount;
+
             Dictionary<bool, string> dic = null;
             using (TransactionScope transaction = new TransactionScope())
             {
@@ -326,7 +550,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
 
                     string orderCode = DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0');
 
-                    dic = _orderService.GenerateOrder(SocialSecurityPeopleIDStr, parameter.MemberID, orderCode);
+                    dic = _orderService.GenerateOrder(SocialSecurityPeopleIDStr, parameter.MemberID, orderCode, UseBalance);
                     #endregion
 
                     if (dic.First().Key == true)
@@ -377,16 +601,17 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
                             DbHelper.ExecuteSqlCommand(BuchaSqlStr, null);
                     }
                     else {
-                        throw new Exception("自动扣款失败");
+                        throw new Exception("余额扣款失败");
                     }
 
                     string sqlOrderDetail = $"select * from OrderDetails where OrderCode ={dic.First().Value}";
                     List<OrderDetails> orderDetailList = DbHelper.Query<OrderDetails>(sqlOrderDetail);
+                    Order order = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderCode='{dic.First().Value}'");
 
                     string sqlAccountRecord = "";
                     string sqlSocialSecurityPeople = "";
                     //收支记录
-                    string ShouNote = "自动扣款：";
+                    string ShouNote = "余额扣款：";
                     string ZhiNote = string.Empty;
                     decimal Bucha = 0;//补差
                     decimal ZhiAccount = 0;//支出总额
@@ -410,9 +635,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({SocialSecurityPeopleIDsStr
                     }
 
                     sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','余额扣款','{ShouNote}',{accountNum},{memberAccount + accountNum},getdate());
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','余额扣款','{ShouNote}','0',{memberAccount},getdate());
                                        insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','{ZhiNote}',{ZhiAccount},{memberAccount + accountNum - Bucha - ZhiAccount},getdate()); ";
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','{ZhiNote}',{ZhiAccount},{memberAccount - Bucha - ZhiAccount},getdate()); ";
 
                     //更新未参保人的支付状态
                     DbHelper.ExecuteSqlCommand(sqlSocialSecurityPeople, null);
@@ -426,7 +651,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     if (!(updateResult > 0)) throw new Exception("更新个人账户失败");
 
                     //更新订单
-                    string sqlUpdateOrder = $"update [Order] set Status = {(int)OrderEnum.completed},PaymentMethod='余额扣款',PayTime=getdate() where OrderCode={dic.First().Value}";
+                    string sqlUpdateOrder = $"update [Order] set Status = {(int)OrderEnum.Auditing},PaymentMethod='余额扣款',PayTime=getdate() where OrderCode={dic.First().Value}";
                     DbHelper.ExecuteSqlCommand(sqlUpdateOrder, null);
                     transaction.Complete();
                 }
@@ -495,7 +720,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         }
 
         /// <summary>
-        /// 订单支付详情
+        /// 订单支付详情 总额是各项值加起来减去余额支付的额度(Balance)
         /// </summary>
         /// <returns></returns>
         public JsonResult<OrderDetailForMobile> GetOrderDetail(int MemberID, string OrderCode)
@@ -517,12 +742,22 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// <returns></returns>
         public JsonResult<dynamic> OrderPayment1(OrderPayParameter parameter)
         {
+            //判断账户是否冻结，如果冻结，则不能进行支付
+            bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
+  where MemberID = (select MemberID from[Order] where OrderID = {parameter.OrderID})");
+            if (isFrozen)
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "该账户被冻结，不允许支付"
+                };
+
             int orderID = parameter.OrderID;
             if (orderID > 0)
             {
                 decimal money = 0;
                 Order order = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID={orderID}");
-                money = DbHelper.QuerySingle<decimal>($"select SUM(SocialSecurityAmount*SocialSecuritypayMonth+SocialSecurityFirstBacklogCost+SocialSecurityBuCha+AccumulationFundAmount*AccumulationFundpayMonth+AccumulationFundFirstBacklogCost) from OrderDetails where OrderCode ='{order.OrderCode}'");
+                money = DbHelper.QuerySingle<decimal>($"select SUM(ISNULL(SocialSecurityAmount*SocialSecuritypayMonth,0)+ISNULL(SocialSecurityFirstBacklogCost,0)+ISNULL(SocialSecurityBuCha,0)+ISNULL(AccumulationFundAmount*AccumulationFundpayMonth,0)+ISNULL(AccumulationFundFirstBacklogCost,0)) from OrderDetails where OrderCode ='{order.OrderCode}'");
 
 
                 string BranchID = "0532";
@@ -534,7 +769,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    //string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     return new JsonResult<dynamic>
                     {
@@ -592,7 +828,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         /// <param name="Signature"></param>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-        public void OrderPayment1_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
+        public void OrderPayment1_Return(string Succeed, string CoNo, string BillNo, string Amount, string Date, string MerchantPara, string Msg, string Signature)
         {
             string orderID = BillNo.TrimStart('0');
             Order model = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID='{orderID}'");
@@ -604,7 +840,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
              * 先判断是否支付成功
              * 验证支付成功还要验证支付金额是否和订单的金额一致
              */
-            string ReturnInfo = "Succeed=" + Succeed + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&Msg=" + Msg + "&Signature=" + Signature;
+            string ReturnInfo = "Succeed=" + Succeed + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&MerchantPara=" + MerchantPara + "&Msg=" + Msg + "&Signature=" + Signature;
             //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
             StringBuilder str = new StringBuilder();
             string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
@@ -640,7 +876,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
                     return;
                 }
-                decimal payMoney = money;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
@@ -665,6 +901,10 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
                 if (model.Status == "0")
                     OrderPayment(model);
+
+
+                HttpContext.Current.Response.Status = "200";
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
             }
         }
 
@@ -731,8 +971,10 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     decimal Bucha = 0;//补差
                     decimal ZhiAccount = 0;//支出总额
                     decimal accountNum = 0;//订单总额
+                    int PeopleCount = 0;//缴费人数
                     foreach (var orderDetail in orderDetailList)
                     {
+                        PeopleCount += 1;//人数递增
                         if (orderDetail.IsPaySocialSecurity)
                             sqlSocialSecurityPeople += $"update SocialSecurity set IsPay=1 where SocialSecurityPeopleID ={orderDetail.SocialSecurityPeopleID};";
                         if (orderDetail.IsPayAccumulationFund)
@@ -754,11 +996,16 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         //sqlAccountRecord += orderDetail.AccumulationFundFirstBacklogCost != 0 ? $"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random().Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},{orderDetail.SocialSecurityPeopleID},'{orderDetail.SocialSecurityPeopleName}','支出','余额','公积金代办',{orderDetail.AccumulationFundFirstBacklogCost},{memberAccount},getdate());" : string.Empty;
                         #endregion
                     }
-
-                    sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','收入','{model.PaymentMethod}','{ShouNote}',{accountNum},{memberAccount + accountNum},getdate());
+                    if (order.Balance == 0)
+                        sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime,PeopleCount)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','收入','{order.PaymentMethod}','{ShouNote}',{accountNum - order.Balance},{memberAccount + accountNum - order.Balance},getdate(),{PeopleCount});
                                        insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','支出','余额','{ZhiNote}',{ZhiAccount},{memberAccount + accountNum - Bucha - ZhiAccount},getdate()); ";
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','支出','余额','{ZhiNote}',{ZhiAccount},{memberAccount + accountNum - order.Balance - Bucha - ZhiAccount},getdate()); ";
+                    else
+                        sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime,PeopleCount)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','收入','{order.PaymentMethod}、余额扣款','余额扣款:{order.Balance};{ShouNote}',{accountNum - order.Balance},{memberAccount + accountNum - order.Balance},getdate(),{PeopleCount});
+                                       insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{order.MemberID},'','','支出','余额','{ZhiNote}',{ZhiAccount},{memberAccount + accountNum - order.Balance - Bucha - ZhiAccount},getdate()); ";
 
                     //更新未参保人的支付状态
                     if (!string.IsNullOrEmpty(sqlSocialSecurityPeople))

@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -50,6 +51,7 @@
     <Compile Include="IService\Loan\ILoanAuditService.cs" />
     <Compile Include="IService\Loan\ILoanMemberService.cs" />
     <Compile Include="IService\Loan\ILoanSubjectService.cs" />
+    <Compile Include="IService\Loan\ILoanRepayment.cs" />
     <Compile Include="IService\SocialSecurity\IBaseAuditService.cs" />
     <Compile Include="IService\SocialSecurity\IAccumulationFundService.cs" />
     <Compile Include="IService\SocialSecurity\IBaseOrdersService.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="ServiceImpl\BaseOrdersService.cs" />
     <Compile Include="ServiceImpl\Loan\LoanAuditService.cs" />
     <Compile Include="ServiceImpl\Loan\LoanMemberService.cs" />
+    <Compile Include="ServiceImpl\Loan\LoanRepaymentService.cs" />
     <Compile Include="ServiceImpl\Loan\LoanSubjectService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\AccumulationFundService.cs" />
     <Compile Include="ServiceImpl\SocialSecurity\BaseAuditService.cs" />

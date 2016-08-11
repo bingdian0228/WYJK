@@ -50,14 +50,15 @@ namespace WYJK.Data.ServiceImpl
                       dbo.SocialSecurity.Status, dbo.SocialSecurity.InsuranceArea, dbo.SocialSecurity.SocialSecurityBase, dbo.SocialSecurityPeople.SocialSecurityPeopleID, 
                       dbo.SocialSecurity.SocialSecurityID, dbo.SocialSecurity.PayProportion, dbo.SocialSecurity.PayTime, dbo.SocialSecurity.PayMonthCount, SocialSecurity.AlreadyPayMonthCount,
                       dbo.SocialSecurity.PayBeforeMonthCount, dbo.SocialSecurity.BankPayMonth, dbo.SocialSecurity.EnterprisePayMonth, dbo.Members.UserType, SocialSecurity.UpdateDt,
-                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,SocialSecurity.IsAdjustingBase,SocialSecurity.AdjustingBaseNote,
+                      dbo.Members.MemberName,Members.EnterpriseName,Members.BusinessName, ISNULL(dbo.Members.Account,0) Account, dbo.SocialSecurity.StopReason, dbo.SocialSecurity.ApplyStopDate, dbo.SocialSecurity.StopDate,SocialSecurity.CollectType,SocialSecurity.MailAddress,SocialSecurity.ContactsPhone,SocialSecurity.ContactsUser,SocialSecurity.MailOrder,SocialSecurity.ExpressCompany, dbo.Members.MemberID,SocialSecurity.IsAdjustingBase,SocialSecurity.AdjustingBaseNote,SocialSecurity.IsPay,
                         case when exists(
                              select * from SocialSecurityPeople
                              left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
                               left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
                               where MemberID = members.MemberID and(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew})
                              ) 
-                             then 1 else 0 end IsArrears
+                             then 1 else 0 end IsArrears,
+                        SocialSecurity.HandleDate
                       FROM dbo.SocialSecurityPeople 
                       INNER JOIN dbo.SocialSecurity ON dbo.SocialSecurityPeople.SocialSecurityPeopleID = dbo.SocialSecurity.SocialSecurityPeopleID 
                       INNER JOIN dbo.Members ON dbo.SocialSecurityPeople.MemberID = dbo.Members.MemberID";
@@ -273,13 +274,13 @@ where (tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1)";
             decimal value = 0;
             //model.PersonalShiYeTown
             if (socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
-    socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+    socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural)) ||
     socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
             {
                 value = model.PersonalShiYeRural;
             }
             else if (socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
-              socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+              socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown)) ||
               socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
             {
                 value = model.PersonalShiYeTown;
@@ -682,13 +683,13 @@ where (tt.IsPaySocialSecurity =1 or tt.IsPayAccumulationFund=1)";
             decimal value = 0;
             //model.PersonalShiYeTown
             if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
-    HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+    HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural)) ||
     HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
             {
                 value = model.PersonalShiYeRural;
             }
             else if (HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
-              HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+              HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown)) ||
               HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
             {
                 value = model.PersonalShiYeTown;
@@ -739,7 +740,24 @@ select @totalAmount";
         }
 
         /// <summary>
-        /// 根据MemberID获取社保待续费列表
+        /// 是否存在待续费和未续费待停的
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public bool IsExistsRenew_WaitingTop(int MemberID)
+        {
+
+            string sqlstr = $@"select count(1) from Members
+left join SocialSecurityPeople on SocialSecurityPeople.MemberID = members.MemberID
+left join SocialSecurity on SocialSecurity.SocialSecurityPeopleID = socialsecuritypeople.SocialSecurityPeopleID
+left join AccumulationFund on AccumulationFund.SocialSecurityPeopleID = socialsecuritypeople.SocialSecurityPeopleID
+where (SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew} or (SocialSecurity.Status ={(int)SocialSecurityStatusEnum.WaitingStop} and SocialSecurity.StopMethod=1) or (AccumulationFund.Status ={(int)SocialSecurityStatusEnum.WaitingStop} and AccumulationFund.StopMethod=1)) and members.MemberID={MemberID}";
+            int result = DbHelper.QuerySingle<int>(sqlstr);
+            return result > 0;
+        }
+
+        /// <summary>
+        /// 根据MemberID获取社保待续费(包括未续费待停保)列表
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
@@ -748,13 +766,13 @@ select @totalAmount";
             string sqlstr = $@"select SocialSecurityPeople.* from SocialSecurity
   left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
   where SocialSecurityPeople.MemberID ={MemberID}
-            and(SocialSecurity.Status in({(int)SocialSecurityStatusEnum.Renew}))";
+            and(SocialSecurity.Status in({(int)SocialSecurityStatusEnum.Renew}) or (SocialSecurity.Status={(int)SocialSecurityStatusEnum.WaitingStop} and StopMethod = 1))";
 
             return DbHelper.Query<SocialSecurityPeople>(sqlstr);
         }
 
         /// <summary>
-        /// 根据MemberID获取公积金待续费列表
+        ///根据MemberID获取公积金待续费（包括未续费待停保）列表
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
@@ -763,7 +781,7 @@ select @totalAmount";
             string sqlstr = $@"select 1 from AccumulationFund
   left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
   where SocialSecurityPeople.MemberID ={MemberID}
-            and(AccumulationFund.Status in({(int)SocialSecurityStatusEnum.Renew}))";
+            and(AccumulationFund.Status in({(int)SocialSecurityStatusEnum.Renew}) or(AccumulationFund.Status={(int)SocialSecurityStatusEnum.WaitingStop} or StopMethod=1))";
 
             return DbHelper.Query<SocialSecurityPeople>(sqlstr); ;
         }
@@ -783,6 +801,25 @@ update AccumulationFund set AccumulationFund.Status = {(int)SocialSecurityStatus
   (select AccumulationFund.AccumulationFundID from AccumulationFund
 left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
   where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew});
+  ";
+            DbHelper.ExecuteSqlCommand(sqlstr, null);
+        }
+
+        /// <summary>
+        /// 更新用户ID下的所有待续费和未续费待停保的社保和公积金变成正常
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <param name="MonthCount"></param>
+        public void UpdateRenew_WaitingTopToNormalByMemberID(int MemberID, int MonthCount)
+        {
+            string sqlstr = $@"update SocialSecurity set SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Normal},SocialSecurity.PayMonthCount= case when SocialSecurity.PayMonthCount>{MonthCount} then SocialSecurity.PayMonthCount else {MonthCount} end where socialsecurity.SocialSecurityID in
+  (select SocialSecurity.SocialSecurityID from SocialSecurity
+left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
+  where SocialSecurityPeople.MemberID = {MemberID} and (SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.WaitingStop} and stopmethod=1)));
+update AccumulationFund set AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Normal},AccumulationFund.PayMonthCount= case when AccumulationFund.PayMonthCount> {MonthCount} then AccumulationFund.PayMonthCount else {MonthCount} end where AccumulationFund.AccumulationFundID in
+  (select AccumulationFund.AccumulationFundID from AccumulationFund
+left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
+  where SocialSecurityPeople.MemberID = {MemberID} and (AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew} or(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.WaitingStop} and stopmethod=1)));
   ";
             DbHelper.ExecuteSqlCommand(sqlstr, null);
         }
@@ -885,6 +922,47 @@ select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecuri
             select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase * AccumulationFund.PayProportion / 100 from SocialSecurityPeople
                   left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
                   where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status = 4;
+            select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
+select @totalAmount";
+
+            decimal result = DbHelper.QuerySingle<decimal>(sqlstr);
+            return result;
+        }
+
+        /// <summary>
+        /// 未参保但已付款金额
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        public decimal GetUnInsured_IsPayAmountByMemberID(int MemberID)
+        {
+            string str = $@"select ISNULL(sum(SocialSecurityAmount*SocialSecuritypayMonth+ AccumulationFundAmount * AccumulationFundpayMonth),0)
+   from OrderDetails
+   where OrderDetails.SocialSecurityPeopleID in 
+   (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
+    left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID  where MemberID = {MemberID} and SocialSecurityPeople.IsPay = 1 and SocialSecurity.Status = 1)
+    or SocialSecurityPeopleID in 
+    (select SocialSecurityPeople.SocialSecurityPeopleID from SocialSecurityPeople
+    left join AccumulationFund on SocialSecurityPeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID  where MemberID = {MemberID} and SocialSecurityPeople.IsPay = 1 and AccumulationFund.Status = 1)";
+
+            return DbHelper.QuerySingle<decimal>(str);
+        }
+
+        /// <summary>
+        /// 获取待续费和未续费待停用户所产生的金额和
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+
+        public decimal GetRenew_WaitingTopAmountByMemberID(int MemberID)
+        {
+            string sqlstr = $@"declare @SocialSecurityAmount decimal(18,2) = 0, @AccumulationFundAmount decimal(18,2) = 0,@totalAmount decimal(18,2) =0
+select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
+      left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+      where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.Status in(4,5);
+            select @AccumulationFundAmount += AccumulationFund.AccumulationFundBase * AccumulationFund.PayProportion / 100 from SocialSecurityPeople
+                  left join AccumulationFund on socialsecuritypeople.SocialSecurityPeopleID = AccumulationFund.SocialSecurityPeopleID
+                  where SocialSecurityPeople.MemberID = {MemberID} and AccumulationFund.Status in(4,5);
             select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
 select @totalAmount";
 

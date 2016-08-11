@@ -40,6 +40,10 @@ namespace WYJK.Entity
         /// 审核时间
         /// </summary>
         public DateTime? AuditTime { get; set; }
+        /// <summary>
+        /// 余额
+        /// </summary>
+        public decimal Balance { get; set; }
 
     }
 
@@ -76,6 +80,11 @@ namespace WYJK.Entity
         /// 用户支付数
         /// </summary>
         public int payUserCount { get; set; }
+
+        /// <summary>
+        /// 缴费用户名
+        /// </summary>
+        public string payUserName { get; set; }
         /// <summary>
         /// 支付方式
         /// </summary>
@@ -148,6 +157,16 @@ namespace WYJK.Entity
         /// 用户ID
         /// </summary>
         public int MemberID { get; set; }
+
+        /// <summary>
+        /// 平台类型  0:线下；1：移动端
+        /// </summary>
+        public string PlatType { get; set; } = "1";
+
+        /// <summary>
+        /// 是否使用余额
+        /// </summary>
+        public bool IsUseBalance { get; set; }
     }
 
 
@@ -208,6 +227,11 @@ namespace WYJK.Entity
         /// 支付方式
         /// </summary>
         public string PaymentMethod { get; set; }
+
+        /// <summary>
+        /// 余额支付额度
+        /// </summary>
+        public decimal Balance { get; set; }
 
     }
 

@@ -21,7 +21,7 @@
             }(),
             jump: function (e, first) { //触发分页后的回调
                 if (!first) { //一定要加此判断，否则初始时会无限刷新
-                    location.href = '?PageIndex=' + e.curr + '&MemberID=' + '@Request.Params["MemberID"]' + '&OrderCode=' + '@Request.Params["OrderCode"]' + '&Status=' + '@Request.Params["Status"]' + '&StartTime=' + '@Request.Params["StartTime"]' + '&EndTime=' + '@Request.Params["EndTime"]'+'&PaymentMethod='+'@Request.Params["PaymentMethod"]';
+                    location.href = '?PageIndex=' + e.curr + '&MemberID=' + '@Request.Params["MemberID"]' + '&OrderCode=' + '@Request.Params["OrderCode"]' + '&Status=' + '@Request.Params["Status"]' + '&StartTime=' + '@Request.Params["StartTime"]' + '&EndTime=' + '@Request.Params["EndTime"]' + '&PaymentMethod=' + '@Request.Params["PaymentMethod"]';
                 }
             }
         });
@@ -29,6 +29,28 @@
         $(function () {
 
             $(".Huialert.Huialert-info").fadeOut(2000);
+
+            //15号以后办结的点击扣费，包括15号以后从冻结转到非冻结的
+            $(".action-complete").click(function () {
+                layer.confirm('确定要进行办结扣费吗？', { btn: ['确定', '取消'] },
+                    function () {
+                        var index = layer.load(1, {
+                            shade: [0.1, '#000']
+                        });
+                        $.ajax({
+                            url: '@Url.Action("BanJieKouFei", "Order")',
+                            dataType: "json",
+                            type: "get",
+                            success: function (data) {
+                                layer.close(index);
+                                layer.msg(data.message);
+                            },
+                            error: function () {
+                                layer.msg("服务器错误");
+                            }
+                        });
+                    });
+            });
 
             $(".action-pass").click(function () {
                 if ($("input[type='checkbox']:checked").length <= 0) {
@@ -74,6 +96,51 @@
                         });
                     })
             });
+
+            $(".action-fail").click(function () {
+                if ($("input[type='checkbox']:checked").length <= 0) {
+                    layer.msg("请选择需要操作的信息");
+                    return;
+                }
+
+                if ($("input[type='checkbox']:checked").length > 1) {
+                    layer.msg("只能选择一项操作信息");
+                    return;
+                }
+
+                layer.confirm('确定不通过该项吗？', { btn: ['确定', '取消'] },
+                    function () {
+                        var OrderCodes = [];
+                        $("input[type='checkbox']:checked").each(function (i) {
+                            OrderCodes[i] = $(this).val();
+                        });
+                        var index = layer.load(1, {
+                            shade: [0.1, '#000']
+                        });
+
+                        var Amount = $("input[type='checkbox']:checked").closest("tr").find("[name='Amount']").text();
+
+                        $.ajax({
+                            url: "@Url.Action("BatchNoPass", "Order")?OrderCodeStr=" + OrderCodes + "&Amount=" + Amount + "&Type=0",
+                            //data: { "OrderCodes": OrderCodes, "Type": 0 },
+                            dataType: "json",
+                            type: "GET",
+                            success: function (data) {
+                                layer.close(index);
+                                if (data.status) {
+                                    layer.msg("审核成功");
+                                    refresh();
+                                } else {
+                                    layer.msg("审核失败");
+                                }
+                            },
+                            error: function () {
+                                layer.close(index);
+                                layer.msg("出现异常");
+                            }
+                        });
+                    })
+            });
         })
     </script>
 }
@@ -98,10 +165,13 @@
             @:费用来源：
                     <span class="select-box inline">
                         @{
-                            var PaymentMethodList = ViewData["PaymentMethod"] as SelectList;
-                            PaymentMethodList.Concat(new List<SelectListItem> { new SelectListItem { Value = "", Text = "全部" } });
+//var PaymentMethodList = ViewData["PaymentMethod"] as List<SelectListItem>;
+//PaymentMethodList=PaymentMethodList.Concat(new List<SelectListItem> { new SelectListItem { Value = "", Text = "全部" } }) as List<SelectListItem>;
                         }
                         @Html.DropDownList("PaymentMethod", ViewData["PaymentMethod"] as List<SelectListItem>, new { @class = "select" })
+                        <script>
+                            $("#PaymentMethod").prepend("<option value='' @((Request["PaymentMethod"] ?? "")=="" ? "selected":"")>全部</option>");
+                        </script>
                     </span>
                     @:订单编号： @Html.TextBox("OrderCode", null, new { style = "width:250px", @class = "input-text", placeholder = "订单编号" })
                             @:日期范围：
@@ -139,6 +209,7 @@
                     <th width="80">用户类型</th>
                     <th width="80">代理机构</th>
                     <th width="80">缴费人数</th>
+                    <th width="80">缴费人名</th>
                     <th width="80">交费来源</th>
                     <th width="80">总额</th>
                     <th width="80">审核状态</th>
@@ -156,6 +227,7 @@
                         <td><a class="maincolor" href="@Url.Action("EditMemberExtensionInformation", "Member")?MemberID=@item.MemberID&type=1">@(item.UserType == "0" ? item.MemberName : (item.UserType == "1" ? item.EnterpriseName : item.BusinessName))</a></td>
                         @*<td>@item.MemberName</td>*@
                         <td>@item.payUserCount</td>
+                        <td>@item.payUserName</td>
                         <td>@item.PaymentMethod</td>
                         <td name="Amount">@item.Amounts</td>
                         <td>@EnumExt.GetEnumCustomDescription((OrderEnum)item.Status.AsInt())</td>
@@ -172,9 +244,9 @@
             @if (Request.Params["Status"] == Convert.ToInt32(OrderEnum.Auditing).ToString())
             {
                 <a href="javascript:;" class="btn btn-primary radius action-pass"><i class="Hui-iconfont">&#xe6e1;</i>审核通过</a>
-                @*<a href="javascript:;" class="btn btn-danger radius action-fail"><i class="Hui-iconfont">&#xe6dd;</i>不通过</a>*@
+                <a href="javascript:;" class="btn btn-danger radius action-fail"><i class="Hui-iconfont">&#xe6dd;</i>不通过</a>
             }
-
+            <a href="javascript:;" class="btn btn-primary radius action-complete"><i class="Hui-iconfont">&#xe6e1;</i>办结扣费</a>
             &nbsp;订单总额：<strong>@ViewBag.TotalAmount</strong>
         </span>
 

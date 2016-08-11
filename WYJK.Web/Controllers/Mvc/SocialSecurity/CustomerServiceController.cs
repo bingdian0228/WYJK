@@ -498,7 +498,7 @@ namespace WYJK.Web.Controllers.Mvc
                         //查看是否存在社保未付款的订单
                         if (DbHelper.QuerySingle<int>($"select count(0) from [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPaySocialSecurity=1 and [Order].Status=0") > 0)
                         {
-                            DbHelper.ExecuteSqlCommand($"update OrderDetails set SocialSecurityAmount='{NewSSAmount}' where OrderDetailID=(select OrderDetails.OrderDetailID form [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPaySocialSecurity=1 and [Order].Status=0)", null);
+                            DbHelper.ExecuteSqlCommand($"update OrderDetails set SocialSecurityAmount='{NewSSAmount}' where OrderDetailID=(select OrderDetails.OrderDetailID from [Order] left join OrderDetails on [Order].OrderCode =OrderDetails.OrderCode where SocialSecurityPeopleID={ model.SocialSecurityPeopleID} and OrderDetails.IsPaySocialSecurity=1 and [Order].Status=0)", null);
                         }
                         //查看参保人是否已经支付，如果已经支付则需要生成一个待支付的差额订单
                         else if (DbHelper.QuerySingle<bool>($"select IsPay from SocialSecurity where SocialSecurityPeopleID={ model.SocialSecurityPeopleID}"))

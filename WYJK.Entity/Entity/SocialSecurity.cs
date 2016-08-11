@@ -298,6 +298,13 @@ namespace WYJK.Entity
         /// 快递公司
         /// </summary>
         public string ExpressCompany { get; set; }
+
+        /// <summary>
+        /// 归档时间
+        /// </summary>
+        public DateTime? HandleDate { get; set; }
+
+        public bool IsPay { get; set; }
     }
 
     /// <summary>

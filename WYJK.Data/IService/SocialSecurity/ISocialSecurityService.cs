@@ -239,6 +239,19 @@ namespace WYJK.Data.IServices
         /// <returns></returns>
         decimal GetRenewAmountByMemberID(int MemberID);
 
+        /// <summary>
+        /// 未参保但已付款金额
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        decimal GetUnInsured_IsPayAmountByMemberID(int MemberID);
+
+        /// <summary>
+        /// 获取待续费和未续费待停用户所产生的金额和
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        decimal GetRenew_WaitingTopAmountByMemberID(int MemberID);
 
         /// <summary>
         /// 是否存在续费
@@ -247,14 +260,21 @@ namespace WYJK.Data.IServices
         bool IsExistsRenew(int MemberID);
 
         /// <summary>
-        /// 根据MemberID获取社保待续费列表
+        /// 是否存在待续费和未续费待停的
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+        bool IsExistsRenew_WaitingTop(int MemberID);
+
+        /// <summary>
+        ///  根据MemberID获取社保待续费(包括未续费待停保)列表
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
         List<SocialSecurityPeople> GetSocialSecurityRenewListByMemberID(int MemberID);
 
         /// <summary>
-        /// 根据MemberID获取公积金待续费列表
+        /// 根据MemberID获取公积金待续费（包括未续费待停保）列表
         /// </summary>
         /// <param name="MemberID"></param>
         /// <returns></returns>
@@ -268,6 +288,12 @@ namespace WYJK.Data.IServices
 
         void UpdateRenewToNormalByMemberID(int MemberID,int MonthCount);
 
+        /// <summary>
+        /// 更新用户ID下的所有待续费和未续费待停保的社保和公积金变成正常
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <param name="MonthCount"></param>
+        void UpdateRenew_WaitingTopToNormalByMemberID(int MemberID, int MonthCount);
         /// <summary>
         /// 获取当前基数
         /// </summary>

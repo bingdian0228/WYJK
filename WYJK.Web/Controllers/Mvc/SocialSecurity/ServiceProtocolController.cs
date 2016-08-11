@@ -21,9 +21,10 @@ namespace WYJK.Web.Controllers.Mvc
         }
 
         [ValidateInput(false)]
-        public ActionResult PostServiceProtocol(ServiceProtocol erviceProtocol)
+        public ActionResult PostServiceProtocol(ServiceProtocol serviceProtocol)
         {
-            DbHelper.ExecuteSqlCommand($"delete from ServiceProtocol;insert into ServiceProtocol values('{erviceProtocol.ServiceProtocolContent}')", null);
+            serviceProtocol.ServiceProtocolContent = serviceProtocol.ServiceProtocolContent.Replace("<img", "<img width=\"100%\"");
+            DbHelper.ExecuteSqlCommand($"delete from ServiceProtocol;insert into ServiceProtocol values('{serviceProtocol.ServiceProtocolContent}')", null);
 
             return RedirectToAction("GetServiceProtocol");
         }

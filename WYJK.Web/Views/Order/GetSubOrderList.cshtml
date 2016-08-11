@@ -101,6 +101,8 @@
         <span class="l">公积金金额：@afAmount.ToString("N2")</span>
         <span class="l">公积金服务费：@AccumulationFundServiceCost.ToString("N2")</span>
         <span class="l">公积金待办费：@AccumulationFundFirstBacklogCost.ToString("N2")</span>
+        <span class="l">余额额度：@Convert.ToDecimal(ViewData["Balance"]).ToString("N2")</span>
+        <span class="l">支付额度：@((totalAmount - Convert.ToDecimal(ViewData["Balance"])).ToString("N2"))</span>
         <span class="l">总金额：@totalAmount.ToString("N2")</span>
     </div>
     @{
@@ -111,6 +113,7 @@
     { <div class="cl pd-5 bg-1 bk-gray mt-20">
         <span class="l">
             <a href="@Url.Action("BatchAuditing","Order")?OrderCodeStr=@OrderCode&Amount=@totalAmount&Type=1" class="btn btn-primary radius action-pass"><i class="Hui-iconfont">&#xe6e1;</i>审核通过</a>
+            <a href="@Url.Action("BatchNoPass","Order")?OrderCodeStr=@OrderCode&Amount=@totalAmount&Type=1" class="btn btn-danger radius action-nopass"><i class="Hui-iconfont">&#xe6dd;</i>审核不通过</a>
         </span>
     </div>
 

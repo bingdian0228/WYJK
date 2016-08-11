@@ -15,6 +15,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using WYJK.Data;
+using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
 using WYJK.Framework.EnumHelper;
 using WYJK.Framework.Helpers;
@@ -52,12 +53,20 @@ namespace WYJK.Web
 
 
             #region 定时任务 15号
-            Timer myTimer = new Timer();
-            myTimer.Elapsed += new ElapsedEventHandler(theout);
-            myTimer.Interval = 1000;
-            myTimer.AutoReset = true;
-            myTimer.Enabled = true;
+            Timer Timer15 = new Timer();
+            Timer15.Elapsed += new ElapsedEventHandler(business15);
+            Timer15.Interval = 1000;
+            Timer15.AutoReset = true;
+            Timer15.Enabled = true;
 
+            #endregion
+
+            #region 13号
+            Timer Timer13 = new Timer();
+            Timer13.Elapsed += new ElapsedEventHandler(business13);
+            Timer13.Interval = 1000;
+            Timer13.AutoReset = true;
+            Timer13.Enabled = true;
             #endregion
         }
 
@@ -135,21 +144,20 @@ namespace WYJK.Web
             }
         }
 
-
         /// <summary>
-        /// 触发事件
+        /// 13触发事件
         /// </summary>
         /// <param name="source"></param>
         /// <param name="e"></param>
-        public void theout(object source, System.Timers.ElapsedEventArgs e)
+        public void business13(object source, System.Timers.ElapsedEventArgs e)
         {
             int CurrentDay = DateTime.Now.Day;
             int CurrentHour = DateTime.Now.Hour;
             int CurrentMinute = DateTime.Now.Minute;
             int CurrentSecond = DateTime.Now.Second;
 
-            //定制时间 每月16号 00：00：00 开始执行
-            int CustomDay = 16;
+            //定制时间 每月13号 00：00：00 开始执行
+            int CustomDay = 13;
             int CustomHour = 00;
             int CustomMinute = 00;
             int CustomSecond = 00;
@@ -159,7 +167,90 @@ namespace WYJK.Web
             if (CurrentDay == CustomDay && CurrentHour == CustomHour
                 && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
             {
-                Console.WriteLine("每月16号 00：00：00 开始执行");
+                Console.WriteLine("每月13号 00：00：00 开始执行");
+
+                TransactionOptions transactionOption = new TransactionOptions();
+                //设置事务隔离级别
+                transactionOption.IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted;
+                // 设置事务超时时间为60秒
+                transactionOption.Timeout = new TimeSpan(0, 0, 60);
+
+                using (TransactionScope transaction = new TransactionScope(TransactionScopeOption.Required, transactionOption))
+                {
+                    try
+                    {
+                        string sqlMember = "select * from Members where ISNULL(IsFrozen,0) = 0";
+                        List<Members> memberList = DbHelper.Query<Members>(sqlMember);
+
+                        #region 将所有待续费变成待停保
+                        string sqlStr3 = string.Empty;
+                        foreach (Members member in memberList)
+                        {
+                            //查询该用户下的所有参保人
+                            string sqlSocialSecurityPeople = $"select * from SocialSecurityPeople where MemberID={member.MemberID}";
+                            List<SocialSecurityPeople> SocialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>(sqlSocialSecurityPeople);
+                            string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
+
+                            //查询该用户下的所有待停保参保方案
+                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Renew}";
+                            List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
+                            foreach (SocialSecurity socialSecurity in SocialSecurityList)
+                            {
+                                sqlStr3 += $"update SocialSecurity set Status ={(int)SocialSecurityStatusEnum.WaitingStop},ApplyStopDate=getdate(),StopMethod=1 where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
+                            }
+
+                            //查询该用户下的所有待停保参公积金方案
+                            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.Renew}";
+                            List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
+                            foreach (AccumulationFund accumulationFund in AccumulationFundList)
+                            {
+                                sqlStr3 += $"update AccumulationFund set Status ={(int)SocialSecurityStatusEnum.WaitingStop},ApplyStopDate=getdate(),StopMethod=1 where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
+                            }
+                        }
+                        if (sqlStr3.Trim() != string.Empty)
+                            DbHelper.ExecuteSqlCommand(sqlStr3, null);
+                        #endregion
+                        transaction.Complete();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
+
+                        logManager.SaveLog(ex.ToString(), DateTime.Now);
+                    }
+                    finally {
+                        transaction.Dispose();
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 15触发事件
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        public void business15(object source, System.Timers.ElapsedEventArgs e)
+        {
+            int CurrentDay = DateTime.Now.Day;
+            int CurrentHour = DateTime.Now.Hour;
+            int CurrentMinute = DateTime.Now.Minute;
+            int CurrentSecond = DateTime.Now.Second;
+
+            //定制时间 每月15号 00：00：00 开始执行
+            int CustomDay = 15;
+            int CustomHour = 00;
+            int CustomMinute = 00;
+            int CustomSecond = 00;
+
+            Debug.WriteLine(DateTime.Now);
+
+            if (CurrentDay == CustomDay && CurrentHour == CustomHour
+                && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
+            {
+                Console.WriteLine("每月15号 00：00：00 开始执行");
 
                 using (TransactionScope transaction = new TransactionScope())
                 {
@@ -167,7 +258,7 @@ namespace WYJK.Web
                     {
                         #region 每个用户下的所有正常的参保人进行扣款,并将已投月数+1,剩余月数-1
                         //查询所有用户
-                        string sqlMember = "select * from Members";
+                        string sqlMember = "select * from Members where ISNULL(IsFrozen,0) = 0";//此用户必须是非冻结的账户
                         List<Members> memberList = DbHelper.Query<Members>(sqlMember);
                         string sqlStr = string.Empty;
 
@@ -288,11 +379,43 @@ namespace WYJK.Web
                             DbHelper.ExecuteSqlCommand(sqlStr2, null);
                         #endregion
 
+
+                        #region 待停变停保
+                        string sqlStr3 = string.Empty;
+                        foreach (Members member in memberList)
+                        {
+                            //查询该用户下的所有参保人
+                            string sqlSocialSecurityPeople = $"select * from SocialSecurityPeople where MemberID={member.MemberID}";
+                            List<SocialSecurityPeople> SocialSecurityPeopleList = DbHelper.Query<SocialSecurityPeople>(sqlSocialSecurityPeople);
+                            string SocialSecurityPeopleIDStr = string.Join("','", SocialSecurityPeopleList.Select(n => n.SocialSecurityPeopleID));
+
+                            //查询该用户下的所有待停保参保方案
+                            string sqlSocialSecurity = $"select * from SocialSecurity where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.WaitingStop}";
+                            List<SocialSecurity> SocialSecurityList = DbHelper.Query<SocialSecurity>(sqlSocialSecurity);
+                            foreach (SocialSecurity socialSecurity in SocialSecurityList)
+                            {
+                                sqlStr3 += $"update SocialSecurity set Status ={(int)SocialSecurityStatusEnum.AlreadyStop},StopDate=getdate() where SocialSecurityPeopleID={socialSecurity.SocialSecurityPeopleID};";
+                            }
+
+                            //查询该用户下的所有待停保参公积金方案
+                            string sqlAccumulationFund = $"select * from AccumulationFund where SocialSecurityPeopleID in('{SocialSecurityPeopleIDStr}') and Status={(int)SocialSecurityStatusEnum.WaitingStop}";
+                            List<AccumulationFund> AccumulationFundList = DbHelper.Query<AccumulationFund>(sqlAccumulationFund);
+                            foreach (AccumulationFund accumulationFund in AccumulationFundList)
+                            {
+                                sqlStr3 += $"update AccumulationFund set Status ={(int)SocialSecurityStatusEnum.AlreadyStop},StopDate=getdate() where SocialSecurityPeopleID={accumulationFund.SocialSecurityPeopleID};";
+                            }
+                        }
+                        if (sqlStr3.Trim() != string.Empty)
+                            DbHelper.ExecuteSqlCommand(sqlStr3, null);
+                        #endregion
+
                         transaction.Complete();
                     }
                     catch (Exception ex)
                     {
+                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
 
+                        logManager.SaveLog(ex.ToString(), DateTime.Now);
                     }
                     finally
                     {

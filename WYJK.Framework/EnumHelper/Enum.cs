@@ -80,7 +80,9 @@ namespace WYJK.Framework.EnumHelper
         [EnumDisplayName("审核中")]
         Auditing = 1,
         [EnumDisplayName("已完成")]
-        completed = 2
+        completed = 2,
+        [EnumDisplayName("不通过")]
+        NoPass = 3
     }
 
     /// <summary>
@@ -188,6 +190,31 @@ namespace WYJK.Framework.EnumHelper
         NoPass = 3,
         [EnumDisplayName("已放款")]
         AlreadyLoan = 4
+    }
+
+    /// <summary>
+    /// 还款状态
+    /// </summary>
+    public enum RepaymentStatusEnum
+    {
+        [EnumDisplayName("未结清")]
+        NoSettled = 1,
+        [EnumDisplayName("已逾期")]
+        Overdue = 2,
+        [EnumDisplayName("已结清")]
+        Settled = 3
+    }
+
+    /// <summary>
+    /// 还款类型
+    /// </summary>
+    public enum RepaymentTypeEnum
+    {
+        [EnumDisplayName("正常还")]
+        Normal = 1,
+        [EnumDisplayName("提前还")]
+        TiQianHuan = 2
+
     }
 
     /// <summary>

@@ -80,8 +80,10 @@ namespace WYJK.Web.Controllers.Http
             List<string> list = new List<string>();
             list.Add("本市农村");
             list.Add("本市城镇");
-            list.Add("外市农村");
-            list.Add("外市城镇");
+            list.Add("本省农村");
+            list.Add("本省城镇");
+            list.Add("外省农村");
+            list.Add("外省城镇");
 
             return new JsonResult<List<string>>
             {
@@ -767,13 +769,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 decimal value = 0;
                 //model.PersonalShiYeTown
                 if (socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
-        socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+        socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural)) ||
         socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
                 {
                     value = enterpriseSocialSecurity.PersonalShiYeRural;
                 }
                 else if (socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
-                   socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+                   socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown)) ||
                    socialSecurityPeople.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
                 {
                     value = enterpriseSocialSecurity.PersonalShiYeTown;
@@ -920,13 +922,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             decimal value = 0;
                             //model.PersonalShiYeTown
                             if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
-                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+                    socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural)) ||
                     socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
                             {
                                 value = model.PersonalShiYeRural;
                             }
                             else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
-                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+                              socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown)) ||
                               socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
                             {
                                 value = model.PersonalShiYeTown;
@@ -941,9 +943,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             //复制到中间表备用
                             try
                             {
-                                DbHelper.ExecuteSqlCommand($"insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}", null);
+                                DbHelper.ExecuteSqlCommand($"delete from SocialSecurityTemp where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}; insert into SocialSecurityTemp select * from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.socialSecurity.SocialSecurityPeopleID}", null);
                             }
-                            catch { }
+                            catch (Exception ex) { }
 
                             //更新社保方案
                             DbHelper.ExecuteSqlCommand($@"update SocialSecurity set InsuranceArea='{socialSecurityPeople.socialSecurity.InsuranceArea}',SocialSecurityBase='{socialSecurityPeople.socialSecurity.SocialSecurityBase}',PayProportion='{PayProportion}',PayTime='{socialSecurityPeople.socialSecurity.PayTime}',PayMonthCount='{socialSecurityPeople.socialSecurity.PayMonthCount}',AlreadyPayMonthCount='{socialSecurityPeople.socialSecurity.AlreadyPayMonthCount}',Note='{socialSecurityPeople.socialSecurity.Note}',Status=1,RelationEnterprise='{model.EnterpriseID}',IsReApply=1,ReApplyNum=ISNULL(ReApplyNum,0)+1,IsPay=0,IsGenerateOrder=0
@@ -1006,9 +1008,9 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             //复制到中间表备用
                             try
                             {
-                                DbHelper.ExecuteSqlCommand($"insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
+                                DbHelper.ExecuteSqlCommand($"delete from AccumulationFundTemp where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID};insert into AccumulationFundTemp select * from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.accumulationFund.SocialSecurityPeopleID}", null);
                             }
-                            catch { }
+                            catch (Exception ex) { }
 
 
                             //更新公积金方案
@@ -1055,13 +1057,13 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                 decimal value = 0;
                                 //model.PersonalShiYeTown
                                 if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityRural)) ||
-                        socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural))||
+                        socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceRural)) ||
                         socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceRural)))
                                 {
                                     value = model.PersonalShiYeRural;
                                 }
                                 else if (socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisCityTown)) ||
-                                  socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown))||
+                                  socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.ThisProvinceTown)) ||
                                   socialSecurityPeople.socialSecurity.HouseholdProperty == EnumExt.GetEnumCustomDescription((HouseholdPropertyEnum)((int)HouseholdPropertyEnum.OtherProvinceTown)))
                                 {
                                     value = model.PersonalShiYeTown;
@@ -1208,7 +1210,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             SocialSecurity SocialSecurity = DbHelper.QuerySingle<SocialSecurity>($"select * from SocialSecurity where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
                             if (SocialSecurity != null)
                             {
-                                if (SocialSecurity.ReApplyNum > 0 && SocialSecurity.Status == "1")
+                                if (SocialSecurity.ReApplyNum > 0 && SocialSecurity.Status == "1" && !SocialSecurity.IsGenerateOrder && !SocialSecurity.IsPay)
                                 {
                                     SocialSecurityID = SocialSecurity.SocialSecurityID;
 
@@ -1251,7 +1253,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                     //删除社保临时表
                                     DbHelper.ExecuteSqlCommand($"delete from SocialSecurityTemp where SocialSecurityPeopleID={  socialSecurityPeople.SocialSecurityPeopleID}", null);
                                 }
-                                if (SocialSecurity.ReApplyNum == 0 && SocialSecurity.Status == "1")
+                                if (SocialSecurity.ReApplyNum == 0 && SocialSecurity.Status == "1" && !SocialSecurity.IsGenerateOrder && !SocialSecurity.IsPay)
                                 {
                                     //删除参保方案
                                     DbHelper.ExecuteSqlCommand($"delete from SocialSecurity where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
@@ -1317,7 +1319,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                             AccumulationFund accumulationFund = DbHelper.QuerySingle<AccumulationFund>($"select * from AccumulationFund where SocialSecurityPeopleID={ socialSecurityPeople.SocialSecurityPeopleID}");
                             if (accumulationFund != null)
                             {
-                                if (accumulationFund.ReApplyNum > 0 && accumulationFund.Status == "1")
+                                if (accumulationFund.ReApplyNum > 0 && accumulationFund.Status == "1" && !accumulationFund.IsGenerateOrder && !accumulationFund.IsPay)
                                 {
                                     AccumulationFundID = accumulationFund.AccumulationFundID;
 
@@ -1356,7 +1358,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                                     //删除社保临时表
                                     DbHelper.ExecuteSqlCommand($"delete from AccumulationFundTemp where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID}", null);
                                 }
-                                if (accumulationFund.ReApplyNum == 0 && accumulationFund.Status == "1")
+                                if (accumulationFund.ReApplyNum == 0 && accumulationFund.Status == "1" && !accumulationFund.IsGenerateOrder && !accumulationFund.IsPay)
                                 {
                                     //删除参保方案
                                     DbHelper.ExecuteSqlCommand($"delete from AccumulationFund where SocialSecurityPeopleID={socialSecurityPeople.SocialSecurityPeopleID};", null);
@@ -1986,6 +1988,16 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         {
             int orderID = _socialSecurityService.AddAdjustingBase(parameter);
 
+            //判断账户是否冻结，如果冻结，则不能进行支付
+            bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
+  where MemberID = (select MemberID from[Order] where OrderID = {orderID})");
+            if (isFrozen == false)
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "该账户被冻结，不允许支付"
+                };
+
             if (orderID > 0)
             {
                 BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID={orderID}");
@@ -2060,7 +2072,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         /// <param name="Msg"></param>
         /// <param name="Signature"></param>
         [System.Web.Http.HttpGet]
-        public void AdjustingBase_Return(string Succeed, string BillNo, string Amount, string Date, string Msg, string Signature)
+        public void AdjustingBase_Return(string Succeed, string CoNo, string BillNo, string Amount, string Date, string MerchantPara, string Msg, string Signature)
         {
             string orderID = BillNo.TrimStart('0');
             BaseOrders baseOrders = DbHelper.QuerySingle<BaseOrders>($"select * from BaseOrders where OrderID='{orderID}'");
@@ -2070,7 +2082,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
              * 先判断是否支付成功
              * 验证支付成功还要验证支付金额是否和订单的金额一致
              */
-            string ReturnInfo = "Succeed=" + Succeed + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&Msg=" + Msg + "&Signature=" + Signature;
+            string ReturnInfo = "Succeed=" + Succeed + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&MerchantPara=" + MerchantPara + "&Msg=" + Msg + "&Signature=" + Signature;
             //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
             StringBuilder str = new StringBuilder();
             string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
@@ -2150,6 +2162,9 @@ where SocialSecurityPeople.MemberID = {MemberID}";
     values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{baseOrders.MemberID},{baseOrders.SocialSecurityPeopleID},'','支出','余额','调基费',{baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge},{account },getdate());";
 
                     DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
+
+                    HttpContext.Current.Response.Status = "200";
+                    HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
                 }
             }
         }
@@ -2202,6 +2217,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         public JsonResult<dynamic> GetServiceProtocol()
         {
             ServiceProtocol serviceProtocol = DbHelper.QuerySingle<ServiceProtocol>("select ServiceProtocolContent from ServiceProtocol");
+            serviceProtocol.ServiceProtocolContent = serviceProtocol.ServiceProtocolContent.Replace("/Content/lib", ConfigurationManager.AppSettings["ServerUrl"] + "Content/lib");
             return new JsonResult<dynamic>
             {
                 status = true,

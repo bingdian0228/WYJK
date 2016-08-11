@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -65,6 +66,7 @@
     <Compile Include="Entity\Log.cs" />
     <Compile Include="Entity\MemberLoan.cs" />
     <Compile Include="Entity\MemberLoanAudit.cs" />
+    <Compile Include="Entity\MemberLoanRepayment.cs" />
     <Compile Include="Entity\Message.cs" />
     <Compile Include="Entity\Order.cs" />
     <Compile Include="Entity\OrderDetails.cs" />

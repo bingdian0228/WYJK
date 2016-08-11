@@ -9,7 +9,7 @@ namespace WYJK.Entity
     /// <summary>
     /// 用户借款
     /// </summary>
-    public class MemberLoan 
+    public class MemberLoan
     {
         /// <summary>
         /// ID
@@ -56,10 +56,10 @@ namespace WYJK.Entity
         public string MemberPhone { get; set; }
     }
 
-        /// <summary>
-        /// 用户借款参数
-        /// </summary>
-        public class MemberLoanParameter : PagedParameter
+    /// <summary>
+    /// 用户借款参数
+    /// </summary>
+    public class MemberLoanParameter : PagedParameter
     {
         /// <summary>
         /// 用户名
@@ -73,12 +73,21 @@ namespace WYJK.Entity
     public class AppayLoan
     {
         /// <summary>
-        /// 已借
+        /// 总额度
+        /// </summary>
+        public decimal TotalAmount { get; set; }
+        /// <summary>
+        /// 已借额度
         /// </summary>
         public decimal AlreadyUsedAmount { get; set; }
         /// <summary>
-        /// 可借
+        /// 可借额度
         /// </summary>
         public decimal AvailableAmount { get; set; }
+
+        /// <summary>
+        /// 冻结额度
+        /// </summary>
+        public decimal FreezingAmount { get; set; }
     }
 }
