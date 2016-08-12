@@ -63,7 +63,7 @@ namespace WYJK.Data.ServiceImpl
         public bool SubmitLoanApply(MemberLoanAuditParameter model)
         {
             string sqlstr = $@"insert into MemberLoanAudit(MemberID,ApplyAmount,LoanTerm,LoanMethod)
-                                values({model.MemberID},{model.ApplyAmount},{model.LoanTerm},{model.LoanMethod})";
+                                values({model.MemberID},{model.ApplyAmount},{model.LoanTerm},'{model.LoanMethod}')";
             int result = DbHelper.ExecuteSqlCommandScalar(sqlstr, new DbParameter[] { });
             return result > 0;
         }

@@ -7,7 +7,7 @@ using WYJK.Entity;
 
 namespace WYJK.Data.IService
 {
-    public interface ILoanRepayment
+    public interface ILoanRepaymentService
     {
         /// <summary>
         /// 获取还款列表
@@ -15,5 +15,13 @@ namespace WYJK.Data.IService
         /// <param name="ID"></param>
         /// <returns></returns>
         List<MemberLoanRepayment> GetMemberLoanRepaymentList(int ID);
+
+        /// <summary>
+        /// 根据memberID获取还款列表
+        /// </summary>
+        /// <param name="MemberID"></param>
+        /// <returns></returns>
+       Task< PagedResult<MemberLoanRepayment>> GetRepaymentList(int memberID, PagedParameter parameter);
+
     }
 }

@@ -1716,6 +1716,16 @@
             放款时间
             </summary>
         </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.RepaymentStatus">
+            <summary>
+            还款状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanAuditList.LoanBalance">
+            <summary>
+            还款余额
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.MemberLoanAuditListParameter">
             <summary>
             用户借款审核参数
@@ -1736,9 +1746,29 @@
             还款
             </summary>
         </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.TotalAmount">
+            <summary>
+            还款总额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.WeiYueJin">
+            <summary>
+            违约金
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.RepaymentDt">
+            <summary>
+            还款时间
+            </summary>
+        </member>
         <member name="P:WYJK.Entity.MemberLoanRepayment.RepaymentType">
             <summary>
-            还款类型 正常还：1，提前还：2，逾期还：3
+            还款类型 逾期还：1，正常还：2，提前还：3
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.LoanMethod">
+            <summary>
+            借款方式
             </summary>
         </member>
         <member name="P:WYJK.Entity.MemberLoanRepayment.JieID">
@@ -1746,59 +1776,69 @@
             借款ID
             </summary>
         </member>
-        <member name="T:WYJK.Entity.Repayment">
+        <member name="P:WYJK.Entity.MemberLoanRepayment.Status">
+            <summary>
+            还款审核状态
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.AuditDt">
+            <summary>
+            审核时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.RepaymentTypeList">
+            <summary>
+            还款类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepayment.DetailList">
+            <summary>
+            还款详情列表
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanRepaymentDetail">
             <summary>
             我要还款展示
             </summary>
         </member>
-        <member name="P:WYJK.Entity.Repayment.LoanMethod">
-            <summary>
-            还款方式
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.Repayment.RepaymentType">
-            <summary>
-            还款类型 正常还：1，提前还：2，逾期还：3
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.Repayment.TotalAmount">
-            <summary>
-            还款总额
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.Repayment.WeiYueJin">
-            <summary>
-            违约金
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.Repayment.DetailList">
-            <summary>
-            详情列表
-            </summary>
-        </member>
-        <member name="T:WYJK.Entity.RepaymentDetail">
-            <summary>
-            还款展示详情
-            </summary>
-        </member>
-        <member name="P:WYJK.Entity.RepaymentDetail.BenJin">
+        <member name="P:WYJK.Entity.MemberLoanRepaymentDetail.BenJin">
             <summary>
             本金
             </summary>
         </member>
-        <member name="P:WYJK.Entity.RepaymentDetail.LiXi">
+        <member name="P:WYJK.Entity.MemberLoanRepaymentDetail.LiXi">
             <summary>
             利息
             </summary>
         </member>
-        <member name="P:WYJK.Entity.RepaymentDetail.ZhiNaJin">
+        <member name="P:WYJK.Entity.MemberLoanRepaymentDetail.ZhiNaJin">
             <summary>
             滞纳金
             </summary>
         </member>
-        <member name="P:WYJK.Entity.RepaymentDetail.MonthDt">
+        <member name="P:WYJK.Entity.MemberLoanRepaymentDetail.MonthStr">
             <summary>
             所还月份
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanRepaymentParameter">
+            <summary>
+            还款
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepaymentParameter.ID">
+            <summary>
+            借款ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepaymentParameter.RepaymentType">
+            <summary>
+            还款类型
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanSetting">
+            <summary>
+            借款参数设置
             </summary>
         </member>
         <member name="T:WYJK.Entity.Message">
@@ -2786,7 +2826,11 @@
             补交月数
             </summary>		
         </member>
-        <!-- Badly formed XML comment ignored for member "P:WYJK.Entity.SocialSecurity.BankPayMonth" -->
+        <member name="P:WYJK.Entity.SocialSecurity.BankPayMonth">
+            <summary>
+            银行缴费月数
+            </summary>		
+        </member>
         <member name="P:WYJK.Entity.SocialSecurity.EnterprisePayMonth">
             <summary>
             企业缴费月数

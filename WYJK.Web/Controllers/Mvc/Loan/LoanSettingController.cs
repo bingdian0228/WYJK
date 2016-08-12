@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
@@ -130,6 +131,30 @@ namespace WYJK.Web.Controllers.Mvc.Loan
                 TempData["Message"] = "保存失败";
                 return RedirectToAction("GetSubjectList");
             }
+        }
+
+        /// <summary>
+        /// 借款收费标准
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult MemberLoanSetting()
+        {
+            MemberLoanSetting memberLoanSetting = DbHelper.QuerySingle<MemberLoanSetting>("select * from MemberLoanSetting");
+
+            return View("~/Views/Loan/LoanSetting/MemberLoanSetting.cshtml", memberLoanSetting);
+        }
+
+        /// <summary>
+        /// 借款收费标准
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult MemberLoanSetting(MemberLoanSetting memberLoanSetting)
+        {
+            DbHelper.ExecuteSqlCommand($"delete from MemberLoanSetting;insert into MemberLoanSetting values({memberLoanSetting.InThreeMonthsLiLv},{memberLoanSetting.HalfYearLiLv},{memberLoanSetting.OneYearPeriodLiLv},{memberLoanSetting.ZhiNaJinPercent},{memberLoanSetting.WeiYueJinPercent})",null);
+
+            return View("~/Views/Loan/LoanSetting/MemberLoanSetting.cshtml", memberLoanSetting);
         }
     }
 }

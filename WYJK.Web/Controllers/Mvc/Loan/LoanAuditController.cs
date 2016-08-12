@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using WYJK.Data;
 using WYJK.Data.IService;
 using WYJK.Data.ServiceImpl;
 using WYJK.Entity;
@@ -66,6 +68,62 @@ namespace WYJK.Web.Controllers.Mvc.Loan
 
             return Json(new { status = true, message = "审核成功" });
 
+        }
+
+        /// <summary>
+        /// 获取还款记录
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        public ActionResult GetMemberLoanRepaymentList(int ID, string Status = null)
+        {
+
+            StringBuilder builder = new StringBuilder(" and 1 = 1");
+            if (!string.IsNullOrEmpty(Status))
+            {
+                builder.Append($" and Status = {Status}");
+            }
+
+            List<MemberLoanRepayment> memberLoanRepaymentList = DbHelper.Query<MemberLoanRepayment>($"select * from MemberLoanRepayment where JieID={ID} and Status<>0" + builder.ToString());
+
+            memberLoanRepaymentList.ForEach(n =>
+            {
+                n.RepaymentType = EnumExt.GetEnumCustomDescription((RepaymentTypeEnum)(Convert.ToInt32(n.RepaymentType)));
+            });
+
+            List<SelectListItem> selectList = new List<SelectListItem> { new SelectListItem() { Value = "", Text = "全部" } };
+            selectList.AddRange(EnumExt.GetSelectList(typeof(RepaymentAuditEnum)));
+            ViewData["StatusType"] = selectList;
+
+            return View("~/Views/Loan/LoanAudit/GetMemberLoanRepaymentList.cshtml", memberLoanRepaymentList);
+        }
+
+        /// <summary>
+        /// 还款审核
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <param name="Status"></param>
+        /// <returns></returns>
+        public ActionResult BatchRepaymentAudit(int ID, string Status)
+        {
+            int result = DbHelper.ExecuteSqlCommand($"update MemberLoanRepayment set Status={Status},AuditDt=getdate() where ID={ID}", null);
+
+            if (result > 0)
+                return Json(new { status = true, message = "审核成功" });
+            else
+                return Json(new { status = false, message = "审核失败" });
+        }
+
+        /// <summary>
+        /// 获取还款详情
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        public ActionResult GetMemberLoanRepaymentDetail(int ID)
+        {
+            MemberLoanRepayment memberLoanRepayment = DbHelper.QuerySingle<MemberLoanRepayment>($"select * from MemberLoanRepayment where ID={ID}");
+            memberLoanRepayment.DetailList = DbHelper.Query<MemberLoanRepaymentDetail>($"select * from MemberLoanRepaymentDetail where HuanID={ID}");
+            return View("~/Views/Loan/LoanAudit/GetMemberLoanRepaymentDetail.cshtml", memberLoanRepayment);
         }
     }
 }

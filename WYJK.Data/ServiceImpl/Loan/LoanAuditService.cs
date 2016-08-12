@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,7 +30,7 @@ namespace WYJK.Data.ServiceImpl
 
             string innersqlstr = $@"select MemberLoanAudit.ID,Members.MemberID,Members.MemberName,Members.UserType,members.MemberPhone,members.EnterpriseName,members.BusinessName,
 MemberLoan.TotalAmount,memberloan.AlreadyUsedAmount,memberloan.AvailableAmount,
-MemberLoanAudit.ApplyAmount,MemberLoanAudit.Status,MemberLoanAudit.ApplyDate,MemberLoanAudit.AuditDate,MemberLoanAudit.AlreadyLoanDate
+MemberLoanAudit.ApplyAmount,MemberLoanAudit.Status,MemberLoanAudit.ApplyDate,MemberLoanAudit.AuditDate,MemberLoanAudit.AlreadyLoanDate,MemberLoanAudit.RepaymentStatus,MemberLoanAudit.LoanBalance
 from MemberLoanAudit
 left join MemberLoan on MemberLoanAudit.MemberID = MemberLoan.MemberID
 left join Members on  MemberLoanAudit.MemberID = Members.MemberID"
@@ -92,5 +94,6 @@ left join Members on  MemberLoanAudit.MemberID = Members.MemberID"
             List<MemberLoanAudit> list = DbHelper.Query<MemberLoanAudit>(sqlstr);
             return list;
         }
+
     }
 }

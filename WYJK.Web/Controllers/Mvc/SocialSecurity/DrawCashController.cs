@@ -113,11 +113,8 @@ namespace WYJK.Web.Controllers.Mvc
             {
                 using (TransactionScope transaction = new TransactionScope())
                 {
-
-
                     try
                     {
-
                         string sql = $"update DrawCash set ApplyStatus=2,agreetime=getdate(),paysn='{model.OrderNo}' where DrawCashId in ({model.DrawCashIds});";
                         foreach (string item in model.DrawCashIds.Split(','))
                         {
@@ -201,15 +198,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         #endregion
 
                         List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account, Bucha, HeadPortrait from Members where MemberID in(select memberid from DrawCash WHERE DrawCashId IN ({ model.DrawCashIds})) ");
-                        //string names = string.Empty;
-                        //list.ForEach(l =>
-                        //{
-                        //    names = names + l.MemberName + ',';
-                        //});
-                        //if (!string.IsNullOrEmpty(names))
-                        //{
-                        //    names = names.TrimEnd(',');
-                        //}
+               
                         list.ForEach(l =>
                         {
                             LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = l.MemberID, Contents = string.Format("提现申请成功客户:{0}", l.MemberName) });

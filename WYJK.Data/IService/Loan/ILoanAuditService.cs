@@ -34,5 +34,7 @@ namespace WYJK.Data.IService
         /// <returns></returns>
         List<MemberLoanAudit> GetNoAuditedList(string IDsStr,string Status);
 
+
+
     }
 }
