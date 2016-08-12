@@ -1,0 +1,162 @@
+﻿@model CertificationAudit
+@{
+    ViewBag.title = "补充信息";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                <div class="pull-left">
+                    <i class="icon-w icon-info am-margin-right-xs"></i>
+                    <span class="am-text-middle">认证信息</span>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            
+            <form class="form-horizontal" action='@Url.Action("CertificationAudit", "User")' enctype="multipart/form-data" method="post">
+                @Html.HiddenFor(m => m.MemberID)
+
+                @if (!string.IsNullOrEmpty(Model.EnterpriseName))
+                {
+                    <div class="form-group" style="text-align:center;">
+                        <label style="font-size:24px;font-weight:bold;">企业资质认证信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">企业名：</label>
+                        <div class="col-lg-4">   
+                            @Model.EnterpriseName
+                        </div>
+                        <label class="col-lg-2 control-label">行业类型：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterpriseType
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">企业税号：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterpriseTax
+                        </div>
+                        <label class="col-lg-2 control-label">所在城市：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterpriseArea.Replace("|"," ")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">法人：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterpriseLegal
+                        </div>
+                        <label class="col-lg-2 control-label">法人身份证：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterpriseLegalIdentityCardNo
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">企业人数：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterprisePeopleNum
+                        </div>
+                        <label class="col-lg-2 control-label">社会信用代码：</label>
+                        <div class="col-lg-4">
+                            @Model.SocialSecurityCreditCode
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">岗位名称：</label>
+                        <div class="col-lg-4">
+                            @Model.EnterprisePositionName
+                        </div>
+                        <label class="col-lg-2 control-label">营业执照：</label>
+                        <div class="col-lg-4">
+                            <a href="@(System.Configuration.ConfigurationManager.AppSettings["ServerUrl"] + Model.EnterpriseBusinessLicense)" target="_blank" name="img"><img src="@(System.Configuration.ConfigurationManager.AppSettings["ServerUrl"] + Model.EnterpriseBusinessLicense)" width="200" /></a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group" style="text-align:center;">
+                        <label style="font-size:24px;font-weight:bold;">企业资质认证信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">企业名：</label>
+                        <div class="col-lg-4">
+                            <input type="text" name="EnterpriseName" class="form-control" value="" />
+                        </div>
+                        <label class="col-lg-2 control-label">行业类型：</label>
+                        <div class="col-lg-4">
+                            <select name="EnterpriseType" class="form-control">
+                                @foreach (var item in ViewBag.EnterprisePeopleNum as List<string>)
+                                {
+                                    <option value="@item" @(Model.EnterprisePeopleNum == item ? "selected" : "")>@item</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">企业税号：</label>
+                        <div class="col-lg-4">
+                            <input type="text" name="EnterpriseTax" class="form-control" value="" />
+                        </div>
+                        <label class="col-lg-2 control-label">所在城市：</label>
+                        <div class="col-lg-4">
+                            @Html.Action("RegionView", "OptionView", new
+                            {
+                                pname = string.Empty,
+                                cname = string.Empty,
+                                coname = string.Empty,
+                                IsHideCounty = true,
+                            })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">法人：</label>
+                        <div class="col-lg-4">
+                            <input type="text" name="EnterpriseLegal" class="form-control" value="" />
+                        </div>
+                        <label class="col-lg-2 control-label">法人身份证：</label>
+                        <div class="col-lg-4">
+                            <input type="text" name="EnterpriseLegalIdentityCardNo" class="form-control" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">企业人数：</label>
+                        <div class="col-lg-4">
+                            <select name="EnterprisePeopleNum" class="form-control">
+                                @foreach (var item in ViewBag.EnterprisePeopleNum as List<string>)
+                                {
+                                    <option value="@item" @(Model.EnterprisePeopleNum == item ? "selected" : "")>@item</option>
+                                }
+                            </select>
+                        </div>
+                        <label class="col-lg-2 control-label">社会信用代码：</label>
+                        <div class="col-lg-4">
+                            <input type="text" name="SocialSecurityCreditCode" class="form-control" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">岗位名称：</label>
+                        <div class="col-lg-4">
+                            <input type="text" name="EnterprisePositionName" class="form-control" value="" />
+                        </div>
+                        <label class="col-lg-2 control-label">营业执照：</label>
+                        <div class="col-lg-4">
+                            <input type="file" name="EnterpriseBusinessLicenseImg" class="form-control" value="" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-4">
+                            <button type="button" class="btn btn-info bg-lightblue btn-lg btn-block" onclick="history.back();">取消</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">保存</button>
+                        </div>
+                    </div>
+                }
+            </form>
+        </div>
+
+    </div>
+</div>
