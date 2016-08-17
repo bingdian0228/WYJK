@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -24,48 +26,65 @@ namespace WYJK.HOME.Controllers
 
         UserLoanService loanSv = new UserLoanService();
 
+        private string url = ConfigurationManager.AppSettings["ServerUrl"] + "/api";
 
-        public ActionResult Index(LoanQueryParamsModel parameter)
+        public async Task<ActionResult> Index(LoanQueryParamsModel parameter)
         {
+            HttpClient client = new HttpClient();
+            var req = await client.GetAsync(url + "/Loan/GetMemberLoanAuditList?memberID=" + CommonHelper.CurrentUser.MemberID + "&PageIndex=" + parameter.PageIndex + "&PageSize=" + parameter.PageSize);
 
-            string where = "";
+            var reqResult = (await req.Content.ReadAsAsync<JsonResult<PagedResult<MemberLoanAudit>>>()).Data;
 
-            int  status = 0;
-            if (Int32.TryParse(parameter.Status, out status))
-            {
-                where += $@" and Status={status}";
-            }
+            return View(reqResult);
+        }
 
-            List<MemberLoanAudit> list = loanSv.GetUserLoans(CommonHelper.CurrentUser.MemberID,where);
 
-            //string sql = $@"
-            //    select 
-            //     MemberLoanAudit.ID,Members.MemberID,Members.MemberName,members.MemberPhone,
-            //     MemberLoan.TotalAmount,memberloan.AlreadyUsedAmount,memberloan.AvailableAmount,
-            //     MemberLoanAudit.ApplyAmount,MemberLoanAudit.Status,MemberLoanAudit.ApplyDate,MemberLoanAudit.AuditDate
-            //    from MemberLoanAudit
-            //     left join MemberLoan on MemberLoanAudit.MemberID = MemberLoan.MemberID
-            //     left join Members on  MemberLoanAudit.MemberID = Members.MemberID 
-            //    where 1=1 {where} and Members.MemberID={MemberId()}";
+        /// <summary>
+        /// 获取申请进度
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult> ApplayProgress(PagedParameter parameter)
+        {
+            HttpClient client = new HttpClient();
 
-            //List<MemberLoanAuditList> SocialSecurityPeopleList = DbHelper.Query<MemberLoanAuditList>(sql);
+            var req = await client.GetAsync(url + "/Loan/GetLoanApplayProgress?memberID=" + CommonHelper.CurrentUser.MemberID + "&PageIndex=" + parameter.PageIndex + "&PageSize=" + parameter.PageSize);
 
-            var c = list.Skip(parameter.SkipCount - 1).Take(parameter.TakeCount);
-             
+            var reqResult = (await req.Content.ReadAsAsync<JsonResult<PagedResult<MemberLoanAudit>>>()).Data;
 
-            PagedResult<MemberLoanAudit> page = new PagedResult<MemberLoanAudit>
-            {
-                PageIndex = parameter.PageIndex,
-                PageSize = parameter.PageSize,
-                TotalItemCount = list.Count,
-                Items = c
-            };
+            return View(reqResult);
+        }
 
-            List<SelectListItem> selectList = new List<SelectListItem> { new SelectListItem() { Value = "", Text = "全部" } };
-            selectList.AddRange(EnumExt.GetSelectList(typeof(LoanAuditEnum)));
-            ViewData["StatusType"] = selectList;
+        /// <summary>
+        /// 根据借款ID获取还款列表
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> GetRepaymentList(int id)
+        {
+            HttpClient client = new HttpClient();
 
-            return View(page);
+            var req = await client.GetAsync(url + "/Loan/GetRepaymentList?ID=" + id);
+
+            var reqResult = (await req.Content.ReadAsAsync<JsonResult<List<MemberLoanRepayment>>>()).Data;
+
+            return View(reqResult);
+        }
+
+
+        /// <summary>
+        /// 还款详情
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> GetRepaymentDetail(int id)
+        {
+            HttpClient client = new HttpClient();
+
+            var req = await client.GetAsync(url + "/Loan/GetRepaymentDetail?ID=" + id);
+
+            var reqResult = (await req.Content.ReadAsAsync<JsonResult<MemberLoanRepayment>>()).Data;
+
+            return View(reqResult);
         }
 
         /// <summary>
@@ -82,6 +101,53 @@ namespace WYJK.HOME.Controllers
 
             return Redirect("/Index/Index");
         }
+
+        /// <summary>
+        /// 新建我要还款
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult> MemberLoanRepayment(int id)
+        {
+            HttpClient client = new HttpClient();
+            var req = await client.GetAsync(url + "/Loan/MemberLoanRepayment?id=" + id);
+            var reqResult = (await req.Content.ReadAsAsync<JsonResult<MemberLoanRepayment>>()).Data;
+
+
+            return View(reqResult);
+        }
+
+
+        /// <summary>
+        /// 选择还款类型
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="RepaymentType"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> SelectRepaymentType(int id, string RepaymentType)
+        {
+            HttpClient client = new HttpClient();
+            var req = await client.GetAsync(url + "/Loan/SelectRepaymentType?id=" + id + "&RepaymentType=" + RepaymentType);
+            var reqResult = (await req.Content.ReadAsAsync<JsonResult<MemberLoanRepayment>>()).Data;
+
+            return View("MemberLoanRepayment", reqResult);
+        }
+
+        /// <summary>
+        /// 提交还款
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public async Task<ActionResult> MemberLoanRepayment(MemberLoanRepaymentParameter parameter)
+        {
+            HttpClient client = new HttpClient();
+            var req = await client.PostAsJsonAsync(url + "/Loan/MemberLoanRepayment", parameter);
+            JsonResult<dynamic> reqResult = await req.Content.ReadAsAsync<JsonResult<dynamic>>();
+
+            return RedirectToAction("GetRepaymentDetail", new { id = reqResult.Data });
+        }
+
 
         /// <summary>
         /// 还款1

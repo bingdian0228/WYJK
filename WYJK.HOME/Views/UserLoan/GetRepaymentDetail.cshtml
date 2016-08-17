@@ -1,0 +1,65 @@
+﻿@model MemberLoanRepayment
+@{
+    Layout = "~/Views/User/_Layout_user.cshtml";
+    ViewBag.Title = "还款详情";
+}
+@section Header{
+    <script>
+        $(function () {
+            var menus = $("#leftMenu li");
+            menus.removeClass("active");
+
+            $("#leftMenu #userLoanItem").addClass("active");
+
+        });
+
+    </script>
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+        </div>
+        <div class="panel-body bg-white">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr>
+                        <td>还款类型</td>
+                        <td>@Model.RepaymentType</td>
+                    </tr>
+                    <tr>
+                        <td>还款金额</td>
+                        <td>@Model.TotalAmount</td>
+                    </tr>
+                    <tr>
+                        <td>违约金</td>
+                        <td>@Model.WeiYueJin</td>
+                    </tr>
+                    <tr>
+                        <td>还款时间</td>
+                        <td>@Model.RepaymentDt</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>本金</th>
+                    <th>利息</th>
+                    <th>滞纳金</th>
+                    <th>月份</th>
+                </tr>
+                <tbody>
+                    @foreach (var item in Model.DetailList)
+                    {
+                        <tr>
+                            <td>@item.BenJin</td>
+                            <td>@item.LiXi</td>
+                            <td>@item.ZhiNaJin</td>
+                            <td>@item.MonthStr</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

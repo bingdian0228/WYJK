@@ -23,13 +23,13 @@
                         <form action="@Url.Action("Index","UserLoan")" method="get" class="form-inline">
                             @Html.Hidden("PageIndex")
                             <div class="clearfix">
-                                <div class="form-group pull-left">
+                                @*<div class="form-group pull-left">
                                     <label for="" class="am-padding-right-sm">审核状态</label>
                                     @Html.DropDownList("Status", ViewData["StatusType"] as List<SelectListItem>, new { @class = "form-control" })
                                 </div>
                                 <div class="pull-right">
                                     <button type="submit" class="btn btn-info bg-lightblue">查询</button>
-                                </div>
+                                </div>*@
                             </div>
                         </form>
                     </h3>
@@ -47,32 +47,28 @@
                                                 借款额度：@item.ApplyAmount
                                             </div>
                                             <div class="col-lg-4">
-                                                还款期限：@EnumExt.GetEnumCustomDescription((LoanTermEnum)int.Parse(item.LoanTerm))
+                                                借款余额：@item.LoanBalance
                                             </div>
                                             <div class="col-lg-4">
-                                                还款方式：@EnumExt.GetEnumCustomDescription((LoanMethodEnum)int.Parse(item.LoanMethod))
-                                            </div>
-                                        </dd>
-                                        <dd class="row am-padding-vertical-sm">
-                                            <div class="col-lg-4">
-                                                状态：<span class="text-primary">@EnumExt.GetEnumCustomDescription((LoanAuditEnum)Convert.ToInt32(item.Status))</span>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                提交时间：@(item.ApplyDate == null ? "--" : item.ApplyDate.ToString("yyyy-MM-dd"))
-                                            </div>
-                                            <div class="col-lg-4">
-                                                审核时间：@(item.AuditDate.Year == 1900 ? "--" : item.AuditDate.ToString("yyyy-MM-dd"))
+                                                还款方式：@EnumExt.GetEnumCustomDescription((LoanTermEnum)int.Parse(item.LoanTerm))
                                             </div>
                                         </dd>
                                         <dd class="row am-padding-vertical-sm">
                                             <div class="col-lg-4">
-                                                滞纳金
+                                                状态：<span class="text-primary">@item.RepaymentStatus</span>
                                             </div>
                                             <div class="col-lg-4">
-                                                <a href="/UserLoan/Payback1/@item.ID" class="orange">我要还款</a>
+                                                时间：@(item.ApplyDate == null ? "--" : item.AlreadyLoanDate.ToString("yyyy-MM-dd"))
                                             </div>
-                                            <div class="col-lg-4">
-                                                <a href="/UserLoan/Detail/@item.ID" class="orange">查看详情</a>
+                                            <div class="col-lg-2">
+                                                @if (item.RepaymentStatus != "已结清")
+                                                {
+                                                    <a href="/UserLoan/MemberLoanRepayment?id=@item.ID" class="orange">我要还款</a>
+                                                }
+                                                
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <a href="/UserLoan/GetRepaymentList/@item.ID" class="orange">还款记录</a>
                                             </div>
                                         </dd>
                                     </dl>

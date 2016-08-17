@@ -1,7 +1,30 @@
-﻿@model MemberLoanAuditViewModel
+﻿@model AppayLoan
 @{
     ViewBag.Title = "Loan";
     Layout = "~/Views/_Layout_SocialSecurity.cshtml";
+}
+@section scripts{
+
+    <script>
+        $(function () {
+            $("#message").fadeOut(2000);
+
+
+            $("#LoanTerm").change(function () {
+
+                if ($(this).val() == "1") {
+                    $("#LoanMethod").attr("disabled", false);
+                    $("#LoanMethod").show();
+                } else {
+                    $("#LoanMethod").attr("disabled", true);
+                    $("#LoanMethod").hide();
+                }
+            });
+
+
+        })
+
+    </script>
 }
 
 <div class="bg-lightgrey">
@@ -14,13 +37,18 @@
         </div>
         <!--表单计算-->
         <div class="am-padding-xl">
+
+            @if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
+            {
+                <div id="message" style="color:red;">@(TempData["Message"])</div>
+            }
             <form class="form-horizontal" action="/Loan/Loan" method="post">
                 <div class="row am-margin-vertical-lg">
                     <div class="col-lg-2 col-md-2 col-sm-2 text-right">
                         <strong>可借额度</strong>
                     </div>
                     <div class="col-lg-9 col-md-9 col-sm-9">
-                        @Model.AppayLoan.AvailableAmount
+                        @Model.AvailableAmount
                     </div>
                 </div>
                 <div class="row am-margin-vertical-lg">
@@ -28,22 +56,30 @@
                         <strong>已借额度</strong>
                     </div>
                     <div class="col-lg-9 col-md-9 col-sm-9">
-                        @Model.AppayLoan.AlreadyUsedAmount
+                        @Model.AlreadyUsedAmount
+                    </div>
+                </div>
+                <div class="row am-margin-vertical-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>冻结额度</strong>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Model.FreezingAmount
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="" class="col-lg-2 col-md-2 col-sm-2 control-label">本次借款</label>
                     <div class="col-lg-3 col-md-5 col-sm-5">
-                        @Html.TextBoxFor(m=>m.ApplyAmount,new { @class = "form-control", placeholder = "请输入本次借款金额" })
+                        <input type="text" name="ApplyAmount" class="form-control" placeholder="请输入本次借款金额" value="0" />
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-lg-2 col-md-2 col-sm-2 control-label">还款方式</label>
                     <div class="col-lg-3 col-md-5 col-sm-5">
-                        @Html.DropDownListFor(m=>m.LoanTerm,ViewData["LoanTerm"] as SelectList,new { @class="form-control"})
+                        @Html.DropDownList("LoanTerm", ViewData["LoanTerm"] as SelectList, new { @class = "form-control" })
                     </div>
                     <div class="col-lg-3 col-md-5 col-sm-5">
-                        @Html.DropDownListFor(m => m.LoanMethod, ViewData["LoanMethod"] as SelectList, new { @class = "form-control" })
+                        @Html.DropDownList("LoanMethod", ViewData["LoanMethod"] as SelectList, new { @class = "form-control" })
                     </div>
                 </div>
                 <div class="row am-margin-vertical-lg orange">
@@ -62,4 +98,3 @@
         </div>
     </div>
 </div>
-

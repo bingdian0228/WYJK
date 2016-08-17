@@ -35,10 +35,10 @@
                         <td>滞纳金</td>
                         <td></td>
                     </tr>
-                    <tr>
+                    @*<tr>
                         <td>还款方式</td>
                         <td>@EnumExt.GetEnumCustomDescription((LoanMethodEnum)int.Parse(Model.LoanMethod))</td>
-                    </tr>
+                    </tr>*@
                     <tr>
                         <td>借款状态</td>
                         <td><span class="text-primary">@EnumExt.GetEnumCustomDescription((LoanAuditEnum)Convert.ToInt32(Model.Status))</span></td>

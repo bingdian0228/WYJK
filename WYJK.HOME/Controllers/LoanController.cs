@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WYJK.Data.IService;
@@ -18,41 +21,48 @@ namespace WYJK.HOME.Controllers
         private ILoanMemberService _loanMemberService = new LoanMemberService();
         private ILoanSubjectService _loanSubjectService = new LoanSubjectService();
 
+        private string url = ConfigurationManager.AppSettings["ServerUrl"] + "/api";
+
         /// <summary>
         /// 借款
         /// </summary>
         /// <returns></returns>
-        public ActionResult Loan()
+        public async Task<ActionResult> Loan()
         {
             Members m = CommonHelper.CurrentUser;
 
-            //判断是否已缴费//缴费不满三个月
-            if (!sss.ExistSocialPeople(m.MemberID))
-            {
-                //添加社保人
-                return Redirect("/UserInsurance/Add1");
-            }
+            ////判断是否已缴费//缴费不满三个月
+            //if (!sss.ExistSocialPeople(m.MemberID))
+            //{
+            //    //添加社保人
+            //    return Redirect("/UserInsurance/Add1");
+            //}
 
-            if (!sss.PayedMonthCount(m.MemberID))
-            {
-                return Redirect("/UserInsurance/Index");
-            }
+            //if (!sss.PayedMonthCount(m.MemberID))
+            //{
+            //    return Redirect("/UserInsurance/Index");
+            //}
 
-            //判断是否计算过身价
-            if (_loanSubjectService.GetMemberValue(m.MemberID) == 0)//没有进行过身价计算
-            {
-                return Redirect("/LoanCalculator/Calculator");
-            }
+            ////判断是否计算过身价
+            //if (_loanSubjectService.GetMemberValue(m.MemberID) == 0)//没有进行过身价计算
+            //{
+            //    return Redirect("/LoanCalculator/Calculator");
+            //}
 
             //还款期限
-            ViewData["LoanTerm"] = new SelectList(CommonHelper.SelectListType(typeof(LoanTermEnum), "请选择还款期限"), "Value", "Text");
+            ViewData["LoanTerm"] = new SelectList(CommonHelper.SelectListType(typeof(LoanTermEnum), ""), "Value", "Text");
             //还款方式
-            ViewData["LoanMethod"] =new SelectList(CommonHelper.SelectListType(typeof(LoanMethodEnum), "请选择还款方式"), "Value", "Text");
+            ViewData["LoanMethod"] = new SelectList(CommonHelper.SelectListType(typeof(LoanMethodEnum), ""), "Value", "Text");
 
-            MemberLoanAuditViewModel model = new MemberLoanAuditViewModel();
-            model.AppayLoan = _loanMemberService.GetMemberLoanDetail(m.MemberID);
+            //MemberLoanAuditViewModel model = new MemberLoanAuditViewModel();
+            //model.AppayLoan = _loanMemberService.GetMemberLoanDetail(m.MemberID);
 
-            return View(model);
+            HttpClient client = new HttpClient();
+            var req = await client.GetAsync(url + "/Loan/GetApplyloan?MemberID=" + m.MemberID);
+
+            AppayLoan appayLoan = (await req.Content.ReadAsAsync<JsonResult<AppayLoan>>()).Data;
+
+            return View(appayLoan);
 
         }
 
@@ -62,25 +72,26 @@ namespace WYJK.HOME.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Loan(MemberLoanAuditViewModel model)
+        public async Task<ActionResult> Loan(MemberLoanAuditParameter parameter)
         {
-            MemberLoanAuditParameter paramModel = new MemberLoanAuditParameter();
-
-            paramModel.ApplyAmount = model.ApplyAmount;
-            paramModel.LoanMethod = model.LoanMethod;
-            paramModel.LoanTerm = model.LoanTerm;
-            paramModel.MemberID = CommonHelper.CurrentUser.MemberID;
-
-            bool result = _loanMemberService.SubmitLoanApply(paramModel);
-
-            if (result)
+            if (parameter.ApplyAmount <= 0)
             {
-                return Redirect("/UserLoan/Index");
+                TempData["Message"] = "申请金额必须大于0";
+                return RedirectToAction("Loan");
             }
+            parameter.MemberID = CommonHelper.CurrentUser.MemberID;
+            HttpClient client = new HttpClient();
+            var req = await client.PostAsJsonAsync(url + "/Loan/SubmitLoanApply", parameter);
 
-            return RedirectToAction("Loan");
+            JsonResult<dynamic> result = (await req.Content.ReadAsAsync<JsonResult<dynamic>>());
+            if (!result.status)
+            {
+                TempData["Message"] = result.Message;
+                return RedirectToAction("Loan");
+            }
+            else
+                return Redirect("/UserLoan/Index");
 
-            
         }
     }
 }

@@ -325,6 +325,12 @@
     <Content Include="Views\User\CertificationAudit.cshtml" />
     <Content Include="Views\OptionView\RegionView.cshtml" />
     <Content Include="Views\UserInsurance\Edit.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\UserLoan\ApplayProgress.cshtml" />
+    <Content Include="Views\UserLoan\GetRepaymentList.cshtml" />
+    <Content Include="Views\UserLoan\GetRepaymentDetail.cshtml" />
+    <Content Include="Views\UserLoan\MemberLoanRepayment.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

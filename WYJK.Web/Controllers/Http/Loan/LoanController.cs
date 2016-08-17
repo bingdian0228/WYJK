@@ -154,16 +154,16 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<AppayLoan> GetApplyloan(int MemberID)
         {
             //判断用户下的社保否在平台缴纳三个月
-            if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
-    left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
-    where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
-            {
-                return new JsonResult<AppayLoan>
-                {
-                    status = false,
-                    Message = "用户至少在平台缴纳三个月社保才可以借款"
-                };
-            }
+    //        if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
+    //left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+    //where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
+    //        {
+    //            return new JsonResult<AppayLoan>
+    //            {
+    //                status = false,
+    //                Message = "用户至少在平台缴纳三个月社保才可以借款"
+    //            };
+    //        }
 
             AppayLoan appayLoan = _loanMemberService.GetMemberLoanDetail(MemberID);
             return new JsonResult<AppayLoan>
