@@ -31,23 +31,23 @@ namespace WYJK.HOME.Controllers
         {
             Members m = CommonHelper.CurrentUser;
 
-            ////判断是否已缴费//缴费不满三个月
+            //判断是否已缴费//缴费不满三个月
             //if (!sss.ExistSocialPeople(m.MemberID))
             //{
             //    //添加社保人
             //    return Redirect("/UserInsurance/Add1");
             //}
 
-            //if (!sss.PayedMonthCount(m.MemberID))
-            //{
-            //    return Redirect("/UserInsurance/Index");
-            //}
+            if (sss.PayedMonthCount(m.MemberID))
+            {
+                return Redirect("/UserInsurance/Index");
+            }
 
-            ////判断是否计算过身价
-            //if (_loanSubjectService.GetMemberValue(m.MemberID) == 0)//没有进行过身价计算
-            //{
-            //    return Redirect("/LoanCalculator/Calculator");
-            //}
+            //判断是否计算过身价
+            if (_loanSubjectService.GetMemberValue(m.MemberID) == 0)//没有进行过身价计算
+            {
+                return Redirect("/LoanCalculator/Calculator");
+            }
 
             //还款期限
             ViewData["LoanTerm"] = new SelectList(CommonHelper.SelectListType(typeof(LoanTermEnum), ""), "Value", "Text");

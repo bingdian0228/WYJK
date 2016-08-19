@@ -637,14 +637,14 @@
             <param name="parameter"></param>
             <returns></returns>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.LoanController.MemberLoanRepayment(System.Int32,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.MemberLoanRepayment(System.Int32,System.String,System.Boolean)">
             <summary>
             提交还款内部类
             </summary>
             <param name="ID"></param>
             <param name="RepaymentType"></param>
         </member>
-        <member name="M:WYJK.Web.Controllers.Http.LoanController.GetMemberLoanRepayment(System.Int32,System.String)">
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.GetMemberLoanRepayment(System.Int32,System.String,System.Boolean)">
             <summary>
             得到还款实体
             </summary>
@@ -2445,14 +2445,7 @@
         </member>
         <member name="M:WYJK.Web.MvcApplication.business1(System.Object,System.Timers.ElapsedEventArgs)">
             <summary>
-            1号针对借款更新状态
-            </summary>
-            <param name="source"></param>
-            <param name="e"></param>
-        </member>
-        <member name="M:WYJK.Web.MvcApplication.business1Before1Hours(System.Object,System.Timers.ElapsedEventArgs)">
-            <summary>
-            1号针对半年期、一年期扣款
+            1号针对半年期、一年期扣款,并更新状态
             </summary>
             <param name="source"></param>
             <param name="e"></param>
@@ -2477,6 +2470,13 @@
             </summary>
             <param name="source"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:WYJK.Web.MvcApplication.AmountVal(WYJK.Entity.Members)">
+            <summary>
+            金额值
+            </summary>
+            <param name="members"></param>
+            <returns></returns>
         </member>
         <member name="T:WYJK.Web.Models.UserViewModel">
             <summary>

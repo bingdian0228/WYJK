@@ -9,15 +9,17 @@
         $(function () {
             $("#message").fadeOut(2000);
 
+            $("#LoanMethod").attr("disabled", true);
+            $("#LoanMethod").hide();
 
             $("#LoanTerm").change(function () {
 
                 if ($(this).val() == "1") {
-                    $("#LoanMethod").attr("disabled", false);
-                    $("#LoanMethod").show();
-                } else {
                     $("#LoanMethod").attr("disabled", true);
                     $("#LoanMethod").hide();
+                } else {
+                    $("#LoanMethod").attr("disabled", false);
+                    $("#LoanMethod").show();
                 }
             });
 

@@ -215,7 +215,9 @@
     <Content Include="scripts\respond.min.js" />
     <Content Include="scripts\superslide.2.1.js" />
     <None Include="scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\_Layout_black.cshtml" />
     <Content Include="Views\User\Info.cshtml" />
     <Content Include="Views\Index\Index.cshtml" />
