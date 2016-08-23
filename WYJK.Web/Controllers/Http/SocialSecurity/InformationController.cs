@@ -26,7 +26,11 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> GetInformationList(string Type, int PageIndex, int PageSize)
         {
             PagedResult<Information> informationList = await _informationService.GetNewNoticeList(new InformationParameter { PageIndex = PageIndex, PageSize = PageSize, Type = Type, IsDescending = true });
-
+            var list = informationList.ToList();
+            foreach (var item in list)
+            {
+                item.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + item.ImgUrl;
+            }
             return new JsonResult<dynamic>
             {
                 status = true,
