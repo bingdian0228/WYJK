@@ -47,14 +47,11 @@ namespace WYJK.HOME.Service
         /// <returns></returns>
         public bool PayedMonthCount(int memberId)
         {
-            string sql = $@"select 
-	                            case when MAX(ss.PayedMonthCount) is null then 0 else MAX(ss.PayedMonthCount) end
-                            from SocialSecurityPeople ssp
-	                            left join SocialSecurity ss on ssp.SocialSecurityPeopleID = ss.SocialSecurityPeopleID
-                            where MemberID = {memberId}";
-            int count = DbHelper.QuerySingle<int>(sql);
+            int result = DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
+            left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+            where SocialSecurityPeople.MemberID = {memberId} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null);
 
-            if (count >= 3)
+            if (result == 0)
             {
                 return true;
             }

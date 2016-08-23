@@ -154,16 +154,16 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<AppayLoan> GetApplyloan(int MemberID)
         {
             //判断用户下的社保否在平台缴纳三个月
-            if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
-    left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
-    where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
-            {
-                return new JsonResult<AppayLoan>
-                {
-                    status = false,
-                    Message = "用户至少在平台缴纳三个月社保才可以借款"
-                };
-            }
+            //        if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
+            //left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+            //where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
+            //        {
+            //            return new JsonResult<AppayLoan>
+            //            {
+            //                status = false,
+            //                Message = "用户至少在平台缴纳三个月社保才可以借款"
+            //            };
+            //        }
 
             AppayLoan appayLoan = _loanMemberService.GetMemberLoanDetail(MemberID);
             return new JsonResult<AppayLoan>
@@ -391,12 +391,17 @@ namespace WYJK.Web.Controllers.Http
         /// </summary>
         /// <param name="ID"></param>
         /// <param name="RepaymentType"></param>
-        internal int MemberLoanRepayment(int ID, string RepaymentType)
+        internal int MemberLoanRepayment(int ID, string RepaymentType, bool IsAutoPay = false)
         {
-            MemberLoanRepayment repayment = GetMemberLoanRepayment(ID, RepaymentType);
+            MemberLoanRepayment repayment = GetMemberLoanRepayment(ID, RepaymentType, IsAutoPay);
 
             //保存还款记录
             int id = DbHelper.ExecuteSqlCommandScalar($"insert into MemberLoanRepayment(TotalAmount,WeiYueJin,RepaymentDt,Status,RepaymentType,JieID) values({repayment.TotalAmount},{repayment.WeiYueJin},getdate(),1,{repayment.RepaymentType},{ID})", new DbParameter[] { });
+            if (IsAutoPay == true)
+            {
+                DbHelper.ExecuteSqlCommand($"update MemberLoanRepayment set Status=2 where ID={id} ", null);
+            }
+
             foreach (MemberLoanRepaymentDetail detail in repayment.DetailList)
             {
                 DbHelper.ExecuteSqlCommand($"insert into MemberLoanRepaymentDetail(BenJin,LiXi,ZhiNaJin,MonthStr,HuanID) values({detail.BenJin},{detail.LiXi},{detail.ZhiNaJin},'{detail.MonthStr}',{id})", null);
@@ -443,8 +448,14 @@ namespace WYJK.Web.Controllers.Http
         /// </summary>
         /// <param name="ID"></param>
         /// <returns></returns>
-        internal MemberLoanRepayment GetMemberLoanRepayment(int ID, string RepaymentType = null)
+        internal MemberLoanRepayment GetMemberLoanRepayment(int ID, string RepaymentType = null, bool IsAutoPay = false)
         {
+            //如果是自动扣款，则时间-1个小时
+            DateTime currentDt = new DateTime();
+            if (IsAutoPay == false)
+                currentDt = DateTime.Now;
+            else
+                currentDt = DateTime.Now.AddHours(-1);
 
             MemberLoanRepayment repayment = new MemberLoanRepayment();//我要还款展示实体
 
@@ -466,7 +477,7 @@ namespace WYJK.Web.Controllers.Http
                 {
                     foreach (var item in DetailList)
                     {
-                        if (item.MonthStr == DateTime.Now.ToString("yyyy-MM"))
+                        if (item.MonthStr == currentDt.ToString("yyyy-MM"))
                         {
                             flag = true;
                         }
@@ -504,7 +515,7 @@ namespace WYJK.Web.Controllers.Http
                         repayment.LoanMethod = EnumExt.GetEnumCustomDescription((LoanTermEnum)((int)LoanTermEnum.InThreeMonths));
 
                         BenJin = memberLoanAudit.ApplyAmount;
-                        LiXi = memberLoanAudit.ApplyAmount * (decimal)(((DateTime.Now - memberLoanAudit.AlreadyLoanDate).Days + 1) * InThreeMonthsDayLiLv);
+                        LiXi = memberLoanAudit.ApplyAmount * (decimal)(((currentDt - memberLoanAudit.AlreadyLoanDate).Days + 1) * InThreeMonthsDayLiLv);
                         repayment.TotalAmount = BenJin + LiXi;
                         repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi });
 
@@ -520,7 +531,7 @@ namespace WYJK.Web.Controllers.Http
                         LiXi = memberLoanAudit.LoanBalance * HalfYearMonthLiLv;
                         BenJin = MonthBenXi - LiXi;
                         repayment.TotalAmount = MonthBenXi;
-                        repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthStr = DateTime.Now.ToString("yyyy-MM") });
+                        repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthStr = currentDt.ToString("yyyy-MM") });
 
 
                         #endregion
@@ -535,7 +546,7 @@ namespace WYJK.Web.Controllers.Http
                         LiXi = memberLoanAudit.LoanBalance * OneYearPeriodMonthLiLv;
                         BenJin = MonthBenXi - LiXi;
                         repayment.TotalAmount = MonthBenXi;
-                        repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthStr = DateTime.Now.ToString("yyyy-MM") });
+                        repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi, MonthStr = currentDt.ToString("yyyy-MM") });
                         #endregion
                     }
                 }
@@ -588,9 +599,9 @@ namespace WYJK.Web.Controllers.Http
                     BenJin = memberLoanAudit.ApplyAmount;
                     LiXi = memberLoanAudit.ApplyAmount * (decimal)((memberLoanAudit.AlreadyLoanDate.AddMonths(InThreeMonthsCount) - memberLoanAudit.AlreadyLoanDate).Days * InThreeMonthsDayLiLv);
 
-                    ZhiNaJin = ((DateTime.Now - memberLoanAudit.AlreadyLoanDate.AddMonths(InThreeMonthsCount)).Days + 1) * (BenJin + LiXi) * ZhiNaJinPercent;
+                    ZhiNaJin = ((currentDt - memberLoanAudit.AlreadyLoanDate.AddMonths(InThreeMonthsCount)).Days + 1) * (BenJin + LiXi) * ZhiNaJinPercent;
                     repayment.TotalAmount = BenJin + LiXi + ZhiNaJin;
-                    repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi, ZhiNaJin = ZhiNaJin, MonthStr = DateTime.Now.ToString("yyyy-MM") });
+                    repayment.DetailList.Add(new MemberLoanRepaymentDetail { BenJin = BenJin, LiXi = LiXi, ZhiNaJin = ZhiNaJin, MonthStr = currentDt.ToString("yyyy-MM") });
 
                     #endregion
                 }
@@ -610,14 +621,14 @@ namespace WYJK.Web.Controllers.Http
                         DateTime TempDt = memberLoanAudit.AlreadyLoanDate.AddMonths(i);
 
                         DateTime t1 = new DateTime(TempDt.Year, TempDt.Month, 1);
-                        DateTime t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                        DateTime t2 = new DateTime(currentDt.Year, currentDt.Month, 1);
                         if (DateTime.Compare(t1, t2) == 0)
                         {
                             break;
                         }
 
                         DateTime t3 = t1.AddMonths(1).AddDays(-1);
-                        int ZhiNaDayCount = (DateTime.Now - t3).Days;
+                        int ZhiNaDayCount = (currentDt - t3).Days;
 
                         LiXi = LoanBalance * HalfYearMonthLiLv;
                         BenJin = MonthBenXi - LiXi;
@@ -647,14 +658,14 @@ namespace WYJK.Web.Controllers.Http
                         DateTime TempDt = memberLoanAudit.AlreadyLoanDate.AddMonths(i);
 
                         DateTime t1 = new DateTime(TempDt.Year, TempDt.Month, 1);
-                        DateTime t2 = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                        DateTime t2 = new DateTime(currentDt.Year, currentDt.Month, 1);
                         if (DateTime.Compare(t1, t2) == 0)
                         {
                             break;
                         }
 
                         DateTime t3 = t1.AddMonths(1).AddDays(-1);
-                        int ZhiNaDayCount = (DateTime.Now - t3).Days;
+                        int ZhiNaDayCount = (currentDt - t3).Days;
 
                         LiXi = LoanBalance * HalfYearMonthLiLv;
                         BenJin = MonthBenXi - LiXi;

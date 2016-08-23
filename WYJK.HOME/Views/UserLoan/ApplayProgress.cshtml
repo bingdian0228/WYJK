@@ -1,0 +1,59 @@
+﻿@model PagedResult<MemberLoanAudit>
+@{
+    Layout = "~/Views/User/_Layout_user.cshtml";
+    ViewBag.Title = "申请进度";
+}
+@Html.Partial("~/Views/_Pager.cshtml")
+@section Header{
+    <script>
+        $(function () {
+            var menus = $("#leftMenu li");
+            menus.removeClass("active");
+
+            $("#leftMenu #userLoanItem").addClass("active");
+
+        });
+
+    </script>
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <form action="@Url.Action("Index","UserLoan")" method="get" class="form-inline">
+                    @Html.Hidden("PageIndex")
+                    <div class="clearfix">
+                        @*<div class="form-group pull-left">
+                                <label for="" class="am-padding-right-sm">审核状态</label>
+                                @Html.DropDownList("Status", ViewData["StatusType"] as List<SelectListItem>, new { @class = "form-control" })
+                            </div>
+                            <div class="pull-right">
+                                <button type="submit" class="btn btn-info bg-lightblue">查询</button>
+                            </div>*@
+                    </div>
+                </form>
+            </h3>
+        </div>
+        <div class="panel-body bg-white">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>借款金额</th>
+                    <th>申请时间</th>
+                    <th>状态</th>
+                </tr>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.ApplyAmount</td>
+                            <td>@item.ApplyDate</td>
+                            <td>@item.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!--分页-->
+        <div id="pager" style="margin-top: 20px;"></div>
+    </div>
+</div>

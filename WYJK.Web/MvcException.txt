@@ -1,19 +1,278 @@
-2016/2/29 17:30:15:页面异常
-2016/2/29 17:34:36:页面异常
-2016/3/1 9:47:33:页面异常
-2016/3/1 9:49:16:页面异常
-2016/3/1 9:54:14:页面异常
-2016/3/1 9:55:41:页面异常
-2016/3/1 11:39:36:页面异常
-2016/3/1 12:08:01:页面异常
-2016/3/1 12:09:33:页面异常
-2016/3/1 12:11:03:页面异常
-2016/3/1 12:14:12:页面异常
-2016/3/1 12:17:29:页面异常
-2016/3/1 12:18:07:页面异常
-2016/3/3 18:33:28:未将对象引用设置到对象的实例。
-2016/3/3 18:34:06:未将对象引用设置到对象的实例。
-2016/3/3 18:35:07:未将对象引用设置到对象的实例。
-2016/7/6 11:33:11:在与 SQL Server 建立连接时出现与网络相关的或特定于实例的错误。未找到或无法访问服务器。请验证实例名称是否正确并且 SQL Server 已配置为允许远程连接。 (provider: Named Pipes Provider, error: 40 - 无法打开到 SQL Server 的连接)
-2016/7/26 9:49:40:用户 'qingdao!10' 登录失败。
-2016/7/26 9:49:44:用户 'qingdao!10' 登录失败。
+2016/11/19 14:48:59:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 32
+   在 WYJK.Web.Controllers.Http.LoanController.get_memberLoanSetting() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 285
+   在 WYJK.Web.Controllers.Http.LoanController..ctor() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 289
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 117
+ClientConnectionId:1df8c06c-751e-4b16-b021-74c7b2b9a6ed
+Error Number:8501,State:2,Class:16
+2016/11/19 14:56:15:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 32
+   在 WYJK.Web.Controllers.Http.LoanController.get_memberLoanSetting() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 285
+   在 WYJK.Web.Controllers.Http.LoanController..ctor() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 289
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 117
+ClientConnectionId:69f49cd4-ee14-448b-a3cf-e703df87435f
+Error Number:8501,State:2,Class:16
+2016/11/19 14:56:53:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 32
+   在 WYJK.Web.Controllers.Http.LoanController.get_memberLoanSetting() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 285
+   在 WYJK.Web.Controllers.Http.LoanController..ctor() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 289
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 117
+ClientConnectionId:546bb8f0-62a3-43f8-b5d8-27fe83b71dbc
+Error Number:8501,State:2,Class:16
+2016/11/19 14:59:00:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.QuerySingle[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 77
+   在 WYJK.Web.MvcApplication.AmountVal(Members members) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 829
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 125
+ClientConnectionId:4103a801-f104-42e5-a3e9-526c2b0d74fe
+Error Number:8501,State:2,Class:16
+2016/11/19 14:59:01:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.QuerySingle[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 77
+   在 WYJK.Web.MvcApplication.AmountVal(Members members) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 829
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 125
+ClientConnectionId:14706e30-5c11-4af4-8c5f-13724eb336a3
+Error Number:8501,State:2,Class:16
+2016/11/19 15:14:44:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 32
+   在 WYJK.Web.Controllers.Http.LoanController.get_memberLoanSetting() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 285
+   在 WYJK.Web.Controllers.Http.LoanController..ctor() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 289
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 117
+ClientConnectionId:e77729a7-0024-417b-bf64-c3ae12523026
+Error Number:8501,State:2,Class:16
+2016/8/19 15:21:35:System.Threading.ThreadAbortException: 正在中止线程。
+   在 SNIReadSyncOverAsync(SNI_ConnWrapper* , SNI_Packet** , Int32 )
+   在 SNINativeMethodWrapper.SNIReadSyncOverAsync(SafeHandle pConn, IntPtr& packet, Int32 timeout)
+   在 System.Data.SqlClient.TdsParserStateObject.ReadSniSyncOverAsync()
+   在 System.Data.SqlClient.TdsParserStateObject.TryReadNetworkPacket()
+   在 System.Data.SqlClient.TdsParserStateObject.TryPrepareBuffer()
+   在 System.Data.SqlClient.TdsParserStateObject.TryReadByte(Byte& value)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   在 System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader(CommandBehavior behavior)
+   在 Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext()
+   在 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   在 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   在 Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType)
+   在 WYJK.Data.DbHelper.QuerySingle[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 78
+   在 WYJK.Web.MvcApplication.AmountVal(Members members) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 807
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 123
+2016/8/19 15:21:35:System.Threading.ThreadAbortException: 正在中止线程。
+   在 SNIReadSyncOverAsync(SNI_ConnWrapper* , SNI_Packet** , Int32 )
+   在 SNINativeMethodWrapper.SNIReadSyncOverAsync(SafeHandle pConn, IntPtr& packet, Int32 timeout)
+   在 System.Data.SqlClient.TdsParserStateObject.ReadSniSyncOverAsync()
+   在 System.Data.SqlClient.TdsParserStateObject.TryReadNetworkPacket()
+   在 System.Data.SqlClient.TdsParserStateObject.TryPrepareBuffer()
+   在 System.Data.SqlClient.TdsParserStateObject.TryReadByte(Byte& value)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task& task, Boolean asyncWrite, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean asyncWrite)
+   在 System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   在 System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   在 System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader(CommandBehavior behavior)
+   在 Dapper.SqlMapper.<QueryImpl>d__61`1.MoveNext()
+   在 System.Collections.Generic.List`1..ctor(IEnumerable`1 collection)
+   在 System.Linq.Enumerable.ToList[TSource](IEnumerable`1 source)
+   在 Dapper.SqlMapper.Query[T](IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Boolean buffered, Nullable`1 commandTimeout, Nullable`1 commandType)
+   在 WYJK.Data.DbHelper.QuerySingle[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 74
+   在 WYJK.Web.MvcApplication.AmountVal(Members members) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 820
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 123
+2016/8/19 15:46:56:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters)
+   在 WYJK.Web.Controllers.Http.LoanController.get_memberLoanSetting() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 285
+   在 WYJK.Web.Controllers.Http.LoanController..ctor() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 289
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 117
+ClientConnectionId:c9b3a589-83fe-4ff4-b3e7-8c66db8ccc80
+Error Number:8501,State:2,Class:16
+2016/8/19 16:07:21:System.Data.SqlClient.SqlException (0x80131904): 服务器 'CUIZHEN' 上的 MSDTC 不可用。
+   在 System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   在 System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   在 System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   在 System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   在 System.Data.SqlClient.SqlDataReader.get_MetaData()
+   在 System.Data.SqlClient.TdsParser.TdsExecuteTransactionManagerRequest(Byte[] buffer, TransactionManagerRequestType request, String transactionName, TransactionManagerIsolationLevel isoLevel, Int32 timeout, SqlInternalTransaction transaction, TdsParserStateObject stateObj, Boolean isDelegateControlRequest)
+   在 System.Data.SqlClient.TdsParser.GetDTCAddress(Int32 timeout, TdsParserStateObject stateObj)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.GetDTCAddress()
+   在 System.Data.SqlClient.SqlInternalConnection.EnlistNonNull(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnection.Enlist(Transaction tx)
+   在 System.Data.SqlClient.SqlInternalConnectionTds.Activate(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionInternal.ActivateConnection(Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.PrepareConnection(DbConnection owningObject, DbConnectionInternal obj, Transaction transaction)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   在 System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   在 System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   在 System.Data.SqlClient.SqlConnection.Open()
+   在 WYJK.Data.DbHelper.Query[TEntity](String sql, Object parameters) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Data\Data\DbHelper.cs:行号 32
+   在 WYJK.Web.Controllers.Http.LoanController.get_memberLoanSetting() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 285
+   在 WYJK.Web.Controllers.Http.LoanController..ctor() 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Controllers\Http\Loan\LoanController.cs:行号 289
+   在 WYJK.Web.MvcApplication.business3(Object source, ElapsedEventArgs e) 位置 D:\Documents\Visual Studio 2015\Projects\WYJK\WYJK.Web\Global.asax.cs:行号 117
+ClientConnectionId:18109635-9f3c-44cc-9443-1ff2f877b9ab
+Error Number:8501,State:2,Class:16

@@ -1,0 +1,97 @@
+﻿@model MemberLoanRepayment
+@{
+    Layout = "~/Views/User/_Layout_user.cshtml";
+    ViewBag.Title = "我要还款";
+}
+@section Header{
+    <script>
+        $(function () {
+            var menus = $("#leftMenu li");
+            menus.removeClass("active");
+
+            $("#leftMenu #userLoanItem").addClass("active");
+
+
+
+            $("#RepaymentType").change(function () {
+
+                location.href = '@Url.Action("SelectRepaymentType", "UserLoan")?id=@Request.QueryString["id"]&RepaymentType=' + $(this).val();
+            });
+        });
+
+
+
+    </script>
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title"></h3>
+        </div>
+        <div class="panel-body bg-white">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>本金</th>
+                    <th>利息</th>
+                    <th>滞纳金</th>
+                    <th>月份</th>
+                </tr>
+                <tbody>
+                    @foreach (var item in Model.DetailList)
+                    {
+                        <tr>
+                            <td>@Math.Round(item.BenJin, 2)</td>
+                            <td>@Math.Round(item.LiXi, 2)</td>
+                            <td>@item.ZhiNaJin</td>
+                            <td>@item.MonthStr</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!--表单计算-->
+        <div class="am-padding-xl">
+            <form class="form-horizontal" action="/UserLoan/MemberLoanRepayment" method="post">
+                <input type="hidden" name="ID" value="@Request.QueryString["id"]" />
+                <div class="row am-margin-vertical-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>还款方式</strong>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Model.LoanMethod
+                    </div>
+                </div>
+                <div class="row am-margin-vertical-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>还款类型</strong>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Html.DropDownListFor(n => n.RepaymentType, new SelectList(Model.RepaymentTypeList, "Value", "Text") as SelectList, new { @class = "form-control" })
+                        @*@Model.RepaymentType*@
+                    </div>
+                </div>
+                <div class="row am-margin-vertical-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>还款金额</strong>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Math.Round(Model.TotalAmount, 2)
+                    </div>
+                </div>
+                <div class="row am-margin-vertical-lg">
+                    <div class="col-lg-2 col-md-2 col-sm-2 text-right">
+                        <strong>违约金</strong>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-9">
+                        @Math.Round(Model.WeiYueJin, 2)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-4 col-lg-4 text-center">
+                        <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">确定还款</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

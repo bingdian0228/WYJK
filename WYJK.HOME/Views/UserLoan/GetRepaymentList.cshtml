@@ -1,0 +1,47 @@
+﻿@model List<MemberLoanRepayment>
+@{
+    Layout = "~/Views/User/_Layout_user.cshtml";
+    ViewBag.Title = "我的还款";
+}
+
+@section Header{
+    <script>
+        $(function () {
+            var menus = $("#leftMenu li");
+            menus.removeClass("active");
+
+            $("#leftMenu #userLoanItem").addClass("active");
+
+        });
+
+    </script>
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
+        <div class="panel-heading">
+
+        </div>
+        <!--列表-->
+        <div class="panel-body bg-white">
+            <table class="table table-bordered table-hover">
+                <tr>
+                    <th>还款类型</th>
+                    <th>还款金额</th>
+                    <th>时间</th>
+                    <th>详情</th>
+                </tr>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.RepaymentType</td>
+                            <td>@item.TotalAmount</td>
+                            <td>@item.RepaymentDt</td>
+                            <td><a href="/UserLoan/GetRepaymentDetail/@item.ID" class="orange">详情</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

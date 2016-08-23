@@ -3476,6 +3476,16 @@
             是否可修改参保人
             </summary>
         </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.SSEnterpriseList">
+            <summary>
+            签约单位
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.SocialSecurityPeopleDetail.AFEnterpriseList">
+            <summary>
+            签约单位
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.SocialSecurityPeoples">
             <summary>
             参保人列表（Mobile）
