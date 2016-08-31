@@ -1,0 +1,592 @@
+﻿@model SocialSecurityPeople
+@{
+    ViewBag.title = "参保人信息";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+    var member = ViewData["member"] as Members;
+    var accountRecordList = ViewData["accountRecordList"] as List<AccountRecord>;
+    var type = Request.Params["Type"];
+    var isadd = Request.Params["IsAdd"] == "1";
+}
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                <div class="pull-left">
+                    <i class="icon-w icon-info am-margin-right-xs"></i>
+                    <span class="am-text-middle">参保人信息</span>
+                </div>
+            </h3>
+        </div>
+        <div class="panel-body">
+            
+            <form class="form-horizontal" action='@Url.Action("Edit")' enctype="multipart/form-data" method="post">
+                @Html.HiddenFor(m => m.SocialSecurityPeopleID)
+                @Html.HiddenFor(m => m.MemberID)
+                <div class="form-group" style="text-align:center;">
+                    <label style="font-size:24px;font-weight:bold;">@(Model.SocialSecurityPeopleName)@(string.IsNullOrEmpty(Model.SocialSecurityPeopleName) ? "" : "的")基本信息</label>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">用户类型：</label>
+                    <div class="col-lg-4">
+                        @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(member.UserType))
+                    </div>
+                    <label class="col-lg-2 control-label">代理机构：</label>
+                    <div class="col-lg-4">
+                        @(member.UserType == "0" ? member.MemberName : (member.UserType == "1" ? member.EnterpriseName : member.BusinessName))
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">客服专员：</label>
+                    <div class="col-lg-4">
+                        @Model.CustomerServiceUserName
+                    </div>
+                    <label class="col-lg-2 control-label">身份证：</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.IdentityCard, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">业务专员：</label>
+                    <div class="col-lg-4">
+                        <input type="hidden" value="@member.MemberID" name="MemberID" />
+                        @if (!string.IsNullOrEmpty(member.InviteCode))
+                        {
+                            WYJK.Data.IService.IUserService _userService = new WYJK.Data.ServiceImpl.UserService();
+
+                            WYJK.Entity.Users user = _userService.GetUserInfo(member.InviteCode);
+
+                            List<WYJK.Entity.Users> userList = _userService.GetUserList();
+                            var list = new List<SelectListItem> { new SelectListItem { Text = "公司", Value = "" } };
+                            list.AddRange(userList.Select(item => new SelectListItem
+                            {
+                                Value = item.UserID.ToString(),
+                                Text = item.TrueName,
+                                Selected = item.UserID == (user == null ? 0 : user.UserID)
+                            }));
+
+                            @Html.DropDownList("InviteCode", list, new { @class = "form-control" });
+                        }
+                        else
+                        {
+                            WYJK.Data.IService.IUserService _userService = new WYJK.Data.ServiceImpl.UserService();
+                            List<WYJK.Entity.Users> userList = _userService.GetUserList();
+                            var list = new List<SelectListItem> { new SelectListItem { Text = "公司", Value = "" } };
+                            list.AddRange(userList.Select(item => new SelectListItem
+                            {
+                                Value = item.UserID.ToString(),
+                                Text = item.TrueName
+                            }));
+
+                            @Html.DropDownList("InviteCode", list, new { @class = "form-control" });
+                        }
+                    </div>
+                    <label class="col-lg-2 control-label">姓名：</label>
+                    <div class="col-lg-4">
+                        @Html.TextBoxFor(m => m.SocialSecurityPeopleName, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-2 control-label">身份证照：</label>
+                    <div class="col-lg-4">
+                        @{
+                            var ImgUrls = string.IsNullOrEmpty(Model.IdentityCardPhoto) ? new List<string>() : Model.IdentityCardPhoto.Split(';').ToList();
+                            while (ImgUrls.Count < 2)
+                            {
+                                ImgUrls.Add("");
+                            }
+                        }
+                        <div style="width:50%;float:left;">
+                            <p>
+                                正面：
+                            </p>
+                            <p>
+                                <a href="@System.Configuration.ConfigurationManager.AppSettings["ServerUrl"]@ImgUrls[0]" target="_blank" name="img"><img src="@System.Configuration.ConfigurationManager.AppSettings["ServerUrl"]@ImgUrls[0]" onerror="this.src = '/Content/img/nopic.jpg';" height="100" width="100" /></a>
+                            </p>
+                            <p>
+                                <input type="file" class="form-control" style="width: 95%" name="IdentityCardPhoto1" value="" />
+                                <input type="hidden" name="IdentityCardPhotoPath1" value="@ImgUrls[0]" />
+                            </p>
+                        </div>
+                        <div style="width:50%;float:left;">
+                            <p>
+                                反面：
+                            </p>
+                            <p>
+                                <a href="@System.Configuration.ConfigurationManager.AppSettings["ServerUrl"]@ImgUrls[1]" target="_blank" name="img"><img src="@System.Configuration.ConfigurationManager.AppSettings["ServerUrl"]@ImgUrls[1]" onerror="this.src = '/Content/img/nopic.jpg';" height="100" width="100" /></a>
+                            </p>
+                            <p>
+                                <input type="file" class="form-control" style="width: 95%" name="IdentityCardPhoto2" value="" />
+                                <input type="hidden" name="IdentityCardPhotoPath2" value="@ImgUrls[1]" />
+                            </p>
+                        </div>
+                    </div>
+                    <label class="col-lg-2 control-label">户籍性质：</label>
+                    <div class="col-lg-4">
+                        @Html.DropDownList("HouseholdProperty", ViewData["HouseholdProperty"] as List<SelectListItem>, new { @class = "form-control" })
+                    </div>
+                </div>
+                @if (Model.socialSecurity != null)
+                {
+                    @Html.Hidden("IsPaySocialSecurity", true)
+                    <div class="form-group" style="text-align:center;">
+                        <label style="font-size:24px;font-weight:bold;">@(Model.SocialSecurityPeopleName)@(string.IsNullOrEmpty(Model.SocialSecurityPeopleName) ? "" : "的")社保业务信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">客户社保号：</label>
+                        <div class="col-lg-4">
+                            @*@Html.TextBoxFor(m => m.socialSecurity.SocialSecurityNo, new { @class = "form-control" })*@
+                            <input type="text" value="@Model.socialSecurity.SocialSecurityNo" name="SocialSecurityNo" class="form-control" />
+                        </div>
+                        <label class="col-lg-2 control-label">签约单位：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight" id="ssEnterpriseName">
+                                @Html.DropDownList("SSEnterpriseList", ViewData["SSEnterpriseList"] as List<SelectListItem>, new { @class = "form-control" })
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">基数：</label>
+                        <div class="col-lg-4">
+                            @*@Html.TextBoxFor(m => m.socialSecurity.SocialSecurityBase, new { @class = "form-control" })*@
+                            <input type="text" value="@Model.socialSecurity.SocialSecurityBase" name="SocialSecurityBase" class="form-control" />
+                            <div style="color:red;">
+                                <span>基数范围：</span>
+                                <span id="SSMinBase">
+                                    @ViewData["SSMinBase"]
+                                </span>
+                                <span>~</span>
+                                <span id="SSMaxBase">
+                                    @ViewData["SSMaxBase"]
+                                </span>
+                            </div>
+                        </div>
+                        <label class="col-lg-2 control-label">比例：</label>
+                        <div class="col-lg-4">
+                                <span class="lineheight">
+                                    <input type="text" name="ssPayProportion" value="@Model.socialSecurity.PayProportion%" readonly="readonly" class="form-control" />
+                                </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">参保地：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                @Html.Action("RegionView", "OptionView", new
+                                {
+                                    pname = Model.socialSecurity.InsuranceArea.Split('|')[0],
+                                    cname = Model.socialSecurity.InsuranceArea.Split('|')[1],
+                                    coname = string.Empty,
+                                    IsHideCounty = true,
+                                    Id = "AF",
+                                    CallBack = "afCallback",
+                                })
+                                <input type="hidden" name="socialSecurity.InsuranceArea" value="" />
+                                <script>
+                                    function afCallback(p, city) {
+                                        if (city != '请选择市')
+                                            $('[name="socialSecurity.InsuranceArea"]').val(p + '|' + city);
+                                    }
+                                </script>
+                            </span>
+                            <input id="InsuranceArea" type="hidden" value="@Model.socialSecurity.InsuranceArea" />
+                        </div>
+                        <label class="col-lg-2 control-label">每月交：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight" id="SSMonthAccount">
+                                @Math.Round(Model.socialSecurity.SocialSecurityBase * Model.socialSecurity.PayProportion / 100, 2)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">起缴时间：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                    <input type="text" value="" placeholder="起缴时间（年月 如：2000-01-01）" name="socialSecurity.PayTime" class="form-control" />
+                            </span>
+                        </div>
+                        <label class="col-lg-2 control-label">业务当前状态：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                @EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)Convert.ToInt32(Model.socialSecurity.Status))
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">业务申请时间：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                @*@{
+                                                  string sqlstr = @"  select * from [Order]
+                        left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+                        where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID;
+                                                  Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                                              }
+                                              @(order != null ? order.PayTime.ToString() : "--")*@
+
+                                @if (Model.socialSecurity.IsPay)
+                                {
+                                    string sqlstr = @"  select top 1 * from [Order]
+  left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+  where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID + "and IsPaySocialSecurity=1 order by [Order].PayTime desc";
+                                    Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                                    if (order != null)
+                                    {
+                                        @order.PayTime.ToString()
+                                    }
+                                    else
+                                    {
+                                        @:--
+                            }
+                                }
+                                else
+                                {
+                                    @:--
+                        }
+                            </span>
+                        </div>
+                        @if (!isadd)
+                {
+                            <label class="col-lg-2 control-label">交费至：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    @Model.socialSecurity.PayTime.Value.AddMonths(Model.socialSecurity.PayMonthCount + Model.socialSecurity.AlreadyPayMonthCount - 1).ToString("yyyy/MM")
+                                </span>
+                            </div>
+                        }
+                    </div>
+                    if (isadd)
+                    {
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">缴费月数：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    <input type="text" value="@Model.socialSecurity.PayMonthCount" placeholder="" name="socialSecurity.PayMonthCount" class="form-control" />
+                                </span>
+                            </div>
+                            <label class="col-lg-2 control-label">补交月数：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    <input type="text" value="@Model.socialSecurity.PayBeforeMonthCount" placeholder="" name="socialSecurity.PayBeforeMonthCount" class="form-control" />
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">业务办停时间：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    @(Model.socialSecurity.StopDate == null ? "--" : Convert.ToString(Model.socialSecurity.StopDate))
+                                </span>
+                            </div>
+                            <label class="col-lg-2 control-label">业务办理时间：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    @(Model.socialSecurity.HandleDate == null ? "--" : Convert.ToString(Model.socialSecurity.HandleDate))
+                                </span>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">备注：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                    <input type="text" value="@Model.socialSecurity.Note" placeholder="" name="socialSecurity.Note" class="form-control" />
+                            </span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @Html.Hidden("IsPaySocialSecurity", false)
+                }
+
+                @if (Model.accumulationFund != null)
+                {
+                    @Html.Hidden("IsPayAccumulationFund", true)
+                    <div class="row cl" style="text-align:center;">
+                        <label style="font-size:24px;font-weight:bold;">@(Model.SocialSecurityPeopleName)@(string.IsNullOrEmpty(Model.SocialSecurityPeopleName) ? "" : "的")公积金业务信息</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">客户公积金号：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                    @*@Html.TextBoxFor(m => m.accumulationFund.AccumulationFundNo, new { @class = "form-control" })*@
+                                    <input type="text" name="AccumulationFundNo" value="@Model.accumulationFund.AccumulationFundNo" class="form-control" />
+                            </span>
+                        </div>
+                        <label class="col-lg-2 control-label">签约单位：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight" id="afEnterpriseName">
+                                @Html.DropDownList("AFEnterpriseList", ViewData["AFEnterpriseList"] as List<SelectListItem>, new { @class = "form-control" })
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">基数：</label>
+                        <div class="col-lg-4">
+                                @*@Html.TextBoxFor(m => m.accumulationFund.AccumulationFundBase, new { @class = "form-control" })*@
+                                <input type="text" value="@Model.accumulationFund.AccumulationFundBase" name="AccumulationFundBase" class="form-control" />
+                                <div style="color:red;">
+                                    <span> 基数范围：</span>
+                                    <span id="AFMinBase">
+                                        @ViewData["AFMinBase"]
+                                    </span>
+                                    <span> ~</span>
+                                    <span id="AFMaxBase">
+                                        @ViewData["AFMaxBase"]
+                                    </span>
+                                </div>
+                        </div>
+                        <label class="col-lg-2 control-label">比例：</label>
+                        <div class="col-lg-4">
+                                <span class="lineheight">
+                                    <input type="text" value="@Model.accumulationFund.PayProportion%" name="afPayProportion" readonly="readonly" class="form-control" />
+                                </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">参保地：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                    @Html.Action("RegionView", "OptionView", new
+                               {
+                                   pname = Model.accumulationFund.AccumulationFundArea.Split('|')[0],
+                                   cname = Model.accumulationFund.AccumulationFundArea.Split('|')[1],
+                                   coname = string.Empty,
+                                   IsHideCounty = true,
+                                   Id = "SO",
+                                   CallBack = "soCallback",
+                               })
+                                    <input type="hidden" name="accumulationFund.AccumulationFundArea" value="" />
+                                    <script>
+                                    function soCallback(p, city) {
+                                        if (city != '请选择市')
+                                            $('[name="accumulationFund.AccumulationFundArea"]').val(p + '|' + city);
+                                    }
+                                    </script>
+                            </span>
+                            <input id="AccumulationFundArea" type="hidden" value="@Model.accumulationFund.AccumulationFundArea" />
+                        </div>
+                        <label class="col-lg-2 control-label">每月交：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight" id="AFMonthAccount">
+                                @Math.Round(Model.accumulationFund.AccumulationFundBase * Model.accumulationFund.PayProportion / 100, 2)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">起缴时间：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                <input type="text" value="" placeholder="起缴时间（年月 如：2000-01-01）" name="accumulationFund.PayTime" class="form-control" />
+                            </span>
+                        </div>
+                        <label class="col-lg-2 control-label">业务当前状态：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                @EnumExt.GetEnumCustomDescription((SocialSecurityStatusEnum)Convert.ToInt32(Model.accumulationFund.Status))
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">业务申请时间：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                @*@{
+                                                  string sqlstr = @"  select * from [Order]
+                        left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+                        where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID;
+                                                  Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                                              }
+                                              @(order != null ? order.PayTime.ToString() : "--")*@
+
+                                @if (Model.accumulationFund.IsPay)
+                                {
+                                    string sqlstr = @"  select top 1 * from [Order]
+  left join OrderDetails on OrderDetails.OrderCode =[Order].OrderCode
+  where OrderDetails.SocialSecurityPeopleID = " + Model.SocialSecurityPeopleID + " and IsPayAccumulationFund=1 order by [Order].PayTime desc";
+                                    Order order = WYJK.Data.DbHelper.QuerySingle<Order>(sqlstr);
+                                    if (order != null)
+                                    {
+                                        @order.PayTime.ToString()
+                                    }
+                                    else
+                                    {
+                                        @:--
+                                    }
+                                }
+                                else
+                                {
+                                    @:--
+                                }
+
+                            </span>
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">缴费月数：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    <input type="text" value="@Model.accumulationFund.PayMonthCount" placeholder="" name="accumulationFund.PayMonthCount" class="form-control" />
+                                </span>
+                            </div>
+                            <label class="col-lg-2 control-label">补交月数：</label>
+                            <div class="col-lg-4">
+                                <span class="lineheight">
+                                    <input type="text" value="@Model.accumulationFund.PayBeforeMonthCount" placeholder="" name="accumulationFund.PayBeforeMonthCount" class="form-control" />
+                                </span>
+                            </div>
+                        </div>
+
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label">备注：</label>
+                        <div class="col-lg-4">
+                            <span class="lineheight">
+                                    <input type="text" value="@Model.accumulationFund.Note" placeholder="" name="accumulationFund.Note" class="form-control" />
+                            </span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @Html.Hidden("IsPayAccumulationFund", false)
+                }
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-4">
+                            <button type="button" class="btn btn-info bg-lightblue btn-lg btn-block" onclick="history.back();">取消</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">保存</button>
+                        </div>
+                    </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<script>
+
+    $(function () {
+
+        //手动更改社保基数
+        $("[name='SocialSecurityBase']").blur(function () {
+            var val = $.trim($("[name='ssPayProportion']").val());
+            $("#SSMonthAccount").text(Math.round(Number($(this).val()) * Number(val.substring(0, val.length - 1)) / 100, 2));
+        })
+
+        //手动更改公积金基数
+        $("[name='AccumulationFundBase']").blur(function () {
+            var val = $.trim($("[name='afPayProportion']").val());
+            $("#AFMonthAccount").text(Math.round(Number($(this).val()) * Number(val.substring(0, val.length - 1)) / 100, 2));
+        });
+
+
+        //提交
+        $("button[type='submit']").click(function () {
+            var SocialSecurityBase = Number($("[name='SocialSecurityBase']").val());
+            var SSMinBase = Number($("#SSMinBase").text());
+            var SSMaxBase = Number($("#SSMaxBase").text());
+            if (SocialSecurityBase < SSMinBase || SocialSecurityBase > SSMaxBase) {
+                alert("所填社保基数不符合范围");
+                return false;
+            }
+
+            var AccumulationFundBase = Number($("[name='AccumulationFundBase']").val());
+            var AFMinBase = Number($("#AFMinBase").text());
+            var AFMaxBase = Number($("#AFMaxBase").text());
+            if (AccumulationFundBase < AFMinBase || AccumulationFundBase > AFMaxBase) {
+                alert("所填公积金基数不符合范围");
+                return false;
+            }
+        });
+
+        //户籍性质改变时
+        $("#HouseholdProperty").change(function () {
+            var InsuranceArea = $("#InsuranceArea[type='hidden']").val();
+            var Accumulation = $("#AccumulationFundArea[type='hidden']").val();
+
+            var HouseholdProperty = $(this).find("option:selected").text();
+
+            if (HouseholdProperty == "请选择")
+                return;
+
+            if (InsuranceArea != undefined) {
+                $.ajax({
+                    url: '@Url.Action("GetEnterpriseSocialSecurityByAreaList")?area=' + InsuranceArea + "&HouseHoldProperty=" + HouseholdProperty,
+                    type: 'get',
+                    dataType: "json",
+                    success: function (data) {
+                        $("#SSEnterpriseList").empty();
+                        $.each(data, function (i, value) {
+                            $("#SSEnterpriseList").append("<option value='" + value.EnterpriseID + "'>" + value.EnterpriseName + "</option>");
+                        });
+                        $("#SSEnterpriseList").change();
+                    },
+                    error: function () {
+                        alert("服务器错误");
+                    }
+                });
+            }
+
+            if (Accumulation != undefined) {
+
+                $.ajax({
+                    url: '@Url.Action("GetEnterpriseSocialSecurityByAreaList")?area=' + Accumulation + "&HouseHoldProperty=" + HouseholdProperty,
+                    type: 'get',
+                    dataType: "json",
+                    success: function (data) {
+                        $("#AFEnterpriseList").empty();
+                        $.each(data, function (i, value) {
+                            $("#AFEnterpriseList").append("<option value='" + value.EnterpriseID + "'>" + value.EnterpriseName + "</option>");
+                        });
+                        $("#AFEnterpriseList").change();
+                    },
+                    error: function () {
+                        alert("服务器错误");
+                    }
+                });
+            }
+        });
+
+        //社保签约单位改变时
+        $("#SSEnterpriseList").change(function () {
+            $.ajax({
+                url: '@Url.Action("GetSSEnterprise")?EnterpriseID=' + $(this).val() + "&HouseholdProperty=" + $("#HouseholdProperty").val(),
+                type: 'get',
+                dataType: "json",
+                success: function (data) {
+                    $("#SSMinBase").text(data.SSMinBase);
+                    $("#SSMaxBase").text(data.SSMaxBase);
+                    $("[name='SocialSecurityBase']").val(data.SSMinBase);
+                    $("[name='ssPayProportion']").val(data.SSPayProportion + "%");
+                    $("#SSMonthAccount").text(data.SSMonthAccount);
+                },
+                error: function () {
+                    alert("服务器错误");
+                }
+            });
+        });
+
+        //公积金签约单位改变时
+        $("#AFEnterpriseList").change(function () {
+            $.ajax({
+                url: '@Url.Action("GetAFEnterprise")?EnterpriseID=' + $(this).val(),
+                type: 'get',
+                dataType: "json",
+                success: function (data) {
+                    $("#AFMinBase").text(data.AFMinBase);
+                    $("#AFMaxBase").text(data.AFMaxBase);
+                    $("[name='AccumulationFundBase']").val(data.AFMinBase);
+                    $("[name='afPayProportion']").val(data.AFPayProportion + "%");
+                    $("#AFMonthAccount").text(data.AFMonthAccount);
+                },
+                error: function () {
+                    alert("服务器错误");
+                }
+            });
+        });
+    });
+</script>

@@ -260,6 +260,29 @@ namespace WYJK.Entity
         /// </summary>
         public bool IsCanModify { get; set; }
 
+        public string[] ImgUrls { get; set; }
+
+        public int MemberID { get; set; }
+        public string InviteCode { get; set; }
+
+
+        public string SocialSecurityNo { get; set; }
+        /// <summary>
+        /// 签约单位
+        /// </summary>
+        public string SSEnterpriseList { get; set; }
+        public string SocialSecurityBase { get; set; }
+        public string ssPayProportion { get; set; }
+
+
+        public string AccumulationFundNo { get; set; }
+        /// <summary>
+        /// 签约单位
+        /// </summary>
+        public string AFEnterpriseList { get; set; }
+        public string AccumulationFundBase { get; set; }
+        public string afPayProportion { get; set; }
+
 
     }
 

@@ -369,6 +369,7 @@
     <Content Include="Content\images\loading.gif" />
     <Content Include="Content\images\loading_072.gif" />
     <Content Include="Content\images\logo.png" />
+    <Content Include="Content\images\nopic.jpg" />
     <Content Include="Content\images\sort_asc.png" />
     <Content Include="Content\images\sort_both.png" />
     <Content Include="Content\images\sort_desc.png" />

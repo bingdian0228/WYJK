@@ -28,6 +28,14 @@
                     </a>
                 </div>
             </li>
+            <li class="@(controller == "CompayVer" ? "active" : "")">
+                <div class="cate-tag">
+                    <a href="@Url.Action("CertificationAudit", "User")" class="white center-block">
+                        <i class="icon-w icon-info-w am-margin-right-xs"></i>
+                        <span class="am-text-middle">企业认证</span>
+                    </a>
+                </div>
+            </li>
             <li class="@(controller == "UserInsurance" ? "active":"")">
                 <div class="cate-tag">
                     <a href="@Url.Action("Index", "UserInsurance")" class="white center-block">

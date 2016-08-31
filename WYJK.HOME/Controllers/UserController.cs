@@ -15,6 +15,10 @@ using WYJK.Framework.EnumHelper;
 using WYJK.HOME.Models;
 using WYJK.Framework.Helpers;
 using WYJK.HOME.Service;
+using System.Configuration;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 
 namespace WYJK.HOME.Controllers
 {
@@ -209,6 +213,64 @@ namespace WYJK.HOME.Controllers
         }
 
         #endregion
+
+        #region 企业认证
+
+        private HttpClient client = new HttpClient();
+        private string url = ConfigurationManager.AppSettings["ServerUrl"] + "/api";
+        private JsonMediaTypeFormatter formatter = System.Web.Http.GlobalConfiguration.Configuration.Formatters.Where(f =>
+        {
+            return f.SupportedMediaTypes.Any(v => v.MediaType.Equals("application/json", StringComparison.CurrentCultureIgnoreCase));
+        }).FirstOrDefault() as JsonMediaTypeFormatter;
+
+
+        public async Task<ActionResult> CertificationAudit()
+        {
+            var req = await client.GetAsync(url + "/Member/GetEnterpriseCertificationDetails?memberID=" + CommonHelper.CurrentUser.MemberID);
+            var model = (await req.Content.ReadAsAsync<JsonResult<CertificationAudit>>()).Data;
+            var req1 = await client.GetAsync(url + "/Member/GetIndustryType");
+            ViewBag.IndustryType = (await req1.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+            var req2 = await client.GetAsync(url + "/Member/GetEnterprisePeopleNum");
+            ViewBag.EnterprisePeopleNum = (await req2.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+
+            return View(model ?? new Entity.CertificationAudit());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CertificationAudit(CertificationAudit model,string ProvinceCode, string CityCode, string CountyCode, HttpPostedFileBase EnterpriseBusinessLicenseImg)
+        {
+            #region 将编码变成名称
+            string sqlstr = "select * from Region where RegionCode = '{0}'";
+            string ProvinceName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, ProvinceCode)).RegionName;
+            string CityName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, CityCode)).RegionName;
+            string CountyName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, CountyCode)).RegionName;
+            #endregion
+
+            model.EnterpriseArea = ProvinceName + "|" + CityName + "|" + CountyName;
+
+            var bytes = new byte[EnterpriseBusinessLicenseImg.ContentLength];
+            EnterpriseBusinessLicenseImg.InputStream.Read(bytes, 0, EnterpriseBusinessLicenseImg.ContentLength);
+
+            var fileContent = new ByteArrayContent(bytes);
+            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = "EnterpriseBusinessLicense.jpg" };
+
+            var requpload = await client.PostAsync(url + "/Upload/MultiUpload", new MultipartFormDataContent() { fileContent });
+            var resultupload = await requpload.Content.ReadAsAsync<JsonResult<List<string>>>();
+
+            var req = await client.PostAsync(url + "/Member/CommitEnterpriseCertification", new { CommonHelper.CurrentUser.MemberID, model.EnterpriseName, model.EnterpriseTax, model.EnterpriseType, model.EnterpriseArea, model.EnterpriseLegal, model.EnterpriseLegalIdentityCardNo, model.EnterprisePeopleNum, model.SocialSecurityCreditCode, EnterpriseBusinessLicense = resultupload.Data.FirstOrDefault(), model.EnterprisePositionName }, formatter);
+            var result = await req.Content.ReadAsAsync<JsonResult<object>>();
+
+            TempData["Message"] = result.Data;
+            TempData["MessageType"] = true;
+
+            var req1 = await client.GetAsync(url + "/Member/GetIndustryType");
+            ViewBag.IndustryType = (await req1.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+            var req2 = await client.GetAsync(url + "/Member/GetEnterprisePeopleNum");
+            ViewBag.EnterprisePeopleNum = (await req2.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+            return View(model ?? new Entity.CertificationAudit());
+        }
+
+        #endregion  
 
         #region 显示验证码
         /// <summary>

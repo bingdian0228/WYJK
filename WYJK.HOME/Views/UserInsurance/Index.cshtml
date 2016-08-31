@@ -2,30 +2,30 @@
 @{
     Layout = "~/Views/User/_Layout_user.cshtml";
 }
-@Html.Partial("~/Views/_Pager.cshtml") 
+@Html.Partial("~/Views/_Pager.cshtml")
 
 <div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
     <div class="panel panel-default bg-lightgrey am-margin-bottom-0">
         <div class="panel-heading">
-        @using (Html.BeginForm("Index", "UserInsurance", FormMethod.Get))
-        {
-            <h3 class="panel-title row">
-                <div class="col-lg-3">
-                    @Html.Hidden("PageIndex")
-                    @Html.TextBox("SocialSecurityPeopleName", null,new { @class= "form-control" ,placeholder = "姓名" })
-                </div>
-                <div class="col-lg-3">
-                    @Html.DropDownList("HouseholdProperty", ViewData["HouseholdProperty"] as SelectList, new { @class = "form-control" })
-                </div>
-                <div class="col-lg-3">
-                    @Html.TextBox("InsuranceArea", null, new { @class = "form-control", placeholder = "参保城市" })
-                </div>
-                <div class="col-lg-3 text-right">
-                    <button type="button" id="search" class="btn btn-info bg-lightblue">查询</button>
-                </div>
-            </h3>
-        }
-           
+            @using (Html.BeginForm("Index", "UserInsurance", FormMethod.Get))
+            {
+                <h3 class="panel-title row">
+                    <div class="col-lg-3">
+                        @Html.Hidden("PageIndex")
+                        @Html.TextBox("SocialSecurityPeopleName", null, new { @class = "form-control", placeholder = "姓名" })
+                    </div>
+                    <div class="col-lg-3">
+                        @Html.DropDownList("HouseholdProperty", ViewData["HouseholdProperty"] as SelectList, new { @class = "form-control" })
+                    </div>
+                    <div class="col-lg-3">
+                        @Html.TextBox("InsuranceArea", null, new { @class = "form-control", placeholder = "参保城市" })
+                    </div>
+                    <div class="col-lg-3 text-right">
+                        <button type="button" id="search" class="btn btn-info bg-lightblue">查询</button>
+                    </div>
+                </h3>
+            }
+
         </div>
 
         <form action="/UserInsurance/StopSocialSecurity" method="post">
@@ -41,6 +41,7 @@
                                         <input type="checkbox" name="cbxSS" id="" value="@item.SocialSecurityPeopleID" aria-label="...">
                                     </label>
                                 </div>
+                                <a href="@Url.Action("Edit", new { item.SocialSecurityPeopleID })">编辑</a>
                             </div>
                             <div class="col-lg-11">
                                 <dl class="am-margin-0">
@@ -118,7 +119,7 @@
 
         </form>
 
-        
+
     </div>
 </div>
 @section Footer{

@@ -91,6 +91,9 @@
 
                 var HouseholdProperty = $(this).find("option:selected").text();
 
+                if (HouseholdProperty == "请选择")
+                    return;
+
                 if (InsuranceArea != undefined) {
                     $.ajax({
                         url: '@Url.Action("GetEnterpriseSocialSecurityByAreaList", "CustomerService")?area=' + InsuranceArea + "&HouseHoldProperty=" + HouseholdProperty,
@@ -423,7 +426,6 @@
                 {
                     foreach (var ImgUrl in ImgUrls)
                     {
-
                         <div class="formControls col-2" style="position:relative">
                             <a href="/@ImgUrl" target="_blank" name="img"><img src="/@ImgUrl" height="100" width="100" /></a>
                         </div>
