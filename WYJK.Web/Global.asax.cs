@@ -74,7 +74,7 @@ namespace WYJK.Web
 
             #region 针对借款每月1号自动还款
             Timer Timer11 = new Timer();
-            Timer11.Elapsed += new ElapsedEventHandler(business1Before1Minutes);
+            Timer11.Elapsed += new ElapsedEventHandler(business1Before1Hours);
             Timer11.Interval = 1000;
             Timer11.AutoReset = true;
             Timer11.Enabled = true;
@@ -122,7 +122,7 @@ namespace WYJK.Web
                         foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
                         {
                             //如果已经超过3个月，但是还没还款，则逾期
-                            if (memberLoanAudit.AlreadyLoanDate.AddMonths(3) >= DateTime.Now)
+                            if (memberLoanAudit.AlreadyLoanDate.AddMonths(3) <= DateTime.Now)
                             {
 
                                 ILoanRepaymentService _loanRepaymentService = new LoanRepaymentService();
@@ -132,7 +132,10 @@ namespace WYJK.Web
                                 if (memberLoanRepaymentList != null && memberLoanRepaymentList.Count == 0)
                                 {
                                     //变已逾期
-                                    DbHelper.ExecuteSqlCommand($"update MemberLoanRepayment set RepaymentStatus=2 where ID={memberLoanAudit.ID}", null);
+                                    DbHelper.ExecuteSqlCommand($"update MemberLoanAudit set RepaymentStatus=2 where ID={memberLoanAudit.ID}", null);
+
+
+                                    /**********************************逾期提醒**************************************/
                                 }
                             }
                         }
@@ -217,8 +220,8 @@ namespace WYJK.Web
                                 {
                                     if ((t2.Year * 12 + t2.Month - (t1.Year * 12 + t1.Month)) > memberLoanRepaymentList.Count)
                                     {
-                                        //变已逾期 待开发
-                                        DbHelper.ExecuteSqlCommand($"update MemberLoanRepayment set RepaymentStatus=2 where ID={memberLoanAudit.ID}", null);
+                                        //变已逾期
+                                        DbHelper.ExecuteSqlCommand($"update MemberLoanAudit set RepaymentStatus=2 where ID={memberLoanAudit.ID}", null);
                                     }
                                 }
                             }
@@ -244,14 +247,14 @@ namespace WYJK.Web
         /// </summary>
         /// <param name="source"></param>
         /// <param name="e"></param>
-        public void business1Before1Minutes(object source, System.Timers.ElapsedEventArgs e)
+        public void business1Before1Hours(object source, System.Timers.ElapsedEventArgs e)
         {
             int CurrentDay = DateTime.Now.Day;
             int CurrentHour = DateTime.Now.Hour;
             int CurrentMinute = DateTime.Now.Minute;
             int CurrentSecond = DateTime.Now.Second;
 
-            //定制时间 每月1号前1分钟 开始执行
+            //定制时间 每月1号 开始执行
             int CustomDay = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1).Day;
             int CustomHour = 23;
             int CustomMinute = 00;
@@ -262,26 +265,29 @@ namespace WYJK.Web
             if (CurrentDay == CustomDay && CurrentHour == CustomHour
                 && CurrentMinute == CustomMinute && CurrentSecond == CustomSecond)
             {
-                Console.WriteLine("每月1号前一分钟 开始执行");
+                Console.WriteLine("每月1号 开始执行");
 
-                using (TransactionScope transaction = new TransactionScope())
+                //using (TransactionScope transaction = new TransactionScope())
+                //{
+                try
                 {
-                    try
+                    throw new Exception("error");
+                    /*
+                        【未参保（已付款）+待办】（此部分不能减掉）+正常+剩余=余额
+                        1、当前用户还款金额<=剩余金额，则扣余额
+                        2、还款金额<=正常+剩余，则扣余额&&正常=>待续费
+                        3、还款金额>正常+剩余，则不能扣款
+                    */
+
+                    List<Members> memberList = DbHelper.Query<Members>("select * from Members");//查询所有用户
+
+                    Debug.WriteLine(DateTime.Now);
+
+                    LoanController loanController = new LoanController();
+
+                    foreach (Members members in memberList)
                     {
-                        /*
-                            【未参保（已付款）+待办】（此部分不能减掉）+正常+剩余=余额
-                            1、当前用户还款金额<=剩余金额，则扣余额
-                            2、还款金额<=正常+剩余，则扣余额&&正常=>待续费
-                            3、还款金额>正常+剩余，则不能扣款
-                        */
-
-                        List<Members> memberList = DbHelper.Query<Members>("select * from Members");//查询所有用户
-
-                        LoanController loanController = new LoanController();
-
-                        foreach (Members members in memberList)
-                        {
-                            string UnInsuredIsPay_WaitingHandle_Sql = $@"declare @SocialSecurityAmount decimal(18, 2) = 0, @AccumulationFundAmount decimal(18, 2) = 0,@totalAmount decimal(18, 2) = 0
+                        string UnInsuredIsPay_WaitingHandle_Sql = $@"declare @SocialSecurityAmount decimal(18, 2) = 0, @AccumulationFundAmount decimal(18, 2) = 0,@totalAmount decimal(18, 2) = 0
                             select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
                               left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
                               where SocialSecurityPeople.MemberID = { members.MemberID}
@@ -292,10 +298,10 @@ namespace WYJK.Web
                             and ((AccumulationFund.Status =1 and AccumulationFund.IsPay=1) or AccumulationFund.Status=2);
                             select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
                             select @totalAmount";
-                            //未参保（已付款）+待办的金额
-                            decimal UnInsuredIsPay_WaitingHandleAmount = DbHelper.QuerySingle<decimal>(UnInsuredIsPay_WaitingHandle_Sql);
+                        //未参保（已付款）+待办的金额
+                        decimal UnInsuredIsPay_WaitingHandleAmount = DbHelper.QuerySingle<decimal>(UnInsuredIsPay_WaitingHandle_Sql);
 
-                            string Normal_Sql = $@"declare @SocialSecurityAmount decimal(18, 2) = 0, @AccumulationFundAmount decimal(18, 2) = 0,@totalAmount decimal(18, 2) = 0
+                        string Normal_Sql = $@"declare @SocialSecurityAmount decimal(18, 2) = 0, @AccumulationFundAmount decimal(18, 2) = 0,@totalAmount decimal(18, 2) = 0
                             select @SocialSecurityAmount += SocialSecurity.SocialSecurityBase * SocialSecurity.PayProportion / 100 from SocialSecurityPeople
                               left join SocialSecurity on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
                               where SocialSecurityPeople.MemberID = { members.MemberID}
@@ -306,22 +312,64 @@ namespace WYJK.Web
                             and AccumulationFund.Status=3;
                             select @totalAmount = @SocialSecurityAmount + @AccumulationFundAmount;
                             select @totalAmount";
-                            //正常金额
-                            decimal NormalAmount = DbHelper.QuerySingle<decimal>(Normal_Sql);
-                            //其它金额
-                            decimal OtherAmount = members.Account - UnInsuredIsPay_WaitingHandleAmount - NormalAmount;
+                        //正常金额
+                        decimal NormalAmount = DbHelper.QuerySingle<decimal>(Normal_Sql);
+                        //其它金额
+                        decimal OtherAmount = members.Account - UnInsuredIsPay_WaitingHandleAmount - NormalAmount;
 
-                            //查询当前用户的还款金额(只针对半年期和一年期)
-                            decimal RepaymentAmount = 0;//还款金额
-                            List<MemberLoanAudit> memberLoanAuditList = DbHelper.Query<MemberLoanAudit>($"select * from MemberLoanAudit where MemberID={members.MemberID} and LoanTerm in(2,3) and Status=4 and RepaymentStatus<>3");
+                        //查询当前用户的还款金额(只针对半年期和一年期)
+                        decimal RepaymentAmount = 0;//还款金额
+                        List<MemberLoanAudit> memberLoanAuditList = DbHelper.Query<MemberLoanAudit>($"select * from MemberLoanAudit where MemberID={members.MemberID} and LoanTerm in(2,3) and Status=4 and RepaymentStatus<>3");
+                        foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
+                        {
+                            //正常或逾期
+                            MemberLoanRepayment memberLoanRepayment = loanController.GetMemberLoanRepayment(memberLoanAudit.ID);
+                            RepaymentAmount += memberLoanRepayment.TotalAmount;
+
+                            //如果是逾期，则查询交完逾期额后是否至少还能交一个月
+                            if (memberLoanRepayment.RepaymentType == "1")
+                            {
+                                int period = 0;
+                                if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.HalfYear))
+                                {
+                                    period = 6;
+                                }
+                                else if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
+                                {
+                                    period = 12;
+                                }
+                                //已交月数，算上本次
+                                int IsRepaymentedMonth = DbHelper.QuerySingle<int>($"select count(*) from MemberLoanRepayment left join MemberLoanRepaymentDetail on MemberLoanRepayment.id=MemberLoanRepaymentDetail.HuanID  where JieID={memberLoanAudit.ID}") + memberLoanRepayment.DetailList.Count;
+                                if (IsRepaymentedMonth < period)
+                                {
+                                    RepaymentAmount += memberLoanRepayment.DetailList[0].BenJin + memberLoanRepayment.DetailList[0].LiXi;
+                                }
+                            }
+                        }
+
+                        //当前用户还款金额<=剩余金额，则扣余额
+                        if (RepaymentAmount > 0 && RepaymentAmount <= NormalAmount + OtherAmount)
+                        {
+                            //扣余额
+                            DbHelper.ExecuteSqlCommand($"update Members set Account-={RepaymentAmount} where MemberID={members.MemberID}", null);
+
+                            //还款
                             foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
                             {
-                                //正常或逾期
-                                MemberLoanRepayment memberLoanRepayment = loanController.GetMemberLoanRepayment(memberLoanAudit.ID);
-                                RepaymentAmount += memberLoanRepayment.TotalAmount;
+                                string RepaymentType = string.Empty;
+                                if (memberLoanAudit.RepaymentStatus == "1")
+                                {
+                                    RepaymentType = "2";
+                                }
+                                else if (memberLoanAudit.RepaymentStatus == "2")
+                                {
+                                    RepaymentType = "1";
+                                }
 
-                                //如果是逾期，则查询交完逾期额后是否至少还能交一个月
-                                if (memberLoanRepayment.RepaymentType == "1")
+                                loanController.MemberLoanRepayment(memberLoanAudit.ID, RepaymentType);
+
+                                //如果是逾期交，则判断是否需要交本月
+                                if (RepaymentType == "1")
                                 {
                                     int period = 0;
                                     if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.HalfYear))
@@ -332,84 +380,40 @@ namespace WYJK.Web
                                     {
                                         period = 12;
                                     }
-                                    //已交月数，算上本次
-                                    int IsRepaymentedMonth = DbHelper.QuerySingle<int>($"select count(*) from MemberLoanRepayment left join MemberLoanRepaymentDetail on MemberLoanRepayment.id=MemberLoanRepaymentDetail.HuanID  where JieID={memberLoanAudit.ID}") + memberLoanRepayment.DetailList.Count;
+                                    //已交月数
+                                    int IsRepaymentedMonth = DbHelper.QuerySingle<int>($"select count(*) from MemberLoanRepayment left join MemberLoanRepaymentDetail on MemberLoanRepayment.id=MemberLoanRepaymentDetail.HuanID  where JieID={memberLoanAudit.ID}");
                                     if (IsRepaymentedMonth < period)
                                     {
-                                        RepaymentAmount += memberLoanRepayment.DetailList[0].BenJin + memberLoanRepayment.DetailList[0].LiXi;
+                                        loanController.MemberLoanRepayment(memberLoanAudit.ID, "2");
                                     }
                                 }
+
                             }
 
-                            //当前用户还款金额<=剩余金额，则扣余额
-                            if (RepaymentAmount > 0 && RepaymentAmount <= NormalAmount + OtherAmount)
+                            if (RepaymentAmount > OtherAmount)
                             {
-                                //扣余额
-                                DbHelper.ExecuteSqlCommand($"update Members set Account-={RepaymentAmount} where MemberID={members.MemberID}", null);
-
-                                //还款
-                                foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
-                                {
-                                    string RepaymentType = string.Empty;
-                                    if (memberLoanAudit.RepaymentStatus == "1")
-                                    {
-                                        RepaymentType = "2";
-                                    }
-                                    else if (memberLoanAudit.RepaymentStatus == "2")
-                                    {
-                                        RepaymentType = "1";
-                                    }
-
-                                    loanController.MemberLoanRepayment(memberLoanAudit.ID, RepaymentType);
-
-                                    //如果是逾期交，则判断是否需要交本月
-                                    if (RepaymentType == "1")
-                                    {
-                                        int period = 0;
-                                        if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.HalfYear))
-                                        {
-                                            period = 6;
-                                        }
-                                        else if (memberLoanAudit.LoanTerm == Convert.ToString((int)LoanTermEnum.OneYearPeriod))
-                                        {
-                                            period = 12;
-                                        }
-                                        //已交月数
-                                        int IsRepaymentedMonth = DbHelper.QuerySingle<int>($"select count(*) from MemberLoanRepayment left join MemberLoanRepaymentDetail on MemberLoanRepayment.id=MemberLoanRepaymentDetail.HuanID  where JieID={memberLoanAudit.ID}");
-                                        if (IsRepaymentedMonth < period)
-                                        {
-                                            loanController.MemberLoanRepayment(memberLoanAudit.ID, "2");
-                                        }
-                                    }
-
-                                }
-
-                                if (RepaymentAmount <= OtherAmount)
-                                {
-                                    return;
-                                }
-                                else {
-                                    //正常变待续费
-                                    DbHelper.ExecuteSqlCommand($@"update SocialSecurity set Status=4 where SocialSecurityPeopleID in(select SocialSecurityPeopleID from SocialSecurityPeople where MemberID={members.MemberID}) and Status=3;
+                                //正常变待续费
+                                DbHelper.ExecuteSqlCommand($@"update SocialSecurity set Status=4 where SocialSecurityPeopleID in(select SocialSecurityPeopleID from SocialSecurityPeople where MemberID={members.MemberID}) and Status=3;
                                                                 update AccumulationFund set Status=4 where SocialSecurityPeopleID in(select SocialSecurityPeopleID from SocialSecurityPeople where MemberID={members.MemberID}) and Status=3;", null);
-                                }
-
                             }
+
                         }
+                    }
 
-                        transaction.Complete();
-                    }
-                    catch (Exception ex)
-                    {
-                        LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
-
-                        logManager.SaveLog(ex.ToString(), DateTime.Now);
-                    }
-                    finally
-                    {
-                        transaction.Dispose();
-                    }
+                    //transaction.Complete();
                 }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(DateTime.Now);
+                    LogManager logManager = new LogManager(Server.MapPath("~/MvcException.txt"));
+
+                    logManager.SaveLog(ex.ToString(), DateTime.Now);
+                }
+                finally
+                {
+                    //transaction.Dispose();
+                }
+                //}
             }
         }
 

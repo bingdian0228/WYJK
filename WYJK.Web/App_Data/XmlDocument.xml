@@ -2450,7 +2450,7 @@
             <param name="source"></param>
             <param name="e"></param>
         </member>
-        <member name="M:WYJK.Web.MvcApplication.business1Before1Minutes(System.Object,System.Timers.ElapsedEventArgs)">
+        <member name="M:WYJK.Web.MvcApplication.business1Before1Hours(System.Object,System.Timers.ElapsedEventArgs)">
             <summary>
             1号针对半年期、一年期扣款
             </summary>
