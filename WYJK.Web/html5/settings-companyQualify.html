@@ -1,0 +1,234 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="settings-choseQualify.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					企业资质认证
+				</h1>
+			</header>
+			<!--资质提交表单-->
+			<div class="am-padding-sm submit">
+				<form action="" class="am-form am-form-inline" id="form" data-am-validator>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">企业名称：</label>
+						<input type="text" name="EnterpriseName" class="am-form-field am-radius" placeholder="请输入营业执照名称" required="required">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">行业类型：</label>
+							<select id="typeSelect" name="EnterpriseType" class="l-selectbox am-padding-left-0" required="required">
+								<option value="">请您选择行业类型</option>
+							</select>
+						</div>
+					</div>
+					<!--城市列表可以做成通讯录-->
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">所在省份：</label>
+							<select id="province" class="l-selectbox am-padding-left-0" required="required">
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">所在城市：</label>
+							<select id="city" class="l-selectbox am-padding-left-0" required="required">
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">法人：</label>
+						<input type="text" name="EnterpriseLegal" class="am-form-field am-radius" placeholder="请输入公司法人" required="required">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">法人身份证：</label>
+						<input type="text" name="EnterpriseLegalIdentityCardNo" class="am-form-field am-radius" placeholder="请输入法人身份证号码" required="required">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">企业人数：</label>
+							<select id="numSelect" name="EnterprisePeopleNum" class="l-selectbox am-padding-left-0" required="required">
+								<option value="">请输入企业人数</option>
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">社保信用代码：</label>
+						<input type="text" name="SocialSecurityCreditCode" class="am-form-field am-radius" placeholder="请输入社保信用号码(选填)">
+					</div>
+
+					<div class="am-form-group am-form-icon">
+						<div class="am-padding-sm bg_white l-upload-box am-radius relative">
+							<label class="l-label">营业执照：</label>
+							<div class="l-upimg-box relative">
+								<input type="file" id="p-license" accept="image/*" class="l-img-input" required="required" />
+								<div class="l-preview">
+									<img src="" id="p-license-show" />
+									<input type="hidden" name="EnterpriseBusinessLicense" value="" />
+								</div>
+							</div>
+							<div class="grey">
+								上传正面照
+							</div>
+						</div>
+					</div>
+					<!--数据信息-->
+					<input type="hidden" name="MemberID" id="MemberID" value="" />
+					<input type="hidden" name="EnterpriseArea" id="EnterpriseArea" value="" />
+					<!--btn-->
+					<div class="am-g">
+						<div class="am-u-sm-6">
+							<a href="settings-choseQualify.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">取消</a>
+						</div>
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="save">保存</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/previewImage.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/PCASClass.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="type-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<option value="{{this}}">{{this}}</option>
+			{{/each}}
+		</script>
+		<script id="companyNum-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<option value="{{this}}">{{this}}</option>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var $form = $('#form');
+				loadingFun(true);
+				//获取用户ID
+				var id = Cookies.get("MemID");
+				$('#MemberID').val(id);
+				//获取行业类型
+				var typeTmpl = Handlebars.compile($("#type-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetIndustryType",
+					async: true,
+					success: function(d) {
+						loadingFun(false);
+						if (d.status) {
+							if (d.Data.length) {
+								$('#typeSelect').append(typeTmpl(d.Data));
+							} else {
+								alertFun("获取行业类型失败！")
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//获取企业人数
+				var numTmpl = Handlebars.compile($("#companyNum-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetEnterprisePeopleNum",
+					async: true,
+					success: function(d) {
+						loadingFun(false);
+						if (d.status) {
+							if (d.Data.length) {
+								$('#numSelect').append(numTmpl(d.Data));
+							} else {
+								alertFun("获取企业人数参数失败！")
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//预览图像
+				new previewImage('p-license', 'p-license-show');
+				//省市二级联动
+				new PCAS(cityFun, "province", "city");
+				//二级联动回调函数
+				function cityFun() {
+					var p = $('#province').val();
+					var c = $('#city').val();
+					if (p) {
+						var Area = p;
+						if (c != '0') {
+							Area = Area + '|' + c;
+						}
+						$('#EnterpriseArea').val(Area);
+					}
+				}
+				//保存按钮
+				$('#save').click(function() {
+					var flag = $form.validator('isFormValid');
+					if (flag) {
+						var dataModel = $form.serialize();
+						$.ajax({
+							type: "post",
+							url: "/api/Member/CommitEnterpriseCertification",
+							async: true,
+							data: dataModel,
+							success: function(d) {
+								if (d.status) {
+									alertFun(d.Message,function () {
+										window.location.href="settings-center.html"
+									});
+								} else {
+									alertFun(d.Message);
+								}
+							}
+						});
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>

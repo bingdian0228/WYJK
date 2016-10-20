@@ -1,0 +1,225 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="home.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					计算器
+				</h1>
+			</header>
+			<!--计算结果-->
+			<div class="l-insurance-th">
+				<ul class="am-avg-sm-3 am-text-center blue bg_lightblue am-padding-vertical-xs">
+					<li>
+						社保费
+					</li>
+					<li>
+						公积金
+					</li>
+					<li>
+						合计
+					</li>
+				</ul>
+			</div>
+			<ul class="am-avg-sm-3 am-text-center bg_white am-padding-vertical-xs" id="result-box">
+				<li>
+					0
+				</li>
+				<li>
+					0
+				</li>
+				<li>
+					0
+				</li>
+			</ul>
+			<!--表单-->
+			<div class="am-padding-sm bg_white am-margin-vertical-sm submit">
+				<form action="" id="form" class="am-form" data-am-validator>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label for="idcate" class="l-label">户籍性质：</label>
+							<select id="idcate" name="HouseholdProperty" class="l-selectbox am-padding-left-0" required="required">
+								<option value="">请您选择户籍性质</option>
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">参保省份：</label>
+							<select id="SBprovince" class="l-selectbox am-padding-left-0" required="required">
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">参保城市：</label>
+							<select id="SBcity" class="l-selectbox am-padding-left-0">
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">社保基数：</label>
+						<input type="text" name="SocialSecurityBase" id="SBbase" class="am-form-field am-radius" placeholder="请输入社保基数" disabled="disabled">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">公积金基数：</label>
+						<input type="text" name="AccountRecordBase" id="Fundbase" class="am-form-field am-radius" placeholder="请输入公积金基数" disabled="disabled">
+					</div>
+					<!--储存信息-->
+					<input type="hidden" name="InsuranceArea" id="InsuranceArea" value="" />
+					<!--btn-->
+					<div class="am-g">
+						<div class="am-u-sm-6">
+							<button type="button" id="calculateBtn" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">计算</button>
+						</div>
+						<div class="am-u-sm-6">
+							<a href="insurance-add.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">缴社保</a>
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/PCASClass.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="IDcate-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<option value="{{this}}">{{this}}</option>
+			{{/each}}
+		</script>
+		<script id="result-template" type="text/x-handlebars-template">
+			<li>
+				{{SocialSecuritAmount}}
+			</li>
+			<li>
+				{{AccumulationFundAmount}}
+			</li>
+			<li>
+				{{TotalAmount}}
+			</li>
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				//预先定义
+				var $IDcate = $('#idcate');
+				var $SBbaseTXT = $('#SBbase');
+				var $FundbaseTXT = $('#Fundbase');
+				var $calculateBtn = $('#calculateBtn');
+				var $form = $('#form');
+				//获取户口性质
+				var IDcateTemplate = Handlebars.compile($("#IDcate-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetHouseholdPropertyList",
+					async: false,
+					success: function(d) {
+						$IDcate.append(IDcateTemplate(d.Data));
+					}
+				});
+				//社保参数省份城市二级联动
+				new PCAS(baseFun, "SBprovince", "SBcity");
+				//计算btn
+				$calculateBtn.click(function() {
+					var data = $form.serialize();
+					var flag = $form.validator('isFormValid');
+					var resultTemplate = Handlebars.compile($("#result-template").html());
+					if (flag) {
+						$.getJSON("/api/SocialSecurity/GetSocialSecurityCalculation?" + data, function(d) {
+							$('#result-box').html(resultTemplate(d.Data));
+						});
+					} else {
+						alertFun("请填写完整信息！");
+					}
+				});
+				//基数回调函数
+				function baseFun() {
+					var p = $('#SBprovince').val();
+					var c = $('#SBcity').val();
+					var houseHold = $IDcate.val();
+					if (p) {
+						var Area = p;
+						if (c != '0') {
+							Area = Area + '|' + c;
+						}
+						$('#InsuranceArea').val(Area);
+						if (houseHold) {
+							//获取社保基数
+							$.getJSON('/api/SocialSecurity/GetSocialSecurityBase?area=' + Area + '&HouseholdProperty=' + houseHold, function(d) {
+								if (d.status) {
+									$SBbaseTXT.attr('disabled', false);
+									$SBbaseTXT.attr('placeholder', '输入社保基数（' + d.Data.minBase + '-' + d.Data.maxBase + '）');
+									$SBbaseTXT.attr('min', d.Data.minBase);
+									$SBbaseTXT.attr('max', d.Data.maxBase);
+								} else {
+									$SBbaseTXT.val('');
+									$SBbaseTXT.attr('placeholder', '请先选择城市再输入');
+									alertFun(d.Message);
+									$SBbaseTXT.attr('disabled', true);
+								}
+							});
+							//获取公积金基数
+							$.getJSON('/api/SocialSecurity/GetAccumulationFundBase?area=' + Area + '&HouseholdProperty=' + houseHold, function(d) {
+								if (d.status) {
+									$FundbaseTXT.attr('disabled', false);
+									$FundbaseTXT.attr('placeholder', '输入公积金基数（' + d.Data.minBase + '-' + d.Data.maxBase + '）');
+									$FundbaseTXT.attr('min', d.Data.minBase);
+									$FundbaseTXT.attr('max', d.Data.maxBase);
+								} else {
+									$FundbaseTXT.val('');
+									$FundbaseTXT.attr('placeholder', '请先选择城市再输入');
+									alertFun(d.Message);
+									$FundbaseTXT.attr('disabled', true);
+								}
+							});
+						} else {
+							alertFun("请先选择户籍性质！");
+						}
+					}
+				}
+			});
+		</script>
+	</body>
+
+</html>

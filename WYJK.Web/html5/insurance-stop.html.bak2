@@ -1,0 +1,307 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<!--链接改成history-->
+					<a href="#" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					申请停保
+				</h1>
+			</header>
+			<!--list-->
+			<!--选项卡-->
+			<div class="l-tab stop-insure am-margin-top-sm">
+				<div data-am-widget="tabs" class="am-tabs am-tabs-default am-margin-0">
+					<ul class="am-tabs-nav am-cf">
+						<li class="am-active"><a href="[data-tab-panel-0]" class="am-round first-btn">社保</a></li>
+						<li class=""><a href="[data-tab-panel-1]" class="am-round last-btn">公积金</a></li>
+					</ul>
+					<div class="am-tabs-bd border-0">
+						<div data-tab-panel-0 class="am-tab-panel am-padding-0 am-active">
+							<ul class="am-list am-margin-bottom-0" id="SBlist">
+
+							</ul>
+						</div>
+						<div data-tab-panel-1 class="am-tab-panel am-padding-0">
+							<ul class="am-list am-margin-bottom-0" id="fundList">
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--SBconfirm-->
+			<div class="am-modal am-modal-confirm" tabindex="-1" id="SB-confirm">
+				<div class="am-modal-dialog">
+					<div class="am-modal-hd">请选择停保原因</div>
+					<div class="am-modal-bd">
+						<form action="" class="am-form am-text-left" id="" data-am-validator>
+							<input type="hidden" name="SocialSecurityID" id="SBid" value="" />
+						</form>
+					</div>
+					<div class="am-modal-footer">
+						<span class="am-modal-btn" data-am-modal-cancel>取消</span>
+						<span class="am-modal-btn" data-am-modal-confirm>确定</span>
+					</div>
+				</div>
+			</div>
+			<!--fundConfirm-->
+			<div class="am-modal am-modal-confirm" tabindex="-1" id="fund-confirm">
+				<div class="am-modal-dialog">
+					<div class="am-modal-hd">您，确定停缴公积金吗？</div>
+					<div class="am-modal-bd">
+					</div>
+					<div class="am-modal-footer">
+						<span class="am-modal-btn" data-am-modal-cancel>取消</span>
+						<span class="am-modal-btn" data-am-modal-confirm>确定</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="SBlist-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<li>
+				<div class="bg_lightblue am-padding-vertical-xs am-padding-horizontal-sm">
+					{{SocialSecurityPeopleName}}
+				</div>
+				<a href="user-insure-detail.html?id={{SocialSecurityPeopleID}}" class="am-link-muted">
+					<div class="am-g">
+						<div class="am-u-sm-3">
+							社保
+						</div>
+						<div class="am-u-sm-4">
+							已投{{AlreadyPayMonthCount}}个月
+						</div>
+						<div class="am-u-sm-5 am-text-right">
+							剩余{{RemainingMonthCount}}个月
+						</div>
+						<div class="am-u-sm-8">
+							投保时间：{{PayTime}}
+						</div>
+						<div class="am-u-sm-4 am-text-right">
+							状态：<span class="am-text-warning">{{convert Status}}</span>
+						</div>
+					</div>
+				</a>
+				<div class="am-g">
+					<div class="am-u-sm-12 am-padding-vertical-xs l-item-total am-text-right">
+						<a href="#" data-id="{{SocialSecurityPeopleID}}" class="blue l-stopSB">申请停保</a>
+					</div>
+				</div>
+
+			</li>
+			{{/each}}
+		</script>
+		<script id="fundList-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<li>
+				<div class="bg_lightblue am-padding-vertical-xs am-padding-horizontal-sm">
+					{{SocialSecurityPeopleName}}
+				</div>
+				<a href="#" class="am-link-muted">
+					<div class="am-g">
+						<div class="am-u-sm-3">
+							公积金
+						</div>
+						<div class="am-u-sm-4">
+							已投{{AlreadyPayMonthCount}}个月
+						</div>
+						<div class="am-u-sm-5 am-text-right">
+							剩余{{RemainingMonthCount}}个月
+						</div>
+						<div class="am-u-sm-8">
+							缴费时间：{{PayTime}}
+						</div>
+						<div class="am-u-sm-4 am-text-right">
+							状态：<span class="am-text-warning">{{convert Status}}</span>
+						</div>
+					</div>
+				</a>
+				<div class="am-g">
+					<div class="am-u-sm-12 am-padding-vertical-xs l-item-total am-text-right">
+						<a href="#" data-id="{{SocialSecurityPeopleID}}" class="blue l-stopFund">申请停缴</a>
+					</div>
+				</div>
+			</li>
+			{{/each}}
+		</script>
+		<script id="stopReason-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<label class="am-radio">
+				<input type="radio" name="StopReason" id="" value="{{this}}" required="required"/>{{this}}
+			</label> {{/each}}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get("MemID");
+				var SBtmpl = Handlebars.compile($("#SBlist-template").html());
+				//后退按钮
+				goBack();
+				//loading
+				loadingFun(true);
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetApplyTopList?Type=0&MemberID=" + id,
+					async: true,
+					success: function(d) {
+						loadingFun(false);
+						if (d.status) {
+							if (d.Data.length) {
+								$('#SBlist').html(SBtmpl(d.Data));
+							} else {
+								$('#SBlist').html('<div class="am-text-center am-padding-sm">暂无信息</div>');
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				var fundtmpl = Handlebars.compile($("#fundList-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetApplyTopList?Type=1&MemberID=" + id,
+					async: true,
+					success: function(d) {
+						if (d.status) {
+							if (d.Data.length) {
+								$('#fundList').html(fundtmpl(d.Data));
+							} else {
+								$('#fundList').html('<div class="am-text-center am-padding-sm">暂无信息</div>');
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//获取停保原因
+				var stopReasontmpl = Handlebars.compile($("#stopReason-template").html());
+				var $SBconfirm = $('#SB-confirm');
+				var $fundConfirm = $('#fund-confirm');
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetStopSocialSecurityReason",
+					async: true,
+					success: function(d) {
+						if (d.status) {
+							if (d.Data.length) {
+								$SBconfirm.find("form").append(stopReasontmpl(d.Data));
+								$SBconfirm.find("form input[type=radio]").uCheck();
+							} else {
+								$SBconfirm.find("form").append('<div class="am-text-center am-padding-sm">暂无信息</div>');
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//停止社保按钮
+				$('body').on("click", ".l-stopSB", function() {
+					var SBid = $(this).data("id");
+					$('#SBid').val(SBid);
+					$SBconfirm.modal({
+						relatedTarget: this,
+						closeOnConfirm: false,
+						onConfirm: function(options) {
+							var flag = $SBconfirm.find("form").validator("isFormValid");
+							if (flag) {
+								var dataModel = $SBconfirm.find("form").serialize();
+								$.ajax({
+									type: "post",
+									url: "/api/SocialSecurity/ApplyStopSocialSecurity",
+									async: true,
+									data: dataModel,
+									success: function(d) {
+										if (d.status) {
+											$SBconfirm.modal("close");
+											alertFun(d.Message, function() {
+												window.location.reload();
+											});
+										} else {
+											$SBconfirm.modal("close");
+											alertFun(d.Message);
+										}
+									}
+								});
+							}
+						}
+					});
+				});
+				//停缴公积金
+				$('body').on("click", ".l-stopFund", function() {
+					var fundId = $(this).data("id");
+					$fundConfirm.modal({
+						relatedTarget: this,
+						closeOnConfirm: false,
+						onConfirm: function(options) {
+							$.ajax({
+								type: "post",
+								url: "/api/SocialSecurity/ApplyStopAccumulationFund",
+								async: true,
+								data: {
+									SocialSecurityPeopleID: fundId
+								},
+								success: function(d) {
+									if (d.status) {
+										$fundConfirm.modal("close");
+										alertFun(d.Message, function() {
+											window.location.reload();
+										});
+									} else {
+										$fundConfirm.modal("close");
+										alertFun(d.Message);
+									}
+								}
+							});
+						}
+					});
+				});
+			});
+		</script>
+	</body>
+
+</html>

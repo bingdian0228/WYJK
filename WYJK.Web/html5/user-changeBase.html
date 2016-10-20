@@ -1,0 +1,166 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="#" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					调整基数
+				</h1>
+			</header>
+			<!--内容-->
+			<form action="" class="am-form" id="form" method="post" data-am-validator>
+				<!--储存信息-->
+
+			</form>
+			<!--btn-->
+			<div class="am-g">
+				<div class="am-u-sm-6">
+					<a href="user-insured.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">取消</a>
+				</div>
+				<div class="am-u-sm-6">
+					<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="save">保存</button>
+				</div>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="list-template" type="text/x-handlebars-template">
+			{{#if IsPaySocialSecurity}}
+			<section class="am-panel am-panel-default">
+				<header class="am-panel-hd">
+					<h3 class="am-panel-title">社保基数</h3>
+				</header>
+				<ul class="am-list am-list-static">
+					<li>
+						<div class="">
+							<span>当前基数：</span>
+							<span>{{SocialSecurityBase}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-form-group">
+							<label for="">待申请基数</label>
+							<input type="text" name="SocialSecurityBaseAdjusted" class="js-pattern-intNum am-input-sm" id="" value="{{SocialSecurityBase}}" min="{{SocialSecurityMinBase}}" max="{{SocialSecurityMaxBase}}" placeholder="请输入申请基数">
+						</div>
+						<div class="blue">
+							可交范围：{{SocialSecurityMinBase}}-{{SocialSecurityMaxBase}}
+						</div>
+					</li>
+				</ul>
+			</section>
+			{{/if}} {{#if IsPayAccumulationFund}}
+			<section class="am-panel am-panel-default">
+				<header class="am-panel-hd">
+					<h3 class="am-panel-title">公积金基数</h3>
+				</header>
+				<ul class="am-list am-list-static">
+					<li>
+						<div class="">
+							<span>当前基数：</span>
+							<span>{{AccumulationFundBase}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="">
+							<form action="" class="am-form">
+								<div class="am-form-group">
+									<label for="">待申请基数</label>
+									<input type="text" name="AccumulationFundBaseAdjusted" class="js-pattern-intNum am-input-sm" id="" value="{{AccumulationFundBase}}" min="{{AccumulationFundMinBase}}" max="{{AccumulationFundMaxBase}}" placeholder="请输入申请基数">
+								</div>
+								<div class="blue">
+									可交范围：{{AccumulationFundMinBase}}-{{AccumulationFundMaxBase}}
+								</div>
+							</form>
+						</div>
+					</li>
+				</ul>
+			</section>
+			{{/if}}
+			<input type="hidden" name="SocialSecurityPeopleID" id="SocialSecurityPeopleID" value="{{SocialSecurityPeopleID}}" />
+			<input type="hidden" name="IsPaySocialSecurity" id="IsPaySocialSecurity" value="{{IsPaySocialSecurity}}" />
+			<input type="hidden" name="IsPayAccumulationFund" id="IsPayAccumulationFund" value="{{IsPayAccumulationFund}}" />
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get('MemID');
+				var sID = GetRequest().id;
+				var $form = $('#form');
+				//后退
+				goBack();
+				//获取基数详情
+				var Template = Handlebars.compile($("#list-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/CreateAdjustingBase?SocialSecurityPeopleID=" + sID,
+					async: true,
+					success: function(d) {
+						$form.html(Template(d.Data));
+					}
+				});
+				//保存按钮
+				$('#save').click(function() {
+					var flag = $form.validator('isFormValid');
+					var dataModel = $form.serialize();
+					$.ajax({
+						type: "post",
+						url: "/api/SocialSecurity/PostAdjustingBase",
+						async: true,
+						data: dataModel,
+						success: function(d) {
+							if (d.status) {
+								alertFun(d.Message, function() {
+									window.location.href = "user-insured.html"
+								});
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				});
+			})
+		</script>
+	</body>
+
+</html>

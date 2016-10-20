@@ -38,7 +38,7 @@ namespace WYJK.HOME.Controllers
             //    return Redirect("/UserInsurance/Add1");
             //}
 
-            if (sss.PayedMonthCount(m.MemberID))
+            if (!sss.PayedMonthCount(m.MemberID) && !(_loanSubjectService.GetMemberValue(m.MemberID) > 0))
             {
                 return Redirect("/UserInsurance/Index");
             }

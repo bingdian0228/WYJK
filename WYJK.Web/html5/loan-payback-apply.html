@@ -1,0 +1,244 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="loan-payback.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;" alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					还款
+				</h1>
+			</header>
+			<!--<div>
+				
+			</div>-->
+			<!--余额-->
+			<ul class="am-avg-sm-4 am-margin-sm text-center am-border" id="tabel-info">
+
+			</ul>
+			<!--表单-->
+			<div class="submit">
+				<!--<form action="" class="am-form" data-am-validator>-->
+				<ul class="am-menu bg_white payback-bborder" id="submit-info">
+
+				</ul>
+				<div class="am-navbar bg_grey payback">
+					<div class="am-g">
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="cancel">取消</button>
+						</div>
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="payback-save">保存</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+
+		<script id="table-template" type="text/x-handlebars-template">
+			<li class="am-padding-vertical-xs">本金</li>
+			<li class="am-padding-vertical-xs">利息</li>
+			<li class="am-padding-vertical-xs">滞纳金</li>
+			<li class="am-padding-vertical-xs">月份</li>
+			{{#each DetailList}}
+			<li class="am-padding-vertical-xs">{{BenJin}}</li>
+			<li class="am-padding-vertical-xs">{{LiXi}}</li>
+			<li class="am-padding-vertical-xs">{{ZhiNaJin}}</li>
+			{{/each}} {{#compare MonthStr}}
+			<li class="am-padding-vertical-xs">{{MonthStr}}</li>
+			{{else}}
+			<li class="am-padding-vertical-xs"> 　</li>
+			{{/compare}}
+		</script>
+
+		<script id="info-template" type="text/x-handlebars-template">
+			<li class="am-padding-horizontal-sm am-padding-vertical-xs">
+				<span>还款方式：</span>
+				<span>{{LoanMethod}}</span>
+			</li>
+			<li class="am-padding-horizontal-sm am-padding-vertical-xs">
+				<div class="am-form-group am-form-icon am-margin-0">
+					<div class="l-border-0 bg_white am-radius am-margin-0">
+						<label class="font-weight-n">还款类型：</label>
+						<select id="select" class="l-selectbox am-padding-left-0 l-border-0" required="required" onchange="reload();">
+							{{#each RepaymentTypeList}}
+							<option value="{{Value}}">{{Text}}</option>
+							{{/each}}
+						</select>
+					</div>
+			</li>
+			<li class="am-padding-horizontal-sm am-padding-vertical-xs">
+				<span>还款金额：</span>
+				<span>{{TotalAmount}}</span>
+			</li>
+			<li class="am-padding-horizontal-sm am-padding-vertical-xs">
+				<span>违约金：</span>
+				<span>{{WeiYueJin}}</span>
+			</li>
+
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				//加载中
+				loadingFun(true);
+				var id = Cookies.get('MemID');
+				var Loanid = GetRequest().id;
+				//后退按钮
+				goBack();
+				var Logined = isLogin(id);
+				if(Logined) {
+					//获取简单信息
+					var tabelTemplate = Handlebars.compile($("#table-template").html());
+
+					var infoTemplate = Handlebars.compile($("#info-template").html());
+					$.ajax({
+						type: "get",
+						url: "/api/Loan/MemberLoanRepayment/" + Loanid,
+						async: true,
+						success: function(d) {
+							loadingFun(false);
+							if(d.status) {
+								//注册一个比较大小的Helper,判断v1是否大于v2
+								Handlebars.registerHelper("compare", function(v1, options) {
+									if(v1) {
+										//满足添加继续执行
+										return options.fn(this);
+									} else {
+										//不满足条件执行{{else}}部分
+										return options.inverse(this);
+									}
+								});
+								$('#tabel-info').html(tabelTemplate(d.Data));
+
+								$('#submit-info').html(infoTemplate(d.Data));
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+					$('#payback-save').click(function() {
+						$.ajax({
+							type: "get",
+							url: "/api/Loan/IsCanRepayment/" + Loanid,
+							async: true,
+							success: function(d) {
+								loadingFun(false);
+								if(d.status) {
+									if(d.Data == 1) {
+										MemberLoanRepayment();
+									} else if(d.Data == 0) {
+										alertFun(d.Message);
+									}
+								} else {
+									alertFun(d.Message);
+								}
+							}
+						});
+
+					});
+				}
+
+			});
+
+			function reload() {
+				//加载中
+				loadingFun(true);
+				var Loanid = GetRequest().id;
+				//获取简单信息
+				var tabelTemplate = Handlebars.compile($("#table-template").html());
+
+				var infoTemplate = Handlebars.compile($("#info-template").html());
+				var se = $('select').val();
+				$.ajax({
+					type: "get",
+					url: "/api/Loan/SelectRepaymentType/" + Loanid + '?RepaymentType=' + se,
+					async: true,
+					success: function(d) {
+						loadingFun(false);
+						if(d.status) {
+							//注册一个比较大小的Helper,判断v1是否大于v2
+							Handlebars.registerHelper("compare", function(v1, options) {
+								if(v1) {
+									//满足添加继续执行
+									return options.fn(this);
+								} else {
+									//不满足条件执行{{else}}部分
+									return options.inverse(this);
+								}
+							});
+							$('#tabel-info').html(tabelTemplate(d.Data));
+
+							$('#submit-info').html(infoTemplate(d.Data));
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+			}
+			//新建我要还款
+			function MemberLoanRepayment() {
+				var RepaymentType = $('#select').val();
+				var dataModel = {
+					ID: Loanid,
+					RepaymentType: RepaymentType
+				};
+				$.ajax({
+					type: "post",
+					url: "/api/Loan/MemberLoanRepayment",
+					async: true,
+					data: dataModel,
+					success: function(d) {
+						if(d.status) {
+							window.location.href = "loan-payback-detail.html?id=" + Loanid;
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

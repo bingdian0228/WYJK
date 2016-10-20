@@ -1,7 +1,10 @@
-﻿using System;
+﻿using CMBCHINALib;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -127,21 +130,30 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<AppayLoan> IsCanLoan(int MemberID)
         {
             //判断用户下的社保否在平台缴纳三个月
-            if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
-    left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
-    where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) == 0)
+            if (DbHelper.Query<int>(
+                $@"select 1 from AccountRecord 
+left join SocialSecurity 
+on SocialSecurity.SocialSecurityPeopleID=AccountRecord.SocialSecurityPeopleID 
+where AccountRecord.MemberID={MemberID} and AccountRecord.type=0 and SocialSecurity.Status=3
+group by AccountRecord.SocialSecurityPeopleID
+having COUNT(*)>=3", null).Count() > 0
+                || _loanSubjectService.GetMemberValue(MemberID) > 0)
+            //        if (DbHelper.QuerySingle<int>($@"select count(1) from SocialSecurity 
+            //left join SocialSecurityPeople on SocialSecurityPeople.SocialSecurityPeopleID = SocialSecurity.SocialSecurityPeopleID
+            //where SocialSecurityPeople.MemberID = {MemberID} and SocialSecurity.AlreadyPayMonthCount >= 3 and SocialSecurity.Status = 3", null) > 0
+            //|| _loanSubjectService.GetMemberValue(MemberID) > 0)
             {
                 return new JsonResult<AppayLoan>
                 {
-                    status = false,
-                    Message = "用户至少在平台缴纳三个月社保才可以借款"
+                    status = true,
+                    Message = "进入借款"
                 };
             }
             else {
                 return new JsonResult<AppayLoan>
                 {
-                    status = true,
-                    Message = "进入借款"
+                    status = false,
+                    Message = "用户至少在平台缴纳三个月社保才可以借款"
                 };
             }
         }
@@ -367,6 +379,167 @@ namespace WYJK.Web.Controllers.Http
                 Message = "获取成功",
                 Data = repayment
             };
+        }
+
+        /// <summary>
+        /// 生成还款订单，并调取支付页面
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public JsonResult<dynamic> OrderPay(MemberLoanRepaymentOrderParameter parameter)
+        {
+            MemberLoanRepayment repayment = GetMemberLoanRepayment(parameter.ID, parameter.RepaymentType, false);
+
+            int orderID = DbHelper.ExecuteSqlCommandScalar($@"insert into MemberLoanRepaymentOrder(JieID,RepaymentType,Status) values('{parameter.ID}','{parameter.RepaymentType}','1')", new DbParameter[] { });
+
+            string BranchID = "0532";
+            string CoNo = "019387";
+            string BillNo = orderID.ToString().PadLeft(10, '0');
+            string Amount = Convert.ToDecimal(repayment.TotalAmount).ToString();
+            string Date = DateTime.Now.ToString("yyyyMMdd");
+            string MerchantUrl = ConfigurationManager.AppSettings["ServerUrl"] + "api/Loan/MemberLoanRepayment_Return";
+            if (parameter.PlatType == "1")
+            {
+                #region 移动端
+                string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                return new JsonResult<dynamic>
+                {
+                    status = true,
+                    Message = "提交成功",
+                    Data = new { url = uri }
+                };
+                #endregion
+            }
+            else {
+                #region PC端
+                string m_Action = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC2";//订单提交地址
+                FirmClientClass fm = new FirmClientClass();
+                string dtime = DateTime.Now.ToString("yyyyMMdd");
+                var result = fm.exGenMerchantCode("Superman19810928", dtime, BranchID, CoNo, BillNo, Convert.ToDecimal(Amount).ToString("f"), "", MerchantUrl, "1231", "1231230", "58.56.179.142", "54011600", "");
+                string responseText = "<form name='cbanksubmit' method='post' action='" + m_Action + "'>"
++ "<input type='hidden' name='BranchID' value=" + BranchID + ">"
++ "<input type='hidden' name='CoNo' value=" + CoNo + ">"
++ "<input type='hidden' name='BillNo' value=" + BillNo + ">"
++ "<input type='hidden' name='Amount' value=" + Convert.ToDecimal(Amount).ToString("f") + ">"
++ "<input type='hidden' name='Date' value=" + dtime + ">"
++ "<input type='hidden' name='MerchantUrl' value=" + MerchantUrl + ">"
++ "<input type='hidden' name='MerchantCode' value='" + result.ToString() + "'>"
++ "</form>"
++ "<script>"
++ "document.cbanksubmit.submit()"
++ "</script>";
+                return new JsonResult<dynamic>
+                {
+                    status = true,
+                    Message = "获取成功",
+                    Data = responseText
+                };
+                #endregion
+            }
+
+        }
+
+        private static object locker = new object();
+
+        /// <summary>
+        /// 支付回调
+        /// </summary>
+        /// <param name="Succeed"></param>
+        /// <param name="CoNo"></param>
+        /// <param name="BillNo"></param>
+        /// <param name="Amount"></param>
+        /// <param name="Date"></param>
+        /// <param name="MerchantPara"></param>
+        /// <param name="Msg"></param>
+        /// <param name="Signature"></param>
+        [System.Web.Http.HttpGet]
+        public void MemberLoanRepayment_Return(string Succeed, string CoNo, string BillNo, string Amount, string Date, string MerchantPara, string Msg, string Signature)
+        {
+            string orderID = BillNo.TrimStart('0');
+            MemberLoanRepaymentOrder model = DbHelper.QuerySingle<MemberLoanRepaymentOrder>($"select * from MemberLoanRepaymentOrder where Id='{orderID}'");
+            #region 招行提供
+            /*
+             * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
+             * 先判断是否支付成功
+             * 验证支付成功还要验证支付金额是否和订单的金额一致
+             */
+            string ReturnInfo = "Succeed=" + Succeed + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&MerchantPara=" + MerchantPara + "&Msg=" + Msg + "&Signature=" + Signature;
+            //ReturnInfo = "Succeed=Y&BillNo=001000&Amount=0.01&Date=20160629&Msg=05320193872016062916262934500000001150&Signature=17|14|68|103|5|51|240|207|114|143|173|141|239|172|246|168|116|14|187|166|230|236|195|150|243|90|239|216|233|75|239|171|246|55|182|214|203|96|212|124|184|55|250|3|169|126|210|61|204|152|108|213|216|199|200|188|92|180|241|210|253|149|186|27|";
+            StringBuilder str = new StringBuilder();
+            string upLoadPath = HttpContext.Current.Server.MapPath("~/log/");
+            if (!System.IO.Directory.Exists(upLoadPath))
+            {
+                System.IO.Directory.CreateDirectory(upLoadPath);
+            }
+            str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+            str.Append("\r\n\t请求信息：" + HttpContext.Current.Request.Form);
+            str.Append("\r\n\t参数：" + ReturnInfo);
+            str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+
+            try
+            {
+                string Key_Path = HttpContext.Current.Server.MapPath("~/") + @"key\public.key";//银行公用Key地址
+                FirmClientClass cbmBank = new FirmClientClass();
+                short key = cbmBank.exCheckInfoFromBank(Key_Path, ReturnInfo);
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\tkey：" + key);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+                if (key != 0)//验证银行返回数据是否合法
+                {
+                    string err = cbmBank.exGetLastErr(key);
+                    //throw new Exception(err);
+                    HttpContext.Current.Response.Write("<script>alert('" + err + "')</script>");
+                    return;
+                }
+                if (Succeed.Trim() != "Y")//验证支付结果是否成功
+                {
+                    //throw new Exception("支付失败！");
+                    HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
+                    return;
+                }
+                decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                {
+                    //throw new Exception("支付金额与订单金额不一致！");
+                    HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                str.Append("\r\n" + DateTime.Now.ToString("yyyy.MM.dd HH:mm:ss"));
+                str.Append("\r\n\t错误：" + ex);
+                str.Append("\r\n--------------------------------------------------------------------------------------------------");
+
+            }
+            System.IO.File.AppendAllText(upLoadPath + DateTime.Now.ToString("yyyy.MM.dd") + ".log", str.ToString(), System.Text.Encoding.UTF8);
+
+            #endregion
+            lock (locker)
+            {
+                int memberId = DbHelper.QuerySingle<MemberLoanAudit>("select * from MemberLoanAudit").MemberID;
+                if (model.Status == "1")
+                {
+                    MemberLoanRepaymentParameter parameter = new MemberLoanRepaymentParameter()
+                    {
+                        ID = model.JieID,
+                        RepaymentType = model.RepaymentType
+                    };
+                    
+                    int huanId = MemberLoanRepayment(parameter).Data;
+                    DbHelper.ExecuteSqlCommand($"update MemberLoanRepaymentOrder set status=2,HuanID={huanId} where Id={orderID}", null);
+
+                    HttpContext.Current.Response.StatusCode = 200;
+                    
+                }
+
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={memberId}");
+
+            }
         }
 
         /// <summary>

@@ -1836,6 +1836,31 @@
             还款类型
             </summary>
         </member>
+        <member name="T:WYJK.Entity.MemberLoanRepaymentOrderParameter">
+            <summary>
+            还款订单参数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepaymentOrderParameter.ID">
+            <summary>
+            借款ID
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepaymentOrderParameter.RepaymentType">
+            <summary>
+            还款类型
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberLoanRepaymentOrderParameter.PlatType">
+            <summary>
+            平台类型
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberLoanRepaymentOrder">
+            <summary>
+            还款订单
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.MemberLoanSetting">
             <summary>
             借款参数设置

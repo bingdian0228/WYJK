@@ -1,0 +1,117 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="loan-payback.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;" alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					借款详情
+				</h1>
+			</header>
+			<!--菜单-->
+			<ul class="am-list am-list-static am-margin-top-xs">
+				<li>
+					<div class="am-padding-horizontal-sm">
+						<span>借款金额：</span>
+						<span data-bind="text:ApplyAmount"></span>
+					</div>
+				</li>
+				<li>
+					<div class="am-padding-horizontal-sm">
+						<span>借款余额：</span>
+						<span data-bind="text:LoanBalance"></span>
+					</div>
+				</li>
+				<li>
+					<div class="am-padding-horizontal-sm">
+						<span>时间：</span>
+						<span data-bind="text:AlreadyLoanDate"></span>
+					</div>
+				</li>
+				<li>
+					<div class="am-padding-horizontal-sm">
+						<span>状态：</span>
+						<span data-bind="text:RepaymentStatus"></span>
+					</div>
+				</li>
+				<li>
+					<div class="am-padding-horizontal-sm">
+						<span>还款方式：</span>
+						<span data-bind="text:LoanTerm"></span>
+						<span data-bind="text:LoanMethod"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/knockout-3.4.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				//加载中
+				loadingFun(true);
+				var id = Cookies.get('MemID');
+				var Loanid = GetRequest().id;
+				//后退按钮
+				goBack();
+				var Logined = isLogin(id);
+				if(Logined) {
+					$.ajax({
+						type: "get",
+						url: "/api/Loan/GetMemberLoanAuditDetail/" + Loanid,
+						async: true,
+						success: function(d) {
+							loadingFun(false);
+							if (d.status) {
+								ko.applyBindings(d.Data);
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				}
+			});
+		</script>
+
+	</body>
+
+</html>

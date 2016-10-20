@@ -158,9 +158,11 @@ namespace WYJK.Web.Controllers.Mvc
 
                     #endregion
 
+
+                    List<Members> memberList1 = DbHelper.Query<Members>(sqlMember);
                     #region 检测下月余额是否够用，不够用则状态变为待续费
                     string sqlStr2 = string.Empty;
-                    foreach (Members member in memberList)
+                    foreach (Members member in memberList1)
                     {
                         #region 查询每个用户余额
                         decimal totalAccount = 0;
@@ -252,6 +254,8 @@ namespace WYJK.Web.Controllers.Mvc
                     if (sqlStr3.Trim() != string.Empty)
                         DbHelper.ExecuteSqlCommand(sqlStr3, null);
                     #endregion
+
+                    LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, Contents = "办结扣费" });
 
                     transaction.Complete();
                 }

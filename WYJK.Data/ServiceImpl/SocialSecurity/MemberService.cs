@@ -271,7 +271,7 @@ namespace WYJK.Data.ServiceImpl
                 + " Sex=@Sex,Address=@Address,Phone=@Phone,Email=@Email,QQ=@QQ,Alipay=@Alipay,"
                 + " BankCardNo=@BankCardNo,BankAccount=@BankAccount,UserAccount=@UserAccount,"
                 + " SecondContact=@SecondContact,SecondContactPhone=@SecondContactPhone,InsuranceArea=@InsuranceArea,"
-                + " HouseholdType=@HouseholdType,IsComplete= 1,IsFrozen=@IsFrozen,MemberPhone=@MemberPhone "
+                + " HouseholdType=@HouseholdType,IsComplete= 1 "
                 + " where MemberID=@MemberID";
 
             DbParameter[] parameters = new DbParameter[] {
@@ -294,8 +294,8 @@ namespace WYJK.Data.ServiceImpl
                 new SqlParameter("@SecondContactPhone",model.SecondContactPhone ?? ""),
                 new SqlParameter("@InsuranceArea",model.InsuranceArea ?? ""),
                 new SqlParameter("@HouseholdType",model.HouseholdType ?? ""),
-                new SqlParameter("@IsFrozen",model.IsFrozen),
-                new SqlParameter("@MemberPhone",model.MemberPhone),
+                //new SqlParameter("@IsFrozen",model.IsFrozen),
+                //new SqlParameter("@MemberPhone",model.MemberPhone ?? ""),
                 new SqlParameter("@MemberID",model.MemberID)
             };
 

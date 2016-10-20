@@ -1,0 +1,234 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="home.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;" alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					我的
+				</h1>
+				<div class="am-header-right am-header-nav">
+					<a href="settings-center.html" class="">
+						<i class="am-header-icon am-icon-gear"></i>
+					</a>
+				</div>
+			</header>
+			<!--主页-->
+			<div class="l-userBg am-text-center blue">
+				<div id="account-info">
+				</div>
+				<div><span>账户状态：</span><span id="status">待续费</span></div>
+				<!--保险按钮-->
+				<div class="l-menuBox">
+					<ul class="am-avg-sm-3">
+						<li>
+							<a href="user-noInsured.html" class="blue">
+								<img src="img/Not-insured.png" width="20" height="20" />
+								<div class="am-text-xs">未参保</div>
+								<i></i>
+							</a>
+						</li>
+						<li>
+							<a href="user-agency.html" class="blue">
+								<img src="img/agency.png" width="20" height="20" />
+								<div class="am-text-xs">代办</div>
+								<i></i>
+							</a>
+						</li>
+						<li>
+							<a href="user-insured.html" class="blue">
+								<img src="img/nor.png" width="20" height="20" />
+								<div class="am-text-xs">正常</div>
+							</a>
+						</li>
+						<li>
+							<a href="user-renew.html" class="blue">
+								<img src="img/renew.png" width="20" height="20" />
+								<div class="am-text-xs">续费</div>
+								<b class="am-icon-circle l-remind-point am-text-danger" style="display: none;"></b>
+								<i></i>
+							</a>
+						</li>
+						<li>
+							<a href="user-toStop.html" class="blue">
+								<img src="img/To-be-stopped.png" width="20" height="20" />
+								<div class="am-text-xs">待停</div>
+								<i></i>
+							</a>
+						</li>
+						<li>
+							<a href="user-stoped.html" class="blue">
+								<img src="img/Stop.png" width="20" height="20" />
+								<div class="am-text-xs">已停</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--菜单-->
+			<ul class="am-list">
+				<li class="am-padding-horizontal-sm">
+					<a href="user-order.html" class="am-link-muted arrow-right">我的订单</a>
+				</li>
+				<li class="am-padding-horizontal-sm">
+					<a href="user-billIndex.html" class="am-link-muted arrow-right">账单信息</a>
+				</li>
+				<li class="am-padding-horizontal-sm">
+					<a href="user-msg.html" class="am-link-muted arrow-right">消息</a>
+				</li>
+				<li class="am-padding-horizontal-sm">
+					<a href="insurance-stop.html" class="am-link-muted arrow-right">人员明细</a>
+				</li>
+			</ul>
+			<div class="l-footer-fix"></div>
+			<!--底部菜单-->
+			<div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default l-footer" id="">
+				<ul class="am-navbar-nav am-cf am-avg-sm-5">
+					<li>
+						<a href="home.html" class="">
+							<img src="img/tab_01_nor.png" width="20" height="20" alt="首页" />
+							<span class="am-navbar-label">首页</span>
+						</a>
+					</li>
+					<li>
+						<a href="insurance-index.html" class="">
+							<img src="img/tab_02_nor.png" alt="缴社保" />
+							<span class="am-navbar-label">缴社保</span>
+						</a>
+					</li>
+					<li>
+						<a href="calculator.html" class="calculator">
+							<img src="img/tab_03_nor.png" width="66" height="66" alt="" />
+						</a>
+					</li>
+					<li>
+						<a href="javascript:void(0);" class="loan-btn">
+							<img src="img/tab_04_nor.png" alt="借款" />
+							<span class="am-navbar-label">借款</span>
+						</a>
+					</li>
+					<li>
+						<a href="user-index.html" class="">
+							<img src="img/tab_05_down.png" alt="我的" />
+							<span class="am-navbar-label down">我的</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="info-template" type="text/x-handlebars-template">
+			<img src="{{HeadPortrait}}" class="am-img-thumbnail am-circle" width="120" height="120" />
+			<div class="am-padding-xs am-text-default">
+				{{MemberName}}
+			</div>
+			<div class="">
+				<span>账户余额：</span><span>{{Account}}</span>
+				<span class="am-padding-left-sm">冻结余额：</span>
+				<span>{{Bucha}}</span>
+				<span class="am-text-danger am-icon-question-circle" id="popover"></span>
+			</div>
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get('MemID');
+				var Logined = isLogin(id);
+				if(Logined) {
+					//获取简单信息
+					var infoTemplate = Handlebars.compile($("#info-template").html());
+					$.ajax({
+						type: "get",
+						url: "/api/Member/GetAccountInfo?MemberID=" + id,
+						async: false,
+						success: function(d) {
+							$('#account-info').html(infoTemplate(d.Data));
+						}
+					});
+					//获取冻结金额说明
+					$.ajax({
+						type: "get",
+						url: "/api/Member/GetFreezingAmountInstruction",
+						async: false,
+						success: function(d) {
+							$('#popover').popover({
+								content: d.Data
+							});
+						}
+					});
+					//获取账户状态
+					$.ajax({
+						type: "get",
+						url: "/api/Member/GetAccountStatus?MemberID=" + id,
+						async: true,
+						success: function(d) {
+							$('#status').text(d.Data);
+							if(d.Data == "正常") {
+								$('.l-remind-point').hide();
+							} else {
+								$('.l-remind-point').show();
+							}
+						}
+					});
+					//点击借款是否可以借
+					$('.loan-btn').click(function() {
+						$.ajax({
+							type: "get",
+							url: "/api/Loan/IsCanLoan?MemberID=" + id,
+							async: true,
+							success: function(d) {
+								if(d.status) {
+									$(this).attr('href','loan-index.html');
+								} else {
+									alertFun(d.Message);
+								}
+							}
+						})
+					});
+
+				}
+			});
+		</script>
+	</body>
+
+</html>

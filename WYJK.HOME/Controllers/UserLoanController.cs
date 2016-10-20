@@ -139,13 +139,21 @@ namespace WYJK.HOME.Controllers
         /// </summary>
         /// <param name="parameter"></param>
         /// <returns></returns>
-        public async Task<ActionResult> MemberLoanRepayment(MemberLoanRepaymentParameter parameter)
+        public async Task<ActionResult> MemberLoanRepayment(MemberLoanRepaymentOrderParameter parameter)
         {
+            //HttpClient client = new HttpClient();
+            //var req = await client.PostAsJsonAsync(url + "/Loan/MemberLoanRepayment", parameter);
+            //JsonResult<dynamic> reqResult = await req.Content.ReadAsAsync<JsonResult<dynamic>>();
+            //return RedirectToAction("GetRepaymentDetail", new { id = reqResult.Data });
+            //调起招行支付接口
+            parameter.PlatType = "2";
+
             HttpClient client = new HttpClient();
-            var req = await client.PostAsJsonAsync(url + "/Loan/MemberLoanRepayment", parameter);
+            var req = await client.PostAsJsonAsync(url + "/Loan/OrderPay", parameter);
             JsonResult<dynamic> reqResult = await req.Content.ReadAsAsync<JsonResult<dynamic>>();
 
-            return RedirectToAction("GetRepaymentDetail", new { id = reqResult.Data });
+
+            return Content(reqResult.Data);
         }
 
 

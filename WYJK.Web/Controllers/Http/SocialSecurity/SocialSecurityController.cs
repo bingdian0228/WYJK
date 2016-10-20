@@ -18,6 +18,7 @@ using System.Configuration;
 using System.Net.Http;
 using System.Text;
 using CMBCHINALib;
+using WYJK.Web.Filters;
 
 namespace WYJK.Web.Controllers.Http
 {
@@ -749,6 +750,14 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                     };
                 }
 
+                if (socialSecurityPeople.socialSecurity.PayMonthCount == 0) {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "参保月数不能为0"
+                    };
+                }
+
 
                 IsExistSocialSecurityCase = true;
                 socialSecurityStartTime = socialSecurityPeople.socialSecurity.PayTime.Value;
@@ -832,6 +841,16 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                     {
                         status = false,
                         Message = "参保人日期已失效，请修改"
+                    };
+                }
+
+
+                if (socialSecurityPeople.accumulationFund.PayMonthCount == 0)
+                {
+                    return new JsonResult<dynamic>
+                    {
+                        status = false,
+                        Message = "参公积金月数不能为0"
                     };
                 }
 
@@ -999,6 +1018,12 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                         //保存公积金参保方案
                         if (socialSecurityPeople.accumulationFund != null)
                         {
+
+
+                            //LogManager logManager = new LogManager(HttpContext.Current.Server.MapPath("~/HttpException.txt"));
+
+                            //logManager.SaveLog(socialSecurityPeople.accumulationFund.PayMonthCount.ToString(), DateTime.Now);
+
                             socialSecurityPeople.accumulationFund.SocialSecurityPeopleID = socialSecurityPeople.SocialSecurityPeopleID;
                             string sql = $"select * from EnterpriseSocialSecurity where enterpriseArea  like '%{socialSecurityPeople.accumulationFund.AccumulationFundArea}%' and IsDefault = 1";
                             EnterpriseSocialSecurity model = DbHelper.QuerySingle<EnterpriseSocialSecurity>(sql);
@@ -1991,7 +2016,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
             //判断账户是否冻结，如果冻结，则不能进行支付
             bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
   where MemberID = (select MemberID from[Order] where OrderID = {orderID})");
-            if (isFrozen == false)
+            if (isFrozen)
                 return new JsonResult<dynamic>
                 {
                     status = false,
@@ -2011,7 +2036,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     //HttpClient httpClient = new HttpClient();
                     //string test =await httpClient.GetStringAsync(uri);
@@ -2118,7 +2143,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                     HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
                     return;
                 }
-                decimal payMoney = baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = 0.01M; //baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
@@ -2163,9 +2188,11 @@ where SocialSecurityPeople.MemberID = {MemberID}";
 
                     DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
 
-                    HttpContext.Current.Response.Status = "200";
-                    HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
+                    HttpContext.Current.Response.StatusCode = 200;
+                    
                 }
+
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={baseOrders.MemberID}");
             }
         }
 

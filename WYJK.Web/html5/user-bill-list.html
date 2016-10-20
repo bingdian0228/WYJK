@@ -1,0 +1,235 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+		<style type="text/css">
+			html,
+			body,
+			.project {
+				height: 100%;
+				width: 100%;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="#" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					记录搜索
+				</h1>
+				<div class="am-header-right am-header-nav">
+					<div class="">
+						<i class="am-header-icon am-icon-search" id="searchIcon"></i>
+					</div>
+				</div>
+			</header>
+			<!--上拉加载列表-->
+			<div class="page billList" id="wrapper">
+				<div>
+					<!--刷新-->
+					<div class="pull-action loading" id="pull-down">
+						<span class="am-icon-arrow-down pull-label" id="pull-down-label"> 下拉刷新</span>
+						<span class="am-icon-spinner am-icon-spin"></span>
+					</div>
+					<!--list-->
+					<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
+						<div class="am-list-news-bd">
+							<ul class="am-list l-bills-list" id="events-list">
+								<li>
+									<div class="am-text-center am-padding-sm">
+										正在加载内容...
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<!--加载更多-->
+					<div class="pull-action" id="pull-up">
+						<span class="am-icon-arrow-down pull-label" id="pull-up-label"> 上拉加载更多</span>
+						<span class="am-icon-spinner am-icon-spin"></span>
+					</div>
+				</div>
+			</div>
+			<!--搜索条件-->
+			<div class="l-search-box bg_black am-padding-xs" id="searchBox">
+				<form action="" method="" class="am-form" id="form">
+					<div class="am-alert am-alert-danger" id="my-alert" style="display: none">
+						<p>开始日期应小于结束日期！</p>
+					</div>
+					<div class="am-form-group am-form-group-sm">
+						<label for="" class="white">起始时间</label>
+						<input type="text" name="StartTime" id="my-start" class="am-form-field" placeholder="选择起始时间" data-am-datepicker readonly>
+					</div>
+					<div class="am-form-group am-form-group-sm">
+						<label for="" class="white">截止时间</label>
+						<input type="text" id="my-end" name="EndTime" class="am-form-field" placeholder="选择截止时间" data-am-datepicker readonly>
+					</div>
+					<div class="am-form-group am-form-select">
+						<label for="" class="white">下拉单选框</label>
+						<select id="" name="ShouZhiType" class="am-input-sm">
+        					<option value="">全部</option>
+        					<option value="0">收入</option>
+        					<option value="1">支出</option>
+      					</select>
+						<span class="am-form-caret"></span>
+					</div>
+					<button type="button" class="am-btn am-btn-secondary am-btn-block" id="searchBtn">
+						<i class="am-icon-search"></i>
+						<span>搜索</span>
+					</button>
+					<!--隐藏信息-->
+					<input type="hidden" name="MemberID" id="MemberID" value="" />
+					<input type="hidden" name="PageIndex" id="" value="1" />
+					<input type="hidden" name="PageSize" id="" value="6" />
+				</form>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/pageIscroll.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="list-item" type="text/x-handlebars-template">
+			{{#each list}}
+			<li>
+				<a href="user-bill-detail.html?id={{ID}}" class="am-link-muted arrow-right">
+					<div class="am-padding-horizontal-sm">
+						<ul class="am-avg-sm-2">
+							<li>
+								<div>
+									<span>{{OperationType}}：</span>
+									<span class="">{{CostDisplay}}</span>
+								</div>
+							</li>
+							<li class="am-text-right">
+								<span class="am-text-xs am-padding-right-xs grey">{{CreateTime}}</span>
+							</li>
+						</ul>
+					</div>
+				</a>
+			</li>
+			{{/each}}
+		</script>
+		<!--日期选择限制-->
+		<script>
+			$(function() {
+				var startDate = new Date(1970, 11, 20);
+				var endDate = new Date();
+				var $alert = $('#my-alert');
+				$('#my-start').datepicker().
+				on('changeDate.datepicker.amui', function(event) {
+					if (event.date.valueOf() > endDate.valueOf()) {
+						$alert.find('p').text('开始日期应小于结束日期！').end().show();
+					} else {
+						$alert.hide();
+						startDate = new Date(event.date);
+					}
+					$(this).datepicker('close');
+				});
+				$('#my-end').datepicker('setValue', endDate).
+				on('changeDate.datepicker.amui', function(event) {
+					if (event.date.valueOf() < startDate.valueOf()) {
+						$alert.find('p').text('结束日期应大于开始日期！').end().show();
+					} else {
+						$alert.hide();
+						endDate = new Date(event.date);
+						$('#my-endDate').text($('#my-end').data('date'));
+					}
+					$(this).datepicker('close');
+				});
+			});
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get("MemID");
+				//后退按钮
+				goBack();
+				$('#MemberID').val(id);
+				//搜索按钮
+				var $list = $('#wrapper');
+				var $searchBox = $('#searchBox');
+				var $searchIcon = $('#searchIcon');
+				var $searchBtn = $('#searchBtn');
+				$searchIcon.click(function() {
+					var flag = $list.hasClass("out");
+					if (flag) {
+						$list.removeClass("out");
+						$searchBox.removeClass('in');
+					} else {
+						$list.addClass("transition out");
+						$searchBox.addClass('transition in');
+					}
+				});
+				//搜索表单
+				$searchBtn.click(function() {
+					var model = serializeObject($('#form'));
+					getList(model);
+					$searchIcon.trigger("click");
+				});
+				//获取列表信息
+				var app = new EventsList(null, {
+					api: '/api/Member/GetAccountRecordList',
+					params: {
+						MemberID: id,
+						PageIndex: "1",
+						PageSize: "6",
+						StartTime: '',
+						EndTime: '',
+						ShouZhiType: ''
+					},
+					templateCallback: function(result) {
+						if (!result.Data.list.length) {
+							$('#events-list').html('<div class="am-padding-sm am-text-center">暂无信息</div>');
+						}
+					}
+				});
+
+				function getList(options) {
+					app.newParams = options;
+					app.sortInit();
+				}
+				//初始化列表
+				app.init();
+			});
+		</script>
+	</body>
+
+</html>

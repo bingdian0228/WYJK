@@ -1,0 +1,249 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+		<style type="text/css">
+			html,
+			body,
+			.project {
+				height: 100%;
+			}
+		</style>
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="user-index.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					待停保
+				</h1>
+			</header>
+			<!--操作菜单-->
+			<div class="l-slideTopmenu">
+				<div class="am-padding-vertical-xs am-text-center">
+					<div class="am-btn-group am-btn-group-sm">
+						<a href="user-toStop-apply.html" class="am-btn am-btn-default am-btn-primary am-round am-active">申&nbsp;&nbsp;&nbsp;&nbsp;请</a>
+						<a href="user-toStop-renew.html" class="am-btn am-btn-default am-round">未续费</a>
+					</div>
+				</div>
+				<div class="black bg_yellow am-padding-xs">
+					<span>停保审核中</span>
+				</div>
+				<div class="l-insurance-th">
+					<ul class="am-avg-sm-4 am-text-center bg_lightblue am-padding-vertical-xs">
+						<li>
+							项目
+						</li>
+						<li>
+							投保时间
+						</li>
+						<li>
+							已投月数
+						</li>
+						<li>
+							剩余月数
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--list-->
+			<!--上拉加载列表-->
+			<div class="page stop-insure" id="wrapper">
+				<div>
+					<!--刷新-->
+					<div class="pull-action loading" id="pull-down">
+						<span class="am-icon-arrow-down pull-label" id="pull-down-label"> 下拉刷新</span>
+						<span class="am-icon-spinner am-icon-spin"></span>
+					</div>
+					<!--list-->
+					<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
+						<div class="am-list-news-bd">
+							<ul class="am-list" id="events-list">
+								<li>
+									<div class="am-text-center am-padding-sm">
+										正在加载内容...
+									</div>
+								</li>
+								<li>
+									<div class="am-padding-horizontal-sm">
+										<ul class="am-avg-sm-2 l-tr-header am-padding-vertical-sm">
+											<li>
+												黄晓明
+											</li>
+											<li class="am-text-right">
+												<span class="am-text-warning">待停保</span>
+											</li>
+										</ul>
+									</div>
+									<a href="#" class="am-text-center grey">
+										<div class="am-padding-horizontal-sm">
+											<ul class="am-avg-sm-4">
+												<li class="am-text-left">
+													社保
+												</li>
+												<li>
+													2016-03-15
+												</li>
+												<li>
+													0个月
+												</li>
+												<li class="am-text-right">
+													4个月
+												</li>
+											</ul>
+											<ul class="am-avg-sm-4">
+												<li class="am-text-left">
+													公积金
+												</li>
+												<li>
+													2016-03-15
+												</li>
+												<li>
+													0个月
+												</li>
+												<li class="am-text-right">
+													144个月
+												</li>
+											</ul>
+										</div>
+									</a>
+									<div class="am-padding-horizontal-sm grey">
+										<div class="am-g l-tr-footer am-g-collapse am-padding-vertical-sm">
+											<div class="am-u-sm-8">
+												<span>停保原因：</span>个人解除劳动合同
+											</div>
+											<div class="am-u-sm-4 am-text-right">
+												2016-09-15
+											</div>
+										</div>
+									</div>
+								</li>
+								<li>
+									<div class="am-padding-horizontal-sm">
+										<ul class="am-avg-sm-2 l-tr-header am-padding-vertical-sm">
+											<li>
+												诸葛亮
+											</li>
+											<li class="am-text-right">
+												<span class="am-text-warning">待停保</span>
+											</li>
+										</ul>
+									</div>
+									<a href="#" class="am-text-center grey">
+										<div class="am-padding-horizontal-sm">
+											<ul class="am-avg-sm-4">
+												<li class="am-text-left">
+													社保
+												</li>
+												<li>
+													2016-03-15
+												</li>
+												<li>
+													35个月
+												</li>
+												<li class="am-text-right">
+													9个月
+												</li>
+											</ul>
+											<ul class="am-avg-sm-4">
+												<li class="am-text-left">
+													公积金
+												</li>
+												<li>
+													2016-03-15
+												</li>
+												<li>
+													20个月
+												</li>
+												<li class="am-text-right">
+													21个月
+												</li>
+											</ul>
+										</div>
+									</a>
+									<div class="am-padding-horizontal-sm grey">
+										<div class="am-g l-tr-footer am-g-collapse am-padding-vertical-sm">
+											<div class="am-u-sm-8">
+												<span>停保原因：</span>个人解除劳动合同
+											</div>
+											<div class="am-u-sm-4 am-text-right">
+												2016-09-15
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<!--加载更多-->
+					<div class="pull-action" id="pull-up">
+						<span class="am-icon-arrow-down pull-label" id="pull-up-label"> 上拉加载更多</span>
+						<span class="am-icon-spinner am-icon-spin"></span>
+					</div>
+				</div>
+			</div>
+			<!--confirm-->
+			<div class="am-modal am-modal-confirm" tabindex="-1" id="submit-confirm">
+				<div class="am-modal-dialog">
+					<div class="am-modal-hd">您需要账户自动扣款吗？</div>
+					<div class="am-modal-bd">
+					</div>
+					<div class="am-modal-footer">
+						<span class="am-modal-btn" data-am-modal-cancel>取消</span>
+						<span class="am-modal-btn" data-am-modal-confirm>确定</span>
+					</div>
+				</div>
+			</div>
+			<div class="am-modal am-modal-confirm" tabindex="-1" id="delete-confirm">
+				<div class="am-modal-dialog">
+					<div class="am-modal-hd">您确定要删除此参保人吗？</div>
+					<div class="am-modal-bd">
+					</div>
+					<div class="am-modal-footer">
+						<span class="am-modal-btn" data-am-modal-cancel>取消</span>
+						<span class="am-modal-btn" data-am-modal-confirm>确定</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+
+	</body>
+
+</html>

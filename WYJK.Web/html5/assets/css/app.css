@@ -1,0 +1,625 @@
+/*无忧借款*/
+
+.bg_grey {
+	background-color: #f3f4f6;
+}
+
+.bg_white {
+	background-color: #FFFFFF;
+}
+
+.bg_blue {
+	background-color: #469ee5!important;
+}
+
+.bg_yellow {
+	background-color: #ffd461;
+}
+
+.bg_black {
+	background-color: #333;
+}
+
+.bg_darkblue {
+	background-color: #0a7dd8;
+}
+
+.bg_lightblue {
+	background-color: #e3e9f9;
+}
+
+.bg_darkgrey {
+	background-color: #dedede;
+}
+
+.grey {
+	color: #9b9b9b;
+}
+
+.blue {
+	color: #4671b6;
+}
+
+.white {
+	color: #FFFFFF;
+}
+
+.black {
+	color: #000000;
+}
+
+.red {
+	color: #ff0500;
+}
+
+.relative {
+	position: relative;
+}
+
+.project .border-0 {
+	border-color: transparent;
+}
+
+html,
+body,
+.project {
+	backface-visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+}
+
+.project .arrow-right::after {
+	display: inline-block;
+	font: normal normal normal 1.6rem/1 FontAwesome, sans-serif;
+	font-size: inherit;
+	text-rendering: auto;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	transform: translate(0, 0);
+	content: "\f105";
+	position: absolute;
+	right: 10px;
+	color: #c4c4c4;
+	top: 50%;
+	margin-top: -8px
+}
+
+
+/*header*/
+
+.project .am-header {
+	border-bottom: 1px solid #3e96dd;
+	z-index: 10;
+}
+
+
+/*登录注册*/
+
+.login input.am-form-field {
+	border-color: transparent;
+	background-color: rgba(255, 255, 255, 0.5);
+}
+
+.login input.am-form-field:focus {
+	background-color: rgba(255, 255, 255, 0.6);
+}
+
+.login .icon-input {
+	width: 3rem;
+	height: 21px;
+	border-right: 1px solid #FFFFFF;
+	position: absolute;
+	left: 1rem;
+	top: 50%;
+	margin-top: -10px;
+}
+
+.login .icon-input img {
+	vertical-align: baseline;
+}
+
+.login .am-form-field {
+	padding-left: 5rem!important;
+}
+
+.login button.bg_darkblue {
+	border-color: #0a7dd8;
+}
+
+
+/*表单提交*/
+
+.submit .am-form-field {
+	padding-left: 33%!important;
+}
+
+.submit label.l-label {
+	height: 38px;
+	line-height: 38px;
+	position: absolute;
+	left: 8px;
+	top: 50%;
+	margin: -19px 0 0 0;
+}
+
+.submit .l-upload-box,
+.submit .l-form-group {
+	border: 1px solid #CCCCCC;
+	padding-left: 32%;
+}
+
+.submit .l-upimg-box {
+	border: 1px solid #CCCCCC;
+	width: 100%;
+	min-height: 92px;
+	display: inline-block;
+	background: url(../../img/plus-lg.png) no-repeat center center;
+	background-size: 35px 35px;
+}
+
+.submit .l-img-input {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	opacity: 0;
+}
+
+.l-preview {
+	width: 100%;
+	min-height: 90px;
+	overflow: hidden;
+	text-align: center;
+}
+
+.l-preview img {
+	max-width: 100%;
+	display: block;
+}
+
+.l-form-group .l-selectbox {
+	border-color: transparent;
+}
+
+.l-border-0{
+	border: none;
+}
+
+.font-weight-n{
+	font-weight: normal;
+}
+
+
+/*社保版块*/
+
+.l-item-total,
+.l-border-top {
+	border-top: 1px solid #dedede;
+}
+
+.submit input.l-inputPayed {
+	width: 30%;
+	padding-left: 0.5rem!important;
+	font-size: 1.2rem!important;
+}
+
+
+/*滑动加载*/
+
+.l-slideTopmenu {
+	position: relative;
+	z-index: 10;
+}
+
+#wrapper {
+	position: absolute;
+	top: 0px;
+	bottom: 0;
+	overflow: hidden;
+	margin: 0;
+	width: 100%;
+	padding: 0px;
+}
+
+#wrapper ul.am-list {
+	min-height: 600px;
+}
+
+#wrapper.bill ul.am-list {
+	min-height: 320px;
+}
+
+.pull-action {
+	text-align: center;
+	height: 49px;
+	line-height: 49px;
+	color: #999;
+}
+
+.pull-action .am-icon-spin {
+	display: none;
+}
+
+.pull-action.loading .am-icon-spin {
+	display: block;
+}
+
+.pull-action.loading .pull-label {
+	display: none;
+}
+
+#wrapper.insurance.settleList {
+	top: 117px;
+}
+
+#wrapper.insurance {
+	top: 102px;
+}
+
+#wrapper.stop-insure {
+	top: 107px;
+}
+
+#wrapper.no-insurance,
+#wrapper.agency,
+#wrapper.progress,
+#wrapper.billList,
+#wrapper.bill,
+#wrapper.billPayback,
+#wrapper.lRecord,
+#wrapper.pRecord{
+	top: 49px;
+}
+
+#wrapper.lSchedule{
+	top: 83px;
+}
+
+.am-nowrap {
+  word-wrap: normal;
+  /* for IE */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+
+/*用户中心*/
+
+.l-userBg {
+	background: url(../../img/user-bg.jpg) no-repeat top center;
+	padding-top: 10px;
+	background-size: cover;
+}
+
+.l-menuBox ul li {
+	margin: 0.8rem 0;
+	position: relative;
+	padding-right: 1px;
+}
+
+.l-menuBox ul li a {
+	display: block;
+}
+
+.l-menuBox ul li i {
+	display: block;
+	width: 1px;
+	height: 26px;
+	position: absolute;
+	right: 0;
+	top: 50%;
+	margin-top: -13px;
+	content: '';
+	background-color: #0A628F;
+}
+
+.l-remind-point {
+	position: absolute;
+	top: -6px;
+	right: 50%;
+	margin-right: -20px;
+}
+
+
+/*底部菜单*/
+
+.l-footer.am-navbar-default .am-navbar-nav {
+	background-color: #FFFFFF;
+	overflow: visible;
+	border-top: 1px solid #e6e7eb;
+}
+
+.l-footer.am-navbar-default a {
+	color: #c7c7c7;
+}
+
+.l-footer.am-navbar .am-navbar-nav li {
+	width: 20%;
+	display: block;
+	float: left;
+}
+
+.l-footer .am-navbar-nav a img {
+	width: 20px;
+	height: 20px;
+}
+
+.l-footer .am-navbar-nav .calculator {
+	position: relative;
+	top: -20px;
+}
+
+.l-footer .am-navbar-nav .calculator img {
+	width: 66px;
+	height: 66px;
+	margin: 0 auto;
+}
+
+.l-footer .am-navbar-label.down {
+	color: #3397e5;
+}
+
+.l-footer-fix {
+	height: 49px;
+	width: 100%;
+}
+
+
+/*参保审核*/
+
+.l-insurance-th ul {
+	border-bottom: 1px solid #E5E5E5;
+}
+
+.l-insurance-th ul li {
+	border-right: 1px solid #c2cff1;
+}
+
+.l-insurance-th ul li:last-child {
+	border-right: none;
+}
+
+.agency ul.am-list>li,
+.insurance ul.am-list>li,
+.stop-insure ul.am-list>li {
+	margin: 1rem 0;
+	border-color: #E5E5E5;
+}
+
+.agency ul.am-list>li:first-child,
+.insurance ul.am-list>li:first-child {
+	margin-top: 0;
+}
+
+.l-tr-header {
+	border-bottom: 1px solid #E5E5E5;
+}
+
+.l-tr-footer {
+	border-top: 1px solid #E5E5E5;
+}
+
+
+/*订单*/
+
+.l-order-header a {
+	border-bottom: 2px solid transparent;
+	height: 42px;
+}
+
+.l-order-header a.active {
+	border-bottom: 2px solid #355eae;
+}
+
+
+/*账单*/
+
+.l-countBox {
+	background: url(../../img/count_bg.png) repeat-x;
+	background-size: 1px 232px;
+}
+
+.l-count-btn {
+	border-top: 1px dashed #9dccf2;
+}
+
+.l-count-btn ul li a {
+	border-right: 1px solid #9dccf2;
+}
+
+.l-bills-list.am-list>li:first-child,
+.l-msg-list.am-list>li:first-child,
+.l-payback-list.am-list>li:first-child,
+.l-progress-list.am-list>li:first-child {
+	margin-top: 0;
+}
+
+.l-bills-list.am-list>li,
+.l-msg-list.am-list>li,
+.l-payback-list.am-list>li,
+.l-progress-list.am-list>li {
+	margin: 1rem 0;
+	border-color: #E5E5E5;
+}
+
+.l-msg-list.am-list>li {
+	border: 1px solid #469ee5;
+	border-radius: 3px;
+}
+
+
+/*贷款*/
+
+.l-user-status {
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	left: 0;
+	margin-top: -23.5px;
+}
+
+.l-loan-btn {
+	border-top: 1px dashed #9dccf2;
+}
+
+.l-loan-menuBox .line-r {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	width: 1px;
+	height: 80px;
+	margin-top: -40px;
+	background-color: #ececec;
+}
+
+.l-loan-menuBox .line-b {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 80%;
+	height: 1px;
+	margin-left: -40%;
+	background-color: #ececec;
+}
+
+/*借款进度*/
+
+.text-center{
+	text-align: center;
+}
+
+.am-bg-grey{
+	background: #E2E8F8;
+}
+
+.am-rborder-grey{
+	border-right: 1px solid #9DAADA;
+}
+
+
+/*选项卡*/
+
+.l-tab [data-am-widget=tabs] .am-tabs-nav {
+	width: 60%;
+	margin: 0 auto;
+	background-color: transparent;
+}
+
+.l-tab .am-tabs-default .am-tabs-nav a {
+	line-height: 36px;
+	background-color: #DDDDDD;
+}
+
+.l-tab .am-tabs-default .am-tabs-nav>.am-active a {
+	background-color: #469ee5;
+}
+
+.l-tab .first-btn {
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0
+}
+
+.l-tab .last-btn {
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0
+}
+
+.l-tab.stop-insure ul.am-list>li:first-child {
+	margin-top: 1rem;
+}
+
+.stop-insure.applyList .am-list>li {
+	background-color: transparent;
+}
+
+
+/*账单信息搜索*/
+
+.l-search-box,
+.l-search-box.in,
+.page.billList,
+.page.billList.out {
+	-webkit-animation-timing-function: ease-in-out;
+	-moz-animation-timing-function: ease-in-out;
+	-webkit-animation-duration: 500ms;
+	-moz-animation-duration: 500ms;
+}
+
+.l-search-box {
+	position: absolute;
+	top: 49px;
+	right: 0;
+	width: 60%;
+	height: 100%;
+	transform: translate3d(100%, 0, 0);
+}
+
+.l-search-box.transition {
+	-webkit-animation-name: slideInReverse;
+}
+
+.l-search-box.transition.in {
+	transform: translate3d(0, 0, 0);
+	-webkit-animation-name: slideIn;
+}
+
+.page.billList.transition {
+	-webkit-animation-name: slideOutReverse;
+}
+
+.page.billList.transition.out {
+	transform: translate3d(-60%, 0, 0);
+	-webkit-animation-name: slideOut;
+}
+
+@-webkit-keyframes slideIn {
+	from {
+		transform: translate3d(100%, 0, 0);
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+@-webkit-keyframes slideInReverse {
+	from {
+		transform: translate3d(0, 0, 0);
+	}
+	to {
+		transform: translate3d(100%, 0, 0);
+	}
+}
+
+@-webkit-keyframes slideOut {
+	from {
+		transform: translate3d(0, 0, 0);
+	}
+	to {
+		transform: translate3d(-60%, 0, 0);
+	}
+}
+
+@-webkit-keyframes slideOutReverse {
+	from {
+		transform: translate3d(-60%, 0, 0);
+	}
+	to {
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+/*还款*/
+.am-border li{
+	border-left: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+.am-border{
+	border-top: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+
+.payback-bborder li{
+	border-bottom: 1px solid #F7F7F7;
+}

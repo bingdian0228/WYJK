@@ -1,0 +1,170 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="#left-link" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					参保详情
+				</h1>
+			</header>
+			<!--面板-->
+			<div id="detail">
+
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="detail-template" type="text/x-handlebars-template">
+			{{#if IsSocialSecurity}}
+			<div class="am-panel am-panel-default">
+				<div class="am-panel-hd border-0"><strong class="blue">社保信息</strong></div>
+				<ul class="am-list am-list-static" id="SBdetail">
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>参保人：</span>
+							<span>{{SocialSecurityPeopleName}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>基数：</span>
+							<span>￥{{SocialSecurityBase}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>参保地：</span>
+							<span>{{InsuranceArea}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>起缴时间：</span>
+							<span>{{SSPayTime}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>已投：</span>
+							<span>{{SSAlreadyPayMonthCount}}个月</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>剩余：</span>
+							<span>{{SSRemainingMonths}}个月</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			{{/if}} {{#if IsAccumulationFund}}
+			<div class="am-panel am-panel-default">
+				<div class="am-panel-hd border-0"><strong class="blue">公积金信息</strong></div>
+				<ul class="am-list am-list-static">
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>基数：</span>
+							<span>￥{{AccumulationFundBase}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>参保地：</span>
+							<span>{{InsuranceArea}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>起缴时间：</span>
+							<span>{{AFPayTime}}</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>已投：</span>
+							<span>{{AFAlreadyPayMonthCount}}个月</span>
+						</div>
+					</li>
+					<li>
+						<div class="am-padding-horizontal-sm">
+							<span>剩余：</span>
+							<span>{{AFRemainingMonths}}个月</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			{{/if}}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var uID = Cookies.get("MemID");
+				var id = GetRequest().id;
+				var tmpl = Handlebars.compile($("#detail-template").html());
+				//后退按钮
+				goBack();
+				//loading
+				loadingFun(true);
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetSocialSecurityDetail?SocialSecurityPeopleID=" + id + "&MemberID=" + uID,
+					async: true,
+					success: function(d) {
+						loadingFun(false);
+						if (d.status) {
+							if (d.Data) {
+								$('#detail').html(tmpl(d.Data));
+							} else {
+								$('#detail').html('<div class="am-text-center am-padding-sm">暂无信息</div>');
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>

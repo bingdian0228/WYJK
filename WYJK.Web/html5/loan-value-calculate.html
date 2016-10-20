@@ -1,0 +1,167 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="loan-index.html">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					身价计算
+				</h1>
+			</header>
+			<!--身价计算表单-->
+			<div class="am-padding-lg">
+				<form action="" class="am-form" id="form" method="post" data-am-validator>
+
+				</form>
+			</div>
+			<div class="am-navbar">
+				<div class="am-g">
+					<div class="am-u-sm-8 am-u-sm-centered">
+						<a href="#" id="nextBtn" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">下一步</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="question-template" type="text/x-handlebars-template">
+			<div class="am-form-group">
+				<label class="am-form-label" data-id="{{SubjectID}}">
+					{{Subject}}
+				</label>
+				{{#each LoanAnswerList}}
+				<div class="am-radio">
+					<label>
+						<input type="radio" name="radio{{SubjectID}}" id="" value="{{AnswerID}}" required="required" />
+						{{Answer}}
+					</label>
+				</div>
+				{{/each}}
+			</div>
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get('MemID');
+				var Logined = isLogin(id);
+				var $form = $('#form');
+				var Answer = [];
+				if (Logined) {
+					var $nextBtn = $('#nextBtn');
+					getQuestion('');
+					//点击下一步按钮
+					$nextBtn.click(function(e) {
+						e.preventDefault();
+						var flag = $form.validator('isFormValid');
+						var next = $(this).data('nextID');
+						if (flag) {
+							//push答案
+							getAnswer();
+							//按钮行为
+							if (next == 0) {
+								var dataModel = {
+									MemberID: id,
+									RelList: Answer
+								};
+								$.ajax({
+									type: "post",
+									url: "/api/Loan/ValueCalculation",
+									async: true,
+									data: dataModel,
+									success: function(d) {
+										if (d.status) {
+											window.location.href = "loan-index.html";
+										} else {
+											alertFun(d.Message);
+										}
+									}
+								});
+							} else {
+								getQuestion(next);
+							}
+						} else {
+							alertFun('请选择一个答案！');
+						}
+					});
+					//获取身价计算选择题
+					var questionTemplate = Handlebars.compile($("#question-template").html());
+
+					function getQuestion(next) {
+						loadingFun(true);
+						$.ajax({
+							type: "get",
+							url: "/api/Loan/GetChoiceSubject?SubjectID=" + next,
+							async: true,
+							success: function(d) {
+								loadingFun(false);
+								if (d.status) {
+									$.each(d.Data.LoanAnswerList, function(i, item) {
+										item.SubjectID = d.Data.SubjectID;
+									});
+									if (d.Data.NextSubjectID == 0) {
+										$nextBtn.text("计算身价");
+									}
+									$nextBtn.data('nextID', d.Data.NextSubjectID);
+									$('#form').html(questionTemplate(d.Data));
+								} else {
+									alertFun(d.Message);
+								}
+							}
+						});
+					}
+					//push答案进数组
+					function getAnswer() {
+						var s = $form.find('.am-form-label').data('id');
+						var a = $form.find('input[type="radio"]:checked').val();
+						var obj = {
+							"SubjectID": s,
+							"AnswerID": a
+						}
+						Answer.push(obj);
+					}
+				}
+			})
+		</script>
+	</body>
+
+</html>

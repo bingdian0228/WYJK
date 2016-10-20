@@ -1,0 +1,175 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="loan-index.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					申请贷款
+				</h1>
+			</header>
+			<!--额度-->
+			<ul class="am-list am-list-static">
+				<li>
+					<div class="am-padding-horizontal-sm">
+						可借额度：<span data-bind="text:AvailableAmount">0</span>
+					</div>
+				</li>
+				<li>
+					<div class="am-padding-horizontal-sm">
+						已借额度：<span data-bind="text:AlreadyUsedAmount">0</span>
+					</div>
+				</li>
+			</ul>
+			<!--表单-->
+			<div class="am-padding-horizontal-sm submit">
+				<form action="" id="form" class="am-form" data-am-validator>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">本次借款：</label>
+						<input type="text" name="ApplyAmount" class="am-form-field js-pattern-intNum am-radius" data-bind="attr:{max:AvailableAmount}" placeholder="请输入借款金额" required="required">
+					</div>
+					<div class="am-form-group">
+						<label for="">还款方式：</label>
+						<div class="am-g">
+							<div class="am-u-sm-12 am-padding-left-0">
+								<select name="LoanTerm" id="termSelect" required="required">
+								</select>
+							</div>
+							<!--<div class="am-u-sm-6 am-padding-right-0">
+								<select name="LoanMethod" id="methodSelect" required="required">
+								</select>
+							</div>-->
+						</div>
+					</div>
+					<!--存储信息-->
+					<input type="hidden" name="MemberID" id="MemberID" value="" />
+					<!--btn-->
+					<div class="am-g">
+						<div class="am-u-sm-6">
+							<a href="loan-index.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">取消</a>
+						</div>
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="confirm">确认</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/knockout-3.4.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="optionList-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<option value="{{Value}}">{{Text}}</option>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get('MemID');
+				var Logined = isLogin(id);
+				var $form = $('#form');
+				$('#MemberID').val(id);
+				if (Logined) {
+					loadingFun(true);
+					$.ajax({
+						type: "get",
+						url: "/api/Loan/GetApplyloan?MemberID=" + id,
+						async: false,
+						success: function(d) {
+							loadingFun(false);
+							if (d.status) {
+								ko.applyBindings(d.Data);
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+					var optionTemplate = Handlebars.compile($("#optionList-template").html());
+					//获取还款期限类型
+					$.ajax({
+						type: "get",
+						url: "/api/Loan/GetLoanTermList",
+						async: true,
+						success: function(d) {
+							$('#termSelect').html(optionTemplate(d.Data));
+						}
+					});
+					//获取还款方式
+					$.ajax({
+						type: "get",
+						url: "/api/Loan/GetLoanMethodList",
+						async: true,
+						success: function(d) {
+							$('#methodSelect').html(optionTemplate(d.Data));
+						}
+					});
+					//确认按钮
+					$('#confirm').click(function() {
+						var flag = $form.validator('isFormValid');
+						var dataModel = $form.serialize();
+						if (flag) {
+							$.ajax({
+								type: "post",
+								url: "/api/Loan/SubmitLoanApply",
+								async: true,
+								data: dataModel,
+								success: function(d) {
+									if (d.status) {
+										alertFun(d.Message, function() {
+											window.location.href = "loan-l-record.html"
+										});
+									} else {
+										alertFun(d.Message);
+									}
+								}
+							});
+						}
+					});
+				}
+			});
+		</script>
+	</body>
+
+</html>

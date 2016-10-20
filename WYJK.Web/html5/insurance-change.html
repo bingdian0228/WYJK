@@ -1,0 +1,457 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+		<!--过场动画-->
+		<link rel="stylesheet" type="text/css" href="assets/css/transition.css" />
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<div class="ui-page" id="main-page">
+				<!--header-->
+				<header data-am-widget="header" class="am-header am-header-default bg_blue">
+					<div class="am-header-left am-header-nav">
+						<!--链接改成history-->
+						<a href="#" class="">
+							<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+								alt="" />
+						</a>
+					</div>
+					<h1 class="am-header-title">
+					添加参保人
+				</h1>
+				</header>
+				<!--提示菜单-->
+				<div class="black bg_yellow am-padding-xs am-block">
+					新增参保方案
+				</div>
+				<!--表单-->
+				<div class="am-padding-sm submit">
+					<form action="" class="am-form am-form-inline" id="main-form" data-am-validator>
+						<div class="am-form-group am-form-icon">
+							<label class="l-label">姓名：</label>
+							<input type="text" name="SocialSecurityPeopleName" data-bind="value:SocialSecurityPeopleName" class="am-form-field am-radius" placeholder="请输入参保人姓名" required="required">
+						</div>
+						<div class="am-form-group am-form-icon">
+							<div class="am-padding-sm bg_white l-upload-box am-radius relative">
+								<label class="l-label">身份证：</label>
+								<div class="l-upimg-box relative">
+									<input type="file" id="p-ID" accept="image/*" class="l-img-input" />
+									<div class="l-preview">
+										<img data-bind="attr:{src:photoArray[0]}" id="p-ID-show" />
+										<input type="hidden" name="IdentityCardPhoto" data-bind="value:inputArray[0]" required="required" />
+									</div>
+								</div>
+								<div class="l-upimg-box relative">
+									<input type="file" id="o-ID" accept="image/*" class="l-img-input" />
+									<div class="l-preview">
+										<img data-bind="attr:{src:photoArray[1]}" id="o-ID-show" />
+										<input type="hidden" name="IdentityCardPhoto" data-bind="value:inputArray[1]" required="required" />
+									</div>
+								</div>
+								<div class="grey">
+									上传正反面照
+								</div>
+							</div>
+						</div>
+						<div class="am-form-group am-form-icon">
+							<label class="l-label">身份证号：</label>
+							<input type="text" class="am-form-field am-radius js-pattern-IDnum" data-bind="value:IdentityCard" name="IdentityCard" placeholder="请输入身份证号码" required="required">
+						</div>
+						<div class="am-form-group am-form-icon">
+							<div class="l-form-group bg_white am-radius relative">
+								<label for="idcate" class="l-label">户籍性质：</label>
+								<select id="idcate" name="HouseholdProperty" class="l-selectbox am-padding-left-0" required="required">
+									<option value="">请您选择户籍性质</option>
+								</select>
+							</div>
+						</div>
+						<div class="am-form-group am-form-icon">
+							<div class="am-g">
+								<div class="am-u-sm-7 am-padding-left-0">
+									<label class="l-label">社保 公积金：</label>
+									<input type="text" id="totalAmount" class="am-form-field am-radius am-text-right" placeholder="请选择方案" required="required" readonly="readonly">
+								</div>
+								<div class="am-u-sm-5 am-padding-0">
+									<button type="button" class="am-btn am-btn-primary am-radius border-0 bg_darkblue am-btn-block" id="chose_scheme">选择参保方案</button>
+								</div>
+							</div>
+						</div>
+						<div class="am-form-group">
+							<strong>所需材料:</strong>
+							<span class="grey">本市城镇，若有失业证，则需邮寄失业证， 或线下递交</span>
+						</div>
+						<input type="hidden" name="MemberID" id="MemberID" value="" />
+						<input type="hidden" name="SocialSecurityPeopleID" id="SocialSecurityPeopleID" value="" />
+						<!--btn-->
+						<div class="am-g">
+							<div class="am-u-sm-6">
+								<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="addNew_back">取消</button>
+							</div>
+							<div class="am-u-sm-6">
+								<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="addNew_confirm">确认</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="ui-page am-hide" id="scheme-page">
+				<!--header-->
+				<header data-am-widget="header" class="am-header am-header-default bg_blue">
+					<div class="am-header-left am-header-nav">
+						<a href="javascript:;" class="" onclick="myTran.goTo('myslide', 'reverse', '#main-page', '#scheme-page')">
+							<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+								alt="" />
+						</a>
+					</div>
+					<h1 class="am-header-title">
+						选择方案
+					</h1>
+				</header>
+				<!--提示菜单-->
+				<div class="black bg_yellow am-padding-xs am-block">
+					<label class="am-checkbox am-margin-vertical-0">
+						<input type="checkbox" value="" id="SBcheck" data-am-ucheck >社保参数
+					</label>
+				</div>
+				<!--表单-->
+				<div class="submit">
+					<form action="" class="am-form am-form-inline" id="SBform" style="display: none;" data-am-validator>
+						<div class="am-padding-sm">
+							<div class="am-form-group am-form-icon">
+								<div class="l-form-group bg_white am-radius relative">
+									<label class="l-label">参保省份：</label>
+									<select id="SBprovince" class="l-selectbox am-padding-left-0" required="required">
+									</select>
+								</div>
+							</div>
+							<div class="am-form-group am-form-icon">
+								<div class="l-form-group bg_white am-radius relative">
+									<label class="l-label">参保城市：</label>
+									<select id="SBcity" class="l-selectbox am-padding-left-0">
+									</select>
+								</div>
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">社保基数：</label>
+								<input type="number" id="SBbase" name="SocialSecurityBase" class="am-form-field am-radius js-pattern-number" data-bind="value:SocialSecurityBase" placeholder="请先选择城市再输入" disabled="disabled" required="required" />
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">起缴时间：</label>
+								<input type="text" name="PayTime" class="am-form-field am-padding-left-xs" placeholder="请选择年份/月份" data-am-datepicker="{format: 'yyyy-mm', viewMode: 'years'}" readonly="readonly" required="required" />
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">参保月数：</label>
+								<input type="number" name="PayMonthCount" id="" class="am-form-field am-radius js-pattern-intNum" data-bind="value:PayMonthCount" placeholder="请输入参保月数" required="required" />
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">补交月数：</label>
+								<input type="text" name="PayBeforeMonthCount" id="" data-bind="value:PayBeforeMonthCount" class="am-form-field am-radius js-pattern-ZeroIntNum" placeholder="请输入补交月数（选填）" />
+							</div>
+							<div class="am-form-group am-text-right">
+								<div class="am-cf">
+									<strong class="am-fl">今年参保情况：</strong>
+									<span>在银行缴纳</span>
+									<input type="text" name="BankPayMonth" id="" class="am-inline am-form-field  js-pattern-ZeroIntNum l-inputPayed" data-bind="value:BankPayMonth" placeholder="（选填）" />
+									<span class="am-text-middle">个月</span>
+								</div>
+								<div class="am-padding-top-xs">
+									<span>在企业缴纳</span>
+									<input type="text" name="EnterprisePayMonth" id="" data-bind="value:EnterprisePayMonth" class="am-inline am-form-field js-pattern-ZeroIntNum l-inputPayed" placeholder="（选填）" />
+									<span>个月</span>
+								</div>
+							</div>
+							<!--备注-->
+							<div class="am-form-group am-form-icon">
+								<label for="">备注：</label>
+								<textarea class="" name="Note" rows="3" id="" data-bind="value:Note" placeholder="请输入备注信息"></textarea>
+							</div>
+						</div>
+						<input type="hidden" name="InsuranceArea" id="InsuranceArea" value="" />
+					</form>
+					<!--公积金参数-->
+					<div class="bg_darkgrey black am-padding-xs">
+						<label class="am-checkbox am-margin-vertical-0">
+							<input type="checkbox" value="" id="Fundcheck" data-am-ucheck >公积金参数
+						</label>
+					</div>
+					<!--表单-->
+					<form action="" class="am-form am-form-inline" id="Fundform" style="display: none;" data-am-validator>
+						<div class="am-padding-sm">
+							<div class="am-form-group am-form-icon">
+								<div class="l-form-group bg_white am-radius relative">
+									<label class="l-label">参保省份：</label>
+									<select id="Fundprovince" class="l-selectbox am-padding-left-0" required="required">
+									</select>
+								</div>
+							</div>
+							<div class="am-form-group am-form-icon">
+								<div class="l-form-group bg_white am-radius relative">
+									<label class="l-label">参保城市：</label>
+									<select id="Fundcity" class="l-selectbox am-padding-left-0">
+									</select>
+								</div>
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">公积金基数：</label>
+								<input type="text" id="Fundbase" name="AccumulationFundBase" data-bind="value:AccumulationFundBase" class="am-form-field am-radius js-pattern-number" placeholder="请先选择城市再输入" required="required" disabled="disabled">
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">起缴时间：</label>
+								<input type="text" name="PayTime" class="am-form-field am-padding-left-xs" placeholder="请选择年份/月份" data-am-datepicker="{format: 'yyyy-mm', viewMode: 'years'}" readonly required />
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">缴费月数：</label>
+								<input type="number" name="PayMonthCount" id="" data-bind="value:PayMonthCount" class="am-form-field am-radius js-pattern-intNum" placeholder="请输入参保月数" required="required" />
+							</div>
+							<div class="am-form-group am-form-icon">
+								<label class="l-label">补交月数：</label>
+								<input type="text" name="PayBeforeMonthCount" id="" data-bind="value:PayBeforeMonthCount" class="am-form-field am-radius js-pattern-ZeroIntNum" placeholder="请输入补交月数（选填）" />
+							</div>
+							<!--备注-->
+							<div class="am-form-group am-form-icon">
+								<label for="">备注：</label>
+								<textarea class="" rows="3" name="Note" data-bind="value:Note" id="" placeholder="请输入备注信息"></textarea>
+							</div>
+						</div>
+						<input type="hidden" name="AccumulationFundArea" id="AccumulationFundArea" value="" />
+					</form>
+					<!--btn-->
+					<div class="am-g am-margin-top-sm">
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" onclick="myTran.goTo('myslide', 'reverse', '#main-page', '#scheme-page')">取消</button>
+						</div>
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="schemeSubmit">提交</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="ui-page am-hide" id="confirm-page">
+				<!--header-->
+				<header data-am-widget="header" class="am-header am-header-default bg_blue">
+					<div class="am-header-left am-header-nav">
+						<a href="javascript:;" class="" onclick="myTran.goTo('myslide', 'reverse', '#scheme-page', '#confirm-page')">
+							<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+								alt="" />
+						</a>
+					</div>
+					<h1 class="am-header-title">
+						确认方案
+					</h1>
+				</header>
+				<!--统计信息-->
+				<div class="am-padding-xs" id="result-box">
+
+				</div>
+				<!--btn-->
+				<div class="am-g">
+					<div class="am-u-sm-6">
+						<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" onclick="myTran.goTo('myslide', 'reverse', '#scheme-page', '#confirm-page')">取消</button>
+					</div>
+					<div class="am-u-sm-6">
+						<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="schemeConfirm">确定</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/previewImage.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/transition.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/PCASClass.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/knockout-3.4.0.js" type="text/javascript" charset="utf-8"></script>
+		<script id="IDcate-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<option value="{{this}}">{{this}}</option>
+			{{/each}}
+		</script>
+		<script id="result-template" type="text/x-handlebars-template">
+			<!--社保表格-->
+			{{#if IsExistSocialSecurityCase}}
+			<table class="am-table am-table-bordered am-table-centered bg_white">
+				<tr>
+					<th colspan="2">{{socialSecurityStartTime}}——{{socialSecurityEndTime}}</th>
+					<th>{{socialSecuritypayMonth}}个月</th>
+				</tr>
+				<tr>
+					<td rowspan="2" class="am-text-middle">社保</td>
+					<td>第一次代办费：{{socialSecurityFirstBacklogCost}}</td>
+					<td>社保基数：{{SocialSecurityBase}}</td>
+				</tr>
+				<tr>
+					<td>冻结费：{{FreezingCharge}}</td>
+					<td>社保金额：{{SocialSecurityAmount}}</td>
+				</tr>
+			</table>
+			{{/if}}
+			<!--公积金表格-->
+			{{#if IsExistaAccumulationFundCase}}
+			<table class="am-table am-table-bordered am-table-centered bg_white">
+				<tr>
+					<th colspan="2">{{AccumulationFundStartTime}}——{{AccumulationFundEndTime}}</th>
+					<th>{{AccumulationFundpayMonth}}个月</th>
+				</tr>
+				<tr>
+					<td rowspan="2" class="am-text-middle">公积金</td>
+					<td>第一次代办费：{{AccumulationFundFirstBacklogCost}}</td>
+					<td>公积金基数：{{AccumulationFundBase}}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>公积金额：{{AccumulationFundAmount}}</td>
+				</tr>
+			</table>
+			{{/if}}
+			<div class="am-text-primary">
+				<strong>总计(元)：{{total}}</strong>
+			</div>
+		</script>
+		<script src="assets/js/insurance-add-common.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var sID = GetRequest().id;
+				$('#SocialSecurityPeopleID').val(sID);
+				//获取参保人详情
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetSocialSecurityPeopleDetail?SocialSecurityPeopleID=" + sID,
+					async: false,
+					success: function(d) {
+						d.Data.photoArray = d.Data.IdentityCardPhoto.split(";");
+						d.Data.inputArray = [];
+						$.each(d.Data.photoArray, function(i, item) {
+							d.Data.inputArray[i] = item.substring(item.indexOf("UploadFiles"));
+						});
+						//设置户口性质
+						$('#idcate').val(d.Data.HouseholdProperty);
+						ko.applyBindings(d.Data, document.getElementById("main-form"));
+					}
+				});
+				//获取方案信息
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetSocialSecurityScheme?SocialSecurityPeopleID=" + sID,
+					async: false,
+					success: function(d) {
+						if (d.status) {
+							//依据是否有社保/公积金分别赋值
+							if (d.Data.IsPaySocialSecurity) {
+								//checkBox显示/隐藏
+								$SBchk.uCheck('check');
+								$SBform.show();
+								//社保参数省份城市二级联动
+								d.Data.socialSecurity.InsuranceProvince = d.Data.socialSecurity.InsuranceArea.split("|")[0];
+								d.Data.socialSecurity.InsuranceCity = d.Data.socialSecurity.InsuranceArea.split("|")[1];
+								new PCAS(SBbaseFun, "SBprovince", "SBcity", d.Data.socialSecurity.InsuranceProvince, d.Data.socialSecurity.InsuranceCity);
+								SBbaseFun();
+								new PCAS(FundbaseFun, "Fundprovince", "Fundcity");
+								//起始时间
+								$SBform.find('input[name="PayTime"]').datepicker('setValue', d.Data.socialSecurity.PayTime.slice(0, 7));
+								ko.applyBindings(d.Data.socialSecurity, document.getElementById("SBform"));
+							}
+							if (d.Data.IsPayAccumulationFund) {
+								$Fundchk.uCheck('check');
+								$Fundform.show();
+								//公积金参数省份城市二级联动
+								d.Data.accumulationFund.AccumulationFundProvince = d.Data.accumulationFund.AccumulationFundArea.split("|")[0];
+								d.Data.accumulationFund.AccumulationFundCity = d.Data.accumulationFund.AccumulationFundArea.split("|")[1];
+								new PCAS(FundbaseFun, "Fundprovince", "Fundcity", d.Data.accumulationFund.AccumulationFundProvince, d.Data.accumulationFund.AccumulationFundCity);
+								FundbaseFun();
+								new PCAS(SBbaseFun, "SBprovince", "SBcity");
+								//起始时间
+								$Fundform.find('input[name="PayTime"]').datepicker('setValue', d.Data.accumulationFund.PayTime.slice(0, 7));
+								ko.applyBindings(d.Data.accumulationFund, document.getElementById("Fundform"));
+							}
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//确认方案按钮
+				$schemeConfirm.click(function() {
+					var dataModel = {
+						SocialSecurityPeopleID: sID,
+						socialSecurity: $(this).data('SBData'),
+						accumulationFund: $(this).data('FundData')
+					}
+					$.ajax({
+						type: "post",
+						url: "/api/SocialSecurity/ModifySocialSecurityScheme",
+						data: dataModel,
+						success: function(d) {
+							if (d.status) {
+								$('#totalAmount').val(d.Data.Amount).trigger("blur");
+								myTran.goTo('myslide', 'reverse', '#main-page', '#confirm-page');
+								$schemeConfirm.data("SBID", d.Data.SocialSecurityID);
+								$schemeConfirm.data("FundID", d.Data.AccumulationFundID);
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				});
+				//添加参保人确认按钮
+				$('#addNew_confirm').click(function() {
+					var flag = $mainForm.validator('isFormValid');
+					if (flag) {
+						var dataModel = serializeObject($mainForm);
+						dataModel.socialSecurity = {
+							SocialSecurityID: $schemeConfirm.data("SBID")
+						};
+						dataModel.accumulationFund = {
+							AccumulationFundID: $schemeConfirm.data('FundID')
+						};
+						$.ajax({
+							type: "post",
+							url: "/api/SocialSecurity/ModifySocialSecurityPeople",
+							data: dataModel,
+							success: function(d) {
+								if (d.status) {
+									alertFun(d.Message, function() {
+										window.history.go(-1);
+									})
+								} else {
+									alertFun(d.Message);
+								}
+							}
+						});
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>

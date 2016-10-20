@@ -1,0 +1,320 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="settings-center.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					补充信息
+				</h1>
+			</header>
+			<!--资质提交表单-->
+			<div class="am-padding-sm submit">
+				<form action="" class="am-form am-form-inline" id="form" data-am-validator>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">真实姓名：</label>
+						<input type="text" class="am-form-field am-radius" name="TrueName" data-bind="value:TrueName" placeholder="请输入姓名">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">证件类型：</label>
+							<select id="IDtype" name="CertificateType" class="l-selectbox am-padding-left-0">
+								<option value="">请您选择证件类型</option>
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">证件号码：</label>
+						<input type="text" name="CertificateNo" class="am-form-field am-radius js-pattern-IDnum" data-bind="value:CertificateNo" placeholder="请输入证件号码">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">政治面貌：</label>
+							<select id="politicalSelect" name="PoliticalStatus" class="l-selectbox am-padding-left-0">
+								<option value="">请选择政治面貌</option>
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">学历：</label>
+							<select id="eduSelect" name="Education" class="l-selectbox am-padding-left-0">
+								<option value="">请选择您的学历</option>
+							</select>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">生日：</label>
+						<input type="text" class="am-form-field am-padding-left-xs" name="Birthday" id="Birthday" placeholder="请选择年份/月份/天" readonly />
+					</div>
+					<div class="am-form-group">
+						<ul class="am-avg-sm-3">
+							<li>
+								<label class="am-text-middle am-margin-bottom-0">性别：</label>
+							</li>
+							<li>
+								<label class="am-radio-inline">
+									<input type="radio" name="Sex" value="0" data-am-ucheck> 男
+								</label>
+							</li>
+							<li>
+								<label class="am-radio-inline">
+									<input type="radio" name="Sex" value="1" data-am-ucheck> 女
+								</label>
+							</li>
+						</ul>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">居住地址：</label>
+						<input type="text" name="Address" data-bind="value:Address" class="am-form-field am-radius" placeholder="请输入居住地址">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">邮箱：</label>
+						<input type="text" name="Email" data-bind="value:Email" class="am-form-field am-radius" placeholder="请输入常用邮箱">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">QQ：</label>
+						<input type="text" name="QQ" data-bind="value:QQ" class="am-form-field am-radius js-pattern-number" placeholder="请输入QQ号码">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">支付宝账号：</label>
+						<input type="text" name="Alipay" data-bind="value:Alipay" class="am-form-field am-radius" placeholder="请输入支付宝账号">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">银行账号：</label>
+						<input type="text" name="BankCardNo" data-bind="value:BankCardNo" class="am-form-field am-radius js-pattern-number" placeholder="请输入银行账号">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">开户行：</label>
+						<input type="text" name="BankAccount" data-bind="value:BankAccount" class="am-form-field am-radius" placeholder="请输入开户行">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">开户人：</label>
+						<input type="text" name="UserAccount" data-bind="value:UserAccount" class="am-form-field am-radius" placeholder="请输入开户人">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">第二联系人：</label>
+						<input type="text" name="SecondContact" data-bind="value:SecondContact" class="am-form-field am-radius" placeholder="请输入第二联系人姓名">
+					</div>
+					<div class="am-form-group am-form-icon">
+						<label class="l-label">联系人手机：</label>
+						<input type="text" name="SecondContactPhone" data-bind="value:SecondContactPhone" class="am-form-field am-radius js-pattern-mobile" placeholder="请输入第二联系人手机">
+					</div>
+					<div class="am-form-group">
+						<label for="">投保地：</label><span class="am-text-primary" data-bind="text:InsuranceArea"></span>
+						<div class="am-g">
+							<div class="am-u-sm-6 am-padding-left-0">
+								<select name="" id="province">
+								</select>
+							</div>
+							<div class="am-u-sm-6 am-padding-right-0">
+								<select name="" id="city">
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">户口性质：</label>
+							<select id="idcate" name="HouseholdType" class="l-selectbox am-padding-left-0">
+								<option value="">请选择户口性质</option>
+							</select>
+						</div>
+					</div>
+					<!--btn-->
+					<div class="am-g">
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">取消</button>
+						</div>
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="save">保存</button>
+						</div>
+					</div>
+					<!--储存信息-->
+					<input type="hidden" name="MemberID" id="MemberID" value="" />
+					<input type="hidden" name="InsuranceArea" id="InsuranceArea" value="" />
+				</form>
+			</div>
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/knockout-3.4.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/PCASClass.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="select-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<option value="{{this}}">{{this}}</option>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get("MemID");
+				var $form = $("#form");
+				$('#MemberID').val(id);
+				//loading
+				loadingFun(true);
+				//获取证件类型
+				var selectTemplate = Handlebars.compile($("#select-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetCertificateType",
+					async: false,
+					success: function(d) {
+						if (d.status) {
+							$('#IDtype').append(selectTemplate(d.Data));
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//获取户口性质
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetHouseholdPropertyList",
+					async: false,
+					success: function(d) {
+						if (d.status) {
+							$('#idcate').append(selectTemplate(d.Data));
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//获取政治面貌
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetPoliticalStatus",
+					async: false,
+					success: function(d) {
+						if (d.status) {
+							$('#politicalSelect').append(selectTemplate(d.Data));
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//获取学历
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetEducation",
+					async: false,
+					success: function(d) {
+						if (d.status) {
+							$('#eduSelect').append(selectTemplate(d.Data));
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//初始化二级联动
+				//省市二级联动
+				new PCAS(cityFun, "province", "city");
+				//二级联动回调函数
+				function cityFun() {
+					var p = $('#province').val();
+					var c = $('#city').val();
+					if (p) {
+						var Area = p;
+						if (c != '0') {
+							Area = Area + '|' + c;
+						}
+						$('#InsuranceArea').val(Area);
+					}
+				}
+				//获取补充信息
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetExtensionInformation?MemberID=" + id,
+					async: true,
+					success: function(d) {
+						if (d.status) {
+							//loading
+							loadingFun(false);
+							//绑定已有数据
+							$('#IDtype').val(d.Data.CertificateType);
+							$('#politicalSelect').val(d.Data.PoliticalStatus);
+							$('#eduSelect').val(d.Data.Education);
+							$('#idcate').val(d.Data.HouseholdType);
+							$('#Birthday').datepicker({
+								format: 'yyyy-mm-dd',
+								viewMode: 'years'
+							});
+							$('#Birthday').datepicker('setValue', d.Data.Birthday);
+							if (d.Data.Sex) {
+								d.Data.Sex = parseInt(d.Data.Sex);
+								$('input[name="Sex"]').eq(d.Data.Sex).uCheck('check');
+							}
+							$('#InsuranceArea').val(d.Data.InsuranceArea);
+							ko.applyBindings(d.Data);
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				$('#save').click(function() {
+					var flag = $form.validator('isFormValid');
+					if (flag) {
+						var dataModel = $form.serialize();
+						console.log(dataModel);
+						$.ajax({
+							type: "post",
+							url: "/api/Member/CommitExtensionInformation",
+							async: true,
+							data: dataModel,
+							success: function(d) {
+								if (d.status) {
+									alertFun(d.Message, function() {
+										window.location.reload();
+									});
+								} else {
+									alertFun(d.Message);
+								}
+							}
+						});
+					}
+				});
+			})
+		</script>
+	</body>
+
+</html>

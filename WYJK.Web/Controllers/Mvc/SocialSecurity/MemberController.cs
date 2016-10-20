@@ -62,7 +62,7 @@ namespace WYJK.Web.Controllers.Mvc
         public JsonResult AdjustBucha(int memberID, decimal bucha)
         {
             #region 日志记录
-            decimal bucha1 = DbHelper.QuerySingle<decimal>($"select Bucha from Members where  MemberID={memberID}");
+            decimal bucha1 = DbHelper.QuerySingle<decimal>($"select ISNULL(Bucha,0) from Members where  MemberID={memberID}");
             LogService.WriteLogInfo(new Log { UserName = HttpContext.User.Identity.Name, MemberID = memberID, Contents = "调整用户{0}的冻结费，从" + bucha1 + "到" + bucha });
             #endregion
 

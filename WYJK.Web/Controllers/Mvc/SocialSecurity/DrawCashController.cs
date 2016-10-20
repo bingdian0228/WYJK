@@ -107,7 +107,7 @@ namespace WYJK.Web.Controllers.Mvc
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult> AgreeDrawCash(DrawCashModel model)
+        public  ActionResult AgreeDrawCash(DrawCashModel model)
         {
             if (ModelState.IsValid)
             {
@@ -121,7 +121,7 @@ namespace WYJK.Web.Controllers.Mvc
                             sql += $"update Members set Account=Account-(select money from DrawCash where DrawCashid={item}) where memberid = (select memberid from DrawCash where DrawCashid={item});";
                         }
 
-                        await Data.DbHelper.ExecuteSqlCommandAsync(sql);
+                        DbHelper.ExecuteSqlCommand(sql, null);
 
                         #region 检测余额是否够用,不够用则状态变为待续费
                         string sqlStr2 = string.Empty;
@@ -197,7 +197,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                         DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
                         #endregion
 
-                        List<AccountInfo> list = await DbHelper.QueryAsync<AccountInfo>($"select MemberID, MemberName, Account, Bucha, HeadPortrait from Members where MemberID in(select memberid from DrawCash WHERE DrawCashId IN ({ model.DrawCashIds})) ");
+                        List<AccountInfo> list =  DbHelper.Query<AccountInfo>($"select MemberID, MemberName, Account, Bucha, HeadPortrait from Members where MemberID in(select memberid from DrawCash WHERE DrawCashId IN ({ model.DrawCashIds})) ");
                
                         list.ForEach(l =>
                         {

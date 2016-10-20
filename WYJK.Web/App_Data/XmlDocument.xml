@@ -630,6 +630,26 @@
             <param name="RepaymentType"></param>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.OrderPay(WYJK.Entity.MemberLoanRepaymentOrderParameter)">
+            <summary>
+            生成还款订单，并调取支付页面
+            </summary>
+            <param name="parameter"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.LoanController.MemberLoanRepayment_Return(System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            支付回调
+            </summary>
+            <param name="Succeed"></param>
+            <param name="CoNo"></param>
+            <param name="BillNo"></param>
+            <param name="Amount"></param>
+            <param name="Date"></param>
+            <param name="MerchantPara"></param>
+            <param name="Msg"></param>
+            <param name="Signature"></param>
+        </member>
         <member name="M:WYJK.Web.Controllers.Http.LoanController.MemberLoanRepayment(WYJK.Entity.MemberLoanRepaymentParameter)">
             <summary>
             提交还款

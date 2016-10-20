@@ -109,4 +109,40 @@ namespace WYJK.Entity
         public string RepaymentType { get; set; }
 
     }
+
+    /// <summary>
+    /// 还款订单参数
+    /// </summary>
+    public class MemberLoanRepaymentOrderParameter
+    {
+        /// <summary>
+        /// 借款ID
+        /// </summary>
+        public int ID { get; set; }
+
+        /// <summary>
+        /// 还款类型
+        /// </summary>
+        public string RepaymentType { get; set; }
+
+
+        /// <summary>
+        /// 平台类型
+        /// </summary>
+        public string PlatType { get; set; } = "1";
+    }
+
+    /// <summary>
+    /// 还款订单
+    /// </summary>
+    public class MemberLoanRepaymentOrder
+    {
+        public int Id { get; set; }
+        public int JieID { get; set; }
+        public string RepaymentType { get; set; }
+
+        public string Status { get; set; }
+
+        public string HuanID { get; set; }
+    }
 }

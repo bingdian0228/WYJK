@@ -66,7 +66,9 @@ namespace WYJK.Web.Controllers.Http
                     List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr);
                     foreach (var socialSecurity in socialSecurityList)
                     {
-                        if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
+                        int months = (socialSecurity.PayTime.Value.Year - DateTime.Now.Year) * 12 + socialSecurity.PayTime.Value.Month - DateTime.Now.Month;
+
+                        if ((months < 0 || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
@@ -80,7 +82,9 @@ namespace WYJK.Web.Controllers.Http
                     List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
                     foreach (var accumulationFund in accumulationFundList)
                     {
-                        if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
+                        int months = (accumulationFund.PayTime.Value.Year - DateTime.Now.Year) * 12 + accumulationFund.PayTime.Value.Month - DateTime.Now.Month;
+
+                        if ((months < 0 || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
@@ -301,7 +305,8 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsSt
             List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr2);
             foreach (var socialSecurity in socialSecurityList)
             {
-                if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
+                int months = (socialSecurity.PayTime.Value.Year - DateTime.Now.Year) * 12 + socialSecurity.PayTime.Value.Month - DateTime.Now.Month;
+                if ((months < 0 || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                 {
                     return new JsonResult<dynamic>
                     {
@@ -315,7 +320,8 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsSt
             List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
             foreach (var accumulationFund in accumulationFundList)
             {
-                if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
+                int months = (accumulationFund.PayTime.Value.Year - DateTime.Now.Year) * 12 + accumulationFund.PayTime.Value.Month - DateTime.Now.Month;
+                if ((months < 0 || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                 {
                     return new JsonResult<dynamic>
                     {
@@ -377,7 +383,8 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsSt
             List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr2);
             foreach (var socialSecurity in socialSecurityList)
             {
-                if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
+                int months = (socialSecurity.PayTime.Value.Year - DateTime.Now.Year) * 12 + socialSecurity.PayTime.Value.Month - DateTime.Now.Month;
+                if ((months < 0 || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                 {
                     return new JsonResult<dynamic>
                     {
@@ -391,7 +398,8 @@ where SocialSecurityPeople.SocialSecurityPeopleID in({ SocialSecurityPeopleIDsSt
             List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
             foreach (var accumulationFund in accumulationFundList)
             {
-                if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
+                int months = (accumulationFund.PayTime.Value.Year - DateTime.Now.Year) * 12 + accumulationFund.PayTime.Value.Month - DateTime.Now.Month;
+                if ((months < 0 || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                 {
                     return new JsonResult<dynamic>
                     {
@@ -755,6 +763,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             int orderID = parameter.OrderID;
             if (orderID > 0)
             {
+                //if (parameter.PlatType == "1")
+                //    DbHelper.ExecuteSqlCommand($"update [Order] set PaymentMethod='银行卡' where OrderID={orderID}", null);
                 decimal money = 0;
                 Order order = DbHelper.QuerySingle<Order>($"select * from [Order] where OrderID={orderID}");
                 money = DbHelper.QuerySingle<decimal>($"select SUM(ISNULL(SocialSecurityAmount*SocialSecuritypayMonth,0)+ISNULL(SocialSecurityFirstBacklogCost,0)+ISNULL(SocialSecurityBuCha,0)+ISNULL(AccumulationFundAmount*AccumulationFundpayMonth,0)+ISNULL(AccumulationFundFirstBacklogCost,0)) from OrderDetails where OrderCode ='{order.OrderCode}'");
@@ -903,8 +913,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     OrderPayment(model);
 
 
-                HttpContext.Current.Response.Status = "200";
-                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
+                HttpContext.Current.Response.StatusCode = 200;
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={model.MemberID}");
             }
         }
 
@@ -937,7 +947,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     List<SocialSecurity> socialSecurityList = DbHelper.Query<SocialSecurity>(sqlstr);
                     foreach (var socialSecurity in socialSecurityList)
                     {
-                        if ((socialSecurity.PayTime.Value.Month < DateTime.Now.Month || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
+                        int months = (socialSecurity.PayTime.Value.Year - DateTime.Now.Year) * 12 + socialSecurity.PayTime.Value.Month - DateTime.Now.Month;
+                        if ((months < 0 || (socialSecurity.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && socialSecurity.Status == "1" && socialSecurity.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {
@@ -951,7 +962,8 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     List<AccumulationFund> accumulationFundList = DbHelper.Query<AccumulationFund>(sqlstr1);
                     foreach (var accumulationFund in accumulationFundList)
                     {
-                        if ((accumulationFund.PayTime.Value.Month < DateTime.Now.Month || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
+                        int months = (accumulationFund.PayTime.Value.Year - DateTime.Now.Year) * 12 + accumulationFund.PayTime.Value.Month - DateTime.Now.Month;
+                        if ((months < 0 || (accumulationFund.PayTime.Value.Month == DateTime.Now.Month && DateTime.Now.Day > 13)) && accumulationFund.Status == "1" && accumulationFund.IsPay == false)
                         {
                             return new JsonResult<dynamic>
                             {

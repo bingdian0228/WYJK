@@ -1,0 +1,46 @@
+﻿@model  MemberLoanRepayment
+
+@section Footer{
+    <style>
+        #Summary span {
+            padding: 0px 20px;
+        }
+    </style>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 个人借款 <span class="c-gray en">&gt;</span> 还款详情 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    <th width="80">本金</th>
+                    <th width="80">利息</th>
+                    <th width="80">滞纳金</th>
+                    <th width="80">月份</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.DetailList)
+                {
+                    <tr class="text-c">
+                        <td>@item.BenJin</td>
+                        <td>@item.LiXi</td>
+                        <td>@item.ZhiNaJin</td>
+                        <td>@item.MonthStr</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="cl pd-5 bg-1 bk-gray mt-20" id="Summary">
+        <span class="l">
+            还款类型:@EnumExt.GetEnumCustomDescription((RepaymentTypeEnum)Convert.ToInt32(Model.RepaymentType))
+        </span><span class="l">
+            还款时间：@Model.RepaymentDt
+        </span><span class="l">
+            违约金:@Model.WeiYueJin
+        </span><span class="l">
+            还款金额：@Model.TotalAmount
+        </span>
+    </div>
+</div>

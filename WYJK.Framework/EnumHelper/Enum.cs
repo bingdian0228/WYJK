@@ -259,6 +259,17 @@ namespace WYJK.Framework.EnumHelper
     }
 
     /// <summary>
+    /// 还款订单状态
+    /// </summary>
+    public enum RepaymentOrderStatus
+    {
+        [EnumDisplayName("待付款")]
+        WaitingPay = 1,
+        [EnumDisplayName("已完成")]
+        completed = 2
+    }
+
+    /// <summary>
     /// 公积金办理类型
     /// </summary>
     public enum AccumulationFundTypeEnum

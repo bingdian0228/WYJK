@@ -1,0 +1,167 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="user-index.html" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					待办
+				</h1>
+			</header>
+			<!--list-->
+			<div class="agency">
+				<div class="black bg_yellow am-padding-xs">
+					<span>停保审核中</span>
+				</div>
+				<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
+					<div class="am-list-news-bd">
+						<ul class="am-list" id="list_box">
+
+						</ul>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="list-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<li>
+				<div class="bg_lightblue am-padding-vertical-xs am-padding-horizontal-sm">
+					{{SocialSecurityPeopleName}}
+				</div>
+				<a href="user-insure-detail.html?id={{SocialSecurityPeopleID}}" class="am-link-muted">
+					<div class="am-g">
+						{{#if SSStatus}}
+						<div class="am-u-sm-3">
+							社保
+						</div>
+						<div class="am-u-sm-4">
+							已投{{SSAlreadyPayMonthCount}}个月
+						</div>
+						<div class="am-u-sm-5 am-text-right">
+							剩余{{SSRemainingMonthCount}}个月
+						</div>
+						<div class="am-u-sm-8">
+							投保时间：{{SSPayTime}}
+						</div>
+						<div class="am-u-sm-4 am-text-right">
+							状态：<span class="am-text-warning">{{change SSStatus}}</span>
+						</div>
+						{{/if}} {{#if AFStatus}}
+						<div class="am-u-sm-3">
+							公积金
+						</div>
+						<div class="am-u-sm-4">
+							已投{{AFAlreadyPayMonthCount}}个月
+						</div>
+						<div class="am-u-sm-5 am-text-right">
+							剩余{{AFRemainingMonthCount}}个月
+						</div>
+						<div class="am-u-sm-8">
+							缴费时间：{{AFPayTime}}
+						</div>
+						<div class="am-u-sm-4 am-text-right">
+							状态：<span class="am-text-warning">{{change AFStatus}}</span>
+						</div>
+						{{/if}}
+					</div>
+				</a>
+			</li>
+			{{/each}}
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get("MemID");
+				var $listBox = $('#list_box');
+				loadingFun(true);
+				//获取列表信息
+				var Template = Handlebars.compile($("#list-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetWaitingHandleListByStatus?MemberID=" + id,
+					success: function(d) {
+						if (d.status) {
+							if (d.Data.length) {
+								$listBox.html(Template(d.Data));
+							} else {
+								$listBox.html('<div class="am-padding-sm am-text-center">暂无信息</div>');
+							}
+							loadingFun(false);
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//注册一个Helper，转换status
+				Handlebars.registerHelper("change", function(value) {
+					switch (value) {
+						case 1:
+							return "待办";
+							break;
+						case 2:
+							return "待办";
+							break;
+						case 3:
+							return "正常";
+							break;
+						case 4:
+							return "待续费";
+							break;
+						case 5:
+							return "待停保";
+							break;
+						case 6:
+							return "已停保";
+							break;
+						default:
+							break;
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>

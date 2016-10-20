@@ -778,7 +778,7 @@ where (SocialSecurity.Status = {(int)SocialSecurityStatusEnum.Renew} or Accumula
         /// <returns></returns>
         public List<SocialSecurityPeople> GetAccumulationFundRenewListByMemberID(int MemberID)
         {
-            string sqlstr = $@"select 1 from AccumulationFund
+            string sqlstr = $@"select SocialSecurityPeople.* from AccumulationFund
   left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
   where SocialSecurityPeople.MemberID ={MemberID}
             and(AccumulationFund.Status in({(int)SocialSecurityStatusEnum.Renew}) or(AccumulationFund.Status={(int)SocialSecurityStatusEnum.WaitingStop} or StopMethod=1))";
@@ -819,7 +819,7 @@ left join SocialSecurityPeople on SocialSecurity.SocialSecurityPeopleID = Social
 update AccumulationFund set AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Normal},AccumulationFund.PayMonthCount= case when AccumulationFund.PayMonthCount> {MonthCount} then AccumulationFund.PayMonthCount else {MonthCount} end where AccumulationFund.AccumulationFundID in
   (select AccumulationFund.AccumulationFundID from AccumulationFund
 left join SocialSecurityPeople on AccumulationFund.SocialSecurityPeopleID = SocialSecurityPeople.SocialSecurityPeopleID
-  where SocialSecurityPeople.MemberID = {MemberID} and (AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew} or(SocialSecurity.Status = {(int)SocialSecurityStatusEnum.WaitingStop} and stopmethod=1)));
+  where SocialSecurityPeople.MemberID = {MemberID} and (AccumulationFund.Status = {(int)SocialSecurityStatusEnum.Renew} or(AccumulationFund.Status = {(int)SocialSecurityStatusEnum.WaitingStop} and stopmethod=1)));
   ";
             DbHelper.ExecuteSqlCommand(sqlstr, null);
         }

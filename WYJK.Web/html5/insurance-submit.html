@@ -1,0 +1,190 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="#left-link" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					个人结算
+				</h1>
+			</header>
+			<!--汇总消息-->
+			<div class="bg_white">
+				<ul class="am-list am-list-static" id="detailBox">
+
+				</ul>
+			</div>
+			<!--支付方式-->
+			<div class="submit">
+				<form action="" class="am-form" id="form" data-am-validator>
+					<div class="am-form-group am-form-icon">
+						<div class="l-form-group bg_white am-radius relative">
+							<label class="l-label">支付方式：</label>
+							<select id="" name="PaymentMethod" class="l-selectbox am-padding-left-0" required="required">
+								<option value="">请选择支付方式</option>
+								<option value="支付宝支付">支付宝支付</option>
+								<option value="微信支付">微信支付</option>
+								<option value="银联支付">银联支付</option>
+							</select>
+						</div>
+					</div>
+					<!--隐藏信息-->
+					<input type="hidden" name="OrderCode" id="OrderCode" value="" />
+					<!--btn-->
+					<div class="am-g">
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="cancel">取消</button>
+						</div>
+						<div class="am-u-sm-6">
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="pay-confirm">确认</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="detail-template" type="text/x-handlebars-template">
+			<li>
+				<div class="am-padding-horizontal-sm">
+					您将对{{NameArray.length}}位参保人进行投保
+				</div>
+			</li>
+			<li>
+				<div class="am-padding-horizontal-sm">
+					{{#each NameArray}}
+					<span class="am-badge am-badge-primary am-text-sm am-radius">{{this}}</span> {{/each}}
+				</div>
+			</li>
+			<li>
+				<div class="am-padding-horizontal-sm">
+					费用明细：
+				</div>
+			</li>
+			<li>
+				<div class="am-padding-horizontal-sm" id="fee-table">
+					<table class="am-table am-table-bordered am-table-centered am-margin-bottom-0">
+						<tr>
+							<th>项目</th>
+							<th>费用（元）</th>
+						</tr>
+						<tr>
+							<td>社保</td>
+							<td>{{SocialSecurityTotalAmount}}</td>
+						</tr>
+						<tr>
+							<td>公积金</td>
+							<td>{{AccumulationFundTotalAmount}}</td>
+						</tr>
+						<tr>
+							<td>服务费</td>
+							<td>{{ServiceCost}}</td>
+						</tr>
+						<tr>
+							<td>第一次代办费</td>
+							<td>{{FirstBacklogCost}}</td>
+						</tr>
+						<tr class="am-text-primary">
+							<td><strong>总计：</strong></td>
+							<td><strong>{{allTotal}}</strong></td>
+						</tr>
+					</table>
+				</div>
+			</li>
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var orderID = GetRequest().OrderCode;
+				var id = Cookies.get("MemID");
+				var Logined = isLogin(id);
+				$('#OrderCode').val(orderID);
+				$form = $('#form');
+				goBack();
+				if (Logined) {
+					loadingFun(true);
+					//模板
+					var detailTemplate = Handlebars.compile($("#detail-template").html());
+					//获取信息
+					$.ajax({
+						type: "get",
+						url: "/api/Order/GetOrderDetail?MemberID=" + id + "&OrderCode=" + orderID,
+						async: true,
+						success: function(d) {
+							if (d.status) {
+								d.Data.NameArray = d.Data.Names.split('，');
+								d.Data.allTotal = d.Data.AccumulationFundTotalAmount + d.Data.FirstBacklogCost + d.Data.FirstBacklogCost + d.Data.ServiceCost + d.Data.SocialSecurityTotalAmount;
+								$('#detailBox').html(detailTemplate(d.Data));
+								loadingFun(false);
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				}
+				//确认支付
+				$('#pay-confirm').click(function() {
+					var flag = $form.validator('isFormValid');
+					if (flag) {
+						var model = $form.serialize();
+						$.ajax({
+							type: "post",
+							url: "/api/Order/OrderPayment",
+							async: true,
+							data: model,
+							success: function(d) {
+							}
+						});
+					}
+				});
+				//取消按钮
+				$('#cancel').click(function() {
+					var $arrow = $('header .am-header-left.am-header-nav a');
+					$arrow.trigger("click");
+				});
+			});
+		</script>
+	</body>
+
+</html>

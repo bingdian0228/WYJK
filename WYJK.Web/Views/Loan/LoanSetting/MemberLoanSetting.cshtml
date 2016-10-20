@@ -1,0 +1,156 @@
+﻿@model MemberLoanSetting
+
+@section Header
+{
+    <link href="~/Content/lib/bootstrapvalidator-master/vendor/bootstrap/css/bootstrap.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/Content/lib/bootstrapvalidator-master/dist/css/bootstrapValidator.css" />
+
+    <script type="text/javascript" src="~/Content/lib/bootstrapvalidator-master/vendor/jquery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">var $$ = $.noConflict();</script>
+    <script type="text/javascript" src="~/Content/lib/bootstrapvalidator-master/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Content/lib/bootstrapvalidator-master/dist/js/bootstrapValidator.js"></script>
+    <style>
+        .form-group {
+            display: block;
+        }
+    </style>
+}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">
+            <div class="page-header">
+                <h2>借款参数设置</h2>
+            </div>
+
+            <form id="defaultForm" method="post" class="form-horizontal" action='@Url.Action("MemberLoanSetting")'>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">随借随还月息</label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" name="InThreeMonthsLiLv" value="@Model.InThreeMonthsLiLv" placeholder="百分比" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">半年期月息</label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" name="HalfYearLiLv"  value="@Model.HalfYearLiLv"  placeholder="百分比"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">一年期月息</label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" name="OneYearPeriodLiLv" value="@Model.OneYearPeriodLiLv"  placeholder="百分比" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">滞纳金</label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" name="ZhiNaJinPercent" value="@Model.ZhiNaJinPercent"  placeholder="百分比" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-lg-3 control-label">违约金</label>
+                    <div class="col-lg-5">
+                        <input type="text" class="form-control" name="WeiYueJinPercent" value="@Model.WeiYueJinPercent"  placeholder="百分比" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-9 col-lg-offset-3">
+                        <button type="submit" class="btn btn-primary">更改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $$('#defaultForm')
+            .bootstrapValidator({
+                message: 'This value is not valid',
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    InThreeMonthsLiLv: {
+                        message: 'The username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: '不能为空'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+(.[0-9]+)?$/,
+                                message: '填写不正确'
+                            }
+                        }
+                    },
+                    HalfYearLiLv: {
+                        message: 'The username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: '不能为空'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+(.[0-9]+)?$/,
+                                message: '填写不正确'
+                            }
+                        }
+                    },
+                    OneYearPeriodLiLv: {
+                        message: 'The username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: '不能为空'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+(.[0-9]+)?$/,
+                                message: '填写不正确'
+                            }
+                        }
+                    },
+                    ZhiNaJinPercent: {
+                        message: 'The username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: '不能为空'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+(.[0-9]+)?$/,
+                                message: '填写不正确'
+                            }
+                        }
+                    },
+                    WeiYueJinPercent: {
+                        message: 'The username is not valid',
+                        validators: {
+                            notEmpty: {
+                                message: '不能为空'
+                            },
+                            regexp: {
+                                regexp: /^[0-9]+(.[0-9]+)?$/,
+                                message: '填写不正确'
+                            }
+                        }
+                    }
+                }
+            })
+            //.on('success.form.bv', function (e) {
+            //    // Prevent form submission
+            //    e.preventDefault();
+
+            //    // Get the form instance
+            //    var $form = $(e.target);
+
+            //    // Get the BootstrapValidator instance
+            //    var bv = $form.data('bootstrapValidator');
+
+            //    // Use Ajax to submit form data
+            //    $.post($form.attr('action'), $form.serialize(), function (result) {
+            //        console.log(result);
+            //    }, 'json');
+            //});
+    });
+</script>

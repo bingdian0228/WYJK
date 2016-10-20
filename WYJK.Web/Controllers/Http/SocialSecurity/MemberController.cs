@@ -805,7 +805,7 @@ namespace WYJK.Web.Controllers.Http
             //判断账户是否冻结，如果冻结，则不能进行支付
             bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
   where MemberID = (select MemberID from[Order] where OrderID = {parameter.OrderID})");
-            if (isFrozen == false)
+            if (isFrozen)
                 return new JsonResult<dynamic>
                 {
                     status = false,
@@ -826,7 +826,7 @@ namespace WYJK.Web.Controllers.Http
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     return new JsonResult<dynamic>
                     {
@@ -929,7 +929,7 @@ namespace WYJK.Web.Controllers.Http
                     HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
                     return;
                 }
-                decimal payMoney = model.Money;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
@@ -966,11 +966,15 @@ namespace WYJK.Web.Controllers.Http
                     DbHelper.ExecuteSqlCommand($"update RenewOrders set status=1 where OrderID={orderID}", null);
 
 
-                    HttpContext.Current.Response.Status = "200";
-                    HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
+                    HttpContext.Current.Response.StatusCode = 200;
+
+
                 }
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={model.MemberID}");
 
             }
+
+
 
         }
 
@@ -1128,9 +1132,10 @@ namespace WYJK.Web.Controllers.Http
   where SocialSecurityPeople.MemberID ={parameter.MemberID}
             and(SocialSecurity.Status in({(int)SocialSecurityStatusEnum.Renew}) or AccumulationFund.Status in({(int)SocialSecurityStatusEnum.Renew}))");
 
-                   sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime,PeopleCount)
-values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','{ShouNote}',{parameter.Amount},{accountInfo.Account + parameter.Amount},getdate(),{PeopleCount});
-                                       insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
+                    sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime,PeopleCount)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','收入','{parameter.PayMethod}','{ShouNote}',{parameter.Amount},{accountInfo.Account + parameter.Amount},getdate(),{PeopleCount});";
+                    if (!string.IsNullOrWhiteSpace(ZhiNote))
+                        sqlAccountRecord += $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime) 
 values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{parameter.MemberID},'','','支出','余额','{ZhiNote}',{TotalServiceCost},{accountInfo.Account + parameter.Amount - TotalServiceCost - BuchaAmountTotal},getdate()); ";
 
                     //修改账户余额
@@ -1144,7 +1149,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     //将所有的待续费(包括未续费待停保)变成正常,并将剩余月数变成服务月数
                     _socialSecurityService.UpdateRenew_WaitingTopToNormalByMemberID(parameter.MemberID, parameter.MonthCount);
 
-           
+
 
                     transaction.Complete();
                 }
@@ -1198,7 +1203,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
             //判断账户是否冻结，如果冻结，则不能进行支付
             bool isFrozen = DbHelper.QuerySingle<bool>($@"select ISNULL(IsFrozen,0) from Members
   where MemberID = (select MemberID from[Order] where OrderID = {parameter.OrderID})");
-            if (isFrozen == false)
+            if (isFrozen)
                 return new JsonResult<dynamic>
                 {
                     status = false,
@@ -1219,7 +1224,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     return new JsonResult<dynamic>
                     {
@@ -1322,7 +1327,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
                     return;
                 }
-                decimal payMoney = model.Money;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
@@ -1356,9 +1361,18 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     SubmitRechargeAmount(parameter);
                     DbHelper.ExecuteSqlCommand($"update RechargeOrders set status=1 where OrderID={orderID}", null);
 
-                    HttpContext.Current.Response.Status = "200";
-                    HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
+                    HttpContext.Current.Response.StatusCode = 200;
                 }
+
+                string nextUrl = ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={model.MemberID}";
+                //跳转页面
+                HttpContext.Current.Response.Redirect(nextUrl);
+
+                //返回Html
+                //HttpClient httpClient = new HttpClient();
+                //string str_html = httpClient.GetStringAsync(nextUrl).Result;
+
+                //return nextUrl;
 
             }
         }
@@ -1787,5 +1801,23 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         //    return string.Join("\n", sb);
         //}
 
+        [System.Web.Http.HttpGet]
+        public void Test()
+        {
+            try
+            {
+
+
+                //HttpContext.Current.Response.Status = "200";
+                HttpContext.Current.Response.StatusCode = 200;
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+
+        }
     }
 }

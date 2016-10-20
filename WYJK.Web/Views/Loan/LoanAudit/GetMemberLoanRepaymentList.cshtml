@@ -1,0 +1,114 @@
+﻿@model  List<MemberLoanRepayment>
+@section Footer
+{
+    <script type="text/javascript">
+
+        $(function () {
+            //审核通过
+            $("[class*='action-audit']").click(function () {
+                if ($("input[type='checkbox'][name='LoanAudit']:checked").length <= 0) {
+                    layer.msg("请选择还款项");
+                    return;
+                }
+
+                if ($("input[type='checkbox'][name='LoanAudit']:checked").length > 1) {
+                    layer.msg("只能选择一项进行审核");
+                    return;
+                }
+                var $this = $(this);
+                layer.confirm('确定审核选中的项目？',
+                   { btn: ['确定', '取消'] },
+                   function () {
+                       var IDs = [];
+                       $("input[type='checkbox'][name='LoanAudit']:checked").each(function (i) {
+                           IDs[i] = $(this).val();
+                       });
+
+                       var index = layer.load(1, {
+                           shade: [0.1, '#000']
+                       });
+
+                       var Status = $this.attr("data-type");
+
+                       //提交
+                       $.ajax({
+                           url: "@Url.Action("BatchRepaymentAudit", "LoanAudit")",
+                           data: { "ID": IDs, "Status": Status },
+                           dataType: "json",
+                           type: "post",
+                           success: function (response) {
+                               layer.close(index);
+                               if (response.status) {
+                                   layer.msg(response.message);
+                                   refresh();
+                               } else {
+                                   layer.msg(response.message);
+                               }
+                           },
+                           error: function (data) {
+                               layer.close(index);
+                               layer.msg("服务器错误");
+                           }
+                       });
+                   })
+            });
+
+        })
+    </script>
+}
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 个人借款 <span class="c-gray en">&gt;</span> 还款列表 <a class="btn btn-success radius r mr-20" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新"><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="pd-20">
+    <div class="text-c">
+        @using (Html.BeginForm("GetMemberLoanRepaymentList", "LoanAudit", FormMethod.Get))
+            {
+            @Html.Hidden("ID", Request.QueryString["ID"])
+            @:审核状态:
+            <span class="select-box inline">
+                @Html.DropDownList("Status", ViewData["StatusType"] as List<SelectListItem>, new { @class = "select" })
+            </span>
+            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+
+        }
+    </div>
+
+    <div class="mt-20">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+                <tr class="text-c">
+                    <th width="25"><input type="checkbox" name="" value=""></th>
+                    <th width="80">还款类型</th>
+                    <th width="80">还款金额</th>
+                    <th width="80">还款日期</th>
+                    <th width="80">审核状态</th>
+                    <th width="80">审核时间</th>
+                    <th width="80">详情</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="text-c">
+                        <td><input type="checkbox" value="@item.ID" name="LoanAudit"></td>
+                        <td>@item.RepaymentType</td>
+                        <td>@item.TotalAmount</td>
+                        <td>@item.RepaymentDt</td>
+                        <td>@EnumExt.GetEnumCustomDescription((RepaymentAuditEnum)(Convert.ToInt32(item.Status)))</td>
+                        <td>@item.AuditDt</td>
+                        <td><a title="还款记录" href='@Url.Action("GetMemberLoanRepaymentDetail","LoanAudit")?ID=@item.ID' class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe665;</i></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Request.Params["Status"] == ((int)RepaymentAuditEnum.NoAudited).ToString())
+            {
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+
+            <span class="l">
+                <a href="javascript:;" class="btn btn-primary radius action-audit-pass" data-type="@Convert.ToInt32(RepaymentAuditEnum.Pass)"><i class="Hui-iconfont">&#xe6e1;</i> 通过</a>
+                <a href="javascript:;" class="btn btn-danger radius action-audit-nopass" data-type="@Convert.ToInt32(RepaymentAuditEnum.NoPass)"><i class="Hui-iconfont">&#xe6dd;</i> 不通过</a>
+
+            </span>
+        </div>
+    }
+</div>

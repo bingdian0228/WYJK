@@ -129,7 +129,7 @@ namespace WYJK.Web
                         List<MemberLoanAudit> memberLoanAuditList = DbHelper.Query<MemberLoanAudit>($"select * from MemberLoanAudit where MemberID={members.MemberID} and LoanTerm =1 and Status=4 and RepaymentStatus=1");
                         foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
                         {
-                           
+
                             if (memberLoanAudit.AlreadyLoanDate.AddMonths(3) <= DateTime.Now)
                             {
                                 MemberLoanRepayment memberLoanRepayment = loanController.GetMemberLoanRepayment(memberLoanAudit.ID, IsAutoPay: true);
@@ -144,6 +144,11 @@ namespace WYJK.Web
                             {
                                 //扣余额
                                 DbHelper.ExecuteSqlCommand($"update Members set Account-={RepaymentAmount} where MemberID={members.MemberID}", null);
+
+                                //还款记录
+                                string accountRecordSql = $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{members.MemberID},'','','支出','余额','还款','{RepaymentAmount}',{DbHelper.QuerySingle<Members>($"select * from Members where MemberID={members.MemberID}").Account},getdate())";
+                                DbHelper.ExecuteSqlCommand(accountRecordSql, null);
 
                                 //还款
                                 foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
@@ -315,6 +320,11 @@ namespace WYJK.Web
                                     //扣余额
                                     DbHelper.ExecuteSqlCommand($"update Members set Account-={RepaymentAmount} where MemberID={members.MemberID}", null);
 
+                                    //还款记录
+                                    string accountRecordSql = $@"insert into AccountRecord(SerialNum,MemberID,SocialSecurityPeopleID,SocialSecurityPeopleName,ShouZhiType,LaiYuan,OperationType,Cost,Balance,CreateTime)
+values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().GetHashCode()).Next(1000).ToString().PadLeft(3, '0')},{members.MemberID},'','','支出','余额','还款','{RepaymentAmount}',{DbHelper.QuerySingle<Members>($"select * from Members where MemberID={members.MemberID}").Account},getdate())";
+                                    DbHelper.ExecuteSqlCommand(accountRecordSql, null);
+
                                     //还款
                                     foreach (MemberLoanAudit memberLoanAudit in memberLoanAuditList)
                                     {
@@ -364,7 +374,7 @@ namespace WYJK.Web
                                     //发站内信
                                     Message message = new Message();
                                     message.MemberID = members.MemberID;
-                                    message.ContentStr = string.Format("还款余额扣款成功;");
+                                    message.ContentStr = string.Format("还款余额扣款成功; ");
                                     //发送消息提醒
                                     DbHelper.ExecuteSqlCommand($"insert into Message(MemberID,ContentStr) values({message.MemberID},'{message.ContentStr}')", null);
 
@@ -676,9 +686,10 @@ namespace WYJK.Web
 
                         #endregion
 
+                        List<Members> memberList1 = DbHelper.Query<Members>(sqlMember);
                         #region 检测下月余额是否够用，不够用则状态变为待续费
                         string sqlStr2 = string.Empty;
-                        foreach (Members member in memberList)
+                        foreach (Members member in memberList1)
                         {
                             #region 查询每个用户余额
                             decimal totalAccount = 0;
