@@ -3,32 +3,56 @@
     ViewBag.Title = "首页";
     Layout = "~/Views/_Layout_index.cshtml";
 }
+ <!--轮播图-->
+<div class="fullSlide">
+        <div class="bd">
+            <ul style="position: relative; width: 1157px; height: 418px;">
+                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/1.jpg') 50% 0px no-repeat rgb(226, 2, 94);">
+                    <a href="http://www.baidu.com"></a>
+                </li>
+                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/2.jpg') 50% 0px no-repeat rgb(222, 213, 161);">
+                    <a href="http://www.baidu.com"></a>
+                </li>
+                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/1.jpg') 50% 0px no-repeat rgb(184, 206, 209);">
+                    <a href="http://www.baidu.com"></a>
+                </li>
+                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: list-item; background: url('/Content/img/2.jpg') 50% 0px no-repeat rgb(152, 145, 142);">
+                    <a href="http://www.baidu.com"></a>
+                </li>
+            </ul>
+        </div>
+        <div class="hd">
+            <ul><li class="">1</li><li class="">2</li><li class="">3</li><li class="on">4</li></ul>
+        </div>
+        <span class="prev" style="opacity: 0.5; display: none;"></span>
+        <span class="next" style="opacity: 0.5; display: none;"></span>
+    </div>
 <!--三等分-->
 <div class="avgBox-w bg-lightgrey">
     <div class="container">
         <ul class="am-margin-bottom-0 clearfix list-unstyled">
             <li>
-                <a href="/UserInsurance/Index" class="text-center am-padding-vertical-xxl black border-blue">
+                <a href="#" class="text-center am-padding-vertical-xl black border-blue">
                     <i class="icon-w icon-lg-shebao"></i>
-                    <div class="am-padding-top-lg">缴社保</div>
+                    <div class="am-padding-top">缴社保</div>
                     <div class="am-text-xs grey">
                         Pay social security
                     </div>
                 </a>
             </li>
             <li>
-                <a href="/Loan/Loan" class="text-center am-padding-vertical-xxl black border-red">
+                <a href="loan-apply.html" class="text-center am-padding-vertical-xl black border-red">
                     <i class="icon-w icon-lg-loan"></i>
-                    <div class="am-padding-top-lg">贷款</div>
+                    <div class="am-padding-top">贷款</div>
                     <div class="am-text-xs grey">
                         The loans
                     </div>
                 </a>
             </li>
             <li>
-                <a href="/Calculator/Calculator" class="text-center am-padding-vertical-xxl black border-green">
+                <a href="calculator.html" class="text-center am-padding-vertical-xl black border-green">
                     <i class="icon-w icon-lg-calculator"></i>
-                    <div class="am-padding-top-lg">保费计算</div>
+                    <div class="am-padding-top">保费计算</div>
                     <div class="am-text-xs grey">
                         Premium calculation
                     </div>

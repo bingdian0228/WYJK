@@ -98,7 +98,7 @@ namespace WYJK.Data.ServiceImpl
             DbParameter[] parameters = new DbParameter[] {
                 new SqlParameter("@Name", model.Name),
                 new SqlParameter("@Type", model.Type),
-                new SqlParameter("@StrContent", model.StrContent),
+                new SqlParameter("@StrContent", model.StrContent ?? ""),
                 new SqlParameter("@ImgUrl", model.ImgUrl ?? (object)DBNull.Value),
                 new SqlParameter("@ID", model.ID)
             };
