@@ -3,36 +3,33 @@
     ViewBag.Title = "首页";
     Layout = "~/Views/_Layout_index.cshtml";
 }
- <!--轮播图-->
+<!--轮播图-->
 <div class="fullSlide">
-        <div class="bd">
-            <ul style="position: relative; width: 1157px; height: 418px;">
-                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/1.jpg') 50% 0px no-repeat rgb(226, 2, 94);">
-                    <a href="http://www.baidu.com"></a>
-                </li>
-                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/2.jpg') 50% 0px no-repeat rgb(222, 213, 161);">
-                    <a href="http://www.baidu.com"></a>
-                </li>
-                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/1.jpg') 50% 0px no-repeat rgb(184, 206, 209);">
-                    <a href="http://www.baidu.com"></a>
-                </li>
-                <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: list-item; background: url('/Content/img/2.jpg') 50% 0px no-repeat rgb(152, 145, 142);">
-                    <a href="http://www.baidu.com"></a>
-                </li>
-            </ul>
-        </div>
-        <div class="hd">
-            <ul><li class="">1</li><li class="">2</li><li class="">3</li><li class="on">4</li></ul>
-        </div>
-        <span class="prev" style="opacity: 0.5; display: none;"></span>
-        <span class="next" style="opacity: 0.5; display: none;"></span>
+    <div class="bd">
+        <ul style="position: relative; width: 1157px; height: 418px;">
+            <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/PC_banner1.jpg') 50% 0px no-repeat rgb(226, 2, 94);">
+                <a href="@Url.Action("IntroShebao","index")" target="_blank"></a>
+            </li>
+            <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/PC_banner2.jpg') 50% 0px no-repeat rgb(222, 213, 161);">
+                <a href="@Url.Action("IntroWuyou","index")" target="_blank"></a>
+            </li>
+            <li style="position: absolute; width: 1157px; left: 0px; top: 0px; display: none; background: url('/Content/img/PC_banner3.jpg') 50% 0px no-repeat rgb(184, 206, 209);">
+                <a href="@Url.Action("IntroBuy","index")" target="_blank"></a>
+            </li>
+        </ul>
     </div>
+    <div class="hd">
+        <ul></ul>
+    </div>
+    <span class="prev" style="opacity: 0.5; display: none;"></span>
+    <span class="next" style="opacity: 0.5; display: none;"></span>
+</div>
 <!--三等分-->
 <div class="avgBox-w bg-lightgrey">
     <div class="container">
         <ul class="am-margin-bottom-0 clearfix list-unstyled">
             <li>
-                <a href="#" class="text-center am-padding-vertical-xl black border-blue">
+                <a href="@Url.Action("Add1","UserInsurance")" class="text-center am-padding-vertical-xl black border-blue">
                     <i class="icon-w icon-lg-shebao"></i>
                     <div class="am-padding-top">缴社保</div>
                     <div class="am-text-xs grey">
@@ -41,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="loan-apply.html" class="text-center am-padding-vertical-xl black border-red">
+                <a href="@Url.Action("Loan","Loan")" class="text-center am-padding-vertical-xl black border-red">
                     <i class="icon-w icon-lg-loan"></i>
                     <div class="am-padding-top">贷款</div>
                     <div class="am-text-xs grey">
@@ -50,7 +47,7 @@
                 </a>
             </li>
             <li>
-                <a href="calculator.html" class="text-center am-padding-vertical-xl black border-green">
+                <a href="@Url.Action("Calculator","Calculator")" class="text-center am-padding-vertical-xl black border-green">
                     <i class="icon-w icon-lg-calculator"></i>
                     <div class="am-padding-top">保费计算</div>
                     <div class="am-text-xs grey">
@@ -84,7 +81,7 @@
                 <li class="am-padding-xs">数据全程加密,信息安全有保障.</li>
             </ul>
             <div class="am-padding-top-lg">
-                <a class="btn btn-default am-padding-horizontal-xl" href="#" role="button">了解更多</a>
+                <a class="btn btn-default am-padding-horizontal-xl" href="@Url.Action("Login","User")" role="button">了解更多</a>
             </div>
         </div>
         <div class="pull-right">
@@ -100,26 +97,26 @@
                 <div class="news-head-w clearfix">
                     <div class="pull-left">
                         <div class="title black am-text-lg am-padding-vertical-sm am-padding-right-lg">
-                            社保资讯
+                            最新新闻
                         </div>
                     </div>
                     <div class="pull-right am-padding-top-lg">
-                        <a href="#" target="_blank">更多></a>
+                        <a href="@Url.Action("InfoList","index")?Type=新闻" >更多></a>
                     </div>
                 </div>
                 <ul class="am-padding-left-0 list-unstyled">
 
-                    @{ List<Information> list = ViewBag.insuranceInfos as List<Information>;}
+                    @{ List<Information> list = ViewBag.newsInfos as List<Information>;}
 
                     @foreach (Information item in list)
                     {
                         <li>
                             <div class="row">
                                 <div class="col-lg-10 am-padding-left-0 am-text-truncate">
-                                    <a href="#" target="_blank" class="text-muted">@item.Name</a>
+                                    <a href="@Url.Action("InfoDetail","index")?ID=@item.ID" class="text-muted">@item.Name</a>
                                 </div>
                                 <div class="col-lg-2 grey text-right am-padding-right-0">
-                                    03-28
+                                    @item.CreateTime.ToString("yyyy-MM-dd")
                                 </div>
                             </div>
                         </li>
@@ -135,20 +132,20 @@
                         </div>
                     </div>
                     <div class="pull-right am-padding-top-lg">
-                        <a href="#" target="_blank">更多></a>
+                        <a href="@Url.Action("InfoList","index")?Type=资讯">更多></a>
                     </div>
                 </div>
                 <ul class="am-padding-left-0 list-unstyled">
-
-                    @foreach (Information item in list)
+                    @{ List<Information> list1 = ViewBag.zixunInfos as List<Information>;}
+                    @foreach (Information item in list1)
                     {
                         <li>
                             <div class="row">
                                 <div class="col-lg-10 am-padding-left-0 am-text-truncate">
-                                    <a href="#" target="_blank" class="text-muted">@item.Name</a>
+                                    <a href="@Url.Action("InfoDetail","index")?ID=@item.ID"  class="text-muted">@item.Name</a>
                                 </div>
                                 <div class="col-lg-2 grey text-right am-padding-right-0">
-                                    03-28
+                                    @item.CreateTime.ToString("yyyy-MM-dd")
                                 </div>
                             </div>
                         </li>
@@ -160,7 +157,7 @@
     </div>
 </div>
 <!--图文-->
-<div class="am-padding-lg mediaBox-w">
+@*<div class="am-padding-lg mediaBox-w">
     <div class="container">
         <div class="row">
             <div class="col-lg-6 am-margin-vertical-lg">
@@ -232,6 +229,19 @@
                     </div>
                 </a>
             </div>
+        </div>
+    </div>
+</div>*@
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6">
+            <img src="img/time_icon.png" alt="" width="25px" />
+            <span class="time-des">工作时间：8:15-17:15</span>
+        </div>
+        <div class="col-lg-6">
+            <img src="img/map_icon.png" alt="" width="25px" />
+            <span class="address-des">地址：青岛市市北区连云港路 33 号商务路 B 座1230.</span>
         </div>
     </div>
 </div>

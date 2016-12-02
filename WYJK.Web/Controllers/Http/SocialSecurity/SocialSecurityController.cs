@@ -750,7 +750,8 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                     };
                 }
 
-                if (socialSecurityPeople.socialSecurity.PayMonthCount == 0) {
+                if (socialSecurityPeople.socialSecurity.PayMonthCount == 0)
+                {
                     return new JsonResult<dynamic>
                     {
                         status = false,
@@ -2189,7 +2190,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                     DbHelper.ExecuteSqlCommand(sqlAccountRecord, null);
 
                     HttpContext.Current.Response.StatusCode = 200;
-                    
+
                 }
 
                 HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={baseOrders.MemberID}");

@@ -144,6 +144,7 @@
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\css\common.css" />
+    <Content Include="Content\css\common1.css" />
     <Content Include="Content\css\fileinput.min.css" />
     <Content Include="Content\css\Site.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
@@ -215,6 +216,8 @@
     <Content Include="scripts\respond.min.js" />
     <Content Include="scripts\superslide.2.1.js" />
     <None Include="scripts\_references.js" />
+    <None Include="Views\Index\InfoDetail.cshtml" />
+    <None Include="Views\Index\InfoList.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -333,6 +336,10 @@
     <Content Include="Views\UserLoan\GetRepaymentList.cshtml" />
     <Content Include="Views\UserLoan\GetRepaymentDetail.cshtml" />
     <Content Include="Views\UserLoan\MemberLoanRepayment.cshtml" />
+    <Content Include="Views\Index\IntroBuy.cshtml" />
+    <Content Include="Views\Index\IntroShebao.cshtml" />
+    <Content Include="Views\Index\IntroWuyou.cshtml" />
+    <None Include="Views\_Layout_index_1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

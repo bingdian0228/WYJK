@@ -195,6 +195,11 @@ namespace WYJK.Web.Controllers.Http
             Members member = await _memberService.GetMemberInfo(MemberID);
             //member.UserType = DbHelper.QuerySingle<CertificationAudit>($"select * from CertificationAudit where MemberID={MemberID}").UserType;
 
+            if (member.IsAuthentication == "2")
+            {
+                member.UserType = DbHelper.Query<CertificationAudit>($"select UserType from CertificationAudit where MemberID ={MemberID}").FirstOrDefault().UserType;
+            }
+
             return new JsonResult<dynamic>
             {
                 status = true,
@@ -344,7 +349,7 @@ namespace WYJK.Web.Controllers.Http
 
             await _memberService.CommitEnterpriseCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.QiYe} where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
 
             ////验证身份证
             //if (!Regex.IsMatch(parameter.EnterpriseLegalIdentityCardNo, @"(^\d{18}$)|(^\d{15}$)"))
@@ -391,7 +396,7 @@ namespace WYJK.Web.Controllers.Http
 
             await _memberService.CommitEnterpriseCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.QiYe} where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
 
             return new JsonResult<dynamic>
             {
@@ -415,7 +420,7 @@ namespace WYJK.Web.Controllers.Http
 
             await _memberService.CommitPersonCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
 
             return new JsonResult<dynamic>
             {
@@ -454,7 +459,7 @@ namespace WYJK.Web.Controllers.Http
 
             await _memberService.CommitPersonCertification(parameter);
 
-            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2,UserType={(int)UserTypeEnum.GeTiJingYing} where MemberID={parameter.MemberID}", null);
+            DbHelper.ExecuteSqlCommand($"update Members set IsAuthentication=2 where MemberID={parameter.MemberID}", null);
 
             return new JsonResult<dynamic>
             {

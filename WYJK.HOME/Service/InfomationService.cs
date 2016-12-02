@@ -14,12 +14,22 @@ namespace WYJK.HOME.Service
         /// </summary>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public List<Information> InsuranceOfPageSize(int pageSize)
+        public List<Information> InsuranceOfPageSize(int pageSize, string flag)
         {
             List<Information> list = new List<Information>();
+            string type = string.Empty;
+            switch (flag)
+            {
+                case "1":
+                    type = "新闻";
+                    break;
+                case "2":
+                    type = "资讯";
+                    break;
+            }
 
-            string sql = $@"select top {pageSize} ID,Name from Information";
-            
+            string sql = $@"select top {pageSize} ID,Name,CreateTime from Information where Type = '{type}'  order by CreateTime desc";
+
             return DbHelper.Query<Information>(sql);
         }
 

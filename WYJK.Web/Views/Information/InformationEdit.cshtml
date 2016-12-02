@@ -8,10 +8,10 @@
 }
 @section Footer{
     <script type="text/javascript" src="/Content/lib/webuploader/0.1.5/webuploader.min.js"></script>
-<script src="~/Content/lib/ueditor/1.4.3/ueditor.config.js"></script>
-<script src="~/Content/lib/ueditor/1.4.3/ueditor.all.min.js"></script>
-<script src="~/Content/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
-<script type="text/javascript">
+    <script src="~/Content/lib/ueditor/1.4.3/ueditor.config.js"></script>
+    <script src="~/Content/lib/ueditor/1.4.3/ueditor.all.min.js"></script>
+    <script src="~/Content/lib/ueditor/1.4.3/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript">
         var ue = UE.getEditor('editor');
 
 
@@ -30,7 +30,7 @@
                 window.config.Webuploader.removeFile(id);
             }
         }
-</script>
+    </script>
     <script type="text/javascript">
         $list = $("#fileList"),
             $btn = $("#btn-star"),
@@ -184,7 +184,7 @@
                 <div class="uploader-thum-container">
                     <div id="fileList" class="uploader-list">
 
-                        @if (Model != null && Model.ImgUrl != null && Model.ImgUrls.Length > 0)
+                        @if (Model != null && Model.ImgUrl != "" && Model.ImgUrl != null && Model.ImgUrls.Length > 0)
                         {
                             for (int i = 0, len = Model.ImgUrls.Length; i < len; i++)
                             {

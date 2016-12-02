@@ -68,8 +68,7 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<bool> InformationAdd(Information model)
         {
-            string ImgUrls = string.Join(";", model.ImgUrls);
-            string sql = $"insert into Information(Name,Type,ImgUrl,StrContent,CreateTime) values('{model.Name}','{model.Type}','{ImgUrls}','{model.StrContent}','{model.CreateTime}')";
+            string sql = $"insert into Information(Name,Type,ImgUrl,StrContent,CreateTime) values('{model.Name}','{model.Type}','{model.ImgUrl}','{model.StrContent}','{model.CreateTime}')";
             int result = await DbHelper.ExecuteSqlCommandAsync(sql);
             return result > 0;
         }

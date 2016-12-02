@@ -11,8 +11,6 @@
     <!-- Bootstrap -->
     <link href="~/Content/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/Content/css/common.css">
-    <link href="~/Content/css/body.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/css/wuyou.css" rel="stylesheet" type="text/css" />
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -20,10 +18,6 @@
       <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script type="text/javascript" src="~/Scripts/jquery-1.12.3.min.js"></script>
-    <script>
-			document.write('<script type="text/javascript" data-lxb-uid="9746523" data-lxb-gid="173231" src="https://lxbjs.baidu.com/api/asset/api.js?t=' + new Date().getTime() + '" charset="utf-8"></scr' + 'ipt>');
-    </script>
-    <script src="~/Content/js/nav-animate.js" type="text/javascript" charset="utf-8"></script>
 </head>
 
 <body>
@@ -102,45 +96,13 @@
                         
                         <!--消息-->
                         <span class="light-grey am-padding-horizontal-xs">|</span>
-                        <a href="@Url.Action("Login","User")" class="orange">消息</a>
+                        <a href="#" class="orange">消息</a>
                     </div>
                 </div>
             </div>
         </div>
         <!--导航栏-->
-        <nav class="navbar navbar-default navlist-w navbar-static-top am-margin-top-lg am-margin-bottom-0">
-            <div class="container">
-                <ul class="nav navbar-nav">
 
-                    @{ 
-                        //获取action名称
-                        string action = ViewContext.RouteData.Values["action"].ToString();
-                    }
-
-                    <li class="@(action == "Index" ? "active":"")">
-                        <a href="/Index/Index" class="">
-                            <span class="am-text-default">首页</span>
-                        </a>
-                    </li>
-                    <li class="@(action == "Insurance" ? "active":"")">
-                        <a href="/Index/Insurance" class="">
-                            <span class="am-text-default">社保/公积金</span>
-                        </a>
-                    </li>
-                    <li class="@(action == "Loan" ? "active":"")">
-                        <a href="/Index/Loan" class="">
-                            <span class="am-text-default">无忧借款</span>
-                        </a>
-                    </li>
-                    <li class="@(action == "About" ? "active":"")">
-                        <a href="/Index/About" class="">
-                            <span class="am-text-default">关于我们</span>
-                        </a>
-                    </li>
-                </ul>
-
-            </div>
-        </nav>
         <!--轮播图-->
         @*<div class="fullSlide">
             <div class="bd">
@@ -173,53 +135,6 @@
         @Html.Partial("_Partial_Bottom")
 
     </div>
-
-    <section class="fixed-box">
-        <ul class="fixed-box-list">
-            <li class="fix-box-li online-li online-li1" style="display:none">
-                <span class="fix-box-span online-span">
-                    <p>在线咨询</p>
-                </span>
-                <div class="online-box">
-                    <a class="online-baidu" href="javascript:void(0);">
-                        <div><span>在线咨询</span></div>
-                    </a>
-                </div>
-            </li>
-            <li class="fix-box-li call-li">
-                <span class="fix-box-span call-span">
-                    <p>免费电话</p>
-                </span>
-                <div class="call-box">
-                    <h4>咨询热线</h4>
-                    <div class="color-ff7618">4000-532-600</div>
-                    <h4>售后服务</h4>
-                    <div class="color-ff7618">4000-532-600</div>
-                    <b></b>
-                </div>
-            </li>
-            <li class="fix-box-li App-li">
-                <span class="fix-box-span App-span">
-                    <p>APP下载</p>
-                </span>
-                <div class="App-box">
-                    <img src="~/Content/img/App_download.png">
-                    <p>扫描二维码下载App</p>
-                    <b></b>
-                </div>
-            </li>
-            <li class="fix-box-li wx-li">
-                <span class="fix-box-span wx-span">
-                    <p>微信咨询</p>
-                </span>
-                <div class="wx-box">
-                    <img src="~/Content/img/weixin_Service.jpg">
-                    <p>扫描关注微信号</p>
-                    <b></b>
-                </div>
-            </li>
-        </ul>
-    </section>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/superslide.2.1.js" type="text/javascript" charset="utf-8"></script>

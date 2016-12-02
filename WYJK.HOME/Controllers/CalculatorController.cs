@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WYJK.Data.IServices;
@@ -16,20 +19,47 @@ namespace WYJK.HOME.Controllers
         RegionService regionSv = new RegionService();
 
         ISocialSecurityService _socialSecurity = new WYJK.Data.ServiceImpl.SocialSecurityService();
-
+        private string url = ConfigurationManager.AppSettings["ServerUrl"] + "/api";
         // GET: Calculator
-        public ActionResult Calculator()
+        public async Task<ActionResult> Calculator()
         {
+            HttpClient httpClient = new HttpClient();
+            var req = await httpClient.GetAsync(url + "/SocialSecurity/GetProvinceList");
+            List<string> list = (await req.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+            List<SelectListItem> selList = new List<SelectListItem>();
+
+            selList.Insert(0, new SelectListItem { Text = "请选择省份", Value = "" });
+
+            foreach (var item in list)
+            {
+                selList.Add(new SelectListItem { Text = item, Value = item });
+            }
+
             //获取省份
-            ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(),"请选择省份");
+            ViewBag.Provinces = selList;
+            ViewBag.Url = url;
             //获取户籍
             ViewBag.UserTypes = CommonHelper.SelectListType(typeof(HouseholdPropertyEnum), "请选择户籍性质");
             return View();
         }
 
+        /// <summary>
+        /// 根据省份获取城市
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> GetCityListByProvince(string provinceName)
+        {
+            HttpClient httpClient = new HttpClient();
+            var req = await httpClient.GetAsync(url + "/SocialSecurity/GetCityListByProvince?provinceName=" + provinceName);
+            List<string> list = (await req.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+
+            return Json(new { result = list }, JsonRequestBehavior.AllowGet);
+        }
+
+
         public ActionResult CalculatorResult(string InsuranceArea, string HouseholdProperty, decimal SocialSecurityBase, decimal AccountRecordBase)
         {
-            SocialSecurityCalculation cal = _socialSecurity.GetSocialSecurityCalculationResult("山东省|青岛市|崂山区", HouseholdProperty, SocialSecurityBase, AccountRecordBase);
+            SocialSecurityCalculation cal = _socialSecurity.GetSocialSecurityCalculationResult(InsuranceArea, HouseholdProperty, SocialSecurityBase, AccountRecordBase);
 
             Dictionary<string, decimal> dict = new Dictionary<string, decimal>();
             dict["SocialSecuritAmount"] = cal.SocialSecuritAmount;
@@ -74,7 +104,7 @@ namespace WYJK.HOME.Controllers
                 aFMaxBase = model.MaxAccumulationFund;
             }
 
-            
+
 
             Dictionary<string, decimal> dict = new Dictionary<string, decimal>();
             dict["MinBase"] = minBase;
@@ -83,7 +113,7 @@ namespace WYJK.HOME.Controllers
             dict["AFMaxBase"] = aFMaxBase;
 
 
-            return Json(dict,JsonRequestBehavior.AllowGet);
+            return Json(dict, JsonRequestBehavior.AllowGet);
         }
 
 

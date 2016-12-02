@@ -29,7 +29,8 @@ namespace WYJK.Web.Controllers.Http
             var list = informationList.ToList();
             foreach (var item in list)
             {
-                item.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + item.ImgUrl;
+                if (!string.IsNullOrWhiteSpace(item.ImgUrl.Trim()))
+                    item.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + item.ImgUrl;
             }
             return new JsonResult<dynamic>
             {

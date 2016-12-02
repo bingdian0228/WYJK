@@ -46,8 +46,9 @@ namespace WYJK.Web.Controllers.Mvc
             if (model.ImgUrls != null)
             {
                 model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
-                model.CreateTime = DateTime.Now;
+                
             }
+            model.CreateTime = DateTime.Now;
 
             bool flag = await _informationService.InformationAdd(model);
             ViewBag.ErrorMessage = flag ? "保存成功" : "保存失败";
