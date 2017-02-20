@@ -12,6 +12,9 @@ namespace WYJK.Data.ServiceImpl
     {
         public async Task<PagedResult<RechargeOrders>> GetRechargeOrderList(RechargeOrdersParameter parameter)
         {
+            if (string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = "";
+            parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
             string sqlWhere = $@" where m.MemberName like '%{parameter.SocialSecurityPeopleName}%' and ro.Status!=0  and (ro.Status = {parameter.Status} or {parameter.Status}=-1)";
 
 

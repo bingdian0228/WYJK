@@ -28,7 +28,9 @@ var EventsList = function(element, options) {
 		options.params.PageIndex = start;
 		$.getJSON(this.URL + start).then(function(d) {
 			_this.total = d.Data.total;
-			if(_this.total != 0) {
+			console.log(d.Data.length);
+			console.log(d.Data.length != 0);
+			if((d.Data.length != 0)) {
 				if($.isFunction(options.ajaxCallback)) {
 					options.ajaxCallback(d);
 				}
@@ -53,7 +55,6 @@ var EventsList = function(element, options) {
 				LiHtml = '<li class="am-margin-top-lg"><img src="./img/no-data.png" alt="" width="100%"/></li>';
 				$list.html(LiHtml);
 			}
-
 			// refresh iScroll
 			setTimeout(function() {
 				_this.iScroll.refresh();

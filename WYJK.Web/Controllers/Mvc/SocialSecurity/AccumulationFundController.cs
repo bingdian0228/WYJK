@@ -38,6 +38,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> AccumulationFundOverview(AccumulationFundParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -68,6 +72,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> AccumulationFundWaitingHandle(AccumulationFundParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -93,6 +101,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> AccumulationFundNormal(AccumulationFundParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -118,6 +130,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> AccumulationFundRenew(AccumulationFundParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -142,6 +158,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> AccumulationFundWaitingStop(AccumulationFundParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -167,6 +187,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> AccumulationFundAlreadyStop(AccumulationFundParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 

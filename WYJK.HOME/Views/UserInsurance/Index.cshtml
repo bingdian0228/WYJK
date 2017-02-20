@@ -41,7 +41,8 @@
                                         <input type="checkbox" name="cbxSS" id="" value="@item.SocialSecurityPeopleID" aria-label="...">
                                     </label>
                                 </div>
-                                <a href="@Url.Action("Edit", new { item.SocialSecurityPeopleID })">编辑</a>
+                                <a href="#" id="delSocial" >删除</a>
+                                <input type="hidden" value="@item.SocialSecurityPeopleID" id="txtPeopID" />
                             </div>
                             <div class="col-lg-11">
                                 <dl class="am-margin-0">
@@ -122,6 +123,11 @@
 
     </div>
 </div>
+<script>
+
+         
+</script>
+
 @section Footer{
 
     <script>
@@ -143,6 +149,8 @@
                 }
 
             });
+
+       
 
         });
 

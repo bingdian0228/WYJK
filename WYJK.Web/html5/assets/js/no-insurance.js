@@ -18,7 +18,7 @@ $(document).ready(function() {
 						$.each(d.Data, function(i, item) {
 							item.insuranceFee = item.SocialSecurityAmount + item.AccumulationFundAmount;
 							item.serviceCost = item.AccumulationFundFirstBacklogCost + item.socialSecurityFirstBacklogCost;
-							item.totalAmount = item.insuranceFee + item.serviceCost;
+							item.totalAmount = item.insuranceFee + item.serviceCost + item.Bucha;
 						});
 						$listBox.html(Template(d.Data));
 					} else {
@@ -89,7 +89,7 @@ $(document).ready(function() {
 						//弹出confirm框
 						$('#settle-confirm').modal({
 							relatedTarget: this,
-//							closeOnConfirm: false,
+							//							closeOnConfirm: false,
 							onConfirm: function(options) {
 								//自动扣款
 								$.ajax({
@@ -99,7 +99,7 @@ $(document).ready(function() {
 									data: dataModel,
 									success: function(d) {
 										if (d.status) {
-											alertFun(d.Message,function () {
+											alertFun(d.Message, function() {
 												window.location.reload();
 											});
 										} else {
@@ -162,16 +162,19 @@ $(document).ready(function() {
 		var f = new Number();
 		var s = new Number();
 		var t = new Number();
+		var b = new Number();
 		var ar = [];
 		$.each($chk, function(i, item) {
 			f = f + parseFloat($(this).data("fee"));
 			s = s + parseFloat($(this).data("svc"));
 			t = t + parseFloat($(this).data("total"));
+			b = b + parseFloat($(this).data("bucha"));
 			ar.push($(this).data("id"));
 		});
 		$('#fee').text(f);
 		$('#svc').text(s);
 		$('#total').text(t);
+		$('#bucha').text(b);
 		$settleBtn.data('idAr', ar);
 	}
 });

@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -43,8 +43,82 @@
 					</a>
 				</div>
 			</header>
-			<!--fix-->
-			<div class="l-footer-fix"></div>
+			<!--轮播图-->
+			<div class="am-slider am-slider-default" id="slider">
+				<ul class="am-slides">
+
+				</ul>
+			</div>
+			<!--为啥买，如何买，怎么查-->
+			<div class="am-margin-horizontal-sm am-margin-top-sm bg_white am-nbfc am-margin-bottom-sm">
+				<div class="home-top-left am-fl am-padding-vertical-sm">
+					<a href="home-why-buy.html" class="am-block am-padding-horizontal-sm blue-7D am-text-center am-home-border-right">
+						<span class="blue-7D am-text-sm">
+						为啥买？
+						</span>
+						<div class="grey-A8 am-margin-top-xs am-text-xs">
+							解决就读买房等囧况全方位保障生活质量
+						</div>
+						<img src="img/xh_weishamai.png" alt="为啥买？" width="60px" class="am-margin-top-sm" />
+					</a>
+				</div>
+				<div class="home-top-right am-fl">
+					<ul class="am-margin-0 am-padding-0 home-top">
+						<li class="am-padding-horizontal-sm">
+							<a href="home-how-buy.html" class="am-block am-padding-vertical-sm blue-7D text-left am-nbfc am-home-border-bottom">
+								<div class="home-buy-title am-fl home-top-right-60">
+									<div class="blue-7D am-text-sm">如何买？</div>
+									<div class="grey-A8 am-fl am-margin-top-xs am-text-xs">
+										流程简单方便快捷
+									</div>
+								</div>
+								<img src="img/xh_ruhemai.png" alt="如何买" width="43px" class="am-fr home-buy home-top-40" />
+							</a>
+						</li>
+						<li>
+							<a href="home-how-search.html" class="am-block am-padding-sm blue-7D text-left am-nbfc">
+								<div class="home-search-title am-fl home-top-right-60">
+									<span class="blue-7D am-text-sm">怎么查？</span>
+									<span class="grey-A8 am-margin-top-xs am-block am-text-xs">
+										知晓帐户订单详情
+									</span>
+								</div>
+
+								<img src="img/xh_ruhecha.png" alt="怎么查" width="43px" class="am-fr home-search home-top-40" />
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!--新闻资讯-->
+			<div class="am-padding-horizontal-sm home-newsBox">
+				<div class="am-margin-bottom-sm bg_white">
+					<div class="am-padding-xs am-cf">
+						<div class="am-fl am-text-primary">
+							新闻通知
+						</div>
+						<div class="am-fr">
+							<a href="home-news-list.html" class="am-link-muted">更多></a>
+						</div>
+					</div>
+					<div class="relative" id="news">
+
+					</div>
+				</div>
+				<div class="am-margin-bottom-sm bg_white">
+					<div class="am-padding-xs am-cf">
+						<div class="am-fl am-text-primary">
+							资讯
+						</div>
+						<div class="am-fr">
+							<a href="home-info-list.html" class="am-link-muted">更多></a>
+						</div>
+					</div>
+					<div class="relative" id="info">
+
+					</div>
+				</div>
+			</div>
 			<!--底部菜单-->
 			<div data-am-widget="navbar" class="am-navbar am-cf am-navbar-default l-footer" id="">
 				<ul class="am-navbar-nav am-cf am-avg-sm-5">
@@ -66,8 +140,8 @@
 						</a>
 					</li>
 					<li>
-						<a href="javascript:void(0);" class="loan-btn">
-							<img src="img/tab_04_nor.png" alt="借款" />
+						<a href="loan-index.html" class="">
+							<img src="img/tab_04_nor.png" alt="惠吧" />
 							<span class="am-navbar-label">借款</span>
 						</a>
 					</li>
@@ -90,28 +164,124 @@
 <script src="assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
 		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
-		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="slider-tmpl" type="text/x-handlebars-template">
+			{{#each list}}
+			<li><img src="{{ImgUrl}}" /></li>
+			{{/each}}
+		</script>
+		<script id="news1-tmpl" type="text/x-handlebars-template">
+			{{#each list}}
+			<a href="home-news-detail.html?id={{ID}}">
+				{{#compare1 ImgUrl ''}}
+				<img src="img/news.png" class="" width="100%" height="150px" />
+				{{else}}
+				<img src="{{ImgUrl}}" class="" width="100%" height="150px" />
+				{{/compare1}}
+				<div class="l-news-title am-padding-xs white">
+					<div class="am-text-truncate">{{Name}}</div>
+					<div class="am-text-xs">
+						{{CreateTime}}
+					</div>
+				</div>
+			</a>
+			{{/each}}
+		</script>
+		<script id="news2-tmpl" type="text/x-handlebars-template">
+			{{#each list}}
+			<a href="home-news-detail.html?id={{ID}}">
+				{{#compare2 ImgUrl ''}}
+				<img src="img/consult.png" class="" width="100%" height="150px" />
+				{{else}}
+				<img src="{{ImgUrl}}" class="" width="100%" height="150px" />
+				{{/compare2}}
+				<div class="l-news-title am-padding-xs white">
+					<div class="am-text-truncate">{{Name}}</div>
+					<div class="am-text-xs">
+						{{CreateTime}}
+					</div>
+				</div>
+			</a>
+			{{/each}}
+		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
-				var id = Cookies.get('MemID');
-
-				//点击借款是否可以借
-				$('.loan-btn').click(function() {
-					$.ajax({
-						type: "get",
-						url: "/api/Loan/IsCanLoan?MemberID=" + id,
-						async: true,
-						success: function(d) {
-							if(d.status) {
-								$(this).attr('href', 'loan-index.html');
-							} else {
-								alertFun(d.Message);
-							}
+				var sliderTmpl = Handlebars.compile($("#slider-tmpl").html());
+				$.ajax({
+					type: "get",
+					url: "/api/Information/GetInformationList?Type=焦点图&PageIndex=1&PageSize=5",
+					async: true,
+					success: function(d) {
+						if(d.status) {
+							$('#slider').find(".am-slides").html(sliderTmpl(d.Data));
+							//轮播图初始化
+							$('#slider').flexslider({
+								playAfterPaused: 4000,
+								before: function(slider) {
+									if(slider._pausedTimer) {
+										window.clearTimeout(slider._pausedTimer);
+										slider._pausedTimer = null;
+									}
+								},
+								after: function(slider) {
+										var pauseTime = slider.vars.playAfterPaused;
+										if(pauseTime && !isNaN(pauseTime) && !slider.playing) {
+											if(!slider.manualPause && !slider.manualPlay && !slider.stopped) {
+												slider._pausedTimer = window.setTimeout(function() {
+													slider.play();
+												}, pauseTime);
+											}
+										}
+									}
+									// 设置其他参数
+							});
+						} else {
+							alertFun(d.Message);
 						}
-					})
+					}
 				});
-			});
+				//新闻通知
+
+				$.ajax({
+					type: "get",
+					url: "/api/Information/GetInformationList?Type=新闻&PageIndex=1&PageSize=1",
+					async: true,
+					success: function(d) {
+						var newsTmpl = Handlebars.compile($("#news1-tmpl").html());
+						//注册一个比较大小的Helper,判断v1是否大于v2
+						Handlebars.registerHelper("compare1", function(v1, v2, options) {
+							if(v1 == v2) {
+								//满足添加继续执行
+								return options.fn(this);
+							} else {
+								//不满足条件执行{{else}}部分
+								return options.inverse(this);
+							}
+						});
+						$('#news').html(newsTmpl(d.Data));
+					}
+				});
+				$.ajax({
+					type: "get",
+					url: "/api/Information/GetInformationList?Type=资讯&PageIndex=1&PageSize=1",
+					async: true,
+					success: function(d) {
+						var newsTmpl = Handlebars.compile($("#news2-tmpl").html());
+						//注册一个比较大小的Helper,判断v1是否大于v2
+						Handlebars.registerHelper("compare2", function(v1, v2, options) {
+							if(v1 == v2) {
+								//满足添加继续执行
+								return options.fn(this);
+							} else {
+								//不满足条件执行{{else}}部分
+								return options.inverse(this);
+							}
+						});
+						$('#info').html(newsTmpl(d.Data));
+					}
+				});
+			})
 		</script>
 	</body>
 

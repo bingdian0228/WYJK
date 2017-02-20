@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -148,10 +148,12 @@
 						url: "/api/SocialSecurity/PostAdjustingBase",
 						async: true,
 						data: dataModel,
-						success: function(d) {
+						success: function (d) {
+						    debugger;
 							if (d.status) {
-								alertFun(d.Message, function() {
-									window.location.href = "user-insured.html"
+							    alertFun(d.Message, function () {
+							        window.location.href = d.Data.url;
+									//window.location.href = "user-insured.html"
 								});
 							} else {
 								alertFun(d.Message);

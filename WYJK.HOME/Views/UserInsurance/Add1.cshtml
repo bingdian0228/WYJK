@@ -25,7 +25,8 @@
 
 			        $("#file-5").on("fileuploaded", function (event, data, previewId, index) {
 			            
-			            $("#IdentityCardPhoto").val($("#IdentityCardPhoto").val() + "," + data.response);
+			       
+			       $("#IdentityCardPhoto").val($("#IdentityCardPhoto").val() + "," + data.response);
 
 			        });
     </script>
@@ -49,15 +50,10 @@
                     <b class="num pull-left">1</b>
                     <span class="pull-left">添加参保人</span>
                     <i class="icon-w pull-right"></i>
-                </li>
+                </li>            
                 <li class="">
                     <b class="num pull-left">2</b>
-                    <span class="pull-left">缴纳社保</span>
-                    <i class="icon-w pull-right"></i>
-                </li>
-                <li class="">
-                    <b class="num pull-left">3</b>
-                    <span class="pull-left">缴纳公积金</span>
+                    <span class="pull-left">缴纳社保/公积金</span>
                 </li>
             </ul>
         </div>

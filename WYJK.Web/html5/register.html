@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -29,6 +29,42 @@
 				background-color: #469ee5!important;
 			}
 		</style>
+        <script>
+            var countdown = 60;
+            function settime(obj) {
+                if (countdown == 60)
+                {
+                    if ($("#MemberName").val() == "" || $("#MemberPhone").val() == "")
+                    {
+                        alertFun("请输入用户名和手机号");
+                        return false;
+                    }
+
+                    $.ajax({
+                        type: "get",
+                        url: "/api/Member/GetVerificationCode?MemberName=" + $("#MemberName").val() + "&MemberPhone=" + $("#MemberPhone").val(),
+                        success: function (d) {
+                            
+                            alertFun(d.Message);
+                        }
+                    });
+                }
+                if (countdown == 0) {
+                    obj.removeAttribute("disabled");
+                    obj.value = "获取验证码";
+                    countdown = 60;
+                    return;
+                } else {
+                    obj.setAttribute("disabled", true);
+                    obj.value = "重新发送(" + countdown + ")";
+                    countdown--;
+                }
+                setTimeout(function () {
+                    settime(obj)
+                }
+                    , 1000)
+            }
+        </script>
 	</head>
 
 	<body class="bg_blue">
@@ -54,11 +90,11 @@
 				<form action="" class="am-form am-form-inline" id="regForm" data-am-validator>
 					<div class="am-form-group am-form-icon">
 						<div class="icon-input"><img src="img/user.png" width="21" height="21" /></div>
-						<input type="text" name="MemberName" class="am-form-field am-radius" placeholder="请输入用户名" required="required">
+						<input type="text" name="MemberName"  id="MemberName"  class="am-form-field am-radius" placeholder="请输入用户名" required="required">
 					</div>
 					<div class="am-form-group am-form-icon">
 						<div class="icon-input"><img src="img/phone.png" width="21" height="21" /></div>
-						<input type="text" name="MemberPhone" class="am-form-field am-radius js-pattern-mobile" placeholder="请输入手机号" required="required">
+						<input type="text" name="MemberPhone" id="MemberPhone" class="am-form-field am-radius js-pattern-mobile" placeholder="请输入手机号" required="required">
 					</div>
 					<div class="am-form-group am-form-icon">
 						<div class="icon-input"><img src="img/lock.png" width="21" height="21" /></div>
@@ -69,16 +105,24 @@
 							<div class="am-u-sm-7 am-padding-0">
 								<div class="icon-input"><img src="img/code.png" width="21" height="21" /></div>
 								<!--<input type="text" class="am-form-field am-radius" placeholder="请输入验证码" required="required">-->
-								<input type="text" class="am-form-field am-radius" placeholder="请输入验证码">
+								<input type="text" name="VerificationCode" class="am-form-field am-radius" placeholder="请输入验证码">
 							</div>
 							<div class="am-u-sm-5 am-padding-0 am-text-right">
-								<button type="button" class="am-btn am-btn-primary am-radius bg_darkblue">获取验证码</button>
+								<!--<button type="button" class="am-btn am-btn-primary am-radius bg_darkblue" onclick="settime(this)" >获取验证码</button>-->
+                                <input type="button" id="btn" value="获取验证码" class="am-btn am-btn-primary am-radius bg_darkblue" onclick="settime(this)" /> 
 							</div>
 						</div>
 					</div>
 					<div class="am-form-group am-form-icon">
 						<div class="icon-input"><img src="img/file.png" width="21" height="21" /></div>
 						<input type="text" name="InviteCode" class="am-form-field am-radius" placeholder="请输入邀请码">
+					</div>
+					<div class="am-form-group">
+						<div class="am-checkbox-inline">
+							<label class="white">
+								<input type="checkbox" name="" minchecked="1" maxchecked="1" data-am-ucheck required="required"> 我同意<a href="license.html" class="white">《无忧数据用户协议》</a>
+							</label>
+						</div>
 					</div>
 					<!--注册btn-->
 					<button type="button" id="regBtn" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">立即注册</button>
@@ -109,6 +153,7 @@
 								Cookies.set('MemID', d.Data.MemberID);
 							}
 							alertFun(d.Message, alertCallback(d));
+
 						});
 					} else {
 						alertFun('请填写完整信息！');
@@ -122,6 +167,7 @@
 						setTimeout('window.location.reload()', 2000);
 					}
 				}
+			
 			});
 		</script>
 	</body>

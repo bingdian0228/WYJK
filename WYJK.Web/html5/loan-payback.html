@@ -29,6 +29,9 @@
 			.project {
 				height: 100%;
 			}
+			#wrapper{
+				top: 30px;
+			}
 		</style>
 	</head>
 
@@ -42,12 +45,12 @@
 					</a>
 				</div>
 				<h1 class="am-header-title">
-					应还款项
+					借款记录
 				</h1>
 			</header>
 			<!--list-->
 			<!--上拉加载列表-->
-			<div class="page billPayback" id="wrapper">
+			<div class="page" id="wrapper">
 				<div>
 					<!--刷新-->
 					<div class="pull-action loading" id="pull-down">
@@ -63,7 +66,6 @@
 										正在加载内容...
 									</div>
 								</li>
-								
 							</ul>
 						</div>
 					</div>
@@ -74,7 +76,17 @@
 					</div>
 				</div>
 			</div>
-			
+			<!--底部btn-->
+			<!--<div class="am-navbar bg_grey">
+				<div class="am-g">
+					<div class="am-u-sm-6">
+						<a href="loan-p-record.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">还款记录</a>
+					</div>
+					<div class="am-u-sm-6">
+						<a href="loan-payback-apply.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">我要还款</a>
+					</div>
+				</div>
+			</div>-->
 
 		</div>
 		<!--[if (gte IE 9)|!(IE)]><!-->
@@ -106,7 +118,7 @@
 								</li>
 								<li class="am-text-right am-u-sm-4 am-margin-top-sm  am-ellipsis  am-padding-0">
 									<span class="am-fr">＞</span>
-									<span class="am-fr am-inline-block am-nowrap" style="width: 75px;">{{AlreadyLoanDate}}</span>
+									<span class="am-fr am-inline-block am-nowrap loan-record-time" >{{AlreadyLoanDate}}</span>
 								</li>
 							</ul>
 						</div>
@@ -128,7 +140,7 @@
 						params: {
 							MemberID: id,
 							PageIndex: 1,
-							PageSize: 6
+							PageSize: 10
 						}
 					});
 					app.init();

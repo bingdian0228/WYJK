@@ -145,6 +145,11 @@ namespace WYJK.HOME.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(model.IdentityCardPhoto))
+                {
+                    bulidHouseholdPropertyDropdown(model.HouseholdProperty);
+                    return View(model);
+                }
                 SocialSecurityPeople socialPeople = new SocialSecurityPeople();
                 socialPeople.MemberID = CommonHelper.CurrentUser.MemberID;
                 socialPeople.IdentityCard = model.IdentityCard;
@@ -160,7 +165,7 @@ namespace WYJK.HOME.Controllers
                     socialPeople.SocialSecurityPeopleID = id;
                     //把参保人保存到session中
                     Session["SocialSecurityPeople"] = socialPeople;
-                    return RedirectToAction("Add2");
+                    return RedirectToAction("Add3");
                 }
                 else
                 {
@@ -185,28 +190,29 @@ namespace WYJK.HOME.Controllers
         [HttpPost]
         public ActionResult Add2(InsuranceAdd2ViewModel model)
         {
-            if (ModelState.IsValid)
+            if (string.IsNullOrEmpty(model.InsuranceArea) || model.SocialSecurityBase > model.MaxBase || model.SocialSecurityBase < model.MinBase || model.PayTime < DateTime.Now || model.PayMonthCount <= 0)
             {
-                //保存数据到数据库
-                int id = AddLocalSocialSecurity(model);
 
-                if (id > 0)
-                {
-                    SocialSecurityPeople people = (SocialSecurityPeople)Session["SocialSecurityPeople"];
-                    //跳转到确认页面
-                    return Redirect("/UserOrder/Create/" + people.SocialSecurityPeopleID);
-                }
-                else
-                {
-                    return RedirectToAction("Add2");
-                }
+                ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(), "请选择省份");
+                return View(model);
 
+            }
 
+            //保存数据到数据库
+            int id = AddLocalSocialSecurity(model);
+
+            if (id > 0)
+            {
+                SocialSecurityPeople people = (SocialSecurityPeople)Session["SocialSecurityPeople"];
+                //跳转到确认页面
+                return Redirect("/UserOrder/Create/" + people.SocialSecurityPeopleID);
             }
             else
             {
                 return RedirectToAction("Add2");
             }
+
+
 
         }
 
@@ -249,7 +255,7 @@ namespace WYJK.HOME.Controllers
             //socialSecurity.SocialSecurityPeopleID = 49;
 
             //socialSecurity.InsuranceArea = string.Format("{0}|{1}",Request["provinceText"], Request["city"]);
-            socialSecurity.InsuranceArea = "山东省|青岛市|崂山区";
+            socialSecurity.InsuranceArea = model.InsuranceArea;// "山东省|青岛市|崂山区";
             socialSecurity.HouseholdProperty = people.HouseholdProperty;
             //socialSecurity.HouseholdProperty = "本市城镇";
 
@@ -268,52 +274,120 @@ namespace WYJK.HOME.Controllers
             return id;
         }
 
-
+      
         [HttpGet]
-        public ActionResult Add3()
+        public async Task<ActionResult> Add3()
         {
             //获取省份
-            ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(), "请选择省份");
+            //ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(), "请选择省份");
+
+            HttpClient httpClient = new HttpClient();
+            var req = await httpClient.GetAsync(url + "/SocialSecurity/GetProvinceList");
+            List<string> list = (await req.Content.ReadAsAsync<JsonResult<List<string>>>()).Data;
+            List<SelectListItem> selList = new List<SelectListItem>();
+
+            selList.Insert(0, new SelectListItem { Text = "请选择省份", Value = "" });
+
+            foreach (var item in list)
+            {
+                selList.Add(new SelectListItem { Text = item, Value = item });
+            }
+
+            //获取省份
+            ViewBag.Provinces = selList;
+            ViewBag.Url = url;
+           
+
+
+
             return View();
         }
 
         [HttpPost]
-        public ActionResult Confirm(InsuranceAdd3ViewModel model)
+        public async Task<ActionResult> Add3(InsuranceAdd3ViewModel model)
         {
-            if (ModelState.IsValid)
+            if (Request.Form["ckss"]=="on")
             {
-                SocialSecurityPeople people = (SocialSecurityPeople)Session["SocialSecurityPeople"];
-
-                AccumulationFund accumulationFund = new AccumulationFund();
-
-                accumulationFund.SocialSecurityPeopleID = people.SocialSecurityPeopleID;
-                //accumulationFund.SocialSecurityPeopleID = 49;
-                //accumulationFund.AccumulationFundArea = string.Format("{0}|{1}", Request["provinceText"], Request["city"]);
-                accumulationFund.AccumulationFundArea = "山东省|青岛市|崂山区";
-                accumulationFund.AccumulationFundBase = model.AccumulationFundBase;
-                accumulationFund.PayProportion = 0;
-                accumulationFund.PayTime = model.PayTime;
-                accumulationFund.PayMonthCount = model.PayMonthCount;
-                accumulationFund.PayBeforeMonthCount = model.PayBeforeMonthCount;
-                accumulationFund.Note = model.Note;
-                accumulationFund.RelationEnterprise = 0;
-
-                int id = socialSv.AddAccumulationFund(accumulationFund);
-
-                if (id > 0)
+                if (string.IsNullOrEmpty(model.InsuranceArea) || model.SocialSecurityBase > model.MaxBase || model.SocialSecurityBase < model.MinBase || model.PayTime < DateTime.Now || model.PayMonthCount <= 0)
                 {
-                    //跳转到确认页面
-                    return Redirect("/UserOrder/Create/" + people.SocialSecurityPeopleID);
-                }
-                else
-                {
-                    return RedirectToAction("Add3");
+
+                    ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(), "请选择省份");
+                    return View(model);
+
                 }
             }
-            else
+            if (Request.Form["ckaf"] == "on")
             {
-                return RedirectToAction("Add3");
+                if (string.IsNullOrEmpty(model.AccumulationFundArea) || model.AccumulationFundBase > model.MaxBase2 || model.AccumulationFundBase < model.MinBase2 || model.PayTime2 < DateTime.Now || model.PayMonthCount2 <= 0)
+                {
+
+                    ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(), "请选择省份");
+                    return View(model);
+
+                }
             }
+                
+            SocialSecurityPeople people = (SocialSecurityPeople)Session["SocialSecurityPeople"];
+            SocialSecurity ss = new SocialSecurity() {
+                HouseholdProperty = people.HouseholdProperty,
+                InsuranceArea = model.InsuranceArea,
+                Note = model.Note,
+                PayMonthCount = model.PayMonthCount,
+                PayTime = model.PayTime,
+                SocialSecurityBase = model.SocialSecurityBase,
+                SocialSecurityPeopleID = people.SocialSecurityPeopleID
+            };
+            AccumulationFund af = new AccumulationFund() {
+                AccumulationFundArea = model.AccumulationFundArea,
+                HouseholdProperty = people.HouseholdProperty,
+                AccumulationFundBase = model.AccumulationFundBase,
+                Note = model.Note2,
+                PayMonthCount = model.PayMonthCount2,
+                PayTime  = model.PayTime2,
+                AccumulationFundType = "1",
+                SocialSecurityPeopleID = people.SocialSecurityPeopleID
+            };
+            if (Request.Form["ckss"] == null)
+            {
+                ss = null;
+            }
+            if (Request.Form["ckaf"] == null)
+            {
+                af = null;
+            }
+            people.socialSecurity = ss;
+            people.accumulationFund = af;
+
+           // url = "http://localhost:47565/api";
+
+            var socialBase = await client.PostAsync(url + $"/SocialSecurity/AddSocialSecurityScheme", new { socialSecurity = ss, accumulationFund=af }, formatter);
+            var result = await socialBase.Content.ReadAsAsync<JsonResult<object>>();
+
+            if (!result.status)
+            {
+                ViewBag.Provinces = CommonHelper.EntityListToSelctList(regionSv.GetProvince(), "请选择省份");
+                ViewBag.ErrorMessage = result.Message;
+                return View(model);
+            }
+
+            //AccumulationFund accumulationFund = new AccumulationFund();
+
+            //accumulationFund.SocialSecurityPeopleID = people.SocialSecurityPeopleID;
+            ////accumulationFund.SocialSecurityPeopleID = 49;
+            ////accumulationFund.AccumulationFundArea = string.Format("{0}|{1}", Request["provinceText"], Request["city"]);
+            //accumulationFund.AccumulationFundArea = "山东省|青岛市|崂山区";
+            //accumulationFund.AccumulationFundBase = model.AccumulationFundBase;
+            //accumulationFund.PayProportion = 0;
+            //accumulationFund.PayTime = model.PayTime;
+            //accumulationFund.PayMonthCount = model.PayMonthCount;
+            //accumulationFund.PayBeforeMonthCount = model.PayBeforeMonthCount;
+            //accumulationFund.Note = model.Note;
+            //accumulationFund.RelationEnterprise = 0;
+
+            //int id = socialSv.AddAccumulationFund(accumulationFund);
+
+            return Redirect("/UserOrder/Create/" + people.SocialSecurityPeopleID);
+
 
         }
 
@@ -326,9 +400,44 @@ namespace WYJK.HOME.Controllers
         /// 社保基数变更
         /// </summary>
         /// <returns></returns>
-        public ActionResult ChangeSB()
+        public async Task<ActionResult> ChangeSB()
         {
+            var selectService = await client.GetAsync(url + $"/SocialSecurity/GetInsuredPeopleListByStatus?Status=3&MemberID={CommonHelper.CurrentUser.MemberID}");
+            List<SocialSecurityPeoples> SocialSecurityPeoplesList = (await selectService.Content.ReadAsAsync<JsonResult<List<SocialSecurityPeoples>>>()).Data;
+            ViewBag.PropleList = SocialSecurityPeoplesList;
+            ViewBag.HasPerson = (SocialSecurityPeoplesList.Count>0);
             return View();
+         
+        }
+
+        public async Task<ActionResult> ChangeBase(int socialPeopleId)
+        {
+            var socialBase = await client.GetAsync(url + $"/SocialSecurity/CreateAdjustingBase?SocialSecurityPeopleID={socialPeopleId}");
+            AdjustingBase adjustingBase = (await socialBase.Content.ReadAsAsync<JsonResult<AdjustingBase>>()).Data;       
+            return View(adjustingBase);
+
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ChangeBase(AdjustingBase entity)
+        {
+            if (entity.SocialSecurityBase > entity.SocialSecurityMaxBase || entity.SocialSecurityBase < entity.SocialSecurityMinBase)
+            {
+                ViewBag.Error = "社保基数不在范围内";
+                return View(entity);
+            }
+
+            if (entity.AccumulationFundBase > entity.AccumulationFundMaxBase || entity.SocialSecurityBase < entity.AccumulationFundMinBase)
+            {
+                ViewBag.Error = "公积金基数不在范围内";
+                return View(entity);
+            }
+            
+
+            var socialBase = await client.PostAsync(url + $"/SocialSecurity/PostAdjustingBase", new { SocialSecurityPeopleID=entity.SocialSecurityPeopleID, IsPaySocialSecurity=entity.IsPaySocialSecurity, IsPayAccumulationFund=entity.IsPayAccumulationFund, SocialSecurityBaseAdjusted=entity.SocialSecurityBase, AccumulationFundBaseAdjusted =entity.AccumulationFundBase,PlatType=2 }, formatter);
+            ChargeUrl adjustingBase = (await socialBase.Content.ReadAsAsync<JsonResult<ChargeUrl>>()).Data;
+            return Redirect(adjustingBase.URL);
+
         }
 
         /// <summary>
@@ -840,5 +949,13 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
                 AFMonthAccount = AFMonthAccount
             }, JsonRequestBehavior.AllowGet);
         }
-    }
+
+        [HttpGet]
+        public async Task<string> Delete(int? SocialSecurityPeopleID)
+        {
+            var deleteSSP = await client.GetAsync(url + $"/SocialSecurity/DeleteUninsuredPeople?SocialSecurityPeopleID="+ SocialSecurityPeopleID);
+            var result = await deleteSSP.Content.ReadAsAsync<JsonResult<object>>();
+            return result.Message;
+        }
+   }
 }

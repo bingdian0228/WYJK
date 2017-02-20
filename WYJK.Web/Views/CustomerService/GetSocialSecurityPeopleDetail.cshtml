@@ -303,6 +303,10 @@
 
     </script>
 }
+@if (!string.IsNullOrWhiteSpace(TempData["Message"] + ""))
+{
+    <div class="Huialert Huialert-info">@TempData["Message"]</div>
+}
 <div class="pd-20">
     <form action='@(isadd ? Url.Action("AddSocialSecurityPeople") : Url.Action("SaveEnterprise"))' method="post" class="form form-horizontal" id="form-article-add">
         <div class="row cl" style="text-align:center;">
@@ -334,6 +338,7 @@
                 {
                     @Html.TextBoxFor(m => m.IdentityCard, new { @class = "input-text" })
                 }
+                @Html.ValidationMessageFor(m=>m.IdentityCard)
             </div>
             <label class="form-label col-3">业务专员：</label>
             <div class="formControls col-2">
@@ -514,8 +519,8 @@
                             @enterpriseSocialSecurity.EnterpriseName
                         }
                         else if (type == "1" && !isadd)
-                        {
-                            @Html.DropDownList("SSEnterpriseList", ViewData["SSEnterpriseList"] as List<SelectListItem>, new { @class = "input-text" });
+                        {                       
+                            Html.DropDownList("SSEnterpriseList", ViewData["SSEnterpriseList"] as List<SelectListItem>, new { @class = "input-text" });
                         }
                         else if (isadd)
                         {
@@ -574,14 +579,14 @@
                         @if (isadd)
                         {
                             @Html.Action("RegionView", "OptionView", new
-                       {
-                           pname = string.Empty,
-                           cname = string.Empty,
-                           coname = string.Empty,
-                           IsHideCounty = true,
-                           Id = "AF",
-                           CallBack = "afCallback",
-                       });
+                           {
+                               pname = string.Empty,
+                               cname = string.Empty,
+                               coname = string.Empty,
+                               IsHideCounty = true,
+                               Id = "AF",
+                               CallBack = "afCallback",
+                           });
                             <input type="hidden" name="socialSecurity.InsuranceArea" value="" />
                             <script>
                                 function afCallback(p, city) {

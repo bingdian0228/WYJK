@@ -41,7 +41,7 @@
 			</header>
 			<!--菜单-->
 			<ul class="am-list am-list-static" id="list_box">
-				
+
 			</ul>
 		</div>
 		<!--[if (gte IE 9)|!(IE)]><!-->
@@ -58,6 +58,12 @@
 		<script id="list-template" type="text/x-handlebars-template">
 			<li>
 				<div class="am-padding-horizontal-sm am-cf">
+					<span class="am-fl">流水账号：</span>
+					<span class="am-fr">{{SerialNum}}</span>
+				</div>
+			</li>
+			<li>
+				<div class="am-padding-horizontal-sm am-cf">
 					<span class="am-fl">收支类型：</span>
 					<span class="am-fr">{{ShouZhiType}}</span>
 				</div>
@@ -70,20 +76,26 @@
 			</li>
 			<li>
 				<div class="am-padding-horizontal-sm am-cf">
-					<span class="am-fl">支出类型：</span>
-					<span class="am-fr">{{OperationType}}</span>
+					<span class="am-fl">余额(元)：</span>
+					<span class="am-fr">{{Balance}}</span>
 				</div>
 			</li>
 			<li>
 				<div class="am-padding-horizontal-sm am-cf">
 					<span class="am-fl">费用(元)：</span>
-					<span class="am-fr">{{CostDisplay}}</span>
+					<span class="am-fr">{{Cost}}</span>
 				</div>
 			</li>
 			<li>
 				<div class="am-padding-horizontal-sm am-cf">
 					<span class="am-fl">时间：</span>
 					<span class="am-fr">{{CreateTime}}</span>
+				</div>
+			</li>
+			<li>
+				<div class="am-padding-horizontal-sm am-cf">
+					<span class="am-fl">备注：</span>
+					<span class="am-fr">{{OperationType}}</span>
 				</div>
 			</li>
 		</script>

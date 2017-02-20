@@ -31,7 +31,8 @@
 			<header data-am-widget="header" class="am-header am-header-default bg_blue">
 				<div class="am-header-left am-header-nav">
 					<a href="home.html" class="">
-						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;" alt="" />
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
 					</a>
 				</div>
 				<h1 class="am-header-title">
@@ -104,6 +105,9 @@
 					<a href="user-billIndex.html" class="am-link-muted arrow-right">账单信息</a>
 				</li>
 				<li class="am-padding-horizontal-sm">
+					<a href="user-payment-history.html" class="am-link-muted arrow-right">缴费明细</a>
+				</li>
+				<li class="am-padding-horizontal-sm">
 					<a href="user-msg.html" class="am-link-muted arrow-right">消息</a>
 				</li>
 				<li class="am-padding-horizontal-sm">
@@ -132,7 +136,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="javascript:void(0);" class="loan-btn">
+						<a href="loan-index.html" class="">
 							<img src="img/tab_04_nor.png" alt="借款" />
 							<span class="am-navbar-label">借款</span>
 						</a>
@@ -174,7 +178,7 @@
 			$(document).ready(function() {
 				var id = Cookies.get('MemID');
 				var Logined = isLogin(id);
-				if(Logined) {
+				if (Logined) {
 					//获取简单信息
 					var infoTemplate = Handlebars.compile($("#info-template").html());
 					$.ajax({
@@ -203,29 +207,17 @@
 						async: true,
 						success: function(d) {
 							$('#status').text(d.Data);
-							if(d.Data == "正常") {
+							if (d.Data == "正常") {
 								$('.l-remind-point').hide();
+								$('.l-remind-point').parent("a").click(function(e) {
+									e.preventDefault();
+									alertFun("暂无待续费人员!");
+								})
 							} else {
 								$('.l-remind-point').show();
 							}
 						}
 					});
-					//点击借款是否可以借
-					$('.loan-btn').click(function() {
-						$.ajax({
-							type: "get",
-							url: "/api/Loan/IsCanLoan?MemberID=" + id,
-							async: true,
-							success: function(d) {
-								if(d.status) {
-									$(this).attr('href','loan-index.html');
-								} else {
-									alertFun(d.Message);
-								}
-							}
-						})
-					});
-
 				}
 			});
 		</script>

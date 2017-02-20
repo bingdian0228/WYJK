@@ -47,7 +47,7 @@
 			</header>
 			<!--list-->
 			<!--上拉加载列表-->
-			<div class="page pRecord" id="wrapper">
+			<div class="page" id="wrapper">
 				<div>
 					<!--刷新-->
 					<div class="pull-action loading" id="pull-down">
@@ -63,7 +63,6 @@
 										正在加载内容...
 									</div>
 								</li>
-
 							</ul>
 						</div>
 					</div>
@@ -90,8 +89,7 @@
 		<script src="assets/js/pageIscroll.js" type="text/javascript" charset="utf-8"></script>
 		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
 		<script id="list-item" type="text/x-handlebars-template">
-			{{#if list}}
-			{{#each list}}
+			{{#if list}} {{#each list}}
 			<li class="am-margin-0 am-padding-horizontal-sm">
 				<a href="loan-payback-details.html?id={{ID}}" class="am-link-muted">
 					<div class="am-padding-horizontal-xs">
@@ -113,8 +111,7 @@
 					</div>
 				</a>
 			</li>
-			{{/each}}
-			{{else}} {{#each this}}
+			{{/each}} {{else}} {{#each this}}
 			<li class="am-margin-0 am-padding-horizontal-sm">
 				<a href="loan-payback-details.html?id={{ID}}" class="am-link-muted">
 					<div class="am-padding-horizontal-xs">
@@ -174,7 +171,6 @@
 
 			});
 		</script>
-
 	</body>
 
 </html>

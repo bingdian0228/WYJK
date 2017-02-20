@@ -42,11 +42,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-6">
+                    <div class="col-md-6 col-lg-6" >
                         <div class="input-group am-padding-top-lg">
-                            <input type="text" class="form-control" placeholder="搜索您想要的内容">
+                            <input type="text" class="form-control" placeholder="搜索您想要的内容"  style="display:none">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
+                                <button class="btn btn-default" type="button" style="display:none">
                                     <i class="glyphicon glyphicon-search"></i>
                                 </button>
                             </span>
@@ -86,7 +86,7 @@
                             <a href="#" target="_blank" class="white">社保大厅</a>
                         </li>
                         <li>
-                            <a href="#" target="_blank" class="white">无忧借款</a>
+                            <a href="#" target="_blank" class="white">无忧数据</a>
                         </li>
                         <li>
                             <a href="#" target="_blank" class="white">帮助中心</a>
@@ -143,16 +143,16 @@
         </footer>
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <link href="~/Content/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <script type="text/javascript" src="~/Scripts/jquery-1.12.3.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/scripts/ProvinceAndCity.js"></script>
     <script src="/scripts/bootstrap-datetimepicker.min.js" type="text/javascript" charset="utf-8"></script>
-    <script src="/scripts/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/scripts/locales/bootstrap-datetimepicker.zh-CN.js?t=123123123" type="text/javascript" charset="utf-8"></script>
     <script src="~/scripts/jquery.validate.min.js"></script>
     <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <link href="~/Content/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+ 
     <script type="text/javascript">
 			    $(document).ready(function() {
 			        inputDatepicker();
@@ -160,7 +160,17 @@
 
 			    function inputDatepicker(){
 			        $('#PayTime').datetimepicker({
-			            language: 'zh-CN',
+			            language: 'cn',
+			            format: 'yyyy-mm',
+			            weekStart: 1,
+			            autoclose: 1,
+			            todayHighlight: 1,
+			            startView: 4,
+			            minView: 3,
+			            forceParse: 0
+			        });
+			        $('#PayTime2').datetimepicker({
+			            language: 'cn',
 			            format: 'yyyy-mm',
 			            weekStart: 1,
 			            autoclose: 1,
@@ -170,6 +180,29 @@
 			            forceParse: 0
 			        });
 			    }
+
+			    //删除参保人
+			    $("#delSocial").click(function () {			        
+			        var $li = $("#delSocial").parents("li");
+			        if (confirm("你确定要删除此参保人?")) {
+			            $.ajax({
+			                type: "get",
+			                url: "/UserInsurance/Delete?SocialSecurityPeopleID=" + $("#txtPeopID").val(),
+			                async: true,
+			                success: function (d) {
+			                  
+			                    alert(d);
+			                    if (d == "删除成功") {
+			                        $li.remove();
+			                        location.reload();
+			                    }
+			                }
+			            });
+			        }
+			        else {
+			            return false;
+			        }
+			    });
 
     </script>
     @RenderSection("Footer",false)

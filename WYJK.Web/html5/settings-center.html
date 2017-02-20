@@ -116,7 +116,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="settings-choseQualify.html" class="am-link-muted arrow-right">
+				<a href="settings-choseQualify.html" class="am-link-muted arrow-right" id="toQualify">
 					<div class="am-g">
 						<div class="am-u-sm-4">
 							认证：
@@ -158,6 +158,12 @@
 							d.Data.IsComplete = parseInt(d.Data.IsComplete);
 							d.Data.IsAuthentication = parseInt(d.Data.IsAuthentication);
 							$('#account-info').html(tmpl(d.Data));
+							if (d.Data.IsAuthentication) {
+								$('#toQualify').click(function (e) {
+									e.preventDefault();
+									alertFun("您已通过认证，无法重复认证！");
+								})
+							}
 						}
 					});
 				}

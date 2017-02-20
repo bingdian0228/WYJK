@@ -29,8 +29,8 @@ namespace WYJK.Web.Controllers.Http
             var list = informationList.ToList();
             foreach (var item in list)
             {
-                if (!string.IsNullOrWhiteSpace(item.ImgUrl.Trim()))
-                    item.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + item.ImgUrl;
+                if (!string.IsNullOrWhiteSpace(item.ImgUrl))
+                    item.ImgUrl = ConfigurationManager.AppSettings["ServerUrl2"] + item.ImgUrl;
             }
             return new JsonResult<dynamic>
             {
@@ -47,7 +47,7 @@ namespace WYJK.Web.Controllers.Http
         public async Task<JsonResult<dynamic>> GetInfomationDetail(int? id)
         {
             Information information = await _informationService.GetInfomationDetail(id.Value);
-            information.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + information.ImgUrl;
+            information.ImgUrl = ConfigurationManager.AppSettings["ServerUrl2"] + information.ImgUrl;
 
             return new JsonResult<dynamic>
             {
@@ -68,7 +68,7 @@ namespace WYJK.Web.Controllers.Http
 
             if (model.ImgUrls != null)
             {
-                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl2"], string.Empty);
             }
 
             return new JsonResult<dynamic>
@@ -88,7 +88,7 @@ namespace WYJK.Web.Controllers.Http
         {
             if (model.ImgUrls != null)
             {
-                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl2"], string.Empty);
                 model.CreateTime = DateTime.Now;
             }
 

@@ -32,11 +32,13 @@ namespace WYJK.Data.ServiceImpl
 
             if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
             {
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'","''");
                 builder.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%'");
             }
 
             if (!string.IsNullOrEmpty(parameter.IdentityCard))
             {
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
                 builder.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%'");
             }
 

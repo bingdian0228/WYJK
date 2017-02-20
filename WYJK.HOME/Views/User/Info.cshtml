@@ -76,7 +76,7 @@
                         生 日：
                     </div>
                     <div class="col-lg-10">
-                        @Model.Birthday
+                        @(Model.Birthday != null? Model.Birthday.Value.ToString("yyyy-MM-dd"):"")
                     </div>
                 </div>
             </li>

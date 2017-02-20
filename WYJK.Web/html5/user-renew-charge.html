@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -41,24 +41,21 @@
 			</header>
 			<!--表单-->
 			<div class="am-padding-sm submit">
-				<form action="" class="am-form" data-am-validator>
+				<form action="" class="am-form" data-am-validator id="form">
 					<div class="am-form-group am-form-icon">
 						<div class="l-form-group bg_white am-radius relative">
 							<label class="l-label">支付方式：</label>
 							<select id="" class="l-selectbox am-padding-left-0" required="required">
 								<option value="">请您选择支付方式</option>
-								<option value="option1">选项一...</option>
-								<option value="option2">选项二.....</option>
-								<option value="option3">选项三........</option>
+								<option value="1">招商银行</option>								
 							</select>
 						</div>
 					</div>
 					<div class="am-form-group am-form-icon">
 						<div class="l-form-group bg_white am-radius relative">
 							<label class="l-label">金额：</label>
-							<select name="" class="l-selectbox am-padding-left-0">
-								<option value="">3个月服务 ￥32800</option>
-								<option value="">6个月服务 ￥62800</option>
+							<select name="" class="l-selectbox am-padding-left-0" id="selectService">
+								
 							</select>
 						</div>
 					</div>
@@ -69,9 +66,10 @@
 							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">取消</button>
 						</div>
 						<div class="am-u-sm-6">
-							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">充值</button>
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="btnCharge">充值</button>
 						</div>
 					</div>
+                    
 				</form>
 			</div>
 
@@ -85,21 +83,62 @@
 <script src="assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 		<script src="assets/js/amazeui.min.js"></script>
-		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
-		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+        <script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+        <script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+        <script id="info-template" type="text/x-handlebars-template">
+            {{#each this}}
+            <option value="{{Key}}_{{Value}}">{{Key}}个月服务 ￥{{Value}}</option>   
+            {{/each}}        
+        </script>
 		<script type="text/javascript">
 			$(document).ready(function() {
 				//后退按钮
-				goBack();
+			    goBack();
+			    $form = $('#form');
 				var id = Cookies.get('MemID');
-				$.ajax({
-					type:"get",
-					url:"/api/Member/GetRenewalServiceList?MemberID="+id,
-					async:true,
-					success:function (d) {
-						
-					}
-				});
+				var Logined = isLogin(id);
+				if (Logined) {
+				    //获取简单信息
+				    var infoTemplate = Handlebars.compile($("#info-template").html());
+				    $.ajax({
+				        type: "get",
+				        url: "/api/Member/GetRenewalServiceList?MemberID=" + id,
+				        async: false,
+				        success: function (d) {
+				            $('#selectService').html(infoTemplate(d.Data));
+				        }
+				    });
+				   
+				    $('#btnCharge').click(function () {
+				        var flag = $form.validator('isFormValid');
+				        if (flag) {
+				            var res=$("#selectService").val();
+
+				            $.ajax({
+				                type: "post",
+				                url: "/api/Member/SubmitRenewalServiceOrder",
+				                async: true,
+				                data: { MemberID: id, PayMethod: "1", Amount: $("#selectService").val().split("_")[1], MonthCount: $("#selectService").val().split("_")[0] },
+				                success: function (d) {
+				                    if (d.status)
+				                    {
+				                        $.ajax({
+				                            type: "post",
+				                            url: "/api/Member/SubmitRenewalServiceOrderPayment",
+				                            async: true,
+				                            data: { OrderID: d.Data.OrderID, PlatType: "1" },
+				                            success: function (a) {
+				                                location.href = a.Data.url;
+				                            }
+				                        });
+				                    }
+				                    
+				                }
+				            });
+				        }
+				    });
+				}			
 			});
 		</script>
 	</body>

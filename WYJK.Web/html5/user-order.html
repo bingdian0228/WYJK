@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -220,7 +220,8 @@
 						$('#delete-confirm').modal({
 							relatedTarget: this,
 							closeOnConfirm: false,
-							onConfirm: function(options) {
+							onConfirm: function (options) {
+							    debugger;
 								$.ajax({
 									type: "post",
 									url: "/api/Order/CancelOrder",
@@ -228,7 +229,8 @@
 									data: {
 										OrderCode: codeArray
 									},
-									success: function(d) {
+									success: function (d) {
+									    debugger;
 										$('#delete-confirm').modal('close');
 										if (d.status) {
 											alertFun(d.Message, function() {

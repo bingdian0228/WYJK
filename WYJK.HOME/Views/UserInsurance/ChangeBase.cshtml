@@ -1,0 +1,183 @@
+﻿@model AdjustingBase
+@{
+    ViewBag.Title = "基数调整";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+<style>
+    .bg_lightblue {
+        background: #e3e9f9;
+    }
+
+    .am-u-sm-3 {
+        width: 25%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .am-u-sm-4 {
+        width: 33.33333333%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .am-u-sm-5 {
+        width: 41.66666667%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .am-u-sm-8 {
+        width: 58.366667%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .bg_darkblue,
+    .bg_darkblue:hover {
+        background: #0a7dd8;
+        color: #ffffff;
+        display: inline-block;
+        width: 83px;
+        height: 23px;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .am-text-right {
+        text-align: right;
+    }
+
+    .am-padding-sm {
+        padding: 10px;
+    }
+
+    .am-padding-top-0 {
+        padding-top: 0;
+    }
+
+    .am-u-sm-6 {
+        width: 50%;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .font-bg {
+        font-size: 18px;
+    }
+
+    .am-text-center {
+        text-align: center;
+    }
+    .am-panel-title{
+        font-size: 18px;
+        margin-left: 15px;
+    }
+    .am-list-static li{
+        list-style:none;
+    }
+    .btn-block.btn-sub{
+        width: 70%;
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+    .color-red{
+        color: red;
+    }
+    .am-margin-left{
+        margin-left:16px;
+    }
+</style>
+
+<form class="form-horizontal" method="post" action="/UserInsurance/ChangeBase">
+    
+    <div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+        <div class="panel panel-default am-margin-bottom-0">
+            <div class="panel-heading">
+                <h3 class="panel-title clearfix">
+                    <div class="pull-left">
+                        <span class="am-text-middle">基数变更</span>
+                    </div>
+                </h3>
+            </div>
+            @if (string.IsNullOrWhiteSpace(ViewBag.Error + "") == false)
+            {
+                <div class="Huialert Huialert-info color-red am-margin-left">@(ViewBag.Error)</div>
+            }
+            @if (Model.IsPaySocialSecurity)
+            {
+                <section class="am-panel am-panel-default">
+                    <header class="am-panel-hd">
+                        <h3 class="am-panel-title">社保基数</h3>
+                    </header>
+                    <ul class="am-list am-list-static">
+                        <li>
+                            <div class="">
+                                <span>当前基数：</span>
+                                <span>@Model.SocialSecurityBase</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="am-form-group">
+                                <label for="">待申请基数</label>
+                                <input type="text" name="SocialSecurityBase" class="js-pattern-intNum am-input-sm" id="" value="@Model.SocialSecurityBase" min="@Model.SocialSecurityMinBase" max="@Model.SocialSecurityMaxBase" placeholder="请输入申请基数">
+                            </div>
+                            <div class="blue">
+                                可交范围：@Model.SocialSecurityMinBase.ToString("#0")-@Model.SocialSecurityMaxBase.ToString("#0")
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+                <input name="SocialSecurityMinBase"  type="hidden" value="@Model.SocialSecurityMinBase" />
+                <input name="SocialSecurityMaxBase" type="hidden" value="@Model.SocialSecurityMaxBase" />
+                <input name="IsPaySocialSecurity" type="hidden" value="@(Model.IsPaySocialSecurity?"true":"false")" />
+            }
+            @if (Model.IsPayAccumulationFund)
+            {
+                <section class="am-panel am-panel-default">
+                    <header class="am-panel-hd">
+                        <h3 class="am-panel-title">公积金基数</h3>
+                    </header>
+                    <ul class="am-list am-list-static">
+                        <li>
+                            <div class="">
+                                <span>当前基数：</span>
+                                <span>@Model.AccumulationFundBase</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="">
+                                <form action="" class="am-form">
+                                    <div class="am-form-group">
+                                        <label for="">待申请基数</label>
+                                        <input type="text" name="AccumulationFundBase" class="js-pattern-intNum am-input-sm" id="" value="@Model.AccumulationFundBase" min="@Model.AccumulationFundMinBase" max="@Model.AccumulationFundMaxBase" placeholder="请输入申请基数">
+                                    </div>
+                                    <div class="blue">
+                                        可交范围：@Model.AccumulationFundMinBase.ToString("#0")-@Model.AccumulationFundMaxBase.ToString("#0")
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+                <input name="AccumulationFundMinBase" type="hidden" value="@Model.AccumulationFundMinBase" />
+                    <input name="AccumulationFundMaxBase" type="hidden" value="@Model.AccumulationFundMaxBase" />
+                    <input name="IsPayAccumulationFund" type="hidden" value="@(Model.IsPayAccumulationFund?"true":"false")" />
+            }
+
+            <div class="am-u-sm-6">
+                <a href="@Url.Action("ChangeSB", "UserInsurance")" class="btn btn-info bg-lightblue btn-lg btn-block btn-sub">取消</a>
+            </div>
+            <div class="am-u-sm-6">
+                <button type="submit" id="next" class="btn btn-info bg-lightblue btn-lg btn-block  btn-sub">保存</button>
+            </div>
+
+
+        </div>
+    </div>
+</form>
+
+

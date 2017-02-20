@@ -35,7 +35,7 @@ namespace WYJK.HOME.Service
 	                        [Order].OrderCode,
 	                        [Order].GenerateDate,
                             [Order].status,
-	                        dbo.OrderPeopleName_add([order].OrderCode) Names , 
+	                        dbo.OrderPeopleName_add([order].OrderCode) Names ,                           
 	                        SUM(OrderDetails.SocialSecurityAmount * OrderDetails.SocialSecuritypayMonth + OrderDetails.SocialSecurityServiceCost + OrderDetails.SocialSecurityFirstBacklogCost + OrderDetails.SocialSecurityBuCha + OrderDetails.AccumulationFundAmount * OrderDetails.AccumulationFundpayMonth + OrderDetails.AccumulationFundServiceCost + OrderDetails.AccumulationFundFirstBacklogCost) Amounts 
                           from[Order] right join OrderDetails on[Order].OrderCode = OrderDetails.OrderCode 
                           where[Order].MemberID = {memberID} {appendStr}
@@ -85,7 +85,11 @@ namespace WYJK.HOME.Service
 	                            ssp.HouseholdProperty,
 	                            ss.InsuranceArea,
 	                            ss.SocialSecurityBase,
-	                            af.AccumulationFundBase
+	                            af.AccumulationFundBase,
+ od.SocialSecuritypayMonth as SSPayMonthCount,
+od.AccumulationFundpayMonth,
+   ss.PayTime,
+(od.SocialSecurityAmount * od.SocialSecuritypayMonth + od.SocialSecurityServiceCost + od.SocialSecurityFirstBacklogCost + od.SocialSecurityBuCha + od.AccumulationFundAmount * od.AccumulationFundpayMonth + od.AccumulationFundServiceCost + od.AccumulationFundFirstBacklogCost) as Total
                             from OrderDetails od
 	                            left join SocialSecurityPeople ssp on od.SocialSecurityPeopleID = ssp.SocialSecurityPeopleID 
 	                            left join SocialSecurity ss on od.SocialSecurityPeopleID = ss.SocialSecurityPeopleID 

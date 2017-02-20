@@ -110,7 +110,7 @@
 					<!--隐藏信息-->
 					<input type="hidden" name="MemberID" id="MemberID" value="" />
 					<input type="hidden" name="PageIndex" id="" value="1" />
-					<input type="hidden" name="PageSize" id="" value="6" />
+					<input type="hidden" name="PageSize" id="" value="8" />
 				</form>
 			</div>
 		</div>
@@ -132,17 +132,22 @@
 			<li>
 				<a href="user-bill-detail.html?id={{ID}}" class="am-link-muted arrow-right">
 					<div class="am-padding-horizontal-sm">
-						<ul class="am-avg-sm-2">
-							<li>
-								<div>
-									<span>{{OperationType}}：</span>
-									<span class="">{{CostDisplay}}</span>
-								</div>
-							</li>
-							<li class="am-text-right">
-								<span class="am-text-xs am-padding-right-xs grey">{{CreateTime}}</span>
-							</li>
-						</ul>
+						<div class="am-cf">
+							<div class="am-fl">
+								<span>{{LaiYuan}}</span>
+							</div>
+							<div class="am-fr">
+								<span class="am-text-xs am-padding-right-sm grey">{{CreateTime}}</span>
+							</div>
+						</div>
+						<div class="am-cf">
+							<div class="am-fl am-text-xs">
+								{{Balance}}
+							</div>
+							<div class="am-fr">
+								<strong class="am-padding-right-sm black">{{CostDisplay}}</strong>
+							</div>
+						</div>
 					</div>
 				</a>
 			</li>
@@ -210,7 +215,7 @@
 					params: {
 						MemberID: id,
 						PageIndex: "1",
-						PageSize: "6",
+						PageSize: "8",
 						StartTime: '',
 						EndTime: '',
 						ShouZhiType: ''

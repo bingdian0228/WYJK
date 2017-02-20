@@ -1390,6 +1390,26 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.GetJiaoFeiMemberQuery(System.String,System.String,System.String)">
+            <summary>
+            根据手机号获取续费服务列表
+            </summary>
+            <param name="memberPhone"></param>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.PostJiaoFeiSubmit(WYJK.Entity.JiaoFeiSubmit)">
+            <summary>
+            提交缴费,需要记录日志
+            </summary>
+            <param name="jiaoFeiSubmit"></param>
+            <returns></returns>
+        </member>
+        <member name="M:WYJK.Web.Controllers.Http.MemberController.PostChongZheng(WYJK.Entity.ChongZheng)">
+            <summary>
+            冲正请求
+            </summary>
+            <param name="chongZheng"></param>
+            <returns></returns>
+        </member>
         <member name="T:WYJK.Web.Controllers.UploadController">
             <summary>
             文件上传接口

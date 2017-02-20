@@ -402,8 +402,15 @@ namespace WYJK.Data.ServiceImpl
             {
                 strb.Append($" and Members.MemberID = {parameter.MemberID} ");
             }
+            if (string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = "";
+            parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
             if (!String.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
                 strb.Append($" and SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%' ");
+
+            if (string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = "";
+            parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
 
             if (!String.IsNullOrEmpty(parameter.IdentityCard))
                 strb.Append($" and SocialSecurityPeople.IdentityCard like '%{parameter.IdentityCard}%' ");
@@ -557,6 +564,8 @@ namespace WYJK.Data.ServiceImpl
             {
                 strb.Append($" and Members.MemberID = {parameter.MemberID} ");
             }
+            if(!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
             if (String.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
                 strb.Append($" and (SocialSecurityPeople.SocialSecurityPeopleName is null or SocialSecurityPeople.SocialSecurityPeopleName like '%{parameter.SocialSecurityPeopleName}%')");
             else

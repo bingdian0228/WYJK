@@ -53,9 +53,11 @@
 							<strong class="am-text-primary am-text-middle" id="fee">0</strong>
 							<span class="am-text-middle">+</span>
 							<strong class="am-text-danger am-text-middle" id='svc'>0</strong>
+							<span class="am-text-middle">+</span>
+							<strong class="grey am-text-middle" id='bucha'>0</strong>
 							<span class="am-text-middle">=</span>
 							<strong class="am-text-warning am-text-middle" id="total">0</strong>
-							<button type="button" class="am-btn am-btn-warning bg_yellow black border-0 am-btn-xs am-radius am-margin-left-sm" id="settleBtn">结算</button>
+							<button type="button" class="am-btn am-btn-warning bg_yellow black border-0 am-btn-xs am-radius am-margin-left-xs" id="settleBtn">结算</button>
 						</div>
 					</div>
 				</div>
@@ -114,7 +116,7 @@
 				<div class="bg_lightblue am-cf am-padding-vertical-xs am-padding-horizontal-sm">
 					<div class="am-fl">
 						<label class="am-checkbox am-margin-0">
-							<input type="checkbox" value="" class="l-li-check" data-id="{{SocialSecurityPeopleID}}" data-fee="{{insuranceFee}}" data-svc="{{serviceCost}}" data-total="{{totalAmount}}">{{SocialSecurityPeopleName}}
+							<input type="checkbox" value="" class="l-li-check" data-id="{{SocialSecurityPeopleID}}" data-fee="{{insuranceFee}}" data-svc="{{serviceCost}}" data-bucha="{{Bucha}}" data-total="{{totalAmount}}">{{SocialSecurityPeopleName}}
 						</label>
 					</div>
 					<div class="am-fr">
@@ -147,12 +149,15 @@
 					</div>
 				</a>
 				<div class="am-g">
-					<div class="am-u-sm-12 am-padding-vertical-xs l-item-total am-text-right">
+					<div class="am-u-sm-12 am-padding-vertical-xs l-item-total am-text-xs am-text-right">
 						<span>保费：</span>
 						<strong class="am-text-primary">{{insuranceFee}}</strong>
 						<span>+</span>
 						<span>第一次代办费：</span>
 						<strong class="am-text-danger">{{serviceCost}}</strong>
+						<span>+</span>
+						<span>冻结费：</span>
+						<strong class="grey">{{Bucha}}</strong>
 						<span>=</span>
 						<strong class="am-text-warning">{{totalAmount}}</strong>
 					</div>

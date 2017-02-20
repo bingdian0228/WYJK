@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -58,17 +58,8 @@
 					<!--list-->
 					<div data-am-widget="list_news" class="am-list-news am-list-news-default">
 						<div class="am-list-news-bd">
-							<ul class="am-list l-msg-list" id="events-list">
-								<li>
-									<div class="am-text-center am-padding-sm">
-										正在加载内容...
-									</div>
-								</li>
-								<li>
-									<div class="am-padding-xs grey">
-										您的账户余额已不足抵扣下个月社保公积金您的账户余额已不足抵扣下个月社保公积金
-									</div>
-								</li>
+							<ul class="am-list l-msg-list" id="events-list">								
+								
 							</ul>
 						</div>
 					</div>
@@ -112,7 +103,40 @@
 <script src="assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 		<script src="assets/js/amazeui.min.js"></script>
-
+        <script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+        <script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+        <script id="list-template" type="text/x-handlebars-template">
+            {{#each this}}
+            <li>
+                {{Dt}}
+                <div class="am-padding-xs grey">
+                    {{ContentStr}}
+                </div>
+            </li>
+            {{/each}}
+        </script>
+        <script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get("MemID");
+				var $listBox = $('#events-list');
+				loadingFun(true);
+				//获取列表信息
+				var Template = Handlebars.compile($("#list-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetMessageList?memberID=" + id,
+					success: function(d) {
+						if (d.status) {
+						    $listBox.html(Template(d.Data));
+							loadingFun(false);
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+			});
+        </script>
 	</body>
 
 </html>

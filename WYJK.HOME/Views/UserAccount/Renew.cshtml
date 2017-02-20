@@ -1,0 +1,61 @@
+﻿@model RenewalServiceParameters
+@{
+    ViewBag.Title = "Charge";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                续费
+            </h3>
+        </div>
+        @if (ViewBag.PerStatus == "续费")
+        {
+            <div class="panel-body">
+                <form action="/UserAccount/Renew" method="post" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">支付方式</label>
+                        <div class="col-sm-6">
+                            <select name="" class="form-control">
+                                <option value="">银联支付</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">金额</label>
+                        <div class="col-sm-6">
+                            @{
+                                var memberList = ViewBag.selectService as List<KeyValuePair<int, decimal>>;
+                                var list = new List<SelectListItem>();
+                                var value = 0;
+                                list.AddRange(memberList.Select(item => new SelectListItem
+                                {
+                                    Text = item.Key.ToString() + "个月服务 " + "￥" + item.Value.ToString(),
+                                    Value = (item.Key.ToString() + "_" + item.Value.ToString())
+                                }));
+                            }
+                            @Html.DropDownList("PayMethod", list, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-3">
+                            <button type="button" class="btn btn-info bg-lightblue btn-block">取消</button>
+                        </div>
+                        <div class="col-lg-3">
+                            <button type="submit" class="btn btn-info bg-lightblue btn-block">续费</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            }
+            else
+            {
+                    <div class="panel-body">
+                        账户状态正常无需续费
+                    </div>
+            }
+
+    </div>
+</div>

@@ -1,60 +1,191 @@
 ﻿
 @{
-    ViewBag.Title = "ChangeSB";
+    ViewBag.Title = "基数调整";
     Layout = "~/Views/User/_Layout_user.cshtml";
 }
+<style>
+    .bg_lightblue {
+        background:#e3e9f9;
+    }
+    .am-u-sm-3 {
+        width: 25%;
+        display:inline-block;
+        float: left;
+        padding-top:10px;
+    }
+     .am-u-sm-4 {
+        width: 33.33333333%;
+        display:inline-block;
+        float: left;
+        padding-top:10px;
 
+    }
+    .am-u-sm-5 {
+        width: 41.66666667%;
+        display:inline-block;
+        float: left;
+        padding-top:10px;
+
+
+    }
+
+    .am-u-sm-8 {
+        width:58.366667%;
+        display:inline-block;
+        float: left;
+        padding-top:10px;
+
+    }
+    .bg_darkblue,
+    .bg_darkblue:hover {
+        background: #0a7dd8;
+        color: #ffffff;
+        display:inline-block;
+        width:83px;
+        height: 23px;
+        text-align:center;
+        margin-top: 15px;
+    }
+    .am-text-right {
+        text-align:right;
+    }
+    .am-padding-sm {
+        padding: 10px;
+    }
+    .am-padding-top-0{
+        padding-top:0;
+    }
+    .am-u-sm-6 {
+        width: 50%;
+        float: left;
+        padding-top:10px;
+    }
+    .font-bg {
+        font-size:18px;
+    }
+    .am-text-center{
+        text-align:center;
+    }
+</style>
 <div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
     <div class="panel panel-default am-margin-bottom-0">
         <div class="panel-heading">
             <h3 class="panel-title clearfix">
                 <div class="pull-left">
-                    <span class="am-text-middle">社保基数变更</span>
+                    <span class="am-text-middle">基数变更</span>
                 </div>
             </h3>
         </div>
-        <div class="panel-body">
-            <form action="" method="post" class="form-horizontal">
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-lg-2 control-label">姓名</label>
-                    <div class="col-lg-10">
-                        <p class="form-control-static">黄渤</p>
+        @if (ViewBag.HasPerson)
+        {
+            foreach (var item in ViewBag.PropleList as List<SocialSecurityPeoples>)
+            {
+                <div class="panel-body font-bg">                   
+                    <div class="bg_lightblue am-padding-vertical-xs am-padding-horizontal-sm">
+                        @item.SocialSecurityPeopleName
+                    </div>
+         
+                        <div class="am-g">
+                            @if (item.SSStatus > 0)
+                            {
+                                <div class="am-u-sm-3">
+                                    社保
+                                </div>
+                                <div class="am-u-sm-4 am-text-center">
+                                    已投 @item.SSAlreadyPayMonthCount 个月
+                                </div>
+                                <div class="am-u-sm-5 am-text-right">
+                                    剩余 @item.SSRemainingMonthCount 个月
+                                </div>
+                                <div class="am-u-sm-6">
+                                    投保时间：@item.SSPayTime
+                                </div>
+                                <div class="am-u-sm-6 am-text-right">
+                                    状态：<span class="am-text-warning">                                    
+                                    @switch (item.SSStatus)
+                                    {
+                                        case 1:
+                                            @:未参保
+                                            break;
+                                        case 2:
+                                            @:待办
+                                            break;
+                                        case 3:
+                                            @:正常
+                                            break;
+                                        case 4:
+                                            @:续费
+                                            break;
+                                        case 5:
+                                            @:待停
+                                            break;
+                                        case 6:
+                                            @:已停
+                                            break;
+                                    }
+                                    </span>
+                                </div>
+                            }
+                            @if (item.AFStatus > 0)
+                            {
+                                <div class="am-u-sm-3">
+                                    公积金
+                                </div> 
+                                <div class="am-u-sm-4 am-text-center">
+                                    已投 @item.AFAlreadyPayMonthCount 个月
+                                </div>
+                                <div class="am-u-sm-5 am-text-right">
+                                    剩余 @item.AFRemainingMonthCount 个月
+                                </div>
+                                <div class="am-u-sm-6">
+                                    缴费时间：@item.AFPayTime
+                                </div>
+                                <div class="am-u-sm-6 am-text-right">
+                                    状态：<span class="am-text-warning">
+                                    @switch (item.AFStatus)
+                                    {
+                                        case 1:
+                                             @:未参保
+                                            break;
+                                        case 2:
+                                            @:待办
+                                            break;
+                                        case 3:
+                                            @:正常
+                                            break;
+                                        case 4:
+                                            @:续费
+                                            break;
+                                        case 5:
+                                            @:待停
+                                            break;
+                                        case 6:
+                                            @:已停
+                                            break;
+                                        }                                    
+                                    
+                                    </span>
+                                </div>
+                            }
+
+                          
+                        </div>
+                 
+                    <div class="am-padding-sm am-padding-top-0 am-text-right">
+                        <a href="@Url.Action("ChangeBase", "UserInsurance")?socialPeopleId=@item.SocialSecurityPeopleID" class="am-btn am-btn-xs am-btn-primary bg_darkblue">
+                            基数调整 >
+                        </a>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-lg-2 control-label">身份证</label>
-                    <div class="col-lg-10">
-                        <p class="form-control-static">370784198803286619</p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-lg-2 control-label">原有基数</label>
-                    <div class="col-lg-10">
-                        <p class="form-control-static">2100</p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-lg-2 control-label">变更基数</label>
-                    <div class="col-lg-4">
-                        <input type="" name="" id="" value="" class="form-control" placeholder="请输入变更基数" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="inputEmail3" class="col-lg-2 control-label">变更范围</label>
-                    <div class="col-lg-10">
-                        <p class="form-control-static orange">2000~10000</p>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-lg-offset-2 col-lg-4">
-                        <button type="button" class="btn btn-info bg-lightblue btn-block">取消</button>
-                    </div>
-                    <div class="col-lg-4">
-                        <button type="button" class="btn btn-info bg-lightblue btn-block">申请变更</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+            }
+        }
+        else
+        {
+            <div class="panel-body">
+                暂无正常投保人
+            </div>
+        }
+        
     </div>
 </div>
 

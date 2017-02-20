@@ -37,19 +37,36 @@ PCAArea = [];
 PCAP = [];
 PCAC = [];
 PCAA = [];
-PCAN = PCAD.split("#");
-for (i = 0; i < PCAN.length; i++) {
-	PCAA[i] = [];
-	TArea = PCAN[i].split("$")[1].split("|");
-	for (j = 0; j < TArea.length; j++) {
-		PCAA[i][j] = TArea[j].split(",");
-		if (PCAA[i][j].length == 1) PCAA[i][j][1] = SAT;
-		TArea[j] = TArea[j].split(",")[0]
+//PCAN = PCAD.split("#");
+//for (i = 0; i < PCAN.length; i++) {
+//	PCAA[i] = [];
+//	TArea = PCAN[i].split("$")[1].split("|");
+//	for (j = 0; j < TArea.length; j++) {
+//		PCAA[i][j] = TArea[j].split(",");
+//		if (PCAA[i][j].length == 1) PCAA[i][j][1] = SAT;
+//		TArea[j] = TArea[j].split(",")[0]
+//	}
+//	PCAArea[i] = PCAN[i].split("$")[0] + "," + TArea.join(",");
+//	PCAP[i] = PCAArea[i].split(",")[0];
+//	PCAC[i] = PCAArea[i].split(',')
+//}
+//修改版，基于jQuery
+//获取省份
+$.ajax({
+	type: "get",
+	url: "/api/SocialSecurity/GetProvinceList",
+	async: false,
+	success: function(d) {
+		if (d.status) {
+			PCAP = d.Data;
+			if (ShowT) {
+				PCAP.unshift(SPT);
+			}
+		} else {
+			alertFun(d.Message);
+		}
 	}
-	PCAArea[i] = PCAN[i].split("$")[0] + "," + TArea.join(",");
-	PCAP[i] = PCAArea[i].split(",")[0];
-	PCAC[i] = PCAArea[i].split(',')
-}
+});
 
 function PCAS() {
 	this.SelP = document.getElementById(arguments[1]);
@@ -94,15 +111,31 @@ PCAS.SetP = function(PCA) {
 };
 PCAS.SetC = function(PCA) {
 	PI = PCA.SelP.selectedIndex;
+	//清空option
 	PCA.SelC.length = 0;
-	for (i = 1; i < PCAC[PI].length; i++) {
-		PCACT = PCACV = PCAC[PI][i];
+	//PCAC[PI]由ajax获取再循环操作
+	var Pname = PCA.SelP.options[PI].innerText;
+	if (Pname == SPT) {
+		PCAC = [];
+		PCAC.unshift(SCT);
+	} else {
+		$.ajax({
+			type: "get",
+			url: "/api/SocialSecurity/GetCityListByProvince?provinceName=" + Pname,
+			async: false,
+			success: function(d) {
+				PCAC = d.Data;
+			}
+		});
+	}
+	for (i = 0; i < PCAC.length; i++) {
+		PCACT = PCACV = PCAC[i];
 		if (PCACT == SCT) PCACV = "";
 		if (PCACT == SCT_Qu || PCACT == SCT_Xian) {
 			PCACV = "0";
 		}
 		PCA.SelC.options.add(new Option(PCACT, PCACV));
-		if (PCA.DefC == PCACV) PCA.SelC[i - 1].selected = true;
+		if (PCA.DefC == PCACV) PCA.SelC[i].selected = true;
 	}
 	if (PCA.SelA) PCAS.SetA(PCA);
 };

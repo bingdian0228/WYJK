@@ -38,6 +38,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> SocialSecurityOverview(SocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -70,6 +74,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> SocialSecurityWaitingHandle(SocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -95,6 +103,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> SocialSecurityNormal(SocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -120,6 +132,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> SocialSecurityRenew(SocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -145,6 +161,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> SocialSecurityWaitingStop(SocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 
@@ -170,6 +190,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public async Task<ActionResult> SocialSecurityAlreadyStop(SocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
             ViewData["SocialSecurityPeopleName"] = parameter.SocialSecurityPeopleName;
             ViewData["IdentityCard"] = parameter.IdentityCard;
 

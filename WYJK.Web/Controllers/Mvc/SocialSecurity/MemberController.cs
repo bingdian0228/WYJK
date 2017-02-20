@@ -179,6 +179,71 @@ namespace WYJK.Web.Controllers.Mvc
             if (model.MemberID == 0)
             {
                 var flag1 = await _memberService.RegisterMember(new MemberRegisterModel() { MemberName = model.MemberName, MemberPhone = model.MemberPhone, Password = model.Password, InviteCode = model.InviteCode });
+                foreach (var item1 in flag1)
+                {
+                    if (item1.Key == false)
+                    {
+                        TempData["Message"] = item1.Value;
+                        #region 证件类型
+                        var CertificateTypeList = new List<string> { "请选择" }.Concat(GetCertificateType()).Select(
+                                                    item => new SelectListItem
+                                                    {
+                                                        Text = item,
+                                                        Value = item == "请选择" ? "" : item,
+                                                        Selected = item == model.CertificateType
+
+                                                    }).ToList();
+
+                        //ViewData["CertificateType"] = new SelectList(CertificateTypeList, "Value", "Text");
+
+                        ViewBag.CertificateType = new SelectList(CertificateTypeList, "Value", "Text");
+
+                        #endregion
+
+                        #region 政治面貌
+                        var PoliticalStatusList = new List<string> { "请选择" }.Concat(GetPoliticalStatus()).Select(
+                                                    item => new SelectListItem
+                                                    {
+                                                        Text = item,
+                                                        Value = item == "请选择" ? "" : item
+                                                    }).ToList();
+
+                        ViewData["PoliticalStatus"] = new SelectList(PoliticalStatusList, "Value", "Text", model.PoliticalStatus);
+                        #endregion
+
+                        #region 学历
+                        var EducationList = new List<string> { "请选择" }.Concat(GetEducation()).Select(
+                                            item => new SelectListItem
+                                            {
+                                                Text = item,
+                                                Value = item == "请选择" ? "" : item
+                                            }).ToList();
+
+                        ViewData["Education"] = new SelectList(EducationList, "Value", "Text", model.Education);
+                        #endregion
+
+                        #region 户口性质
+                        List<SelectListItem> UserTypeList = EnumExt.GetSelectList(typeof(HouseholdPropertyEnum));
+                        UserTypeList.Insert(0, new SelectListItem { Text = "请选择", Value = "" });
+                        int householdType = 0;
+                        foreach (var item in UserTypeList)
+                        {
+                            if (item.Text == model.HouseholdType)
+                            {
+                                householdType = Convert.ToInt32(item.Value);
+                                break;
+                            }
+                        }
+
+                        model.HouseholdType = householdType.ToString();
+
+                        ViewData["HouseholdType"] = new SelectList(UserTypeList, "Value", "Text");
+                        #endregion
+                        return View(model);
+                    }
+
+                }
+             
                 model.MemberID = await _memberService.GetMemberId(model.MemberName);
 
                 if (model.MemberID == 0)

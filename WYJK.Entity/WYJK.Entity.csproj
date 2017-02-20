@@ -61,6 +61,7 @@
     <Compile Include="Entity\EnterpriseSocialSecurity.cs" />
     <Compile Include="Entity\Information.cs" />
     <Compile Include="Entity\InsuredIntroduce.cs" />
+    <Compile Include="Entity\JiaoFei.cs" />
     <Compile Include="Entity\LoanAnswer.cs" />
     <Compile Include="Entity\LoanSubject.cs" />
     <Compile Include="Entity\Log.cs" />
@@ -93,7 +94,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="Entity\packages.config" />
     <None Include="Properties\packages.config" />
   </ItemGroup>
   <ItemGroup>

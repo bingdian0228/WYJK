@@ -35,6 +35,8 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public ActionResult GetEnterpriseList(EnterpriseSocialSecurityParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.EnterpriseName))
+                parameter.EnterpriseName = parameter.EnterpriseName.Replace("'", "''");
             PagedResult<EnterpriseSocialSecurity> EnterpriseSocialSecurityList = _enterpriseService.GetEnterpriseList(parameter);
             return View(EnterpriseSocialSecurityList);
         }
@@ -45,6 +47,12 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public ActionResult GetPaymentDetailsList(PaymentDetailsParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.IdentityCard))
+                parameter.IdentityCard = parameter.IdentityCard.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.CompanyName))
+                parameter.CompanyName = parameter.CompanyName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.Year))
+                parameter.Year = parameter.Year.Replace("'", "''");
             PagedResult<PaymentDetail> list = _enterpriseService.GetPaymentDetailsList(parameter);
             string wheresqlstr = $" where IdentityCard like '%{parameter.IdentityCard}%' and CompanyName like '%{parameter.CompanyName}%' and Year like '%{parameter.Year}%'";
             ViewData["totalCount"] = DbHelper.QuerySingle<decimal>($"select ISNULL(sum(PersonalExpenses+ CompanyExpenses),0) TotalCount from PaymentDetail {wheresqlstr}");
@@ -552,7 +560,8 @@ namespace WYJK.Web.Controllers.Mvc
                         if (!_socialSecurityService.IsExistsRenew(MemberID))
                         {
                             Members member = DbHelper.QuerySingle<Members>($"select * from Members where MemberID={MemberID}");
-
+                            if (member == null)
+                                continue;
                             #region 查询每个用户余额
                             decimal totalAccount = 0;
                             //查询该用户下的所有参保人

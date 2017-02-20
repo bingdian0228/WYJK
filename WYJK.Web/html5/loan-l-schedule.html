@@ -29,6 +29,7 @@
 			.project {
 				height: 100%;
 			}
+			
 		</style>
 	</head>
 
@@ -48,19 +49,19 @@
 			<!--list-->
 			<div class="am-bg-grey">
 				<ul class="am-avg-sm-3 text-center">
-					<li class="am-padding-vertical-xs text-center">
+					<li class="am-padding-vertical-xs am-text-center">
 						<div class="am-rborder-grey">借款金额</div>
 					</li>
-					<li class="am-padding-vertical-xs text-center ">
+					<li class="am-padding-vertical-xs am-text-center ">
 						<div class="am-rborder-grey">申请时间</div>
 					</li>
-					<li class="am-padding-vertical-xs text-center">
+					<li class="am-padding-vertical-xs am-text-center">
 						<div>状态</div>
 					</li>
 				</ul>
 			</div>
 			<!--上拉加载列表-->
-			<div class="page lSchedule" id="wrapper">
+			<div class="page lSchedule" id="wrapper" style="top: 83px">
 				<div>
 					<!--刷新-->
 					<div class="pull-action loading" id="pull-down">
@@ -72,12 +73,12 @@
 
 					<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
 						<div class="am-list-news-bd">
-							<ul class="am-list l-bills-list" id="events-list">
-								<!--<li>
+							<ul class="am-list l-bills-list loan-l" id="events-list">
+								<li>
 									<div class="am-text-center am-padding-sm">
 										正在加载内容...
 									</div>
-								</li>-->
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -109,7 +110,7 @@
 				<ul class="am-avg-sm-3 text-center">
 					<li>{{ApplyAmount}}</li>
 					<li>
-						<div  style="width: 75px;margin: 0 auto" class="am-nowrap">{{ApplyDate}}</div></li>
+						<div  class="am-nowrap loan-date">{{ApplyDate}}</div></li>
 					<li>{{Status}}</li>
 				</ul>
 			</li>
@@ -128,7 +129,7 @@
 						params: {
 							MemberID: id,
 							PageIndex: 1,
-							PageSize: 6
+							PageSize: 10
 						}
 					});
 					app.init();

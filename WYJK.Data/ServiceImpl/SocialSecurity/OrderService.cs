@@ -104,8 +104,12 @@ namespace WYJK.Data.ServiceImpl
             {
                 builder.AppendFormat($" and orders.PaymentMethod='{parameter.PaymentMethod}'");
             }
+            if (!string.IsNullOrEmpty(parameter.OrderCode))
+            {
+                parameter.OrderCode = parameter.OrderCode.Replace("'", "''");
+                builder.Append($" and OrderCode like '%{parameter.OrderCode}%'");
+            }
 
-            builder.Append($" and OrderCode like '%{parameter.OrderCode}%'");
 
             if (!string.IsNullOrEmpty(parameter.Status))
             {

@@ -46,6 +46,7 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<MemberRegisterModel>> RegisterMember(MemberRegisterModel entity)
         {
+            string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
             //短信验证
             VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{entity.MemberPhone}' and Code='{entity.VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
             if (verificationCode == null)
@@ -110,9 +111,6 @@ namespace WYJK.Web.Controllers.Http
 
         }
 
-        private static string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
-        private static string apikey = ConfigurationManager.AppSettings["apikey"].ToString();
-        private static string contentFormat = ConfigurationManager.AppSettings["SMSVerifContentFormat"].ToString();
         /// <summary>
         /// 发送短信
         /// </summary>
@@ -121,6 +119,9 @@ namespace WYJK.Web.Controllers.Http
         /// <returns></returns>
         public string SendSms(string mobile, string userName, string code)
         {
+            string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
+            string apikey = ConfigurationManager.AppSettings["apikey"].ToString();
+            string contentFormat = ConfigurationManager.AppSettings["SMSVerifContentFormat"].ToString();
             string content = string.Format(contentFormat, userName, code, timespan);
             return Sms.sendSms(apikey, content, mobile);
         }
@@ -165,6 +166,7 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpPost]
         public async Task<JsonResult<MemberForgetPasswordModel>> ForgetPassword(MemberForgetPasswordModel entity)
         {
+            string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
             //短信验证
             VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{entity.MemberPhone}' and Code='{entity.VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
             if (verificationCode == null)
@@ -227,20 +229,26 @@ namespace WYJK.Web.Controllers.Http
         [System.Web.Http.HttpGet]
         public JsonResult<dynamic> SubmitMemberInfo(int MemberID, string TrueName, string MemberName, string MemberPhone, string VerificationCode)
         {
+            string timespan = ConfigurationManager.AppSettings["timespan"].ToString();
             //如果新手机号与原手机号不同，则需要验证码
             string oldMemberPhone = DbHelper.QuerySingle<string>($"select MemberPhone from Members where MemberID={MemberID}");
+            string compPhone = "";
             if (MemberPhone != oldMemberPhone)
             {
-                //短信验证
-                VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{oldMemberPhone}' and Code='{VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
-                if (verificationCode == null)
-                    return new JsonResult<dynamic>
-                    {
-                        status = false,
-                        Message = "验证码不正确或已失效！"
-                    };
+                compPhone = oldMemberPhone;
             }
-
+            else
+            {
+                compPhone = MemberPhone;
+            }
+            //短信验证    
+            VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{compPhone}' and Code='{VerificationCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+            if (verificationCode == null)
+                return new JsonResult<dynamic>
+                {
+                    status = false,
+                    Message = "验证码不正确或已失效！"
+                };
 
             //如果用户名重复
             if (DbHelper.QuerySingle<int>($"select count(1) from Members where MemberName='{MemberName}' and MemberID<>{MemberID}") > 0)
@@ -568,7 +576,7 @@ namespace WYJK.Web.Controllers.Http
         public JsonResult<AccountInfo> GetAccountInfo(int MemberID)
         {
             AccountInfo accountInfo = _memberService.GetAccountInfo(MemberID);
-            accountInfo.HeadPortrait = ConfigurationManager.AppSettings["ServerUrl"] + accountInfo.HeadPortrait;
+            accountInfo.HeadPortrait = ConfigurationManager.AppSettings["ServerUrl2"] + accountInfo.HeadPortrait;
 
             return new JsonResult<AccountInfo>
             {
@@ -831,13 +839,27 @@ namespace WYJK.Web.Controllers.Http
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     return new JsonResult<dynamic>
                     {
                         status = true,
                         Message = "提交成功",
                         Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else if (parameter.PlatType == "2")
+                {
+                    #region 移动端
+                    string Url = $@"https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC1?BranchID={BranchID}&CoNo={CoNo}&BillNo={BillNo}&Amount={Amount}&Date={Date}&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    //string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = Url }
                     };
                     #endregion
                 }
@@ -935,7 +957,7 @@ namespace WYJK.Web.Controllers.Http
                     return;
                 }
                 decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
-                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                if (model.Money != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
                     HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
@@ -975,7 +997,7 @@ namespace WYJK.Web.Controllers.Http
 
 
                 }
-                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={model.MemberID}");
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl2"] + $"html5/user-billIndex.html?MemberID={model.MemberID}");
 
             }
 
@@ -1154,7 +1176,11 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     //将所有的待续费(包括未续费待停保)变成正常,并将剩余月数变成服务月数
                     _socialSecurityService.UpdateRenew_WaitingTopToNormalByMemberID(parameter.MemberID, parameter.MonthCount);
 
+                    #region 针对银行接口做回滚
 
+
+
+                    #endregion
 
                     transaction.Complete();
                 }
@@ -1229,13 +1255,27 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" +  Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     return new JsonResult<dynamic>
                     {
                         status = true,
                         Message = "提交成功",
                         Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else if (parameter.PlatType == "2")
+                {
+                    #region 移动端
+                    string Url = $@"https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC1?BranchID={BranchID}&CoNo={CoNo}&BillNo={BillNo}&Amount={Amount}&Date={Date}&ExpireTimeSpan=30&MerchantUrl=" +MerchantUrl + "&MerchantPara=";
+                    //string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = Url }
                     };
                     #endregion
                 }
@@ -1333,7 +1373,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     return;
                 }
                 decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
-                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                if (model.Money != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
                     HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
@@ -1369,7 +1409,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     HttpContext.Current.Response.StatusCode = 200;
                 }
 
-                string nextUrl = ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={model.MemberID}";
+                string nextUrl = ConfigurationManager.AppSettings["ServerUrl2"] + $"html5/user-billIndex.html?MemberID={model.MemberID}";
                 //跳转页面
                 HttpContext.Current.Response.Redirect(nextUrl);
 
@@ -1579,7 +1619,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
         public JsonResult<dynamic> DrawCash(DrawCash drawCash)
         {
             //检测提现金额不能大于可提取余额
-            decimal Account = DbHelper.QuerySingle<decimal>($"select Account from Members where MemberID={drawCash.MemberID}");
+            decimal Account = DbHelper.QuerySingle<decimal>($"select  ISNULL(Account,0) from Members where MemberID={drawCash.MemberID}");
             decimal DongJie = DbHelper.QuerySingle<decimal>($"select ISNULL(SUM(Money),0) from DrawCash where MemberID={drawCash.MemberID} and ApplyStatus=1");
             if (drawCash.Money > Account - DongJie)
                 return new JsonResult<dynamic>
@@ -1815,7 +1855,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
                 //HttpContext.Current.Response.Status = "200";
                 HttpContext.Current.Response.StatusCode = 200;
-                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + "html5/user-billIndex.html");
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl2"] + "html5/user-billIndex.html");
             }
             catch (Exception ex)
             {
@@ -1824,5 +1864,234 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
 
         }
+
+        #region 银行接口对接
+        #region 用户查询
+        /// <summary>
+        /// 根据手机号获取续费服务列表
+        /// </summary>
+        /// <param name="memberPhone"></param>
+        [System.Web.Http.HttpGet]
+        public MemberQueryReturn GetJiaoFeiMemberQuery(string businessCode, string bankCode, string memberPhone)
+        {
+            MemberQueryReturn memberQueryReturn = new MemberQueryReturn()
+            {
+                BusinessCode = businessCode,
+                BankCode = bankCode,
+                MemberPhone = memberPhone
+            };
+            try
+            {
+                int memberId = DbHelper.QuerySingle<int>($"select MemberID from Members where MemberPhone='{memberPhone}'");
+                if (memberId == 0)
+                    //无此用户编号
+                    memberQueryReturn.ReturnCode = "0002";
+                else {
+                    memberQueryReturn.TrueName = DbHelper.QuerySingle<string>($"select TrueName from Members where MemberPhone='{memberPhone}'");
+                    //检验是否需要续费
+                    bool flag = _memberService.GetAccountStatus(memberId);
+                    if (flag == false)
+                        memberQueryReturn.ReturnCode = "0003";
+                    else {
+                        memberQueryReturn.ReturnCode = "0000";
+                        foreach (var item in GetRenewalServiceList(memberId).Data)
+                        {
+                            memberQueryReturn.MoneyArray.Add(item.Value);
+                        }
+                    }
+                }
+
+                return memberQueryReturn;
+            }
+            catch (Exception)
+            {
+                memberQueryReturn.ReturnCode = "0001";
+                return memberQueryReturn;
+            }
+        }
+
+        #endregion
+
+        #region 缴费
+        /// <summary>
+        /// 提交缴费,需要记录日志
+        /// </summary>
+        /// <param name="jiaoFeiSubmit"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpPost]
+        public JiaoFeiSubmitReturn PostJiaoFeiSubmit(JiaoFeiSubmit jiaoFeiSubmit)
+        {
+            JiaoFeiSubmitReturn jiaoFeiSubmitReturn = new JiaoFeiSubmitReturn()
+            {
+                BusinessCode = jiaoFeiSubmit.BusinessCode,
+                BankCode = jiaoFeiSubmit.BankCode,
+                MemberPhone = jiaoFeiSubmit.MemberPhone,
+                SerialNumber = jiaoFeiSubmit.SerialNumber
+            };
+
+            try
+            {
+                RenewalServiceParameters parameter = new RenewalServiceParameters()
+                {
+                    MemberID = DbHelper.QuerySingle<int>($"select MemberID from Members where MemberPhone='{jiaoFeiSubmit.MemberPhone}'"),
+                    PayMethod = "招行支付",
+                    Amount = jiaoFeiSubmit.Money,
+                    MonthCount = jiaoFeiSubmit.MonthCount
+                };
+
+                if (SubmitRenewalService(parameter).status)
+                {
+                    jiaoFeiSubmitReturn.ReturnCode = "0000";
+                    DbHelper.ExecuteSqlCommand($"insert into JiaoFei_ZS(BusinessCode,BankCode,MemberPhone,Money,MonthCount,BusinessDate,BusinessTime,SerialNumber) values('{jiaoFeiSubmit.BusinessCode}','{jiaoFeiSubmit.BankCode}','{jiaoFeiSubmit.MemberPhone}','{jiaoFeiSubmit.Money}','{jiaoFeiSubmit.MonthCount}','{jiaoFeiSubmit.BusinessDate}','{jiaoFeiSubmit.BusinessTime}','{jiaoFeiSubmit.SerialNumber}')", null);
+                }
+                else {
+                    jiaoFeiSubmitReturn.ReturnCode = "0001";
+                }
+
+                return jiaoFeiSubmitReturn;
+            }
+            catch (Exception)
+            {
+                jiaoFeiSubmitReturn.ReturnCode = "0001";
+                return jiaoFeiSubmitReturn;
+            }
+        }
+
+        #endregion
+
+        #region 冲正
+        /// <summary>
+        /// 冲正请求
+        /// </summary>
+        /// <param name="chongZheng"></param>
+        /// <returns></returns>
+        public ChongZhengReturn PostChongZheng(ChongZheng chongZheng)
+        {
+            ChongZhengReturn chongZhengReturn = new ChongZhengReturn()
+            {
+                BusinessCode = chongZheng.BusinessCode,
+                BankCode = chongZheng.BankCode,
+                MemberPhone = chongZheng.MemberPhone,
+                SerialNumber = chongZheng.SerialNumber
+            };
+            try
+            {
+                DbHelper.ExecuteSqlCommand($"update JiaoFei_ZS set Status = '1003' where SerialNumber='{chongZheng.SerialNumber}'", null);
+                //缴费回滚
+
+
+                chongZhengReturn.ReturnCode = "0000";
+                return chongZhengReturn;
+            }
+            catch (Exception)
+            {
+                chongZhengReturn.ReturnCode = "0001";
+                return chongZhengReturn;
+            }
+
+
+
+        }
+        #endregion
+
+        #region 日终对账
+        public RiZhongDuiZhangReturn PostRiZhongDuiZhang(RiZhongDuiZhang riZhongDuiZhang)
+        {
+            RiZhongDuiZhangReturn chongZhengReturn = new RiZhongDuiZhangReturn()
+            {
+                BusinessCode = riZhongDuiZhang.BusinessCode,
+                BankCode = riZhongDuiZhang.BankCode
+            };
+
+            try
+            {
+                List<FileContent> fileContentList = new List<FileContent>();
+                List<FileContent> fileErrorList = new List<FileContent>();
+                //查出招商银行当天所有的缴费记录
+                List<JiaoFei_ZS> jiaoFei_ZSList = DbHelper.Query<JiaoFei_ZS>($"select * from JiaoFei_ZS where BankCode ='{riZhongDuiZhang.BankCode}' and BusinessDate='{riZhongDuiZhang.BusinessDate}'");
+                #region 根据文件名从指定目录中读取文件内容到对象集合中
+
+                //读取文件
+                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $@"FileUpload\{riZhongDuiZhang.FileName.Trim()}");
+                StreamReader sr = new StreamReader(riZhongDuiZhang.FullFilename, Encoding.GetEncoding("GBK"));
+                String line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    string recordLine = line.ToString();
+                    FileContent fileContent = new FileContent()
+                    {
+                        MemberPhone = recordLine.Substring(0, 11),
+                        Money = Convert.ToDecimal(recordLine.Substring(11, 10)),
+                        MonthCount = Convert.ToInt32(recordLine.Substring(21, 2)),
+                        BusinessDate = recordLine.Substring(23, 8),
+                        BusinessTime = recordLine.Substring(31, 8),
+                        SerialNumber = recordLine.Substring(39, 16),
+                        BankCode = recordLine.Substring(55, 12)
+                    };
+
+                    fileContentList.Add(fileContent);
+                }
+
+
+                foreach (var fileContent in fileContentList)
+                {
+                    bool flag = false;
+                    foreach (var jiaoFei_ZS in jiaoFei_ZSList)
+                    {
+                        if (fileContent.SerialNumber == jiaoFei_ZS.SerialNumber)
+                        {
+                            flag = true;
+                            break;
+                        }
+                    }
+
+                    if (flag == false)
+                    {
+                        fileErrorList.Add(fileContent);
+                    }
+                }
+
+                bool isSuccess = true;
+                foreach (var fileError in fileErrorList)
+                {
+                    //针对未记录的重新缴纳一遍
+                    JiaoFeiSubmit jiaoFeiSubmit = new JiaoFeiSubmit()
+                    {
+                        BusinessCode = "1004",
+                        BankCode = fileError.BankCode,
+                        MemberPhone = fileError.MemberPhone,
+                        Money = fileError.Money,
+                        MonthCount = fileError.MonthCount,
+                        BusinessDate = fileError.BusinessDate,
+                        BusinessTime = fileError.BusinessTime,
+                        SerialNumber = fileError.SerialNumber
+                    };
+                    JiaoFeiSubmitReturn jiaoFeiSubmitReturn = PostJiaoFeiSubmit(jiaoFeiSubmit);
+                    if (jiaoFeiSubmitReturn.ReturnCode == "0001")
+                    {
+                        isSuccess = false;
+                        break;
+                    }
+
+                }
+
+                #endregion
+                if (isSuccess)
+                    chongZhengReturn.ReturnCode = "0000";
+                else
+                    chongZhengReturn.ReturnCode = "0001";
+
+                return chongZhengReturn;
+            }
+            catch (Exception ex)
+            {
+                chongZhengReturn.ReturnCode = "0001";
+                return chongZhengReturn;
+            }
+        }
+
+        #endregion
+
+        #endregion
     }
 }

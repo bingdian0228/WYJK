@@ -59,7 +59,7 @@ namespace WYJK.HOME.Controllers
 
             HttpClient client = new HttpClient();
             var req = await client.GetAsync(url + "/Loan/GetApplyloan?MemberID=" + m.MemberID);
-
+            
             AppayLoan appayLoan = (await req.Content.ReadAsAsync<JsonResult<AppayLoan>>()).Data;
 
             return View(appayLoan);

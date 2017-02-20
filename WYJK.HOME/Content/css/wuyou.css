@@ -1,0 +1,296 @@
+.fixed-box li.fix-box-li:last-child {
+	border: none
+}
+
+.fixed-box li.fix-box-li-1 {
+	width: 80px;
+	text-align: center;
+	padding: 6px 0;
+	background: #fff;
+	color: #2fc182;
+	border-bottom: 1px solid #2fc182
+}
+
+.fixed-box li.fix-box-li-1:last-child {
+	border-bottom: none
+}
+
+.fixed-box li+li+li+li {
+	border-bottom: none
+}
+
+.fixed-box li.hover.online-li .online-box,
+.fixed-box li.hover.call-li .call-box,
+.fixed-box li.hover.App-li .App-box,
+.fixed-box li.hover.wx-li .wx-box {
+	-webkit-animation: fadeInLeft .1s .1s ease both;
+	-moz-animation: fadeInLeft 1s .2s ease both;
+}
+
+@-webkit-keyframes fadeInLeft {
+	0% {
+		opacity: 0;
+		-webkit-transform: translateX(-20px)
+	}
+	100% {
+		opacity: 1;
+		-webkit-transform: translateX(0)
+	}
+}
+
+@-moz-keyframes fadeInLeft {
+	0% {
+		opacity: 0;
+		-moz-transform: translateX(-20px)
+	}
+	100% {
+		opacity: 1;
+		-moz-transform: translateX(0)
+	}
+}
+
+
+/*还原备份*/
+
+.fixed-box li.hover.online-li .online-box,
+.fixed-box li.hover.call-li .call-box,
+.fixed-box li.hover.App-li .App-box,
+.fixed-box li.hover.wx-li .wx-box {
+	display: block;
+}
+
+/*.fixed-box li.fix-box-li span.icon-call {
+	background: url(../../images/icon.png) no-repeat -468px 0;
+}
+
+.fixed-box li.fix-box-li span.icon-App {
+	background: url(../../images/icon.png) no-repeat 6px -76px;
+}
+
+.fixed-box li.fix-box-li span.icon-wx {
+	background: url(../../images/icon.png) no-repeat -34px -76px;
+}
+
+.fixed-box li.fix-box-li span.icon-back-top {
+	background: url(../../images/icon.png) no-repeat -504px 0;
+	cursor: pointer
+}*/
+
+.fixed-box li .online-box {}
+
+.fixed-box li .online-box h3,
+.fixed-box li .call-box h3 {
+	color: #fff;
+	font-size: 14px;
+	line-height: 28px;
+	font-weight: 100;
+	margin-bottom: 10px
+}
+
+
+/*.fixed-box li .online-box a{display:block; width:118px; height:25px; line-height:25px; color:#2fc182; padding-left:36px;}
+.fixed-box li .online-box .online-baidu{background:url(../../images/bg_home_service_icon.png) no-repeat 0 -416px; margin-bottom:10px;}*/
+
+/*.fixed-box li .online-box .online-qq {
+	background: url(../../images/bg_home_service_icon.png) no-repeat 0 -450px
+}*/
+
+
+/*.fixed-box li.hover.call-li .call-box{width:180px; left:-180px; border:1px solid #2fc182; background:#fff;}*/
+
+.fixed-box li .call-box h3 {
+	color: #333;
+}
+
+.fixed-box li .call-box h4 {
+	color: #333;
+	margin-bottom: 10px;
+	font-weight: 100;
+	font-size: 14px
+}
+
+.fixed-box li .call-box form {
+	display: block;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 16px;
+}
+
+.fixed-box li .call-box .input-sm {
+	width: 160px;
+	font-weight: 100;
+	color: #666;
+	border: 1px solid #eee;
+	margin-bottom: 5px;
+}
+
+
+/*.fixed-box li .call-box .online-free-call{border:none; width:142px; height:28px;  background:url(../../images/baidu_service_box_top_right_call-box.png) no-repeat left center; margin-bottom:16px;}*/
+
+.fixed-box li.fix-box-li .App-box,
+.fixed-box li.fix-box-li .wx-box {
+	background: #fff;
+	border: 1px solid #2fc182;
+	left: -160px;
+	top: -11px;
+	width: 160px;
+	height: 180px;
+	display: none;
+	position: absolute;
+	z-index: 9999;
+	padding: 10px;
+	text-align: left;
+}
+
+.App-box img,
+.wx-box img {
+	width: 100%
+}
+
+.App-box p,
+.wx-box p {
+	text-align: center;
+	color: #666
+}
+
+
+/*20160606浮动在线客服-孙贵磊*/
+
+.fixed-box {
+	width: 40px;
+	position: fixed;
+	top: 200px;
+	right: 20px;
+	z-index: 9999;
+	border: none;
+}
+
+.fixed-box li.fix-box-li {
+	width: 40px;
+	height: 40px;
+	margin-bottom: 8px;
+	/*background: #ff7816;*/
+	background: #FFC60D;
+	position: relative;
+	border-radius: 3px;
+}
+
+.fixed-box li.fix-box-li .fix-box-span {
+	display: block;
+	width: 40px;
+	height: 40px;
+}
+
+.fixed-box li.fix-box-li .fix-box-span>p {
+	display: none;
+	padding: 0px;
+	margin: 0px;
+	border-radius: 3px;
+	width: 40px;
+	height: 40px;
+	line-height: 15px;
+	font-size: 13px;
+	color: #fff;
+	padding: 5px;
+	padding-left: 7px;
+	/*background: #ff7618;*/
+	background: #D8A910;
+}
+
+.fixed-box li.fix-box-li .fix-box-span>p.hover {
+	display: block;
+}
+
+.fixed-box li.fix-box-li .online-span {
+	background: url(../img/baidu_service_normal_min.png) no-repeat 6px 8px;
+}
+
+.fixed-box li.fix-box-li .call-span {
+	background: url(../img/baidu_service_normal_min.png) no-repeat 6px -40px;
+}
+
+.fixed-box li.fix-box-li .App-span {
+	background: url(../img/baidu_service_normal_min.png) no-repeat 6px -88px;
+}
+
+.fixed-box li.fix-box-li .wx-span {
+	background: url(../img/baidu_service_normal_min.png) no-repeat 6px -136px;
+}
+
+.fixed-box li.fix-box-li .online-span.hover.online-span>p {
+	display: block;
+}
+
+.fixed-box li.fix-box-li .call-span.hover.call-span>p {
+	display: block;
+}
+
+.fixed-box li.fix-box-li .App-span.hover.App-span>p {
+	display: block;
+}
+
+.fixed-box li.fix-box-li .wx-span.hover.wx-span>p {
+	display: block;
+}
+
+.fixed-box li.hover.online-li .online-box,
+.fixed-box li.hover.call-li .call-box,
+.fixed-box li.hover.App-li .App-box,
+.fixed-box li.hover.wx-li .wx-box {
+	display: block;
+}
+
+.fixed-box li.fix-box-li .App-box,
+.fixed-box li.fix-box-li .wx-box {
+	background: #fff;
+	/*border: 1px solid #ff7618;*/
+	border: 1px solid #D8A910;
+	left: -167px;
+	top: 0px;
+	width: 160px;
+	height: 180px;
+	display: none;
+	position: absolute;
+	z-index: 9999;
+	padding: 10px;
+	text-align: left;
+}
+
+.fixed-box li.fix-box-li>div>b {
+	display: block;
+	width: 7px;
+	height: 40px;
+	position: absolute;
+	top: 0px;
+	right: -7px;
+	background: url(../img/baidu_service_box_top_right.png) no-repeat 0px 0px;
+}
+
+.fixed-box li.fix-box-li .online-box,
+.fixed-box li.fix-box-li .call-box {
+	background: #ff7618;
+	left: -143px;
+	top: 0px;
+	width: 136px;
+	min-height: 100px;
+	display: none;
+	position: absolute;
+	z-index: 9999;
+	padding: 10px;
+	text-align: left;
+	box-sizing: border-box;
+}
+
+.fixed-box li.fix-box-li .online-box,
+.fixed-box li.fix-box-li .call-box {
+	width: 180px;
+	left: -187px;
+	/*border: 1px solid #ff7618;*/
+	border: 1px solid #D8A910;
+	background: #fff;
+	min-height: 40px;
+}
+
+
+/*收起*/
+
+

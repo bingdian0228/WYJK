@@ -50,6 +50,7 @@ namespace WYJK.HOME.Models
         /// <summary>
         /// 身份证照片
         /// </summary>
+        
         [Display(Name = "身份证照片")]
         public string IdentityCardPhoto { get; set; }
         /// <summary>
@@ -80,30 +81,71 @@ namespace WYJK.HOME.Models
         [Display(Name = "起缴时间")]
         public DateTime PayTime { get; set; }
 
-        [Required]
+        [Range(0,12)]
         [Display(Name = "参保月份")]
         public int PayMonthCount { get; set; }
 
-        [Required]
+        
         [Display(Name = "补交月份")]
         public int PayBeforeMonthCount { get; set; }
 
-        [Required]
+        
         [Display(Name = " 在企业缴纳")]
         public int BankPayMonth { get; set; }
 
-        [Required]
+        
         [Display(Name = "在银行缴纳")]
         public int EnterprisePayMonth { get; set; }
         
         [Display(Name = "备注")]
         public string Note { get; set; }
-         
+
+        public decimal MinBase { get; set; }
+        public decimal MaxBase { get; set; }
+
     }
 
 
     public class InsuranceAdd3ViewModel
     {
+        public bool Ckss { get; set; }
+        public bool Ckaf { get; set; }
+        [Display(Name = "参保地")]
+        public string InsuranceArea { get; set; }
+
+        [Required]
+        [Display(Name = "社保基数")]
+        public decimal SocialSecurityBase { get; set; }
+
+        [Required]
+        [Display(Name = "起缴时间")]
+        public DateTime PayTime { get; set; }
+
+        [Range(0, 12)]
+        [Display(Name = "参保月份")]
+        public int PayMonthCount { get; set; }
+
+
+        [Display(Name = "补交月份")]
+        public int PayBeforeMonthCount { get; set; }
+
+
+        [Display(Name = " 在企业缴纳")]
+        public int BankPayMonth { get; set; }
+
+
+        [Display(Name = "在银行缴纳")]
+        public int EnterprisePayMonth { get; set; }
+
+        [Display(Name = "备注")]
+        public string Note { get; set; }
+
+        public decimal MinBase { get; set; }
+        public decimal MaxBase { get; set; }
+
+
+        public decimal MinBase2 { get; set; }
+        public decimal MaxBase2 { get; set; }
         [Display(Name = "参保地")]
         public string AccumulationFundArea { get; set; }
 
@@ -113,26 +155,26 @@ namespace WYJK.HOME.Models
 
         [Required]
         [Display(Name = "起缴时间")]
-        public DateTime PayTime { get; set; }
+        public DateTime PayTime2 { get; set; }
 
         [Required]
         [Display(Name = "参保月份")]
-        public int PayMonthCount { get; set; }
+        public int PayMonthCount2 { get; set; }
 
-        [Required]
+        
         [Display(Name = "补交月份")]
-        public int PayBeforeMonthCount { get; set; }
+        public int PayBeforeMonthCount2 { get; set; }
 
-        [Required]
+    
         [Display(Name = " 在企业缴纳")]
-        public int BankPayMonth { get; set; }
+        public int BankPayMonth2 { get; set; }
 
-        [Required]
+      
         [Display(Name = "在银行缴纳")]
-        public int EnterprisePayMonth { get; set; }
+        public int EnterprisePayMonth2 { get; set; }
 
         [Display(Name = "备注")]
-        public string Note { get; set; }
+        public string Note2 { get; set; }
 
     }
 

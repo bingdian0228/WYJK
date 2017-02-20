@@ -136,7 +136,9 @@ namespace WYJK.HOME.Service
 	                        ssp.HouseholdProperty,
 	                        ss.PayTime,
 	                        ss.SocialSecurityBase,
-	                        af.AccumulationFundBase
+	                        af.AccumulationFundBase,
+                            ISNULL(ss.PayMonthCount,0) AS SSPayMonthCount ,
+	                        ISNULL(af.PayMonthCount,0) AS AfPayMonthCount
                         from SocialSecurityPeople ssp
 	                        left join SocialSecurity ss on ssp.SocialSecurityPeopleID = ss.SocialSecurityPeopleID
 	                        left join AccumulationFund af on ssp.SocialSecurityPeopleID = af.SocialSecurityPeopleID

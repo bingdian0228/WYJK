@@ -38,16 +38,12 @@
 					还款
 				</h1>
 			</header>
-			<!--<div>
-				
-			</div>-->
 			<!--余额-->
-			<ul class="am-avg-sm-4 am-margin-sm text-center am-border" id="tabel-info">
+			<ul class="am-avg-sm-4 am-margin-sm am-text-center am-border" id="tabel-info">
 
 			</ul>
 			<!--表单-->
 			<div class="submit">
-				<!--<form action="" class="am-form" data-am-validator>-->
 				<ul class="am-menu bg_white payback-bborder" id="submit-info">
 
 				</ul>
@@ -124,6 +120,7 @@
 				loadingFun(true);
 				var id = Cookies.get('MemID');
 				var Loanid = GetRequest().id;
+
 				//后退按钮
 				goBack();
 				var Logined = isLogin(id);
@@ -166,7 +163,8 @@
 								loadingFun(false);
 								if(d.status) {
 									if(d.Data == 1) {
-										MemberLoanRepayment();
+										//MemberLoanRepayment();
+										OrderPay();
 									} else if(d.Data == 0) {
 										alertFun(d.Message);
 									}
@@ -179,64 +177,86 @@
 					});
 				}
 
+				function reload() {
+					//加载中
+					loadingFun(true);
+					var Loanid = GetRequest().id;
+					//获取简单信息
+					var tabelTemplate = Handlebars.compile($("#table-template").html());
+
+					var infoTemplate = Handlebars.compile($("#info-template").html());
+					var se = $('select').val();
+					$.ajax({
+						type: "get",
+						url: "/api/Loan/SelectRepaymentType/" + Loanid + '?RepaymentType=' + se,
+						async: true,
+						success: function(d) {
+							loadingFun(false);
+							if(d.status) {
+								//注册一个比较大小的Helper,判断v1是否大于v2
+								Handlebars.registerHelper("compare", function(v1, options) {
+									if(v1) {
+										//满足添加继续执行
+										return options.fn(this);
+									} else {
+										//不满足条件执行{{else}}部分
+										return options.inverse(this);
+									}
+								});
+								$('#tabel-info').html(tabelTemplate(d.Data));
+
+								$('#submit-info').html(infoTemplate(d.Data));
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				}
+				//新建我要还款
+				//				function MemberLoanRepayment() {
+				//					var RepaymentType = $('#select').val();
+				//					var dataModel = {
+				//						ID: Loanid,
+				//						RepaymentType: RepaymentType
+				//					};
+				//					$.ajax({
+				//						type: "post",
+				//						url: "/api/Loan/MemberLoanRepayment",
+				//						async: true,
+				//						data: dataModel,
+				//						success: function(d) {
+				//							if(d.status) {
+				////								window.location.href = "loan-payback-detail.html?id=" + Loanid;
+				//							} else {
+				//								alertFun(d.Message);
+				//							}
+				//						}
+				//					});
+				//				}
+
+				//生成还款订单,并调去支付页面
+				function OrderPay() {
+					var orderData;
+					var RepaymentType = $('#select').val();
+					var orderModel = {
+						ID: Loanid,
+						RepaymentType: RepaymentType
+					};
+					$.ajax({
+						type: "post",
+						url: "/api/Loan/OrderPay",
+						async: false,
+						data: orderModel,
+						success: function(d) {
+							if(d.status) {
+								window.location.href = d.Data.url;
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				}
 			});
-
-			function reload() {
-				//加载中
-				loadingFun(true);
-				var Loanid = GetRequest().id;
-				//获取简单信息
-				var tabelTemplate = Handlebars.compile($("#table-template").html());
-
-				var infoTemplate = Handlebars.compile($("#info-template").html());
-				var se = $('select').val();
-				$.ajax({
-					type: "get",
-					url: "/api/Loan/SelectRepaymentType/" + Loanid + '?RepaymentType=' + se,
-					async: true,
-					success: function(d) {
-						loadingFun(false);
-						if(d.status) {
-							//注册一个比较大小的Helper,判断v1是否大于v2
-							Handlebars.registerHelper("compare", function(v1, options) {
-								if(v1) {
-									//满足添加继续执行
-									return options.fn(this);
-								} else {
-									//不满足条件执行{{else}}部分
-									return options.inverse(this);
-								}
-							});
-							$('#tabel-info').html(tabelTemplate(d.Data));
-
-							$('#submit-info').html(infoTemplate(d.Data));
-						} else {
-							alertFun(d.Message);
-						}
-					}
-				});
-			}
-			//新建我要还款
-			function MemberLoanRepayment() {
-				var RepaymentType = $('#select').val();
-				var dataModel = {
-					ID: Loanid,
-					RepaymentType: RepaymentType
-				};
-				$.ajax({
-					type: "post",
-					url: "/api/Loan/MemberLoanRepayment",
-					async: true,
-					data: dataModel,
-					success: function(d) {
-						if(d.status) {
-							window.location.href = "loan-payback-detail.html?id=" + Loanid;
-						} else {
-							alertFun(d.Message);
-						}
-					}
-				});
-			}
 		</script>
 
 	</body>

@@ -63,12 +63,9 @@
 			<!--SBconfirm-->
 			<div class="am-modal am-modal-confirm" tabindex="-1" id="SB-confirm">
 				<div class="am-modal-dialog">
-					<div class="am-modal-hd">请选择停保原因</div>
-					<div class="am-modal-bd">
-						<form action="" class="am-form am-text-left" id="" data-am-validator>
-							<input type="hidden" name="SocialSecurityID" id="SBid" value="" />
-						</form>
-					</div>
+					<form action="" class="am-form" id="" data-am-validator>
+						<input type="hidden" name="SocialSecurityPeopleID" id="SBid" value="" />
+					</form>
 					<div class="am-modal-footer">
 						<span class="am-modal-btn" data-am-modal-cancel>取消</span>
 						<span class="am-modal-btn" data-am-modal-confirm>确定</span>
@@ -78,9 +75,9 @@
 			<!--fundConfirm-->
 			<div class="am-modal am-modal-confirm" tabindex="-1" id="fund-confirm">
 				<div class="am-modal-dialog">
-					<div class="am-modal-hd">您，确定停缴公积金吗？</div>
-					<div class="am-modal-bd">
-					</div>
+					<form action="" class="am-form" data-am-validator>
+						<input type="hidden" name="SocialSecurityPeopleID" id="fundId" value="" />
+					</form>
 					<div class="am-modal-footer">
 						<span class="am-modal-btn" data-am-modal-cancel>取消</span>
 						<span class="am-modal-btn" data-am-modal-confirm>确定</span>
@@ -162,10 +159,45 @@
 		</script>
 
 		<script id="stopReason-template" type="text/x-handlebars-template">
-			{{#each this}}
-			<label class="am-radio">
-				<input type="radio" name="StopReason" id="" value="{{this}}" required="required"/>{{this}}
-			</label> {{/each}}
+			<div class="am-modal-hd">
+				{{dateTip}}
+			</div>
+			<div class="am-modal-bd am-text-left">
+				<div class="am-margin-vertical-xs">
+					{{#each CollectTypeList}}
+					<label class="am-radio-inline">
+						<input type="radio" name="CollectType"  value="{{Value}}" required="required"> {{Text}}
+					</label> {{/each}}
+				</div>
+				<div class="contactBox hide">
+
+				</div>
+				<div class="am-margin-vertical-xs">
+					<div class="">
+						请选择停保原因
+					</div>
+					{{#each list}}
+					<label class="am-radio">
+						<input type="radio" name="StopReason" id="" value="{{this}}" required="required"/>{{this}}
+					</label> {{/each}}
+				</div>
+			</div>
+		</script>
+		<script id="stopFund-template" type="text/x-handlebars-template">
+			<div class="am-modal-hd">
+				{{dateTip}}
+			</div>
+			<div class="am-modal-bd am-text-left">
+				<div class="am-margin-vertical-xs">
+					{{#each list}}
+					<label class="am-radio-inline">
+						<input type="radio" name="AccumulationFundTopType"  value="{{Value}}" required="required"> {{Text}}
+					</label> {{/each}}
+				</div>
+				<div class="companyBox hide">
+
+				</div>
+			</div>
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -212,12 +244,49 @@
 					async: true,
 					success: function(d) {
 						if (d.status) {
-							if (d.Data.length) {
-								$SBconfirm.find("form").append(stopReasontmpl(d.Data));
-								$SBconfirm.find("form input[type=radio]").uCheck();
-							} else {
-								$SBconfirm.find("form").append('<div class="am-text-center am-padding-sm">暂无信息</div>');
-							}
+							$SBconfirm.find("form").append(stopReasontmpl(d.Data));
+							$SBconfirm.find("form input[type=radio]").uCheck();
+							//邮寄信息点击事件
+							var $collectType = $SBconfirm.find("input[name='CollectType']");
+							var $contactBox = $SBconfirm.find(".contactBox");
+							var $contactInput = $('<div class="am-margin-vertical-xs"><input type="text" name="ContactsUser" id="" placeholder="请填写联系人姓名" required/></div><div class="am-margin-vertical-xs"><input type="text" class="js-pattern-mobile" name="ContactsPhone" id="" placeholder="请填写联系电话" required/></div><div class="am-margin-vertical-xs"><input type="text" name="MailAddress" id="" placeholder="请填写详细地址" required/></div>');
+							$collectType.click(function() {
+								var flag = $(this).is("[value=2]:checked");
+								if (flag) {
+									$contactBox.append($contactInput).slideDown();
+								} else {
+									$contactInput.remove();
+									$contactBox.hide();
+								}
+							});
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				//获取公积金停办类型
+				var stopFundtmpl = Handlebars.compile($("#stopFund-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/SocialSecurity/GetAccumulationFundTopTypeList",
+					async: true,
+					success: function(d) {
+						if (d.status) {
+							$fundConfirm.find("form").append(stopFundtmpl(d.Data));
+							$fundConfirm.find("form input[type=radio]").uCheck();
+							//转移公司点击事件
+							var $collectType = $fundConfirm.find("input[name='AccumulationFundTopType']");
+							var $companyBox = $fundConfirm.find(".companyBox");
+							var $companyInput = $('<div class="am-margin-vertical-xs"><input type="text" name="CompanyName" id="" placeholder="请输入新单位全称" required/></div><div class="am-margin-vertical-xs"><input type="text" class="" name="CompanyAccumulationFundCode" id="" placeholder="请输入新单位公积金编号" required/></div>');
+							$collectType.click(function() {
+								var flag = $(this).is("[value=2]:checked");
+								if (flag) {
+									$companyBox.append($companyInput).slideDown();
+								} else {
+									$companyInput.remove();
+									$companyBox.hide();
+								}
+							});
 						} else {
 							alertFun(d.Message);
 						}
@@ -258,29 +327,32 @@
 				//停缴公积金
 				$('body').on("click", ".l-stopFund", function() {
 					var fundId = $(this).data("id");
+					$('#fundId').val(fundId);
 					$fundConfirm.modal({
 						relatedTarget: this,
 						closeOnConfirm: false,
 						onConfirm: function(options) {
-							$.ajax({
-								type: "post",
-								url: "/api/SocialSecurity/ApplyStopAccumulationFund",
-								async: true,
-								data: {
-									SocialSecurityPeopleID: fundId
-								},
-								success: function(d) {
-									if (d.status) {
-										$fundConfirm.modal("close");
-										alertFun(d.Message, function() {
-											window.location.reload();
-										});
-									} else {
-										$fundConfirm.modal("close");
-										alertFun(d.Message);
+							var flag = $fundConfirm.find("form").validator("isFormValid");
+							if (flag) {
+								var dataModel = $fundConfirm.find("form").serialize();
+								$.ajax({
+									type: "post",
+									url: "/api/SocialSecurity/ApplyStopAccumulationFund",
+									async: true,
+									data: dataModel,
+									success: function(d) {
+										if (d.status) {
+											$fundConfirm.modal("close");
+											alertFun(d.Message, function() {
+												window.location.reload();
+											});
+										} else {
+											$fundConfirm.modal("close");
+											alertFun(d.Message);
+										}
 									}
-								}
-							});
+								});
+							}
 						}
 					});
 				});

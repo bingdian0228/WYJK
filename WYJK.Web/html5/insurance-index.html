@@ -31,7 +31,8 @@
 			<header data-am-widget="header" class="am-header am-header-default bg_blue">
 				<div class="am-header-left am-header-nav">
 					<a href="home.html" class="">
-						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;" alt="" />
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
 					</a>
 				</div>
 				<h1 class="am-header-title">
@@ -51,17 +52,19 @@
 				<div class="am-g bg_darkgrey">
 					<div class="am-u-sm-3">
 						<label class="am-checkbox">
-						<input type="checkbox" value="" id="chkAllBtn" data-am-ucheck>全选
-					</label>
+							<input type="checkbox" value="" id="chkAllBtn" data-am-ucheck>全选
+						</label>
 					</div>
 					<div class="am-u-sm-9 am-padding-left-0">
 						<div class="am-padding-top-xs am-text-right submit-box">
 							<strong class="am-text-primary am-text-middle" id="fee">0</strong>
 							<span class="am-text-middle">+</span>
 							<strong class="am-text-danger am-text-middle" id='svc'>0</strong>
+							<span class="am-text-middle">+</span>
+							<strong class="grey am-text-middle" id='bucha'>0</strong>
 							<span class="am-text-middle">=</span>
 							<strong class="am-text-warning am-text-middle" id="total">0</strong>
-							<button type="button" class="am-btn am-btn-warning bg_yellow black border-0 am-btn-xs am-radius am-margin-left-sm" id="settleBtn">结算</button>
+							<button type="button" class="am-btn am-btn-warning bg_yellow black border-0 am-btn-xs am-radius am-margin-left-xs" id="settleBtn">结算</button>
 						</div>
 					</div>
 				</div>
@@ -97,7 +100,7 @@
 						</a>
 					</li>
 					<li>
-						<a href="javascript:void(0);" class="loan-btn">
+						<a href="loan-index.html" class="">
 							<img src="img/tab_04_nor.png" alt="借款" />
 							<span class="am-navbar-label">借款</span>
 						</a>
@@ -153,7 +156,7 @@
 				<div class="bg_lightblue am-cf am-padding-vertical-xs am-padding-horizontal-sm">
 					<div class="am-fl">
 						<label class="am-checkbox am-margin-0">
-							<input type="checkbox" value="" class="l-li-check" data-id="{{SocialSecurityPeopleID}}" data-fee="{{insuranceFee}}" data-svc="{{serviceCost}}" data-total="{{totalAmount}}">{{SocialSecurityPeopleName}}
+							<input type="checkbox" value="" class="l-li-check" data-id="{{SocialSecurityPeopleID}}" data-fee="{{insuranceFee}}" data-svc="{{serviceCost}}" data-bucha="{{Bucha}}" data-total="{{totalAmount}}">{{SocialSecurityPeopleName}}
 						</label>
 					</div>
 					<div class="am-fr">
@@ -186,12 +189,15 @@
 					</div>
 				</a>
 				<div class="am-g">
-					<div class="am-u-sm-12 am-padding-vertical-xs l-item-total am-text-right">
+					<div class="am-u-sm-12 am-padding-vertical-xs l-item-total am-text-xs am-text-right">
 						<span>保费：</span>
 						<strong class="am-text-primary">{{insuranceFee}}</strong>
 						<span>+</span>
 						<span>第一次代办费：</span>
 						<strong class="am-text-danger">{{serviceCost}}</strong>
+						<span>+</span>
+						<span>冻结费：</span>
+						<strong class="grey">{{Bucha}}</strong>
 						<span>=</span>
 						<strong class="am-text-warning">{{totalAmount}}</strong>
 					</div>
@@ -200,27 +206,6 @@
 			{{/each}}
 		</script>
 		<script src="assets/js/no-insurance.js" type="text/javascript" charset="utf-8"></script>
-		<script type="text/javascript">
-			$(document).ready(function() {
-				var id = Cookies.get('MemID');
-
-				//点击借款是否可以借
-				$('.loan-btn').click(function() {
-					$.ajax({
-						type: "get",
-						url: "/api/Loan/IsCanLoan?MemberID=" + id,
-						async: true,
-						success: function(d) {
-							if(d.status) {
-								$(this).attr('href', 'loan-index.html');
-							} else {
-								alertFun(d.Message);
-							}
-						}
-					})
-				});
-			});
-		</script>
 	</body>
 
 </html>

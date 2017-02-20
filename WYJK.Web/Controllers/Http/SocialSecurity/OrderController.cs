@@ -780,13 +780,27 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                 {
                     #region 移动端
                     //string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     return new JsonResult<dynamic>
                     {
                         status = true,
                         Message = "提交成功",
                         Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else if (parameter.PlatType == "2")
+                {
+                    #region 移动端
+                    string Url = $@"https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC1?BranchID={BranchID}&CoNo={CoNo}&BillNo={BillNo}&Amount={Amount}&Date={Date}&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    //string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = Url }
                     };
                     #endregion
                 }
@@ -887,7 +901,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
                     return;
                 }
                 decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
-                if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
+                if (money != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
                     HttpContext.Current.Response.Write("<script>alert('支付金额与订单金额不一致！')</script>");
@@ -914,7 +928,7 @@ values({DateTime.Now.ToString("yyyyMMddHHmmssfff") + new Random(Guid.NewGuid().G
 
 
                 HttpContext.Current.Response.StatusCode = 200;
-                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={model.MemberID}");
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl2"] + $"html5/user-billIndex.html?MemberID={model.MemberID}");
             }
         }
 

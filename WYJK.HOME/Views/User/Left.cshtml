@@ -57,15 +57,11 @@
                         </dd>
                         <dd>
                             <a href="@Url.Action("ChangeSB", "UserInsurance")" class="white center-block">
-                                社保基数变更
+                                基数变更
                             </a>
                         </dd>
-                        <dd>
-                            <a href="@Url.Action("ChangeFund", "UserInsurance")" class="white center-block">
-                                公积金基数变更
-                            </a>
-                        </dd>
-                        <dd>
+                       
+                        @*<dd>
                             <a href="@Url.Action("RecSB", "UserInsurance")" class="white center-block">
                                 社保基数变更历史
                             </a>
@@ -74,7 +70,7 @@
                             <a href="@Url.Action("RecFund", "UserInsurance")" class="white center-block">
                                 公积金基数变更历史
                             </a>
-                        </dd>
+                        </dd>*@
                     </dl>
                 </div>
             </li>
@@ -98,7 +94,7 @@
                             </a>
                         </dd>
                         <dd>
-                            <a href="#" class="white center-block">
+                            <a href="/UserAccount/Renew" class="white center-block">
                                 续费
                             </a>
                         </dd>
@@ -113,14 +109,14 @@
                     </a>
                 </div>
             </li>
-            <li class="@(controller == "UserApplyWithDraw" ? "active":"")">
+            @*<li class="@(controller == "UserApplyWithDraw" ? "active":"")">
                 <div class="cate-tag">
                     <a href="@Url.Action("Index", "UserApplyWithDraw")" class="white center-block">
                         <i class="icon-w icon-submit-w am-margin-right-xs"></i>
                         <span class="am-text-middle">提现申请</span>
                     </a>
                 </div>
-            </li>
+            </li>*@
 
             <li class="@(controller == "UserLoan" ? "active":"")" id="userLoanItem">
                 <div class="cate-tag">

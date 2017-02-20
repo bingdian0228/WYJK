@@ -35,7 +35,8 @@
                                 @Html.TextBoxFor(m=>m.SMSCheckCode, new { placeholder = "请输入验证码", @class = "form-control", maxlength = 6 } )
                             </div>
                             <div class="col-lg-4">
-                                <button type="button" class="btn btn-info bg-lightblue">获取验证码</button>
+                                <input type="button" id="btn" value="获取验证码" class="btn btn-info bg-lightblue" onclick="settime(this)"  /> 
+                                @*<button type="button" class="btn btn-info bg-lightblue" id="btnSMSCode"  onclick="settime(this)">获取验证码</button>*@
                             </div>
                         </div>
                         <div class="form-group">
@@ -74,7 +75,7 @@
                                 <div class="checkbox">
                                     <label>
                                         @Html.CheckBoxFor(m =>m.Agreement)
-                                        我已阅读并同意<a href="#">无忧借款服务协议</a>
+                                        我已阅读并同意<a href="#">无忧数据服务协议</a>
                                     </label>
                                 </div>
                             </div>
@@ -94,6 +95,38 @@
 </div>
 
 <script>
+    var countdown = 60;
+    function settime(obj) {
+        if (countdown == 60) {
+            if ($("#MemberName").val() == "" || $("#MemberPhone").val() == "") {
+                alert("请输入用户名和手机号");
+                return false;
+            }
+
+            $.ajax({
+                type: "get",
+                url: "/User/GetVerificationCode?MemberName=" + $("#MemberName").val() + "&MemberPhone=" + $("#MemberPhone").val(),
+                success: function (d) {
+                    var dataObj = eval("(" + d + ")");
+                    alert(dataObj.Message);
+                }
+            });
+        }
+        if (countdown == 0) {
+            obj.removeAttribute("disabled");
+            obj.value = "获取验证码";
+            countdown = 60;
+            return;
+        } else {
+            obj.setAttribute("disabled", true);
+            obj.value = "重新发送(" + countdown + ")";
+            countdown--;
+        }
+        setTimeout(function () {
+            settime(obj)
+        }
+            , 1000)
+    }
     $(function () {
        $("#doLogin").click(function(){
             $("#userForm").submit();
@@ -102,5 +135,8 @@
            $("#check_code").attr("src", $("#check_code").attr("src") + "&" + $("#check_code").attr("src").length);
        });
      
+       //$("#btnSMSCode").click(function () {
+       //    $.get("http://121.42.25.239:8086/api/Member/GetVerificationCode?MemberName={MemberName}&MemberPhone={MemberPhone}")
+       //});
     });
 </script>

@@ -2963,7 +2963,6 @@
     <Content Include="Content\lib\select2-master\src\scss\_dropdown.scss" />
     <Content Include="Content\lib\select2-master\src\scss\_multiple.scss" />
     <Content Include="Content\lib\select2-master\src\scss\_single.scss" />
-    <Content Include="html5\.project" />
     <Content Include="html5\assets\fonts\fontawesome-webfont.eot" />
     <Content Include="html5\assets\fonts\fontawesome-webfont.ttf" />
     <Content Include="html5\assets\fonts\fontawesome-webfont.woff" />
@@ -2986,7 +2985,6 @@
     <Content Include="html5\user-renew.html.bak1" />
     <Content Include="html5\user-renew.html.bak2" />
     <Content Include="html5\user-stoped.html.bak" />
-    <None Include="Properties\PublishProfiles\123.pubxml" />
     <None Include="Properties\PublishProfiles\WYJK.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

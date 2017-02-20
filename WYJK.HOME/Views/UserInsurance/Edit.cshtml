@@ -25,7 +25,7 @@
                 <div class="form-group" style="text-align:center;">
                     <label style="font-size:24px;font-weight:bold;">@(Model.SocialSecurityPeopleName)@(string.IsNullOrEmpty(Model.SocialSecurityPeopleName) ? "" : "的")基本信息</label>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display:none">
                     <label class="col-lg-2 control-label">用户类型：</label>
                     <div class="col-lg-4">
                         @EnumExt.GetEnumCustomDescription((UserTypeEnum)Convert.ToInt32(member.UserType))

@@ -1,4 +1,4 @@
-/*无忧借款*/
+/*无忧数据*/
 
 .bg_grey {
 	background-color: #f3f4f6;
@@ -50,6 +50,26 @@
 
 .red {
 	color: #ff0500;
+}
+
+.greys {
+	color: #868686;
+}
+
+.grey-A8 {
+	color: #A8A8A8;
+}
+
+.blue-7D {
+	color: #7D88A4;
+}
+
+.yel-grey {
+	color: #c7c7c7;
+}
+
+.hide {
+	display: none;
 }
 
 .relative {
@@ -151,7 +171,7 @@ body,
 .submit .l-upimg-box {
 	border: 1px solid #CCCCCC;
 	width: 100%;
-	min-height: 92px;
+	min-height: 84px;
 	display: inline-block;
 	background: url(../../img/plus-lg.png) no-repeat center center;
 	background-size: 35px 35px;
@@ -169,7 +189,7 @@ body,
 
 .l-preview {
 	width: 100%;
-	min-height: 90px;
+	min-height: 84px;
 	overflow: hidden;
 	text-align: center;
 }
@@ -181,14 +201,6 @@ body,
 
 .l-form-group .l-selectbox {
 	border-color: transparent;
-}
-
-.l-border-0{
-	border: none;
-}
-
-.font-weight-n{
-	font-weight: normal;
 }
 
 
@@ -266,22 +278,12 @@ body,
 #wrapper.agency,
 #wrapper.progress,
 #wrapper.billList,
-#wrapper.bill,
-#wrapper.billPayback,
-#wrapper.lRecord,
-#wrapper.pRecord{
+
+#wrapper.news {
 	top: 49px;
 }
-
-#wrapper.lSchedule{
-	top: 83px;
-}
-
-.am-nowrap {
-  word-wrap: normal;
-  /* for IE */
-  white-space: nowrap;
-  overflow: hidden;
+#wrapper.bill{
+	
 }
 
 
@@ -484,18 +486,10 @@ body,
 	background-color: #ececec;
 }
 
-/*借款进度*/
-
-.text-center{
-	text-align: center;
-}
-
-.am-bg-grey{
-	background: #E2E8F8;
-}
-
-.am-rborder-grey{
-	border-right: 1px solid #9DAADA;
+.loan-record-time {
+	width: 77px;
+	overflow: hidden;
+	margin-left: -1px;
 }
 
 
@@ -610,16 +604,120 @@ body,
 	}
 }
 
+
+/*缴费明细*/
+
+.payment-d-tab.am-tabs-d2 .am-tabs-nav li {
+	height: auto;
+}
+
+.payment-d-tab.am-tabs-d2 .am-tabs-nav>.am-active a {
+	line-height: 36px;
+}
+
+
+/*新闻资讯*/
+
+.l-news-title {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+}
+
+.home-newsBox img {
+	width: 100%;
+}
+
+
+/*首页 为啥买，如何买，怎么查*/
+
+.home-top-left {
+	width: 45%;
+}
+
+.home-top-right {
+	width: 55%;
+}
+
+.home-top-right-60 {
+	width: 67%;
+}
+
+.home-top li,
+.list-none li {
+	list-style: none;
+}
+
+.home-search {
+	position: relative;
+	top: 0px;
+}
+
+.home-buy {
+	position: relative;
+	top: 0px;
+}
+
+.am-home-border-right {
+	border-right: 1px solid #AAAAAA;
+}
+
+.am-home-border-bottom {
+	border-bottom: 1px solid #AAAAAA;
+}
+
+
 /*还款*/
-.am-border li{
+
+.am-border li {
 	border-left: 1px solid #CCCCCC;
 	border-bottom: 1px solid #CCCCCC;
 }
-.am-border{
+
+.am-border {
 	border-top: 1px solid #CCCCCC;
 	border-right: 1px solid #CCCCCC;
 }
 
-.payback-bborder li{
+.payback-bborder li {
 	border-bottom: 1px solid #F7F7F7;
+}
+
+.l-form-group .l-selectbox {
+	border-color: transparent;
+}
+
+.l-border-0 {
+	border: none;
+}
+
+.font-weight-n {
+	font-weight: normal;
+}
+
+
+/*借款进度*/
+
+.text-center {
+	text-align: center;
+}
+
+.am-bg-grey {
+	background: #E2E8F8;
+}
+
+.am-rborder-grey {
+	border-right: 1px solid #9DAADA;
+}
+
+.loan-date{
+	width: 75px;
+	margin: 0 auto;
+	overflow:hidden;
+	white-space: nowrap;
+}
+.loan-l.am-list>li{
+	border-top: none!important;
 }

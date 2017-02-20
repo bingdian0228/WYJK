@@ -25,6 +25,8 @@ namespace WYJK.Web.Controllers.Mvc.Loan
         /// <returns></returns>
         public ActionResult GetLoanAuditList(MemberLoanAuditListParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.MemberName))
+                parameter.MemberName = parameter.MemberName.Replace("'", "''");
             PagedResult<MemberLoanAuditList> list = _loanAuditService.GetLoanAuditList(parameter);
 
             List<SelectListItem> selectList = new List<SelectListItem> { new SelectListItem() { Value = "", Text = "全部" } };

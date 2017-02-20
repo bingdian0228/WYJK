@@ -15,10 +15,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">
 
-                    <ul class="order-titleBox-w clearfix">
-                        <li>
-                            <a href="/UserOrder/Index" class="@(Model.Status == null ? "active":"text-muted")">全部</a>
-                        </li>
+                    <ul class="order-titleBox-w clearfix">               
                         <li>
                             <a href="/UserOrder/Index/0" class="@(Model.Status != null && Model.Status.Value == 0 ? "active":"text-muted")">待支付</a>
                         </li>

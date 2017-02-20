@@ -512,9 +512,15 @@ namespace WYJK.Web.Controllers.Mvc
                 ViewBag.ErrorMessage = "用户名已存在";
                 return View(user);
             }
-
+            string sql = $"update Users set UserName='{user.UserName}',TrueName='{user.TrueName}'";
+            if (string.IsNullOrWhiteSpace(user.Password) == false)
+            {
+                user.Password = user.HashPassword;
+                sql = $"{sql} ,Password = '{user.Password}' ";
+            }
+            sql = $"{sql}  where UserID={user.UserID}";
             //保存用户
-            DbHelper.ExecuteSqlCommand($"update Users set UserName='{user.UserName}',TrueName='{user.TrueName}' where UserID={user.UserID} ", null);
+            DbHelper.ExecuteSqlCommand(sql, null);
 
             //删除之前的角色
             DbHelper.ExecuteSqlCommand($"delete from UserRole where UserID={user.UserID}", null);

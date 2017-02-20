@@ -65,62 +65,77 @@
 		<script id="list-template" type="text/x-handlebars-template">
 			{{#each this}}
 			<li>
-				<div class="bg_lightblue am-padding-vertical-xs am-padding-horizontal-sm">
-					{{SocialSecurityPeopleName}}
+				<div class="bg_lightblue am-padding-vertical-xs am-padding-horizontal-sm am-cf">
+					<div class="am-fl">
+						{{SocialSecurityPeopleName}}
+					</div>
+					<div class="am-fr">
+						<a href="insurance-change.html?id={{SocialSecurityPeopleID}}" class="am-text-danger">重新办理</a>
+					</div>
 				</div>
 				{{#if SSStatus}}
-				<a href="user-insure-detail.html?id={{SocialSecurityPeopleID}}" class="am-link-muted">
-					<div class="am-g">
-						<div class="am-u-sm-3">
-							社保
-						</div>
-						<div class="am-u-sm-4">
-							已投{{SSAlreadyPayMonthCount}}个月
-						</div>
-						<div class="am-u-sm-5 am-text-right">
-							剩余{{SSRemainingMonthCount}}个月
-						</div>
-						<div class="am-u-sm-8">
-							投保时间：{{SSPayTime}}
-						</div>
-						<div class="am-u-sm-4 am-text-right">
-							状态：<span class="am-text-warning">{{convert SSStatus}}</span>
-						</div>
-						<div class="am-u-sm-7">
-							停保原因：{{SSStopReason}}
-						</div>
-						<div class="am-u-sm-5 am-text-right">
-							{{SSStopDate}}
-						</div>
+				<div class="am-g am-padding-vertical-sm">
+					<div class="am-u-sm-3">
+						社保
 					</div>
-				</a>
+					<div class="am-u-sm-4">
+						已投{{SSAlreadyPayMonthCount}}个月
+					</div>
+					<div class="am-u-sm-5 am-text-right">
+						剩余{{SSRemainingMonthCount}}个月
+					</div>
+					<div class="am-u-sm-8">
+						投保时间：{{SSPayTime}}
+					</div>
+					<div class="am-u-sm-4 am-text-right">
+						状态：<span class="am-text-warning">{{convert SSStatus}}</span>
+					</div>
+					<div class="am-u-sm-7">
+						停保原因：{{SSStopReason}}
+					</div>
+					<div class="am-u-sm-5 am-text-right">
+						{{SSStopDate}}
+					</div>
+				</div>
 				{{/if}} {{#if AFStatus}}
-				<a href="#" class="am-link-muted l-item-total">
-					<div class="am-g">
-						<div class="am-u-sm-3">
-							公积金
-						</div>
-						<div class="am-u-sm-4">
-							已投{{AFAlreadyPayMonthCount}}个月
-						</div>
-						<div class="am-u-sm-5 am-text-right">
-							剩余{{AFRemainingMonthCount}}个月
-						</div>
-						<div class="am-u-sm-8">
-							缴费时间：{{AFPayTime}}
-						</div>
-						<div class="am-u-sm-4 am-text-right">
-							状态：<span class="am-text-warning">{{convert AFStatus}}</span>
-						</div>
-						<div class="am-u-sm-7">
-							停保原因：{{AFStopReason}}
-						</div>
-						<div class="am-u-sm-5 am-text-right">
-							{{AFStopDate}}
-						</div>
+				<div class="am-g am-padding-vertical-sm l-item-total">
+					<div class="am-u-sm-3">
+						公积金
 					</div>
-				</a>
+					<div class="am-u-sm-4">
+						已投{{AFAlreadyPayMonthCount}}个月
+					</div>
+					<div class="am-u-sm-5 am-text-right">
+						剩余{{AFRemainingMonthCount}}个月
+					</div>
+					<div class="am-u-sm-8">
+						缴费时间：{{AFPayTime}}
+					</div>
+					<div class="am-u-sm-4 am-text-right">
+						状态：<span class="am-text-warning">{{convert AFStatus}}</span>
+					</div>
+					<div class="am-u-sm-7">
+						停保原因：{{AFStopReason}}
+					</div>
+					<div class="am-u-sm-5 am-text-right">
+						{{AFStopDate}}
+					</div>
+				</div>
 				{{/if}}
+				<div class="l-item-total am-padding-vertical-xs am-padding-horizontal-sm am-text-xs">
+					<div class="">
+						<span>收取方式：</span><span>{{changeType CollectType}}</span>
+					</div>
+					{{#if ExpressCompany}}
+					<div class="">
+						<span>快递公司：</span><span>{{ExpressCompany}}</span>
+					</div>
+					{{/if}} {{#if MailOrder}}
+					<div class="">
+						<span>快递单号：</span><span>{{MailOrder}}</span>
+					</div>
+					{{/if}}
+				</div>
 			</li>
 			{{/each}}
 		</script>

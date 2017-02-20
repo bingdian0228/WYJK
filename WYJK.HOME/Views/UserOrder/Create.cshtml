@@ -28,13 +28,13 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <div class="radio am-padding-vertical-sm">
+                    <div class="radio am-padding-vertical-sm" style="display:none">
                         <label>
                             <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
                             支付宝
                         </label>
                     </div>
-                    <div class="radio am-padding-vertical-sm">
+                    <div class="radio am-padding-vertical-sm" style="display:none">
                         <label>
                             <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
                             微信
@@ -42,7 +42,7 @@
                     </div>
                     <div class="radio am-padding-vertical-sm">
                         <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>
                             网银
                         </label>
                     </div>
@@ -75,10 +75,10 @@
                                         </dd>
                                         <dd class="row am-padding-vertical-sm">
                                             <div class="col-lg-4">
-                                                起缴月份：@Model.PayTime
+                                                起缴月份：@Model.PayTime.Year-@Model.PayTime.Month
                                             </div>
                                             <div class="col-lg-4">
-                                                结束月份：
+                                                缴费月数：@Model.SSPayMonthCount
                                             </div>
                                             <div class="col-lg-4">
                                                 社保基数：@Model.SocialSecurityBase
@@ -97,13 +97,13 @@
                                         </dd>
                                         <dd class="row am-padding-vertical-sm">
                                             <div class="col-lg-4">
-                                                冻结费：0
+                                                冻结费：@Model.Bucha
                                             </div>
                                             <div class="col-lg-4">
-                                                服务费：0
+                                                服务费：@Model.ServiceCost
                                             </div>
                                             <div class="col-lg-4">
-                                                缴纳金额：@(Model.Calculation.SocialSecuritAmount + Model.Calculation.AccumulationFundAmount)
+                                                缴纳金额：@Model.Total
                                             </div>
                                         </dd>
                                     </dl>
@@ -119,17 +119,17 @@
                                 <th>社保金额</th>
                                 <th>公积金</th>
                                 <th>服务费</th>
-                                <th>代办费</th>
+                                <th>冻结费</th>
                                 <th>合计</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="warning">
-                                <td>@Model.Calculation.SocialSecuritAmount</td>
+                                <td>@Model.Calculation.SocialSecuritAmount.ToString("f2")</td>
                                 <td>@Model.Calculation.AccumulationFundAmount</td>
-                                <td>0</td>
-                                <td>20</td>
-                                <td class="orange">@(Model.Calculation.SocialSecuritAmount + Model.Calculation.AccumulationFundAmount + 20)</td>
+                                <td>@Model.ServiceCost</td>
+                                <td>@Model.Bucha</td>
+                                <td class="orange">@Model.Total</td>
                             </tr>
                         </tbody>
                     </table>

@@ -23,6 +23,8 @@ namespace WYJK.Web.Controllers.Mvc.Loan
         /// <returns></returns>
         public ActionResult GetLoanMemberList(MemberLoanParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.MemberName))
+                parameter.MemberName = parameter.MemberName.Replace("'", "''");
             PagedResult<MemberLoanList> memberLoanList = _LoanMemberService.GetMemberLoanList(parameter);
 
             return View("/Views/Loan/LoanMember/GetLoanMemberList.cshtml", memberLoanList);

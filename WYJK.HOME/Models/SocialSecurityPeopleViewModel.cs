@@ -6,7 +6,7 @@ using WYJK.Entity;
 
 namespace WYJK.HOME.Models
 {
-    public class SocialSecurityPeopleViewModel: SocialSecurityPeople
+    public class SocialSecurityPeopleViewModel : SocialSecurityPeople
     {
         public string InsuranceArea { get; set; }
 
@@ -24,8 +24,14 @@ namespace WYJK.HOME.Models
 
         //支付方式
         public string PaymentMethod { get; set; }
+        public int SSPayMonthCount { get; set; }
+        public int AfPayMonthCount { get; set; }
 
+        public decimal Bucha { get; set; }
 
+        public decimal ServiceCost { get; set; }
+
+        public decimal Total { get; set; }
 
 
     }

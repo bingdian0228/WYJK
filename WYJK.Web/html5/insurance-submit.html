@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -53,14 +53,16 @@
 							<label class="l-label">支付方式：</label>
 							<select id="" name="PaymentMethod" class="l-selectbox am-padding-left-0" required="required">
 								<option value="">请选择支付方式</option>
-								<option value="支付宝支付">支付宝支付</option>
-								<option value="微信支付">微信支付</option>
-								<option value="银联支付">银联支付</option>
+								<!--<option value="支付宝支付">支付宝支付</option>
+								<option value="微信支付">微信支付</option>-->
+								<option value="银联支付">招商支付</option>
 							</select>
 						</div>
 					</div>
 					<!--隐藏信息-->
 					<input type="hidden" name="OrderCode" id="OrderCode" value="" />
+                    <input type="hidden" name="OrderId" id="OrderId" value="" />
+                    <input type="hidden" name="PlatType" id="PlatType" value="1" />
 					<!--btn-->
 					<div class="am-g">
 						<div class="am-u-sm-6">
@@ -136,7 +138,7 @@
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
-				var orderID = GetRequest().OrderCode;
+			    var orderID = GetRequest().OrderCode;			    
 				var id = Cookies.get("MemID");
 				var Logined = isLogin(id);
 				$('#OrderCode').val(orderID);
@@ -151,11 +153,12 @@
 						type: "get",
 						url: "/api/Order/GetOrderDetail?MemberID=" + id + "&OrderCode=" + orderID,
 						async: true,
-						success: function(d) {
+						success: function (d) {						    
 							if (d.status) {
 								d.Data.NameArray = d.Data.Names.split('，');
-								d.Data.allTotal = d.Data.AccumulationFundTotalAmount + d.Data.FirstBacklogCost + d.Data.FirstBacklogCost + d.Data.ServiceCost + d.Data.SocialSecurityTotalAmount;
+								d.Data.allTotal = d.Data.AccumulationFundTotalAmount + d.Data.FirstBacklogCost  + d.Data.ServiceCost + d.Data.SocialSecurityTotalAmount;
 								$('#detailBox').html(detailTemplate(d.Data));
+								$('#OrderId').val(d.Data.OrderID);
 								loadingFun(false);
 							} else {
 								alertFun(d.Message);
@@ -164,16 +167,18 @@
 					});
 				}
 				//确认支付
-				$('#pay-confirm').click(function() {
+				$('#pay-confirm').click(function () {                    
 					var flag = $form.validator('isFormValid');
 					if (flag) {
-						var model = $form.serialize();
+					    var model = $form.serialize();
+					    
 						$.ajax({
 							type: "post",
-							url: "/api/Order/OrderPayment",
+							url: "/api/Order/OrderPayment1",
 							async: true,
 							data: model,
-							success: function(d) {
+							success: function (d) {
+							    location.href = d.Data.url;
 							}
 						});
 					}

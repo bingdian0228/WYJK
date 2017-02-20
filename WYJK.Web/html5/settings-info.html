@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -23,6 +23,42 @@
 
 		<link rel="stylesheet" href="assets/css/amazeui.min.css">
 		<link rel="stylesheet" href="assets/css/app.css">
+        <script>
+            var countdown = 60;
+            function settime(obj) {
+                if (countdown == 60)
+                {
+                    if ($("#MemberName").val() == "" || $("#MemberPhone").val() == "")
+                    {
+                        alertFun("请输入用户名和手机号");
+                        return false;
+                    }
+                    debugger;
+                    $.ajax({
+                        type: "get",
+                        url: "/api/Member/GetVerificationCode?MemberName=" + $("#MemberName").val() + "&MemberPhone=" + $("#MemberPhone").val(),
+                        success: function (d) {
+
+                            alertFun(d.Message);
+                        }
+                    });
+                }
+                if (countdown == 0) {
+                    obj.removeAttribute("disabled");
+                    obj.value = "获取验证码";
+                    countdown = 60;
+                    return;
+                } else {
+                    obj.setAttribute("disabled", true);
+                    obj.value = "重新发送(" + countdown + ")";
+                    countdown--;
+                }
+                setTimeout(function () {
+                    settime(obj)
+                }
+                    , 1000)
+            }
+        </script>
 	</head>
 
 	<body class="bg_grey">
@@ -59,10 +95,11 @@
 							<div class="am-u-sm-7 am-padding-0">
 								<label class="l-label">验证码：</label>
 								<!--<input type="text" class="am-form-field am-radius" placeholder="请输入验证码" required="required">-->
-								<input type="text" class="am-form-field am-radius" placeholder="">
+								<input type="text"  name="VerificationCode" class="am-form-field am-radius" placeholder="">
 							</div>
 							<div class="am-u-sm-5 am-padding-0 am-text-right">
-								<button type="button" class="am-btn am-btn-primary am-radius bg_darkblue">获取验证码</button>
+								<!--<button type="button" class="am-btn am-btn-primary am-radius bg_darkblue">获取验证码</button>-->
+                                <input type="button" id="btn" value="获取验证码" class="am-btn am-btn-primary am-radius bg_darkblue" onclick="settime(this)" />
 							</div>
 						</div>
 					</div>

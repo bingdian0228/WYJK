@@ -51,6 +51,11 @@
 						已借额度：<span data-bind="text:AlreadyUsedAmount">0</span>
 					</div>
 				</li>
+				<li>
+					<div class="am-padding-horizontal-sm">
+						冻结额度：<span data-bind="text:FreezingAmount">0</span>
+					</div>
+				</li>
 			</ul>
 			<!--表单-->
 			<div class="am-padding-horizontal-sm submit">
@@ -137,14 +142,14 @@
 						}
 					});
 					//获取还款方式
-					$.ajax({
-						type: "get",
-						url: "/api/Loan/GetLoanMethodList",
-						async: true,
-						success: function(d) {
-							$('#methodSelect').html(optionTemplate(d.Data));
-						}
-					});
+//					$.ajax({
+//						type: "get",
+//						url: "/api/Loan/GetLoanMethodList",
+//						async: true,
+//						success: function(d) {
+//							$('#methodSelect').html(optionTemplate(d.Data));
+//						}
+//					});
 					//确认按钮
 					$('#confirm').click(function() {
 						var flag = $form.validator('isFormValid');
@@ -158,6 +163,7 @@
 								success: function(d) {
 									if (d.status) {
 										alertFun(d.Message, function() {
+//											window.location.href = "loan-index.html"
 											window.location.href = "loan-l-record.html"
 										});
 									} else {

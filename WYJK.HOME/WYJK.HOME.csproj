@@ -147,27 +147,56 @@
     <Content Include="Content\css\common1.css" />
     <Content Include="Content\css\fileinput.min.css" />
     <Content Include="Content\css\Site.css" />
+    <Content Include="Content\css\wuyou.css" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Content\img\1.jpg" />
+    <Content Include="Content\img\1_2.png" />
     <Content Include="Content\img\2.jpg" />
     <Content Include="Content\img\aboutUs1.jpg" />
     <Content Include="Content\img\aboutUs2.jpg" />
     <Content Include="Content\img\aboutUs3.jpg" />
+    <Content Include="Content\img\banner1_1.png" />
+    <Content Include="Content\img\buy-1.png" />
+    <Content Include="Content\img\buy-2.png" />
+    <Content Include="Content\img\buy-3.png" />
+    <Content Include="Content\img\buy-4.png" />
+    <Content Include="Content\img\buy-5.png" />
+    <Content Include="Content\img\buy-6.png" />
+    <Content Include="Content\img\buy-7.png" />
     <Content Include="Content\img\cate1.jpg" />
     <Content Include="Content\img\cate2.jpg" />
     <Content Include="Content\img\cate3.jpg" />
     <Content Include="Content\img\cate4.jpg" />
     <Content Include="Content\img\cate5.jpg" />
     <Content Include="Content\img\cate_bg.jpg" />
+    <Content Include="Content\img\descrip1-1.png" />
+    <Content Include="Content\img\descrip1-banner.png" />
+    <Content Include="Content\img\descrip1-gongshang.png" />
+    <Content Include="Content\img\descrip1-shengyu.png" />
+    <Content Include="Content\img\descrip1-shiye.png" />
+    <Content Include="Content\img\descrip1-yanglao.png" />
+    <Content Include="Content\img\descrip1-yiliao.png" />
+    <Content Include="Content\img\descrip2-city.png" />
+    <Content Include="Content\img\descrip3-baby.png" />
+    <Content Include="Content\img\descrip4-yiliao.png" />
+    <Content Include="Content\img\descrip5-shengyu.png" />
+    <Content Include="Content\img\descrip6-fulidaiyu.png" />
+    <Content Include="Content\img\descrip7-visa.png" />
+    <Content Include="Content\img\descrip8-xinyong.png" />
     <Content Include="Content\img\difference.jpg" />
     <Content Include="Content\img\footer1.gif" />
     <Content Include="Content\img\footer2.gif" />
     <Content Include="Content\img\footer3.gif" />
     <Content Include="Content\img\home-cup.jpg" />
     <Content Include="Content\img\icons.png" />
+    <Content Include="Content\img\info1.png" />
+    <Content Include="Content\img\info2.png" />
+    <Content Include="Content\img\info3.png" />
+    <Content Include="Content\img\info4.png" />
     <Content Include="Content\img\list-icon.png" />
     <Content Include="Content\img\list-point.png" />
     <Content Include="Content\img\loan-flow.jpg" />
+    <Content Include="Content\img\loan-flow.png" />
     <Content Include="Content\img\loan-obj.jpg" />
     <Content Include="Content\img\login-left.jpg" />
     <Content Include="Content\img\logo-white.png" />
@@ -176,6 +205,9 @@
     <Content Include="Content\img\photo.png" />
     <Content Include="Content\img\product-advantage.jpg" />
     <Content Include="Content\img\slider-arrow.png" />
+    <Content Include="Content\img\wuyou-chanpintedian.png" />
+    <Content Include="Content\img\wuyou-iphone.png" />
+    <Content Include="Content\img\wuyou-kefu.png" />
     <Content Include="Content\laypage\1.2\laypage.js" />
     <Content Include="Content\laypage\1.2\skin\laypage.css" />
     <Content Include="Content\laypage\1.3\laypage.js" />
@@ -189,6 +221,7 @@
     <Content Include="scripts\ai.0.15.0-build58334.js" />
     <Content Include="scripts\ai.0.15.0-build58334.min.js" />
     <Content Include="scripts\bootstrap-datetimepicker.min.js" />
+    <Content Include="scripts\bootstrap-datetimepicker1.min.js" />
     <Content Include="scripts\bootstrap.js" />
     <Content Include="scripts\bootstrap.min.js" />
     <Content Include="scripts\fileinput.min.js" />
@@ -217,6 +250,14 @@
     <Content Include="scripts\superslide.2.1.js" />
     <None Include="scripts\_references.js" />
     <None Include="Views\Index\InfoDetail.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip1.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip2.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip8.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip7.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip6.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip5.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip4.cshtml" />
+    <Content Include="Views\Index\InfoDetailDescrip3.cshtml" />
     <None Include="Views\Index\InfoList.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -339,6 +380,9 @@
     <Content Include="Views\Index\IntroBuy.cshtml" />
     <Content Include="Views\Index\IntroShebao.cshtml" />
     <Content Include="Views\Index\IntroWuyou.cshtml" />
+    <Content Include="Views\UserAccount\Renew.cshtml" />
+    <Content Include="Views\UserInsurance\ChangeBase.cshtml" />
+    <Content Include="Views\User\UserMessage.cshtml" />
     <None Include="Views\_Layout_index_1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -349,6 +393,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\js\" />
     <Folder Include="scripts\locales\" />
     <Folder Include="UploadFiles\" />
     <Folder Include="Views\BaseFilter\" />

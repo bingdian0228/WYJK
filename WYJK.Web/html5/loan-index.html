@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -43,14 +43,14 @@
 			<div class="relative am-text-center">
 				<img src="img/loan-bg.jpg" class="am-img-responsive" />
 				<div class="l-user-status">
-					<a href="javascript:void(0);" class="white">
+					<a href="loan-value-calculate.html" class="white">
 						<div>身价</div>
 						<div class="am-text-default"><span id="value">0</span></div>
 					</a>
 				</div>
 			</div>
 			<div class="l-loan-btn bg_blue am-text-center">
-				<a href="" class="white am-block am-padding-sm">
+				<a href="loan-apply.html" class="white am-block am-padding-sm">
 					我要借款
 				</a>
 			</div>
@@ -144,22 +144,33 @@
 		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
 		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
-			$(document).ready(function() {
+            $(document).ready(function () {                
+                       
 				var id = Cookies.get('MemID');
 				var Logined = isLogin(id);
+				Logined = 'true';
 				if (Logined) {
+				
+				    $.ajax({
+				        type: "get",
+				        url: "/api/Loan/IsCanLoan?MemberID=" + id,
+				        async: false,
+				        success: function (d) {
+				            if (d.status == false)
+				            {
+				                alertFun("用户至少在平台缴纳三个月社保才可以借款!", function () {
+				                    window.location.href = "insurance-index.html";
+				                });
+				            }
+				        }
+				    });
+				  
 					$.ajax({
 						type: "get",
 						url: "/api/Loan/GetMemberValue?MemberID=" + id,
 						async: true,
 						success: function(d) {
 							$('#value').text(d.Data);
-							if(d.Data == 0){
-								$('.l-user-status a').attr('href','loan-value-calculate.html');
-								$('.l-loan-btn a').attr('href','loan-value-calculate.html');
-							}else{
-								$('.l-loan-btn a').attr('href','loan-apply.html');
-							}
 						}
 					});
 				}

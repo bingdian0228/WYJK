@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WYJK.Framework", "WYJK.Fram
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WYJK.HOME", "WYJK.HOME\WYJK.HOME.csproj", "{ED0971B2-7560-4A22-9967-1B25978F1B57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WYJK.JiaoFei", "WYJK.JiaoFei\WYJK.JiaoFei.csproj", "{2F86044E-60D9-4B5D-9E64-0E0E509CB603}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{ED0971B2-7560-4A22-9967-1B25978F1B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED0971B2-7560-4A22-9967-1B25978F1B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED0971B2-7560-4A22-9967-1B25978F1B57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F86044E-60D9-4B5D-9E64-0E0E509CB603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F86044E-60D9-4B5D-9E64-0E0E509CB603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F86044E-60D9-4B5D-9E64-0E0E509CB603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F86044E-60D9-4B5D-9E64-0E0E509CB603}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

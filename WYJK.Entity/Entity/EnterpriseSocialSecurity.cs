@@ -204,11 +204,13 @@ namespace WYJK.Entity
         /// <summary>
         /// 公积金编号
         /// </summary>
+        [Required(ErrorMessage = "公积金编号必填")]
         public string AccumulationFundCode { get; set; }
 
         /// <summary>
         /// 企业税号
         /// </summary>
+        [Required(ErrorMessage = "企业税号必填")]
         public string EnterpriseTax { get; set; }
 
     }

@@ -22,6 +22,9 @@ namespace WYJK.Data.ServiceImpl
         /// <returns></returns>
         public async Task<PagedResult<DrawCashViewModel>> GetDrawCashListAsync(DrawCashParameter parameter)
         {
+            if (string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = "";
+            parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
             string sqlWhere = $@" where m.MemberName like '%{parameter.SocialSecurityPeopleName}%' and (dc.applystatus = {parameter.Status} or {parameter.Status}=-1)";
 
           

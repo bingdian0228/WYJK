@@ -26,88 +26,257 @@
                     <span class="pull-left">添加参保人</span>
                     <i class="icon-w pull-right"></i>
                 </li>
-                <li class="prev">
-                    <b class="num pull-left">2</b>
-                    <span class="pull-left">缴纳社保</span>
-                    <i class="icon-w pull-right"></i>
-                </li>
+                @*<a href="@Url.Action("Add2", "UserInsurance")">
+                             <li class="prev">
+                                 <b class="num pull-left">2</b>
+                                 <span class="pull-left">缴纳社保</span>
+                                 <i class="icon-w pull-right"></i>
+                             </li>
+                    </a>*@
+
                 <li class="current">
-                    <b class="num pull-left">3</b>
-                    <span class="pull-left">缴纳公积金</span>
+                    <b class="num pull-left">2</b>
+                    <span class="pull-left">缴纳社保/公积金</span>
                 </li>
             </ul>
         </div>
 
-@using (Html.BeginForm("Confirm", "UserInsurance", FormMethod.Post, new { @class = "form-horizontal" }))
-{
-        <!--表单计算-->
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保地</label>
-                <div class="col-lg-3">
-                    @Html.DropDownList("province", ViewBag.Provinces as List<SelectListItem>, new { @class = "form-control" })
-                    <input type="hidden" id="provinceText" name="provinceText" />
-                </div>
-                <div class="col-lg-3">
-                    <select id="city" name="city" class="form-control">
-                        <option>请选择城市</option>
-                    </select>
-                </div>
+        @using (Html.BeginForm("Add3", "UserInsurance", FormMethod.Post, new { @class = "form-horizontal" }))
+        {
+            @ViewBag.ErrorMessage
+            <div class="col-lg-2 col-lg-offset-1 control-label">
+                <input type="checkbox" checked id="group1-checkbox" name="Ckss"/><span>社&nbsp;保&nbsp;参&nbsp;数&nbsp;</span>
             </div>
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">公积金基数</label>
-                <div class="col-lg-6">
-                    @Html.TextBoxFor(m => m.AccumulationFundBase, new { @class = "form-control", placeholder = "请输入公积金基数" })
-                    @*@Html.ValidationMessageFor(m => m.AccumulationFundBase)*@
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">起缴时间</label>
-                <div class="col-lg-6">
-                    @Html.TextBoxFor(m => m.PayTime, new { @class = "form-control", placeholder = "请选择起缴年/月" })
-                    @*@Html.ValidationMessageFor(m => m.PayTime)*@
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保月份</label>
-                <div class="col-lg-6">
-                    @Html.TextBoxFor(m => m.PayMonthCount, new { @class = "form-control", placeholder = "请输入参保月份" })
-                    @*@Html.ValidationMessageFor(m => m.PayMonthCount)*@
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">补交月份</label>
-                <div class="col-lg-6">
-                    @Html.TextBoxFor(m => m.PayBeforeMonthCount, new { @class = "form-control", placeholder = "请输入补交月份" })
-                    @*@Html.ValidationMessageFor(m => m.PayBeforeMonthCount)*@
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">今年参保情况</label>
-                <div class="col-lg-6">
-                    在银行缴纳 @Html.TextBoxFor(m => m.BankPayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月，
-                    在企业缴纳 @Html.TextBoxFor(m => m.EnterprisePayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="" class="col-lg-2 col-lg-offset-1 control-label">备注</label>
-                <div class="col-lg-6">
-                    @Html.TextAreaFor(m => m.Note, new { @class = "form-control", placeholder = "请填写备注" })
-                </div>
-            </div>
-            <div class="form-group am-padding-top-xl">
-                <div class="row">
-                    <div class="col-lg-offset-4 col-lg-4 text-center">
-                        <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">确认参保</button>
+            <br />
+                <br />
+                <div id="group1">
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保地</label>
+
+                        <div class="col-lg-3">
+                            @Html.DropDownList("province", ViewBag.Provinces as List<SelectListItem>, new { @class = "form-control" })
+                            
+                            
+                            <input type="hidden" id="provinceText" name="provinceText" />
+                            <input type="hidden" id="InsuranceArea" name="InsuranceArea" />
+                            <input type="hidden" id="minBase" name="minBase" value="0" />
+                            <input type="hidden" id="maxBase" name="maxBase" value="0" />
+
+
+                        </div>
+                        <div class="col-lg-3">
+                            <select id="city" name="city" class="form-control">
+                                <option>请选择城市</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">社保基数</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.SocialSecurityBase, new { @class = "form-control", placeholder = "请输入社保基数" })
+                            @*@Html.ValidationMessageFor(m => m.SocialSecurityBase)*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">起缴时间</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.PayTime, new { @class = "form-control", placeholder = "请选择起缴年/月" })
+                            @*@Html.ValidationMessageFor(m => m.PayTime)*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保月份</label>
+                        <div class="col-lg-6">
+
+                            @Html.TextBoxFor(m => m.PayMonthCount, new { @class = "form-control", placeholder = "请输入参保月份" })
+                            @*@Html.ValidationMessageFor(m => m.PayMonthCount)*@
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">补交月份</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.PayBeforeMonthCount, new { @class = "form-control", placeholder = "请输入补交月份" })
+                            @*@Html.ValidationMessageFor(m => m.PayBeforeMonthCount)*@
+                        </div>
                     </div>
                 </div>
+                @*<div class="form-group" style="display:none">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">今年参保情况</label>
+                        <div class="col-lg-6">
+                            在银行缴纳 @Html.TextBoxFor(m => m.BankPayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月，
+                            在企业缴纳 @Html.TextBoxFor(m => m.EnterprisePayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">备注</label>
+                        <div class="col-lg-6">
+                            @Html.TextAreaFor(m => m.Note, new { @class = "form-control", placeholder = "请填写备注" })
+                        </div>
+                    </div>*@
+                @*<div class="form-group am-padding-top-xl">
+                        <div class="row">
+                            <div class="col-lg-offset-4 col-lg-4 text-center">
+                                <button type="submit" id="confirm" class="btn btn-info bg-lightblue btn-lg btn-block">确认参保</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group am-padding-bottom-xl">
+                        <div class="row">
+                            <div class="col-lg-offset-4 col-lg-4 text-center">
+                                <button type="submit" formaction="/UserInsurance/Add2Next" id="next" class="btn btn-info bg-lightblue btn-lg btn-block">下一步</button>
+                            </div>
+                        </div>
+                    </div>*@
+                <!--表单计算-->
+                <div class="col-lg-2 col-lg-offset-1 control-label">
+                    <input type="checkbox" id="group2-checkbox"  name="Ckaf" /><span>公积金参数</span>
+                </div>
+                <br />
+                <br />
+
+                <div id="group2" style="display:none">
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">参公积金地</label>
+                        <div class="col-lg-3">
+                            @Html.DropDownList("province2", ViewBag.Provinces as List<SelectListItem>, new { @class = "form-control" })
+                            <input type="hidden" id="provinceText2" name="provinceText2" />
+                            <input type="hidden" id="AccumulationFundArea" name="AccumulationFundArea" />
+                            <input type="hidden" id="minBase2" name="minBase2" value="0" />
+                            <input type="hidden" id="maxBase2" name="maxBase2" value="0" />
+
+                        </div>
+                        <div class="col-lg-3">
+                            <select id="city2" name="city2" class="form-control">
+                                <option>请选择城市</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">公积金基数</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.AccumulationFundBase, new { @class = "form-control", placeholder = "请输入公积金基数" })
+                            @*@Html.ValidationMessageFor(m => m.AccumulationFundBase)*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">起缴时间</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.PayTime2, new { @class = "form-control", placeholder = "请选择起缴年/月" })
+                            @*@Html.ValidationMessageFor(m => m.PayTime)*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保月份</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.PayMonthCount2, new { @class = "form-control", placeholder = "请输入参保月份" })
+                            @*@Html.ValidationMessageFor(m => m.PayMonthCount)*@
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">补交月份</label>
+                        <div class="col-lg-6">
+                            @Html.TextBoxFor(m => m.PayBeforeMonthCount2, new { @class = "form-control", placeholder = "请输入补交月份" })
+                            @*@Html.ValidationMessageFor(m => m.PayBeforeMonthCount)*@
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">今年参保情况</label>
+                        <div class="col-lg-6">
+                            在银行缴纳 @Html.TextBoxFor(m => m.BankPayMonth2, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月，
+                            在企业缴纳 @Html.TextBoxFor(m => m.EnterprisePayMonth2, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-lg-2 col-lg-offset-1 control-label">备注</label>
+                        <div class="col-lg-6">
+                            @Html.TextAreaFor(m => m.Note2, new { @class = "form-control", placeholder = "请填写备注" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group am-padding-top-xl">
+                    <div class="row">
+                        <div class="col-lg-offset-4 col-lg-4 text-center">
+                            <button type="submit" class="btn btn-info bg-lightblue btn-lg btn-block">确认参保</button>
+                        </div>
+                    </div>
+                </div>
+                }
             </div>
-}
-        </div>
 </div>
 
 @section Footer
 {
     <script>
+        $("#province").change(function () {
+            $.ajax({
+                url: '/Calculator/GetCityListByProvince?provinceName=' + $(this).val(),
+                dataType: 'Json',
+                success: function (data) {
+                    $("#city").empty();
+                    $("#city").append("<option value=''>请选择城市</option>");
+                    $.each(data.result, function (i, item) {
+                        $("#city").append("<option value='" + item + "'>" + item + "</option>");
+
+                    });
+                },
+                error: function () {
+                    alert("服务器错误");
+                }
+            });
+        });
+
+        $("#province2").change(function () {
+            $.ajax({
+                url: '/Calculator/GetCityListByProvince?provinceName=' + $(this).val(),
+                dataType: 'Json',
+                success: function (data) {
+                    $("#city2").empty();
+                    $("#city2").append("<option value=''>请选择城市</option>");
+                    $.each(data.result, function (i, item) {
+                        $("#city2").append("<option value='" + item + "'>" + item + "</option>");
+
+                    });
+                },
+                error: function () {
+                    alert("服务器错误");
+                }
+            });
+        });
+
+        $("#city2").change(function () {
+
+            var province = $("#province2").val();
+            var provinceText = $("#province2 option[value=" + province + "]").text();
+            var city = $("#city2").val();
+            var area = provinceText + "|" + city;
+            $("#AccumulationFundArea").val(area);
+
+            $.ajax({
+
+                url: '/Calculator/GetSocialSecurityBase',
+                data: 'area=' + area + '&householdProperty=""',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.MinBase == 0) {
+
+                        $("#AccumulationFundBase").attr("placeholder", "(暂无该地区公积金基数范围)");
+                    }
+                    else {
+                        $("#AccumulationFundBase").attr("placeholder", "公积金基数(" + data.AFMinBase + "-" + data.AFMaxBase + ")");
+                        $("#minBase2").val(data.AFMinBase);
+                        $("#maxBase2").val(data.AFMaxBase);
+                    }
+
+                },
+                error: function (a, b, c) {
+                    console.log(a);
+                }
+
+
+            });
+
+
+        });
 
         $("#city").change(function () {
 
@@ -117,7 +286,8 @@
             var city = $("#city").val();
 
             var area = provinceText + "|" + city;
-
+            $("#InsuranceArea").val(area);
+            
             //console.log(provinceText + "==" + city + "===" + usertypeText);
 
             $.ajax({
@@ -129,20 +299,55 @@
 
                     if (data.AFMinBase == 0) {
 
-                        $("#AccumulationFundBase").attr("placeholder", "(暂无该地区公积金基数范围)");
+                        $("#SocialSecurityBase").attr("placeholder", "(暂无该地区社保基数范围)");
                     }
                     else {
-                        $("#AccumulationFundBase").attr("placeholder", "公积金基数(" + data.AFMinBase + "-" + data.AFMaxBase + ")");
+                        $("#SocialSecurityBase").attr("placeholder", "社保基数(" + data.MinBase + "-" + data.MaxBase + ")");
+                        $("#minBase").val(data.MinBase);
+                        $("#maxBase").val(data.MaxBase);
                     }
                 },
                 error: function (a, b, c) {
-                    console.log('cuowu');
+                    console.log(a);
                 }
 
 
             });
 
         });
+     /*   $("#group1-checbox").on("change", function () {
+            console.log(11);
+            var $checkbox = $(this);
+            console.log($('input:checked').length);
+        });
+        */
+        $("#group1-checkbox").change(function (e) {
+            //alert("change事件触发");
+            var $checkbox = $(this);
+            var checkL = $("#group1-checkbox:checked").length;
+            if (checkL == "1") {
+                $('#group1').show();
+
+            } else {
+                $('#group1').hide();
+              
+
+            }
+        });
+        $("#group2-checkbox").change(function (e) {
+            //alert("change事件触发");
+            var $checkbox = $(this);
+            var checkL = $("#group2-checkbox:checked").length;
+            if (checkL == "1") {
+                $('#group2').show();
+
+            } else {
+                $('#group2').hide();
+
+
+            }
+        });
+        
 
 
 

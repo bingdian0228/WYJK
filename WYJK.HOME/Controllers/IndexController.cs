@@ -90,5 +90,38 @@ namespace WYJK.HOME.Controllers
             return View();
         }
 
+        public ActionResult InfoDetailDescrip1()
+        {
+            return View();
+        }
+
+        public ActionResult InfoDetailDescrip2()
+        {
+            return View();
+        }
+        public ActionResult InfoDetailDescrip3()
+        {
+            return View();
+        }
+        public ActionResult InfoDetailDescrip4()
+        {
+            return View();
+        }
+        public ActionResult InfoDetailDescrip5()
+        {
+            return View();
+        }
+        public ActionResult InfoDetailDescrip6()
+        {
+            return View();
+        }
+        public ActionResult InfoDetailDescrip7()
+        {
+            return View();
+        }
+        public ActionResult InfoDetailDescrip8()
+        {
+            return View();
+        }
     }
 }

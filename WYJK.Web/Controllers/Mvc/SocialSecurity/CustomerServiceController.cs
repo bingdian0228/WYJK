@@ -196,6 +196,8 @@ namespace WYJK.Web.Controllers.Mvc
                 ViewData["AFMinBase"] = AF.MinAccumulationFund;
             }
 
+            
+
             //获取会员信息
             ViewData["member"] = _memberService.GetMemberInfoForAdmin(MemberID.Value);
 
@@ -402,7 +404,7 @@ namespace WYJK.Web.Controllers.Mvc
             SocialSecurityPeople socialSecurityPeople = new SocialSecurityPeople();
             socialSecurityPeople.IdentityCard = model.IdentityCard;
             socialSecurityPeople.SocialSecurityPeopleName = model.SocialSecurityPeopleName;
-            socialSecurityPeople.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+            socialSecurityPeople.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl2"], string.Empty);
 
             #region 户籍性质
             List<SelectListItem> list = EnumExt.GetSelectList(typeof(HouseholdPropertyEnum));
@@ -630,9 +632,9 @@ insert into OrderDetails(OrderCode,SocialSecurityPeopleID,SocialSecurityPeopleNa
             if (_socialSecurityService.IsExistsSocialSecurityPeopleIdentityCard(model.IdentityCard))
             {
                 TempData["Message"] = "身份证已存在";
-                return RedirectToAction("GetCustomerServiceList");
+               return RedirectToAction("GetCustomerServiceList");
             }
-            model.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+            model.IdentityCardPhoto = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl2"], string.Empty);
 
 
             int SocialSecurityID = 0;

@@ -19,12 +19,12 @@
                 <div class="form-group am-padding-left-xl">
                     <div class="radio">
                         <label>
-                            <input type="radio" name="optionsRadios" id="" value="option2">
+                            <input type="radio" name="optionsRadios" id="" value="option2" checked>
                             中国银联
                         </label>
                     </div>
                 </div>
-                <div class="form-group am-padding-left-xl">
+                <div class="form-group am-padding-left-xl" style="display:none">
                     <div class="radio">
                         <label>
                             <input type="radio" name="optionsRadios" id="" value="option2">
@@ -34,7 +34,8 @@
                 </div>
                 <div class="form-group">
                     <div class="col-lg-12 text-right orange">
-                        总计支付：@(Model.SocialSecurityAmount + Model.SocialSecurityServiceCost + Model.SocialSecurityFirstBacklogCost +  Model.SocialSecurityFirstBacklogCost + Model.AccumulationFundServiceCost + Model.AccumulationFundFirstBacklogCost)
+                        总计支付：@Model.Total
+                        <input type="hidden" value="@Model.Total" />
                     </div>
                 </div>
                 <div class="form-group">

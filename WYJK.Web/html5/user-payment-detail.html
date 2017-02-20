@@ -1,0 +1,162 @@
+<!doctype html>
+<html class="no-js">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<!-- Set render engine for 360 browser -->
+		<meta name="renderer" content="webkit">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="apple-mobile-web-app-title" content="Amaze UI" />
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileColor" content="#0e90d2">
+
+		<link rel="stylesheet" href="assets/css/amazeui.min.css">
+		<link rel="stylesheet" href="assets/css/app.css">
+	</head>
+
+	<body class="bg_grey">
+		<div class="project am-text-sm">
+			<!--header-->
+			<header data-am-widget="header" class="am-header am-header-default bg_blue">
+				<div class="am-header-left am-header-nav">
+					<a href="#" class="">
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
+							alt="" />
+					</a>
+				</div>
+				<h1 class="am-header-title">
+					缴费明细
+				</h1>
+			</header>
+			<!--list-->
+			<div class="am-tabs am-tabs-d2 am-margin-0 payment-d-tab" data-am-widget="tabs">
+				<ul class="am-tabs-nav am-cf">
+					<li class="am-active">
+						<a href="[data-tab-panel-0]"><img src="img/shebaochaxun.png" width="49" height="49" />
+							<div>社保查询</div>
+						</a>
+					</li>
+					<li class="">
+						<a href="[data-tab-panel-1]"><img src="img/gjjchaxun.png" width="49" height="49" />
+							<div>公积金查询</div>
+						</a>
+					</li>
+				</ul>
+				<div class="am-tabs-bd border-0">
+					<div data-tab-panel-0 class="am-tab-panel am-padding-0 am-active">
+						<div class="agency">
+							<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
+								<div class="am-list-news-bd" id="list0_box">
+
+								</div>
+							</div>
+						</div>
+					</div>
+					<div data-tab-panel-1 class="am-tab-panel am-padding-0">
+						<div class="agency">
+							<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
+								<div class="am-list-news-bd" id="list1_box">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!--[if (gte IE 9)|!(IE)]><!-->
+		<script src="assets/js/jquery.min.js"></script>
+		<!--<![endif]-->
+		<!--[if lte IE 8 ]>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<![endif]-->
+		<script src="assets/js/amazeui.min.js"></script>
+		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/handlebars.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
+		<script id="list-template" type="text/x-handlebars-template">
+			<div class="am-text-center am-text-primary am-padding-vertical-sm bg_white">
+				{{dateList}}
+			</div>
+			<ul class="am-list">
+				{{#each payList}}
+				<li>
+					<div class="am-g am-padding-vertical-xs">
+						<div class="am-u-sm-4">
+							{{PayMonth}}
+						</div>
+						<div class="am-u-sm-4 am-text-center">
+							{{Cost}}
+						</div>
+						<div class="am-u-sm-4 am-text-right">
+							{{IsPay}}
+						</div>
+					</div>
+				</li>
+				{{/each}}
+			</ul>
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var id = Cookies.get("MemID");
+				var SSID = GetRequest().id;
+				var nowYear = new Date().getFullYear();
+				loadingFun(true);
+				//后退
+				goBack();
+				//获取数据
+				var Template = Handlebars.compile($("#list-template").html());
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetPaymentList?socialSecurityPeopleID=" + SSID + "&year=" + nowYear + "&type=0",
+					async: true,
+					success: function(d) {
+						if (d.status) {
+							if (d.Data.payList.length) {
+								$('#list0_box').html(Template(d.Data));
+							} else {
+								$('#list0_box').html('<div class="am-padding-sm am-text-center">暂无信息</div>');
+							}
+							loadingFun(false);
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetPaymentList?socialSecurityPeopleID=" + SSID + "&year=" + nowYear + "&type=1",
+					async: true,
+					success: function(d) {
+						if (d.status) {
+							if (d.Data.payList.length) {
+								$('#list1_box').html(Template(d.Data));
+							} else {
+								$('#list1_box').html('<div class="am-padding-sm am-text-center">暂无信息</div>');
+							}
+							loadingFun(false);
+						} else {
+							alertFun(d.Message);
+						}
+					}
+				});
+
+			})
+		</script>
+	</body>
+
+</html>

@@ -29,24 +29,32 @@
                 </li>
                 <li class="current">
                     <b class="num pull-left">2</b>
-                    <span class="pull-left">缴纳社保</span>
+                    <span class="pull-left">缴纳社保/公积金</span>
                     <i class="icon-w pull-right"></i>
                 </li>
-                <li class="">
-                    <b class="num pull-left">3</b>
-                    <span class="pull-left">缴纳公积金</span>
-                </li>
+                @*<a href="@Url.Action("Add3", "UserInsurance")">
+                    <li class="">
+                        <b class="num pull-left">3</b>
+                        <span class="pull-left">缴纳公积金</span>
+                    </li>
+                </a>*@
             </ul>
         </div>
         <!--表单计算-->
 @using (Html.BeginForm("Add2", "UserInsurance", FormMethod.Post, new { @class = "form-horizontal" }))
 {
+     
         <div class="form-group">
             <label for="" class="col-lg-2 col-lg-offset-1 control-label">参保地</label>
 
             <div class="col-lg-3">
                 @Html.DropDownList("province", ViewBag.Provinces as List<SelectListItem>, new { @class = "form-control" })
                 <input type="hidden" id="provinceText" name="provinceText" />
+                <input type="hidden" id="InsuranceArea" name="InsuranceArea" />
+                <input type="hidden" id="minBase" name="minBase" value="0" />
+                <input type="hidden" id="maxBase" name="maxBase" value="0"/>
+
+                
             </div>
             <div class="col-lg-3">
                 <select id="city" name="city" class="form-control">
@@ -76,14 +84,14 @@
                 @*@Html.ValidationMessageFor(m => m.PayMonthCount)*@
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="display:none">
             <label for="" class="col-lg-2 col-lg-offset-1 control-label">补交月份</label>
             <div class="col-lg-6">
                 @Html.TextBoxFor(m => m.PayBeforeMonthCount, new { @class = "form-control", placeholder = "请输入补交月份" })
                 @*@Html.ValidationMessageFor(m => m.PayBeforeMonthCount)*@
             </div>
         </div>
-        <div class="form-group">
+        @*<div class="form-group" style="display:none">
             <label for="" class="col-lg-2 col-lg-offset-1 control-label">今年参保情况</label>
             <div class="col-lg-6">
                 在银行缴纳 @Html.TextBoxFor(m => m.BankPayMonth, new { @class = "form-control input-sm-w am-margin-horizontal-sm" })个月，
@@ -95,7 +103,7 @@
             <div class="col-lg-6">
                 @Html.TextAreaFor(m => m.Note, new { @class = "form-control", placeholder = "请填写备注" })
             </div>
-        </div>
+        </div>*@
         <div class="form-group am-padding-top-xl">
             <div class="row">
                 <div class="col-lg-offset-4 col-lg-4 text-center">
@@ -130,19 +138,23 @@
 
             //console.log(provinceText + "==" + city + "===" + usertypeText);
 
+            $("#InsuranceArea").val(area);
             $.ajax({
 
                 url: '/Calculator/GetSocialSecurityBase',
                 data: 'area=' + area + '&householdProperty=""',
                 dataType: 'json',
-                success: function (data) {
+                success: function (data) {                    
                     if (data.MinBase == 0) {
 
                         $("#SocialSecurityBase").attr("placeholder", "(暂无该地区社保基数范围)");
                     }
                     else {
                         $("#SocialSecurityBase").attr("placeholder", "社保基数(" + data.MinBase + "-" + data.MaxBase + ")");
+                        $("#minBase").val(data.MinBase);
+                        $("#maxBase").val(data.MaxBase);
                     }
+
                 },
                 error: function (a, b, c) {
                     console.log(a);

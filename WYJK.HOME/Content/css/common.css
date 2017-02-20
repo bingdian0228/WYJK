@@ -473,7 +473,6 @@
 	background-color: #82baed;
 }
 
-
 .orange {
 	color: #f5ab0c;
 }
@@ -496,6 +495,10 @@
 
 .green {
 	color: #33bb22;
+}
+
+.blue {
+	color: #2599EB;
 }
 
 
@@ -784,10 +787,28 @@
 }
 
 .fitCate-w ul.cate-list li {
-	float: left;
+	/*float: left;*/
+	display: inline-block;
 	list-style: none;
 	width: 207px;
 	margin: 10px;
+}
+
+
+/*ul.cate-list.am-avg-sm-5{
+	border: 1px solid blue;
+}*/
+
+.fitCate-w ul.cate-list.am-avg-sm-5 li {
+	width: 207px;
+	margin: 25px;
+	display: inline-block;
+}
+
+.fitCate-w ul.cate-list.am-avg-sm-5 {
+	/*margin-left: 40px;*/
+	-webkit-padding-start: 0px;
+	margin-left: 45px;
 }
 
 
@@ -1217,27 +1238,206 @@ ul.info-list {
 
 .info-content ul,
 .info-location,
-.info-detail{
+.info-detail {
 	-webkit-box-shadow: #C6C6C6 0px 0px 10px;
 	-moz-box-shadow: #C6C6C6 0px 0px 10px;
 	box-shadow: #C6C6C6 0px 0px 10px;
 }
-.info-detail-content{
-	word-break:break-all;
+
+.info-detail-content {
+	word-break: break-all;
 	display: block;
 	line-height: 28px;
 }
 
-.info-detail-time{
+.info-detail-time {
 	border-bottom: 1px solid #EEEEEE;
 	padding-bottom: 10px;
 }
 
+
 /*工作时间,地址*/
+
 .time-des,
-.address-des{
+.address-des {
 	display: inline-block;
 	margin-left: 10px;
 	line-height: 62px;
 }
 
+
+/*导航列表*/
+
+.fixed-box-list li {
+	list-style: none;
+}
+
+.fixed-box {
+	right: 50px!important;
+}
+
+
+/*社保*/
+
+.intro-shebao,
+.intro-wuyou,
+.intro-buy {
+	width: 1108px;
+	margin: 0 auto;
+	background: white;
+}
+
+.intro-shebao ul {
+	color: #4AA7F6;
+	font-size: 16px;
+	padding: 30px 70px;
+}
+
+.intro-shebao h3 {
+	color: #4AA7F6;
+}
+
+.shebao-sum {
+	border: 1px dashed #49B8BF;
+	border-radius: 8px;
+	padding: 10px;
+}
+
+.shebao-sum>span {
+	color: #4AA7F6;
+}
+
+.am-fr {
+	float: right;
+}
+
+.am-fl {
+	float: left;
+}
+
+.cb {
+	overflow: hidden;
+}
+
+.am-inline-block {
+	display: inline-block;
+}
+
+.wuyou-download,
+.wuyou-service {
+	border: 1px solid #EFDB9B;
+	width: 115px;
+	height: 120px;
+	font-size: 10px;
+	margin-left: 30px;
+}
+
+.intro-wuyou-r {
+	position: relative;
+	top: -34px;
+	left: 15px;
+}
+
+.intro-wuyou-left {
+	width: 32%;
+	border-right: 1px dashed #A5A5A5;
+}
+
+.wuyou-special {
+	width: 968px;
+	margin: 35px auto 15px;
+	color: #666666;
+}
+
+.wuyou-special li {
+	list-style: none;
+	float: left;
+	width: 24.5%;
+	text-align: center;
+	font-size: 18px;
+}
+
+.wuyou-specail-all {
+	border-top: 1px solid #F1F1F1;
+	margin: 40px;
+}
+
+.wuyou-secial-title {
+	display: inline-block;
+	padding: 0 15px;
+	position: relative;
+	top: -16px;
+	background: white;
+	color: #666666;
+}
+
+.intro-buy p {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	font-size: 18px;
+}
+
+.intro-buy:last-child {
+	padding-bottom: 30px;
+}
+
+
+/*描述*/
+
+.des-banner {
+	width: 100%;
+}
+
+.descrip1-top,
+.descrip2-top,
+.descrip3-top,
+.descrip4-top,
+.descrip5-top,
+.descrip6-top {
+	/*margin-left: 100px;*/
+	margin-bottom: 25px;
+}
+
+.des.info-detail h4 {
+	padding-bottom: 20px;
+	border-bottom: 1px solid #E9E9E9;
+	text-indent: 20px;
+	position: relative;
+}
+
+.des.info-detail h4:before {
+	content: '';
+	width: 10px;
+	height: 10px;
+	background: #000000;
+	border-radius: 50%;
+	position: absolute;
+	top: 4px;
+	left: 0px;
+}
+
+.descrip1-ul li {
+	list-style: none;
+	float: left;
+	/*margin-left: 20px;
+	margin-right: 20px;*/
+	font-size: 12px;
+}
+.descrip1-ul{
+	-webkit-padding-start: 0px;
+	overflow: hidden;
+
+}
+.des-col-3 li{
+	width: 33.3333%;
+	text-align: center;
+}
+.des-col-2 li{
+	width: 50%;
+	text-align: center;
+}
+
+.info-content ul.descrip1-ul {
+	overflow: hidden;
+	box-shadow: #FFFFFF 0px 0px 0px;
+}

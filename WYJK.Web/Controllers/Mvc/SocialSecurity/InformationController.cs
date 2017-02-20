@@ -45,7 +45,7 @@ namespace WYJK.Web.Controllers.Mvc
         {
             if (model.ImgUrls != null)
             {
-                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl2"], string.Empty);
                 
             }
             model.CreateTime = DateTime.Now;
@@ -69,7 +69,7 @@ namespace WYJK.Web.Controllers.Mvc
             Information model = await _informationService.GetInfomationDetail(ID);
             if (!string.IsNullOrWhiteSpace(model.ImgUrl))
             {
-                model.ImgUrl = ConfigurationManager.AppSettings["ServerUrl"] + model.ImgUrl.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
+                model.ImgUrl = ConfigurationManager.AppSettings["ServerUrl2"] + model.ImgUrl.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl2"]);
                 model.ImgUrls = model.ImgUrl.Split(';');
             }
             return View(model);
@@ -86,7 +86,7 @@ namespace WYJK.Web.Controllers.Mvc
         {
             if (model.ImgUrls != null)
             {
-                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl"], string.Empty);
+                model.ImgUrl = string.Join(";", model.ImgUrls).Replace(ConfigurationManager.AppSettings["ServerUrl2"], string.Empty);
             }
 
             bool flag = await _informationService.ModifyInformation(model);

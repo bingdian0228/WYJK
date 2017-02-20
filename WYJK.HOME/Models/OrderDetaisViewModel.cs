@@ -16,5 +16,15 @@ namespace WYJK.HOME.Models
 
         public decimal AccumulationFundBase { get; set; }
 
+        public decimal Total { get; set; }
+
+        public decimal AllTotal { get; set; }
+
+        public decimal Bucha { get; set; }
+
+        public decimal ServiceCost { get; set; }
+
+        public int SSPayMonthCount { get; set; }
+        public DateTime PayTime { get; set; }
     }
 }

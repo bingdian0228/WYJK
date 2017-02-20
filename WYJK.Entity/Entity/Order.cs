@@ -233,6 +233,10 @@ namespace WYJK.Entity
         /// </summary>
         public decimal Balance { get; set; }
 
+        public decimal AllTotal { get; set; }
+
+        public decimal Bucha { get; set; }
+
     }
 
     /// <summary>

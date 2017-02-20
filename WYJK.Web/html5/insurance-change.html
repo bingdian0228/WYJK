@@ -55,20 +55,30 @@
 							<input type="text" name="SocialSecurityPeopleName" data-bind="value:SocialSecurityPeopleName" class="am-form-field am-radius" placeholder="请输入参保人姓名" required="required">
 						</div>
 						<div class="am-form-group am-form-icon">
+							<label class="l-label">身份证号：</label>
+							<input type="text" class="am-form-field am-radius js-pattern-IDnum" data-bind="value:IdentityCard" name="IdentityCard" placeholder="请输入身份证号码" required="required">
+						</div>
+						<div class="am-form-group am-form-icon">
 							<div class="am-padding-sm bg_white l-upload-box am-radius relative">
 								<label class="l-label">身份证：</label>
-								<div class="l-upimg-box relative">
-									<input type="file" id="p-ID" accept="image/*" class="l-img-input" />
-									<div class="l-preview">
-										<img data-bind="attr:{src:photoArray[0]}" id="p-ID-show" />
-										<input type="hidden" name="IdentityCardPhoto" data-bind="value:inputArray[0]" required="required" />
+								<div class="am-g">
+									<div class="am-u-sm-6">
+										<div class="l-upimg-box relative">
+											<input type="file" id="p-ID" accept="image/*" class="l-img-input" />
+											<div class="l-preview">
+												<img data-bind="attr:{src:photoArray[0]}" id="p-ID-show" />
+												<input type="hidden" name="IdentityCardPhoto" data-bind="value:inputArray[0]" required="required" />
+											</div>
+										</div>
 									</div>
-								</div>
-								<div class="l-upimg-box relative">
-									<input type="file" id="o-ID" accept="image/*" class="l-img-input" />
-									<div class="l-preview">
-										<img data-bind="attr:{src:photoArray[1]}" id="o-ID-show" />
-										<input type="hidden" name="IdentityCardPhoto" data-bind="value:inputArray[1]" required="required" />
+									<div class="am-u-sm-6">
+										<div class="l-upimg-box relative">
+											<input type="file" id="o-ID" accept="image/*" class="l-img-input" />
+											<div class="l-preview">
+												<img data-bind="attr:{src:photoArray[1]}" id="o-ID-show" />
+												<input type="hidden" name="IdentityCardPhoto" data-bind="value:inputArray[1]" required="required" />
+											</div>
+										</div>
 									</div>
 								</div>
 								<div class="grey">
@@ -76,10 +86,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="am-form-group am-form-icon">
-							<label class="l-label">身份证号：</label>
-							<input type="text" class="am-form-field am-radius js-pattern-IDnum" data-bind="value:IdentityCard" name="IdentityCard" placeholder="请输入身份证号码" required="required">
-						</div>
+
 						<div class="am-form-group am-form-icon">
 							<div class="l-form-group bg_white am-radius relative">
 								<label for="idcate" class="l-label">户籍性质：</label>
@@ -92,7 +99,7 @@
 							<div class="am-g">
 								<div class="am-u-sm-7 am-padding-left-0">
 									<label class="l-label">社保 公积金：</label>
-									<input type="text" id="totalAmount" class="am-form-field am-radius am-text-right" placeholder="请选择方案" required="required" readonly="readonly">
+									<input type="text" id="totalAmount" class="am-form-field am-radius am-text-right" placeholder="请选择方案" readonly="readonly">
 								</div>
 								<div class="am-u-sm-5 am-padding-0">
 									<button type="button" class="am-btn am-btn-primary am-radius border-0 bg_darkblue am-btn-block" id="chose_scheme">选择参保方案</button>
@@ -106,14 +113,14 @@
 						<input type="hidden" name="MemberID" id="MemberID" value="" />
 						<input type="hidden" name="SocialSecurityPeopleID" id="SocialSecurityPeopleID" value="" />
 						<!--btn-->
-						<div class="am-g">
+						<!--<div class="am-g">
 							<div class="am-u-sm-6">
 								<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="addNew_back">取消</button>
 							</div>
 							<div class="am-u-sm-6">
 								<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="addNew_confirm">确认</button>
 							</div>
-						</div>
+						</div>-->
 					</form>
 				</div>
 			</div>
@@ -160,7 +167,7 @@
 							</div>
 							<div class="am-form-group am-form-icon">
 								<label class="l-label">起缴时间：</label>
-								<input type="text" name="PayTime" class="am-form-field am-padding-left-xs" placeholder="请选择年份/月份" data-am-datepicker="{format: 'yyyy-mm', viewMode: 'years'}" readonly="readonly" required="required" />
+								<input type="text" name="PayTime" class="am-form-field am-padding-left-xs payTime" placeholder="请选择年份/月份" readonly="readonly" required="required" />
 							</div>
 							<div class="am-form-group am-form-icon">
 								<label class="l-label">参保月数：</label>
@@ -220,7 +227,7 @@
 							</div>
 							<div class="am-form-group am-form-icon">
 								<label class="l-label">起缴时间：</label>
-								<input type="text" name="PayTime" class="am-form-field am-padding-left-xs" placeholder="请选择年份/月份" data-am-datepicker="{format: 'yyyy-mm', viewMode: 'years'}" readonly required />
+								<input type="text" name="PayTime" class="am-form-field am-padding-left-xs payTime" placeholder="请选择年份/月份" readonly required />
 							</div>
 							<div class="am-form-group am-form-icon">
 								<label class="l-label">缴费月数：</label>
@@ -229,6 +236,16 @@
 							<div class="am-form-group am-form-icon">
 								<label class="l-label">补交月数：</label>
 								<input type="text" name="PayBeforeMonthCount" id="" data-bind="value:PayBeforeMonthCount" class="am-form-field am-radius js-pattern-ZeroIntNum" placeholder="请输入补交月数（选填）" />
+							</div>
+							<!--新开户/转移-->
+							<div class="am-form-group am-form-icon">
+								<h3 class="am-margin-bottom-sm">办理类型：</h3>
+								<div class="" id="fundTypeBox">
+
+								</div>
+								<div class="bg_white am-margin-top-sm hide" id="fundTransferBox">
+
+								</div>
 							</div>
 							<!--备注-->
 							<div class="am-form-group am-form-icon">
@@ -339,6 +356,20 @@
 				<strong>总计(元)：{{total}}</strong>
 			</div>
 		</script>
+		<script id="fundType-template" type="text/x-handlebars-template">
+			{{#each this}}
+			<label class="am-radio-inline">
+				<input type="radio" name="AccumulationFundType" value="{{Value}}" required="required"> {{Text}}
+			</label> {{/each}}
+		</script>
+		<script id="transferInfo-template" type="text/x-handlebars-template">
+			<div class="am-padding-xs">
+				<span>签约公司名称：</span><strong>{{EnterpriseName}}</strong>
+			</div>
+			<div class="am-padding-xs">
+				<span>签约公司公积金编号：</span><strong>{{AccumulationFundCode}}</strong>
+			</div>
+		</script>
 		<script src="assets/js/insurance-add-common.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -377,7 +408,9 @@
 								d.Data.socialSecurity.InsuranceCity = d.Data.socialSecurity.InsuranceArea.split("|")[1];
 								new PCAS(SBbaseFun, "SBprovince", "SBcity", d.Data.socialSecurity.InsuranceProvince, d.Data.socialSecurity.InsuranceCity);
 								SBbaseFun();
-								new PCAS(FundbaseFun, "Fundprovince", "Fundcity");
+								if (!d.Data.IsPayAccumulationFund) {
+									new PCAS(FundbaseFun, "Fundprovince", "Fundcity");
+								}
 								//起始时间
 								$SBform.find('input[name="PayTime"]').datepicker('setValue', d.Data.socialSecurity.PayTime.slice(0, 7));
 								ko.applyBindings(d.Data.socialSecurity, document.getElementById("SBform"));
@@ -390,10 +423,20 @@
 								d.Data.accumulationFund.AccumulationFundCity = d.Data.accumulationFund.AccumulationFundArea.split("|")[1];
 								new PCAS(FundbaseFun, "Fundprovince", "Fundcity", d.Data.accumulationFund.AccumulationFundProvince, d.Data.accumulationFund.AccumulationFundCity);
 								FundbaseFun();
-								new PCAS(SBbaseFun, "SBprovince", "SBcity");
+								if (!d.Data.IsPaySocialSecurity) {
+									new PCAS(SBbaseFun, "SBprovince", "SBcity");
+								}
 								//起始时间
 								$Fundform.find('input[name="PayTime"]').datepicker('setValue', d.Data.accumulationFund.PayTime.slice(0, 7));
 								ko.applyBindings(d.Data.accumulationFund, document.getElementById("Fundform"));
+								// 新开户/转移切换
+								var val = parseInt(d.Data.accumulationFund.AccumulationFundType);
+								var $typeInput = $typeBox.find("input[type=radio]");
+								$typeInput.each(function(i) {
+									if ($(this).val() == val) {
+										$(this).trigger("click");
+									}
+								});
 							}
 						} else {
 							alertFun(d.Message);
@@ -413,26 +456,28 @@
 						data: dataModel,
 						success: function(d) {
 							if (d.status) {
-								$('#totalAmount').val(d.Data.Amount).trigger("blur");
-								myTran.goTo('myslide', 'reverse', '#main-page', '#confirm-page');
-								$schemeConfirm.data("SBID", d.Data.SocialSecurityID);
-								$schemeConfirm.data("FundID", d.Data.AccumulationFundID);
+								//								$('#totalAmount').val(d.Data.Amount).trigger("blur");
+								//								myTran.goTo('myslide', 'reverse', '#main-page', '#confirm-page');
+								//								$schemeConfirm.data("SBID", d.Data.SocialSecurityID);
+								//								$schemeConfirm.data("FundID", d.Data.AccumulationFundID);
+								ModifySocialSecurityPeople(d.Data.SocialSecurityID, d.Data.AccumulationFundID);
 							} else {
 								alertFun(d.Message);
 							}
 						}
 					});
 				});
+
 				//添加参保人确认按钮
-				$('#addNew_confirm').click(function() {
+				function ModifySocialSecurityPeople(SBID, FundID) {
 					var flag = $mainForm.validator('isFormValid');
 					if (flag) {
 						var dataModel = serializeObject($mainForm);
 						dataModel.socialSecurity = {
-							SocialSecurityID: $schemeConfirm.data("SBID")
+							SocialSecurityID: SBID
 						};
 						dataModel.accumulationFund = {
-							AccumulationFundID: $schemeConfirm.data('FundID')
+							AccumulationFundID: FundID
 						};
 						$.ajax({
 							type: "post",
@@ -441,15 +486,41 @@
 							success: function(d) {
 								if (d.status) {
 									alertFun(d.Message, function() {
-										window.history.go(-1);
-									})
+										window.location.href = document.referrer;
+									});
 								} else {
 									alertFun(d.Message);
 								}
 							}
 						});
 					}
-				});
+				}
+				//				$('#addNew_confirm').click(function() {
+				//					var flag = $mainForm.validator('isFormValid');
+				//					if (flag) {
+				//						var dataModel = serializeObject($mainForm);
+				//						dataModel.socialSecurity = {
+				//							SocialSecurityID: $schemeConfirm.data("SBID")
+				//						};
+				//						dataModel.accumulationFund = {
+				//							AccumulationFundID: $schemeConfirm.data('FundID')
+				//						};
+				//						$.ajax({
+				//							type: "post",
+				//							url: "/api/SocialSecurity/ModifySocialSecurityPeople",
+				//							data: dataModel,
+				//							success: function(d) {
+				//								if (d.status) {
+				//									alertFun(d.Message, function() {
+				//										window.history.go(-1);
+				//									})
+				//								} else {
+				//									alertFun(d.Message);
+				//								}
+				//							}
+				//						});
+				//					}
+				//				});
 			});
 		</script>
 	</body>

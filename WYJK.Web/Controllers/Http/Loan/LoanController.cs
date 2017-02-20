@@ -401,7 +401,7 @@ having COUNT(*)>=3", null).Count() > 0
             if (parameter.PlatType == "1")
             {
                 #region 移动端
-                string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                 return new JsonResult<dynamic>
                 {
@@ -458,6 +458,12 @@ having COUNT(*)>=3", null).Count() > 0
         {
             string orderID = BillNo.TrimStart('0');
             MemberLoanRepaymentOrder model = DbHelper.QuerySingle<MemberLoanRepaymentOrder>($"select * from MemberLoanRepaymentOrder where Id='{orderID}'");
+            MemberLoanRepayment modelPay = new Entity.MemberLoanRepayment();
+            if (model != null)
+            {
+                modelPay = DbHelper.QuerySingle<MemberLoanRepayment>($"select * from MemberLoanRepayment where Id='{model.HuanID}'");
+            }
+
             #region 招行提供
             /*
              * 必须验证返回数据的有效性防止订单信息支付过程中被篡改
@@ -501,6 +507,8 @@ having COUNT(*)>=3", null).Count() > 0
                     return;
                 }
                 decimal payMoney = 0.01M;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                if (modelPay != null)
+                    payMoney = modelPay.TotalAmount + modelPay.WeiYueJin;
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");

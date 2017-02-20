@@ -28,6 +28,10 @@ namespace WYJK.HOME.Controllers
 
         UserMemberService userSv = new UserMemberService();
 
+     
+
+
+
         #region 登录、注册、找回密码
 
         // GET: User
@@ -104,9 +108,20 @@ namespace WYJK.HOME.Controllers
                         InviteCode = model.InviteCode,
                         MemberName = model.MemberName,
                         MemberPhone = model.MemberPhone,
-                        Password = model.Password
+                        Password = model.Password,
+                        VerificationCode = model.SMSCheckCode
 
                     };
+                    string timespan = "30";
+                    //短信验证
+                    VerificationCode verificationCode = DbHelper.QuerySingle<VerificationCode>($"select * from VerificationCode where phone='{model.MemberPhone}' and Code='{model.SMSCheckCode}' and CurrentTime > DATEADD(n,-{timespan},getdate())");
+                    if (verificationCode == null)
+                    {
+                        ViewBag.ErrorMessage = "验证码不正确或已失效!";
+                        return View(model);
+                    }
+                        
+
 
                     Dictionary<bool, string> dic = await _memberService.RegisterMember(m);
 
@@ -126,7 +141,7 @@ namespace WYJK.HOME.Controllers
                     }
                 }else
                 {
-                    ViewBag.ErrorMessage = "请勾选 我已阅读并同意无忧借款服务协议";
+                    ViewBag.ErrorMessage = "请勾选 我已阅读并同意无忧数据服务协议";
                 }
             }
 
@@ -243,21 +258,26 @@ namespace WYJK.HOME.Controllers
             string sqlstr = "select * from Region where RegionCode = '{0}'";
             string ProvinceName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, ProvinceCode)).RegionName;
             string CityName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, CityCode)).RegionName;
-            string CountyName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, CountyCode)).RegionName;
+            //string CountyName = DbHelper.QuerySingle<Region>(string.Format(sqlstr, CountyCode)).RegionName;
             #endregion
 
-            model.EnterpriseArea = ProvinceName + "|" + CityName + "|" + CountyName;
+            model.EnterpriseArea = ProvinceName + "|" + CityName;// + "|" + CountyName;
+            string resultup = string.Empty;
+            if (EnterpriseBusinessLicenseImg != null)
+            {
+                var bytes = new byte[EnterpriseBusinessLicenseImg.ContentLength];
+                EnterpriseBusinessLicenseImg.InputStream.Read(bytes, 0, EnterpriseBusinessLicenseImg.ContentLength);
 
-            var bytes = new byte[EnterpriseBusinessLicenseImg.ContentLength];
-            EnterpriseBusinessLicenseImg.InputStream.Read(bytes, 0, EnterpriseBusinessLicenseImg.ContentLength);
+                var fileContent = new ByteArrayContent(bytes);
+                fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = "EnterpriseBusinessLicense.jpg" };
 
-            var fileContent = new ByteArrayContent(bytes);
-            fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment") { FileName = "EnterpriseBusinessLicense.jpg" };
+                var requpload = await client.PostAsync(url + "/Upload/MultiUpload", new MultipartFormDataContent() { fileContent });
+                var resultupload = await requpload.Content.ReadAsAsync<JsonResult<List<string>>>();
+                resultup = resultupload.Data.FirstOrDefault();
+            }
+    
 
-            var requpload = await client.PostAsync(url + "/Upload/MultiUpload", new MultipartFormDataContent() { fileContent });
-            var resultupload = await requpload.Content.ReadAsAsync<JsonResult<List<string>>>();
-
-            var req = await client.PostAsync(url + "/Member/CommitEnterpriseCertification", new { CommonHelper.CurrentUser.MemberID, model.EnterpriseName, model.EnterpriseTax, model.EnterpriseType, model.EnterpriseArea, model.EnterpriseLegal, model.EnterpriseLegalIdentityCardNo, model.EnterprisePeopleNum, model.SocialSecurityCreditCode, EnterpriseBusinessLicense = resultupload.Data.FirstOrDefault(), model.EnterprisePositionName }, formatter);
+            var req = await client.PostAsync(url + "/Member/CommitEnterpriseCertification", new { CommonHelper.CurrentUser.MemberID, model.EnterpriseName, model.EnterpriseTax, model.EnterpriseType, model.EnterpriseArea, model.EnterpriseLegal, model.EnterpriseLegalIdentityCardNo, model.EnterprisePeopleNum, model.SocialSecurityCreditCode, EnterpriseBusinessLicense = resultup, model.EnterprisePositionName }, formatter);
             var result = await req.Content.ReadAsAsync<JsonResult<object>>();
 
             TempData["Message"] = result.Data;
@@ -389,5 +409,54 @@ namespace WYJK.HOME.Controllers
         }
 
         #endregion
+
+        [UserLogin]
+        public async Task<ActionResult> UserMessage()
+        {
+            var req1 = await client.GetAsync(url + "/Member/GetMessageList?memberID="+CommonHelper.CurrentUser.MemberID);
+            List<Message> list = (await req1.Content.ReadAsAsync<JsonResult<List<Message>>>()).Data;
+            ViewBag.UserMsg = list;
+            ViewBag.HasMsg = (list.Count>0);
+            return View();
+        }
+
+        /// <summary>
+        /// 获取验证码
+        /// </summary>
+        /// <param name="MemberName"></param>
+        /// <param name="MemberPhone"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        public async Task<JsonResult<dynamic>> GetVerificationCode(string MemberName, string MemberPhone)
+        {
+            
+            var req1 = await client.GetAsync(url + "/Member/GetVerificationCode?MemberName=" + MemberName+ "&MemberPhone="+ MemberPhone);
+            object sendRegist = (await req1.Content.ReadAsAsync<JsonResult<object>>()).Data;
+            //ViewBag.UserMsg = list;
+            //ViewBag.HasMsg = (list.Count > 0);
+
+            //VerificationCode verificationCode = DbHelper.Query<VerificationCode>($"select * from VerificationCode where Phone='{MemberPhone}'").FirstOrDefault();
+            ////生成随机数
+            //Random rdm = new Random();
+            //string code = rdm.Next(0, 9999).ToString().PadLeft(4, '0');
+            //if (verificationCode == null)
+            //{
+            //    DbHelper.ExecuteSqlCommand($"insert into VerificationCode(Phone,Code,CurrentTime) values('{MemberPhone}','{code}',getdate())", null);
+            //}
+            //else {
+            //    DbHelper.ExecuteSqlCommand($"update VerificationCode set Code='{code}',CurrentTime=getdate() where phone='{MemberPhone}'", null);
+            //}
+
+            ////发送短信
+            //SendSms(MemberPhone, MemberName, code);
+
+            return new JsonResult<dynamic>
+            {
+                status = true,
+                Message = "发送成功"
+            };
+
+        }
+
     }
 }

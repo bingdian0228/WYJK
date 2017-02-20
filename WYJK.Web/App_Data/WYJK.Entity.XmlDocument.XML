@@ -1426,6 +1426,226 @@
             详情
             </summary>
         </member>
+        <member name="T:WYJK.Entity.JiaoFei_ZS">
+            <summary>
+            缴费记录表
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberQuery">
+            <summary>
+            用户查询
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberQuery.BusinessCode">
+            <summary>
+            交易代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberQuery.BankCode">
+            <summary>
+            银行代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberQuery.MemberPhone">
+            <summary>
+            用户缴费号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.MemberQueryReturn">
+            <summary>
+            查询返回
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberQueryReturn.ReturnCode">
+            <summary>
+            返回码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberQueryReturn.TrueName">
+            <summary>
+            用户姓名
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.MemberQueryReturn.MoneyArray">
+            <summary>
+            一月金额
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.JiaoFeiSubmit">
+            <summary>
+            缴费
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmit.Money">
+            <summary>
+            缴费金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmit.MonthCount">
+            <summary>
+            月份数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmit.BusinessDate">
+            <summary>
+            交易日期
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmit.BusinessTime">
+            <summary>
+            交易时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmit.SerialNumber">
+            <summary>
+            流水号
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.JiaoFeiSubmitReturn">
+            <summary>
+            缴费提交返回
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmitReturn.SerialNumber">
+            <summary>
+            流水号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.JiaoFeiSubmitReturn.ReturnCode">
+            <summary>
+            返回码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.ChongZheng">
+            <summary>
+            冲正请求
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ChongZheng.SerialNumber">
+            <summary>
+            流水号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ChongZheng.BusinessDate">
+            <summary>
+            交易日期
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ChongZheng.Money">
+            <summary>
+            缴费金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ChongZheng.MonthCount">
+            <summary>
+            月份数
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.ChongZhengReturn">
+            <summary>
+            冲正返回
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ChongZhengReturn.SerialNumber">
+            <summary>
+            流水号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.ChongZhengReturn.ReturnCode">
+            <summary>
+            返回码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RiZhongDuiZhang">
+            <summary>
+            日终对账请求
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhang.BusinessCode">
+            <summary>
+            交易代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhang.BankCode">
+            <summary>
+            银行代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhang.BusinessDate">
+            <summary>
+            交易日期
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhang.FileName">
+            <summary>
+            文件名称
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhang.FullFilename">
+            <summary>
+            全路径
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.FileContent">
+            <summary>
+            文件内容
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.MemberPhone">
+            <summary>
+            缴费号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.Money">
+            <summary>
+            缴费金额
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.MonthCount">
+            <summary>
+            缴费月份数
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.BusinessDate">
+            <summary>
+            交易日期
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.BusinessTime">
+            <summary>
+            交易时间
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.SerialNumber">
+            <summary>
+            流水号
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.FileContent.BankCode">
+            <summary>
+            银行代码
+            </summary>
+        </member>
+        <member name="T:WYJK.Entity.RiZhongDuiZhangReturn">
+            <summary>
+            日终对账返回
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhangReturn.BusinessCode">
+            <summary>
+            交易代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhangReturn.BankCode">
+            <summary>
+            银行代码
+            </summary>
+        </member>
+        <member name="P:WYJK.Entity.RiZhongDuiZhangReturn.ReturnCode">
+            <summary>
+            返回码
+            </summary>
+        </member>
         <member name="T:WYJK.Entity.LoanAnswer">
             <summary>
             答案

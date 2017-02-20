@@ -28,15 +28,41 @@ $.ajax({
 		$IDcate.append(IDcateTemplate(d.Data));
 	}
 });
-//转场动画
+//选择方案转场动画
 $('#chose_scheme').click(function() {
-	var flag = $IDcate.val();
+	var flag = $mainForm.validator('isFormValid');
+	var ID = $('#IdentityCard').val();
 	if (flag) {
-		myTran.goTo('myslide', '', '#scheme-page', '#main-page');
-	} else {
-		alertFun('请先选择户籍性质！');
+		$.ajax({
+			type: "get",
+			url: "/api/SocialSecurity/SelectSocialSecurityScheme?IdentityCard=" + ID,
+			async: true,
+			success: function(d) {
+				switch (d.Data.PayFlag) {
+					case 1:
+						$SBchk.uCheck("uncheck");
+						$SBchk.uCheck('disable');
+						$SBform.fadeOut();
+						$Fundchk.uCheck("check");
+						$Fundform.fadeIn();
+						myTran.goTo('myslide', '', '#scheme-page', '#main-page');
+						break;
+					case 2:
+						$Fundchk.uCheck('disable');
+						myTran.goTo('myslide', '', '#scheme-page', '#main-page');
+						break;
+					case 3:
+						alertFun("此身份证号已经填写参保方案！");
+						break;
+					default:
+						$SBchk.uCheck('enable');
+						$Fundchk.uCheck("enable");
+						myTran.goTo('myslide', '', '#scheme-page', '#main-page');
+						break;
+				}
+			}
+		});
 	}
-
 });
 //复选框选择
 $SBchk.on('click', function(event) {
@@ -55,6 +81,87 @@ $Fundchk.on('click', function(event) {
 		$Fundform.fadeOut();
 	}
 });
+//datepicker限定日期
+var nowTemp = new Date();
+var day = nowTemp.getDate();
+var month = nowTemp.getMonth();
+var nowMoth;
+var nowDay;
+if (day > 13) {
+	nowDay = new Date(nowTemp.getFullYear(), month + 1, 1, 0, 0, 0, 0).valueOf();
+	nowMoth = new Date(nowTemp.getFullYear(), month + 1, 1, 0, 0, 0, 0).valueOf();
+} else {
+	nowDay = new Date(nowTemp.getFullYear(), month, day, 0, 0, 0, 0).valueOf();
+	nowMoth = new Date(nowTemp.getFullYear(), month, 1, 0, 0, 0, 0).valueOf();
+}
+var nowYear = new Date(nowTemp.getFullYear(), 0, 1, 0, 0, 0, 0).valueOf();
+$('.payTime').datepicker({
+	format: 'yyyy-mm',
+	viewMode: 'years',
+	onRender: function(date, viewMode) {
+		// 默认 days 视图，与当前日期比较
+		var viewDate = nowDay;
+
+		switch (viewMode) {
+			// moths 视图，与当前月份比较
+			case 1:
+				viewDate = nowMoth;
+				break;
+				// years 视图，与当前年份比较
+			case 2:
+				viewDate = nowYear;
+				break;
+		}
+
+		return date.valueOf() < viewDate ? 'am-disabled' : '';
+	}
+});
+//新开户/转移以及点击事件
+var fundTypeTemplate = Handlebars.compile($("#fundType-template").html());
+var transferInfoTemplate = Handlebars.compile($("#transferInfo-template").html());
+var $typeBox = $('#fundTypeBox');
+var $transferBox = $('#fundTransferBox');
+$.ajax({
+	type: "get",
+	url: "/api/SocialSecurity/GetAccumulationFundTypeList",
+	async: false,
+	success: function(d) {
+		$typeBox.append(fundTypeTemplate(d.Data));
+		var $typeInput = $typeBox.find("input[type=radio]");
+		$typeInput.uCheck();
+		//点击事件
+		$typeInput.click(function() {
+			var flag = $(this).is("[value=2]:checked");
+			var Area = $('#AccumulationFundArea').val();
+			var houseHold = $IDcate.val();
+			if (flag) {
+				if (Area) {
+					loadingFun(true);
+					$.ajax({
+						type: "get",
+						url: "/api/SocialSecurity/AccumulationFundTransferShow?area=" + Area + "&HouseholdProperty=" + houseHold,
+						async: true,
+						success: function(d) {
+							if (d.status) {
+								loadingFun(false);
+								$transferBox.html(transferInfoTemplate(d.Data));
+								$transferBox.slideDown();
+							} else {
+								alertFun(d.Message);
+							}
+						}
+					});
+				} else {
+					alertFun("请先选择参保省市！");
+					$typeInput.uCheck("uncheck");
+				}
+			} else {
+				$transferBox.slideUp();
+			}
+		});
+	}
+});
+
 //提交参保方案
 $('#schemeSubmit').click(function() {
 	var fSB = $SBchk.is(":checked");
@@ -92,7 +199,7 @@ $('#schemeSubmit').click(function() {
 	}
 	if (isReady()) {
 		var TotalData = {
-			HouseholdProperty: $IDcate.val(),
+			HouseholdProperty: houseHold,
 			socialSecurity: SBData,
 			accumulationFund: FundData
 		};
@@ -114,6 +221,7 @@ $('#schemeSubmit').click(function() {
 						d.Data.AccumulationFundAmount = Number((d.Data.AccumulationFundAmount * d.Data.AccumulationFundpayMonth).toFixed(2));
 					}
 					d.Data.total = d.Data.SocialSecurityAmount + d.Data.AccumulationFundAmount + d.Data.socialSecurityFirstBacklogCost + d.Data.AccumulationFundFirstBacklogCost + d.Data.FreezingCharge;
+					d.Data.total = d.Data.total.toFixed(2);
 					$('#result-box').html(resultTemplate(d.Data));
 					loadingFun(false);
 					myTran.goTo('myslide', '', '#confirm-page', '#scheme-page');

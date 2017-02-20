@@ -23,6 +23,10 @@ namespace WYJK.Web.Controllers.Mvc
         /// <returns></returns>
         public ActionResult GetLogList(LogParameter parameter)
         {
+            if (!string.IsNullOrEmpty(parameter.MemberName))
+                parameter.MemberName = parameter.MemberName.Replace("'", "''");
+            if (!string.IsNullOrEmpty(parameter.SocialSecurityPeopleName))
+                parameter.SocialSecurityPeopleName = parameter.SocialSecurityPeopleName.Replace("'", "''");
             PagedResult<Log> logList = _logService.GetLogList(parameter);
             return View(logList);
         }

@@ -46,25 +46,23 @@
 				</h1>
 			</header>
 			<!--list-->
-
 			<!--上拉加载列表-->
-			<div class="page lRecord" id="wrapper">
+			<div class="page" id="wrapper">
 				<div>
 					<!--刷新-->
 					<div class="pull-action loading" id="pull-down">
 						<span class="am-icon-arrow-down pull-label" id="pull-down-label"> 下拉刷新</span>
 						<span class="am-icon-spinner am-icon-spin"></span>
 					</div>
-
 					<!--list-->
-
 					<div data-am-widget="list_news" class="am-list-news am-list-news-default am-margin-0">
 						<div class="am-list-news-bd">
-							<ul class="am-list l-bills-list" id="events-list">
+							<ul class="am-list l-payback-list" id="events-list">
 								<li>
 									<div class="am-text-center am-padding-sm">
 										正在加载内容...
 									</div>
+								</li>
 								</li>
 							</ul>
 						</div>
@@ -107,7 +105,7 @@
 								</li>
 								<li class="am-text-right am-u-sm-4 am-margin-top-sm  am-ellipsis  am-padding-0">
 									<span class="am-fr">＞</span>
-									<span class="am-fr am-inline-block am-nowrap" style="width: 75px;">{{AlreadyLoanDate}}</span>
+									<span class="am-fr am-inline-block am-nowrap loan-record-time">{{AlreadyLoanDate}}</span>
 								</li>
 							</ul>
 						</div>
@@ -122,6 +120,7 @@
 				//后退按钮
 				goBack();
 				var Logined = isLogin(id);
+				var payback = GetRequest().payback;
 				if(Logined) {
 					//获取列表信息
 					var app = new EventsList(null, {
@@ -136,7 +135,6 @@
 				}
 			});
 		</script>
-
 	</body>
 
 </html>

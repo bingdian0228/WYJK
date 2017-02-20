@@ -25,6 +25,8 @@ namespace WYJK.Web.Controllers.Mvc.Loan
         /// <returns></returns>
         public ActionResult GetSubjectList(string Subject)
         {
+            if (!string.IsNullOrEmpty(Subject))
+                Subject = Subject.Replace("'", "''");          
             Dictionary<int, LoanSubject>.ValueCollection list = _loanSubjectService.GetSubjectList(Subject);
             return View("~/Views/Loan/LoanSetting/GetSubjectList.cshtml", list);
         }

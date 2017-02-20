@@ -31,8 +31,7 @@
 			<header data-am-widget="header" class="am-header am-header-default bg_blue">
 				<div class="am-header-left am-header-nav">
 					<a href="loan-payback.html" class="">
-						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;"
-							alt="" />
+						<img class="am-header-icon-custom" src="data:image/svg+xml;charset=utf-8,&lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 12 20&quot;&gt;&lt;path d=&quot;M10,0l2,2l-8,8l8,8l-2,2L0,10L10,0z&quot; fill=&quot;%23fff&quot;/&gt;&lt;/svg&gt;" alt="" />
 					</a>
 				</div>
 				<h1 class="am-header-title">
@@ -40,7 +39,7 @@
 				</h1>
 			</header>
 			<!--菜单-->
-			<ul class="am-list am-list-static am-margin-top-xs">
+			<ul class="am-list am-list-static">
 				<li>
 					<div class="am-padding-horizontal-sm">
 						<span>借款金额：</span>
@@ -69,18 +68,16 @@
 					<div class="am-padding-horizontal-sm">
 						<span>还款方式：</span>
 						<span data-bind="text:LoanTerm"></span>
-						<span data-bind="text:LoanMethod"></span>
 					</div>
 				</li>
 			</ul>
-			
 			<!--底部btn-->
 			<div class="am-navbar bg_grey payback">
 				<div class="am-g">
 					<div class="am-u-sm-12 paybackRecord">
 						<a href="loan-p-record.html" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">还款记录</a>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -96,16 +93,16 @@
 		<script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
 		<script src="assets/js/knockout-3.4.0.js" type="text/javascript" charset="utf-8"></script>
 		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
-		
+
 		<script type="text/javascript">
-				$(document).ready(function() {
+			$(document).ready(function() {
 				//加载中
 				loadingFun(true);
 				var id = Cookies.get('MemID');
 				var Loanid = GetRequest().id;
 				var payHref = $('.paybackRecord a').attr('href');
-				payHref += '?id='+Loanid;
-				$('.paybackRecord a').attr('href',payHref);
+				payHref += '?id=' + Loanid;
+				$('.paybackRecord a').attr('href', payHref);
 				//后退按钮
 				goBack();
 				var Logined = isLogin(id);
@@ -116,7 +113,7 @@
 						async: true,
 						success: function(d) {
 							loadingFun(false);
-							if (d.status) {
+							if(d.status) {
 								ko.applyBindings(d.Data);
 							} else {
 								alertFun(d.Message);
@@ -129,12 +126,12 @@
 						async: true,
 						success: function(d) {
 							loadingFun(false);
-							if (d.status) {
-								if(d.Data == 1){
-									var payHtml = '<div class="am-u-sm-6"><a href="loan-payback-apply.html?id='+Loanid +'" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">我要还款</a></div>'
+							if(d.status) {
+								if(d.Data == 1) {
+									var payHtml = '<div class="am-u-sm-6"><a href="loan-payback-apply.html?id=' + Loanid + '" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">我要还款</a></div>'
 									$('.payback .am-g').append(payHtml);
 									$('.paybackRecord').removeClass().addClass('am-u-sm-6');
-									
+
 								}
 							} else {
 								alertFun(d.Message);
@@ -144,8 +141,6 @@
 				}
 			});
 		</script>
-
-
 	</body>
 
 </html>

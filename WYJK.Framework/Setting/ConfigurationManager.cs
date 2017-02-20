@@ -23,7 +23,7 @@ namespace WYJK.Framework.Setting
         /// </summary>
         public static string DefaultConnectionString
         {
-            get { return System.Configuration.ConfigurationManager.ConnectionStrings["WYJKConnectionString"].ConnectionString; }
+            get { return System.Configuration.ConfigurationManager.ConnectionStrings["WYJKConnectionString"].ConnectionString.Replace("******","qingdao!10"); }
         }
 
         /// <summary>

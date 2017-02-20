@@ -39,7 +39,7 @@
 				</h1>
 			</header>
 			<!--菜单-->
-			<ul class="am-list am-list-static am-margin-top-xs">
+			<ul class="am-list am-list-static">
 				<li>
 					<div class="am-padding-horizontal-sm">
 						<span>借款金额：</span>
@@ -68,7 +68,6 @@
 					<div class="am-padding-horizontal-sm">
 						<span>还款方式：</span>
 						<span data-bind="text:LoanTerm"></span>
-						<span data-bind="text:LoanMethod"></span>
 					</div>
 				</li>
 			</ul>
@@ -101,7 +100,11 @@
 						async: true,
 						success: function(d) {
 							loadingFun(false);
-							if (d.status) {
+							if(d.status) {
+								//日期获取截止到日
+								var loanDate = d.Data.AlreadyLoanDate; 
+								var loanDateArray = loanDate.split(' ');
+								d.Data.AlreadyLoanDate = loanDateArray[0];
 								ko.applyBindings(d.Data);
 							} else {
 								alertFun(d.Message);
@@ -111,7 +114,6 @@
 				}
 			});
 		</script>
-
 	</body>
 
 </html>

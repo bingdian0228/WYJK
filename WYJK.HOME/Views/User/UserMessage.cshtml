@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewBag.Title = "消息";
+    Layout = "~/Views/User/_Layout_user.cshtml";
+}
+<style>
+    .bg_lightblue {
+        background: #e3e9f9;
+    }
+
+    .am-u-sm-3 {
+        width: 25%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .am-u-sm-4 {
+        width: 33.33333333%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .am-u-sm-5 {
+        width: 41.66666667%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .am-u-sm-8 {
+        width: 58.366667%;
+        display: inline-block;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .bg_darkblue,
+    .bg_darkblue:hover {
+        background: #0a7dd8;
+        color: #ffffff;
+        display: inline-block;
+        width: 83px;
+        height: 23px;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .am-text-right {
+        text-align: right;
+    }
+
+    .am-padding-sm {
+        padding: 10px;
+    }
+
+    .am-padding-top-0 {
+        padding-top: 0;
+    }
+
+    .am-u-sm-6 {
+        width: 50%;
+        float: left;
+        padding-top: 10px;
+    }
+
+    .font-bg {
+        font-size: 18px;
+    }
+
+    .am-text-center {
+        text-align: center;
+    }
+   .l-msg-list li{
+       list-style:none;
+       border: 1px solid #469ee5;
+       margin-bottom: 10px;
+       border-radius: 8px;
+       width: 94%;
+       margin-left: 3%;
+       margin-right:3%;
+   }
+    .l-msg-list{
+       -webkit-padding-start: 0px;
+       margin-top: 10px;
+   }
+</style>
+<div class="user-right-w pull-right am-margin-bottom-lg am-margin-left-lg">
+    <div class="panel panel-default am-margin-bottom-0">
+        <div class="panel-heading">
+            <h3 class="panel-title clearfix">
+                <div class="pull-left">
+                    <span class="am-text-middle">消息</span>
+                </div>
+            </h3>
+        </div>
+        @if (ViewBag.HasMsg)
+        {
+            <div data-am-widget="list_news" class="am-list-news am-list-news-default">
+                <div class="am-list-news-bd">
+                    <ul class="am-list l-msg-list" id="events-list">
+                        @foreach (var item in ViewBag.UserMsg as List<Message>)
+                        {
+                         
+                            <li>
+                                @item.Dt
+                                <div class="am-padding-xs grey">
+                                    @item.ContentStr
+                                </div>
+                               
+                            </li>
+                        }                        
+                    </ul>
+                </div>
+            </div>
+           
+        }
+        else
+        {
+            <div class="panel-body">
+                暂无消息
+            </div>
+        }
+
+    </div>
+</div>

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -115,7 +115,7 @@
 					<div class="am-padding-horizontal-sm">
 						<div class="am-cf">
 							<div class="am-fl">
-								<span>{{OperationType}}</span>
+								<span>{{LaiYuan}}</span>
 							</div>
 							<div class="am-fr">
 								<span class="am-text-xs am-padding-right-sm grey">{{CreateTime}}</span>
@@ -123,7 +123,7 @@
 						</div>
 						<div class="am-cf">
 							<div class="am-fl am-text-xs">
-								余额：23.00
+								{{Balance}}
 							</div>
 							<div class="am-fr">
 								<strong class="am-padding-right-sm black">{{CostDisplay}}</strong>
@@ -151,25 +151,30 @@
 		</script>
 		<script type="text/javascript">
 			$(document).ready(function() {
-			    var id = Cookies.get("MemID");
-			    if (id == undefined) {
-			        id = GetRequest().MemberID;
-			    }
+				var id = Cookies.get("MemID");
 				//获取账户信息
 				var infoTmpl = Handlebars.compile($("#account-tmpl").html());
 				$.ajax({
 					type: "get",
 					url: "/api/Member/GetAccountInfo?MemberID=" + id,
-					async: true,
+					async: false,
 					success: function(d) {
 						if (d.status) {
 							$('#account-info').html(infoTmpl(d.Data));
-							$('#popover').popover({
-								content: 'Popover via JavaScript'
-							});
 						} else {
 							alertFun(d.Message);
 						}
+					}
+				});
+				//获取冻结金额说明
+				$.ajax({
+					type: "get",
+					url: "/api/Member/GetFreezingAmountInstruction",
+					async: false,
+					success: function(d) {
+						$('#popover').popover({
+							content: d.Data
+						});
 					}
 				});
 				//获取列表信息

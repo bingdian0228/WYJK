@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html class="no-js">
 
 	<head>
@@ -41,35 +41,36 @@
 			</header>
 			<!--表单-->
 			<div class="am-padding-sm submit">
-				<form action="" class="am-form" data-am-validator>
+				<form action="" id="form" class="am-form" data-am-validator>
 					<div class="am-form-group am-form-icon">
 						<div class="l-form-group bg_white am-radius relative">
 							<label class="l-label">支付方式：</label>
-							<select id="" class="l-selectbox am-padding-left-0" required="required">
+							<select id="PayMethod" name="PayMethod" class="l-selectbox am-padding-left-0" required="required">
 									<option value="">请您选择支付方式</option>
-									<option value="option1">选项一...</option>
-									<option value="option2">选项二.....</option>
-									<option value="option3">选项三........</option>
+                                    <option value="1">招商支付</option>
 								</select>
 						</div>
 					</div>
 					<div class="am-form-group am-form-icon">
 						<label class="l-label">金额：</label>
-						<input type="text" class="am-form-field am-radius" placeholder="请输入转入金额" required="required">
+						<input type="text" name="Amount" class="am-form-field am-radius" placeholder="请输入转入金额" required="required">
 					</div>
 
-					<div class="am-form-group am-text-xs">
+					<!--<div class="am-form-group am-text-xs">
 						本月需支付待续保金额为<span class="blue">1200</span>,建议您此次转入金额<span class="blue">大于等于1200</span>
-					</div>
+					</div>-->
 					<!--btn-->
 					<div class="am-g">
 						<div class="am-u-sm-6">
 							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">取消</button>
 						</div>
 						<div class="am-u-sm-6">
-							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius">充值</button>
+							<button type="button" class="am-btn am-btn-primary am-btn-block bg_darkblue am-radius" id="btnCharge">充值</button>
 						</div>
 					</div>
+
+                    <input type="hidden" name="MemberID" id="MemberID" value="" />
+                    <input type="hidden" name="oid" id="oid" value="" />
 				</form>
 			</div>
 
@@ -83,11 +84,48 @@
 <script src="assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 		<script src="assets/js/amazeui.min.js"></script>
+        <script src="assets/js/js.cookie.js" type="text/javascript" charset="utf-8"></script>
 		<script src="assets/js/app.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			$(document).ready(function () {
 				//返回
-				goBack();
+			    goBack();
+//			    debugger;
+			    $('#MemberID').val(Cookies.get("MemID"));
+			    $form = $('#form');
+			    //确认支付
+			    $('#btnCharge').click(function () {
+			        var flag = $form.validator('isFormValid');
+			        if (flag) {
+			            var model = $form.serialize();
+			            $.ajax({
+			                type: "post",
+			                url: "/api/Member/SubmitRechargeAmountOrder",
+			                async: true,
+			                data: model,
+			                success: function (d) {			                  
+			                    if (d.status)
+			                    {
+			                        $('#oid').val(d.Data.OrderID);			                        			                        
+			                        $.ajax({
+			                            type: "post",
+			                            url: "/api/Member/SubmitRechargeAmountPayment",
+			                            async: true,
+			                            data: { OrderId: $('#oid').val(), PlatType: "1" },
+			                            success: function (a) {
+//			                                debugger;
+			                                if (a.status) {
+			                                    location.href = a.Data.url;
+			                                }
+			                            }
+			                        });
+			                       
+			                    }
+			                    
+			                }
+			            });
+			        }
+			    });
 			});
 		</script>
 	</body>

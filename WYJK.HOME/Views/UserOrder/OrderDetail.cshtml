@@ -35,10 +35,10 @@
                                 </dd>
                                 <dd class="row am-padding-vertical-sm">
                                     <div class="col-lg-4">
-                                        起缴月份：@item.SocialSecuritypayMonth
+                                        起缴月份：@item.PayTime.Year-@item.PayTime.Month
                                     </div>
                                     <div class="col-lg-4">
-                                        结束月份：2016-05
+                                        缴纳月数：@item.SSPayMonthCount
                                     </div>
                                     <div class="col-lg-4">
                                         社保基数：@item.SocialSecurityBase
@@ -57,13 +57,13 @@
                                 </dd>
                                 <dd class="row am-padding-vertical-sm">
                                     <div class="col-lg-4">
-                                        冻结费：
+                                        冻结费：@item.Bucha
                                     </div>
                                     <div class="col-lg-4">
-                                        服务费：
+                                        服务费：@item.ServiceCost
                                     </div>
                                     <div class="col-lg-4">
-                                        缴纳金额：
+                                        缴纳金额：@item.AllTotal
                                     </div>
                                 </dd>
                             </dl>
@@ -80,7 +80,7 @@
                     <th>社保金额</th>
                     <th>公积金</th>
                     <th>服务费</th>
-                    <th>代办费</th>
+                    <th>冻结费</th>
                     <th>合计</th>
                 </tr>
             </thead>
@@ -93,8 +93,8 @@
                     <td>@detail.SocialSecurityTotalAmount</td>
                     <td>@detail.AccumulationFundTotalAmount</td>
                     <td>@detail.ServiceCost</td>
-                    <td>@detail.FirstBacklogCost</td>
-                    <td class="orange">@(detail.SocialSecurityTotalAmount+ detail.AccumulationFundTotalAmount+ detail.ServiceCost+ detail.FirstBacklogCost)</td>
+                    <td>@detail.Bucha</td>
+                    <td class="orange">@detail.AllTotal</td>
                 </tr>
             </tbody>
         </table>

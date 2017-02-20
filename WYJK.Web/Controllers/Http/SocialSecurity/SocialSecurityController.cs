@@ -582,7 +582,7 @@ where SocialSecurityPeople.SocialSecurityPeopleID = {SocialSecurityPeopleID}");
                 AccumulationFundBacklogCost = _parameterSettingService.GetCostParameter((int)PayTypeEnum.AccumulationFund).BacklogCost;
             }
             model.Amount = SocialSecurityAmount + AccumulationFundAmount + SocialSecurityBacklogCost + AccumulationFundBacklogCost + FreezingCharge;
-            model.IdentityCardPhoto = ConfigurationManager.AppSettings["ServerUrl"] + model.IdentityCardPhoto.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
+            model.IdentityCardPhoto = ConfigurationManager.AppSettings["ServerUrl2"] + model.IdentityCardPhoto.Replace(";", ";" + ConfigurationManager.AppSettings["ServerUrl"]);
 
             //检测该参保人下是否有订单  --是否修改参保人
             if (DbHelper.QuerySingle<int>($"select count(1) from OrderDetails where SocialSecurityPeopleID={SocialSecurityPeopleID}") > 0)
@@ -2037,7 +2037,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                 if (parameter.PlatType == "1")
                 {
                     #region 移动端
-                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + "0.01" + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
+                    string uri = "https://netpay.cmbchina.com/netpayment/BaseHttp.dll?MfcISAPICommand=PrePayWAP&BranchID=" + BranchID + "&CoNo=" + CoNo + "&BillNo=" + BillNo + "&Amount=" + Amount + "&Date=" + Date + "&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";
 
                     //HttpClient httpClient = new HttpClient();
                     //string test =await httpClient.GetStringAsync(uri);
@@ -2047,6 +2047,19 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                         status = true,
                         Message = "提交成功",
                         Data = new { url = uri }
+                    };
+                    #endregion
+                }
+                else if (parameter.PlatType == "2")
+                {
+                    #region 移动端
+                    string Url = $@"https://netpay.cmbchina.com/netpayment/BaseHttp.dll?PrePayC1?BranchID={BranchID}&CoNo={CoNo}&BillNo={BillNo}&Amount={Amount}&Date={Date}&ExpireTimeSpan=30&MerchantUrl=" + MerchantUrl + "&MerchantPara=";                    
+
+                    return new JsonResult<dynamic>
+                    {
+                        status = true,
+                        Message = "提交成功",
+                        Data = new { url = Url }
                     };
                     #endregion
                 }
@@ -2144,7 +2157,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
                     HttpContext.Current.Response.Write("<script>alert('支付失败！')</script>");
                     return;
                 }
-                decimal payMoney = 0.01M; //baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
+                decimal payMoney = baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge; //baseOrders.SSBaseServiceCharge + baseOrders.AFBaseServiceCharge;  //订单的金额也就是CMBChina_PayMoney.aspx页面中输入的金额 这里只是简单的测试实际运用中请使用实际支付值 
                 if (payMoney != Convert.ToDecimal(Amount))//验证银行实际收到与支付金额是否相等
                 {
                     //throw new Exception("支付金额与订单金额不一致！");
@@ -2193,7 +2206,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
 
                 }
 
-                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl"] + $"html5/user-billIndex.html?MemberID={baseOrders.MemberID}");
+                HttpContext.Current.Response.Redirect(ConfigurationManager.AppSettings["ServerUrl2"] + $"html5/user-billIndex.html?MemberID={baseOrders.MemberID}");
             }
         }
 
@@ -2245,7 +2258,7 @@ where SocialSecurityPeople.MemberID = {MemberID}";
         public JsonResult<dynamic> GetServiceProtocol()
         {
             ServiceProtocol serviceProtocol = DbHelper.QuerySingle<ServiceProtocol>("select ServiceProtocolContent from ServiceProtocol");
-            serviceProtocol.ServiceProtocolContent = serviceProtocol.ServiceProtocolContent.Replace("/Content/lib", ConfigurationManager.AppSettings["ServerUrl"] + "Content/lib");
+            serviceProtocol.ServiceProtocolContent = serviceProtocol.ServiceProtocolContent.Replace("/Content/lib", ConfigurationManager.AppSettings["ServerUrl2"] + "Content/lib");
             return new JsonResult<dynamic>
             {
                 status = true,

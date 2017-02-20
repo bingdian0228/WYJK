@@ -66,6 +66,8 @@ namespace WYJK.HOME.Controllers
 
             foreach (var property in target.GetType().GetProperties())
             {
+                if (source.GetType().GetProperty(property.Name) == null)
+                    continue;
                 var propertyValue = source.GetType().GetProperty(property.Name).GetValue(source, null);
                 if (propertyValue != null)
                 {
